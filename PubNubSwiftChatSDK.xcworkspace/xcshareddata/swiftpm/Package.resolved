@@ -1,0 +1,24 @@
+{
+  "originHash" : "10cdbec984d85d673aaac3ab802f5cae0b7b57b2f5fbd57ab6591de066e23927",
+  "pins" : [
+    {
+      "identity" : "kmp-chat",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jguz-pubnub/kmp-chat/",
+      "state" : {
+        "branch" : "master",
+        "revision" : "a9add93fecc76593ad3e13a9ca6d65205dfd55af"
+      }
+    },
+    {
+      "identity" : "swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pubnub/swift.git",
+      "state" : {
+        "branch" : "feat/kmp2",
+        "revision" : "59ce8fe77aad1747208864e6eafba353a1a15199"
+      }
+    }
+  ],
+  "version" : 3
+}

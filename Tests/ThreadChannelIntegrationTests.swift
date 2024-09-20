@@ -60,7 +60,7 @@ class ThreadChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     try awaitResult { threadChannel.delete(completion: $0) }
   }
 
-  func testPinMessageToParentChannel() throws {
+  func testThreadChannel_PinMessageToParentChannel() throws {
     let message = try XCTUnwrap(
       try awaitResultValue {
         threadChannel.getHistory(

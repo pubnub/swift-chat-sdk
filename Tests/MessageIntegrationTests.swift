@@ -50,11 +50,11 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     channel = nil
   }
 
-  func testHasUserReactions() throws {
+  func testMessage_HasUserReactions() throws {
     XCTAssertFalse(testMessage.hasUserReaction(reaction: "someReaction"))
   }
 
-  func testEditText() throws {
+  func testMessage_EditText() throws {
     let currentMessageText = testMessage.text
     let newText = "NewTextValue"
 
@@ -76,7 +76,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     )
   }
 
-  func testDelete() throws {
+  func testMessage_Delete() throws {
     XCTAssertNil(try awaitResultValue {
       testMessage.delete(
         soft: false,
@@ -86,7 +86,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     })
   }
 
-  func testSoftDelete() throws {
+  func testMessage_SoftDelete() throws {
     let value = try awaitResultValue {
       testMessage.delete(
         soft: true,
@@ -103,7 +103,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     XCTAssertFalse(deletedActions.isEmpty)
   }
 
-  func testGetThread() throws {
+  func testMessage_GetThread() throws {
     let threadChannel = try awaitResultValue {
       testMessage.createThread(
         completion: $0
@@ -137,7 +137,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testForward() throws {
+  func testMessage_Forward() throws {
     let anotherChannel = try XCTUnwrap(
       try awaitResultValue {
         chat.createChannel(
@@ -174,7 +174,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testPin() throws {
+  func testMessage_Pin() throws {
     let resultingChannel = try awaitResultValue {
       testMessage.pin(
         completion: $0
@@ -190,7 +190,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     XCTAssertEqual(resultingChannel.id, testMessage.channelId)
   }
 
-  func testReport() throws {
+  func testMessage_Report() throws {
     XCTAssertNotNil(try awaitResultValue {
       testMessage.report(
         reason: "ReportReason",
@@ -199,7 +199,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     })
   }
 
-  func testCreateThread() throws {
+  func testMessage_CreateThread() throws {
     let threadChannel = try awaitResultValue {
       testMessage.createThread(completion: $0)
     }
@@ -212,7 +212,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       testMessage.channelId
     )
 
-    try awaitResultValue {
+    try awaitResultValue(delay: 1) {
       threadChannel.sendText(
         text: "Text text text",
         meta: nil,
@@ -229,7 +229,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
 
     let retrievedMessage = try XCTUnwrap(
-      try awaitResultValue {
+      try awaitResultValue(delay: 2) {
         channel.getMessage(
           timetoken: testMessage.timetoken,
           completion: $0
@@ -255,7 +255,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testRemoveThread() throws {
+  func testMessage_RemoveThread() throws {
     let threadChannel = try awaitResultValue {
       testMessage.createThread(
         completion: $0
@@ -280,7 +280,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
 
     let retrievedMessage = try XCTUnwrap(
-      try awaitResultValue {
+      try awaitResultValue(delay: 2) {
         channel.getMessage(
           timetoken: testMessage.timetoken,
           completion: $0
@@ -306,7 +306,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testToggleReaction() throws {
+  func testMessage_ToggleReaction() throws {
     let result = try awaitResultValue {
       testMessage.toggleReaction(
         reaction: ":+1",
@@ -320,7 +320,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     XCTAssertEqual(userId, chat.currentUser.id)
   }
 
-  func testStreamUpdates() throws {
+  func testMessage_StreamUpdates() throws {
     let expectation = expectation(description: "StreamUpdates")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
@@ -364,7 +364,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testGlobalStreamUpdates() throws {
+  func testMessage_GlobalStreamUpdates() throws {
     let expectation = expectation(description: "StreamUpdates")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
@@ -409,7 +409,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testRestore() throws {
+  func testMessage_Restore() throws {
     let message = try awaitResultValue {
       testMessage.delete(
         soft: true,

@@ -74,11 +74,11 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     threadMessageTimetoken = nil
   }
 
-  func testHasUserReactions() throws {
+  func testThreadMessage_HasUserReactions() throws {
     XCTAssertFalse(threadMessage.hasUserReaction(reaction: "someReaction"))
   }
 
-  func testEditText() throws {
+  func testThreadMessage_EditText() throws {
     let currentMessageText = threadMessage.text
     let newText = "NewTextValue"
 
@@ -100,7 +100,7 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     )
   }
 
-  func testDelete() throws {
+  func testThreadMessage_Delete() throws {
     XCTAssertNil(try awaitResultValue {
       threadMessage.delete(
         soft: false,
@@ -110,7 +110,7 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     })
   }
 
-  func testSoftDelete() throws {
+  func testThreadMessage_SoftDelete() throws {
     let value = try awaitResultValue {
       threadMessage.delete(
         soft: true,
@@ -126,7 +126,7 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     XCTAssertFalse(deletedActions.isEmpty)
   }
 
-  func testGetThread() throws {
+  func testThreadMessage_GetThread() throws {
     let error = try awaitResultError {
       threadMessage.getThread(
         completion: $0
@@ -136,7 +136,7 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     XCTAssertEqual((error as? ChatError)?.message, "This message is not a thread.")
   }
 
-  func testForward() throws {
+  func testThreadMessage_Forward() throws {
     let anotherChannel = try XCTUnwrap(
       try awaitResultValue {
         chat.createChannel(
@@ -173,7 +173,7 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testPin() throws {
+  func testThreadMessage_Pin() throws {
     let resultingChannel = try awaitResultValue {
       threadMessage.pin(
         completion: $0
@@ -189,13 +189,13 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     XCTAssertEqual(resultingChannel.id, threadMessage.channelId)
   }
 
-  func testReport() throws {
+  func testThreadMessage_Report() throws {
     XCTAssertNotNil(try awaitResultValue {
       threadMessage.report(reason: "ReportReason", completion: $0)
     })
   }
 
-  func testCreateThread() throws {
+  func testThreadMessage_CreateThread() throws {
     let error = try awaitResultError {
       threadMessage.createThread(
         completion: $0
@@ -205,7 +205,7 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     XCTAssertEqual((error as? ChatError)?.message, "Only one level of thread nesting is allowed.")
   }
 
-  func testRemoveThread() throws {
+  func testThreadMessage_RemoveThread() throws {
     let error = try awaitResultError {
       threadMessage.removeThread(
         completion: $0
@@ -215,7 +215,7 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     XCTAssertEqual((error as? ChatError)?.message, "There is no thread to be deleted.")
   }
 
-  func testToggleReaction() throws {
+  func testThreadMessage_ToggleReaction() throws {
     let result = try awaitResultValue {
       threadMessage.toggleReaction(
         reaction: ":+1",
@@ -232,7 +232,7 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     )
   }
 
-  func testStreamUpdates() throws {
+  func testThreadMessage_StreamUpdates() throws {
     let expectation = expectation(description: "StreamUpdates")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
@@ -267,7 +267,7 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testGlobalStreamUpdates() throws {
+  func testThreadMessage_GlobalStreamUpdates() throws {
     let expectation = expectation(description: "StreamUpdates")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
@@ -303,7 +303,7 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testPinMessageToParentChannel() throws {
+  func testThreadMessage_PinMessageToParentChannel() throws {
     let resultingChannel = try awaitResultValue {
       threadMessage.pinToParentChannel(
         completion: $0
@@ -318,7 +318,7 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     XCTAssertNotNil(pinnedMessage)
   }
 
-  func testUnpinMessageFromParentChannel() throws {
+  func testThreadMessage_UnpinMessageFromParentChannel() throws {
     try awaitResultValue {
       threadMessage.pinToParentChannel(
         completion: $0

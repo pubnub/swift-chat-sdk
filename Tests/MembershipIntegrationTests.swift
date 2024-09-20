@@ -43,7 +43,7 @@ final class MembershipTests: PubNubSwiftChatSDKIntegrationTests {
     membership = nil
   }
 
-  func testSetLastReadMessage() throws {
+  func testMembership_SetLastReadMessage() throws {
     let message = MessageImpl(
       chat: chat,
       timetoken: Timetoken(Int(Date().timeIntervalSince1970 * 10000000)),
@@ -63,7 +63,7 @@ final class MembershipTests: PubNubSwiftChatSDKIntegrationTests {
     )
   }
 
-  func testUpdate() throws {
+  func testMembership_Update() throws {
     let newCustom: [String: JSONCodableScalar] = [
       "a": 1,
       "b": "Lorem ipsum",
@@ -81,7 +81,7 @@ final class MembershipTests: PubNubSwiftChatSDKIntegrationTests {
     )
   }
 
-  func testSetLastReadMessageTimetoken() throws {
+  func testMembership_SetLastReadMessageTimetoken() throws {
     let timetoken = Timetoken(Int(Date().timeIntervalSince1970 * 10000000))
     let value = try awaitResultValue { membership.setLastReadMessageTimetoken(timetoken, completion: $0) }
 
@@ -91,7 +91,7 @@ final class MembershipTests: PubNubSwiftChatSDKIntegrationTests {
     )
   }
 
-  func testGetUnreadMessagesCount() throws {
+  func testMembership_GetUnreadMessagesCount() throws {
     for _ in (1...3) {
       try awaitResultValue {
         channel.sendText(
@@ -105,7 +105,7 @@ final class MembershipTests: PubNubSwiftChatSDKIntegrationTests {
     )
   }
 
-  func testStreamUpdates() throws {
+  func testMembership_StreamUpdates() throws {
     let expectation = expectation(description: "MembershipStreamUpdates")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
@@ -132,7 +132,7 @@ final class MembershipTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testGlobalStreamUpdates() throws {
+  func testMembership_GlobalStreamUpdates() throws {
     let expectation = expectation(description: "MembershipStreamUpdates")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1

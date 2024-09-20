@@ -15,7 +15,7 @@ import XCTest
 @testable import PubNubSwiftChatSDK
 
 class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
-  func testCreateUser() throws {
+  func testChat_CreateUser() throws {
     let user = try awaitResultValue {
       chat.createUser(
         id: randomString(),
@@ -40,7 +40,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testGetUser() throws {
+  func testChat_GetUser() throws {
     let user = try awaitResultValue {
       chat.getUser(
         userId: chat.currentUser.id,
@@ -52,7 +52,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     XCTAssertEqual(user?.name, chat.currentUser.name)
   }
 
-  func testGetUsers() throws {
+  func testChat_GetUsers() throws {
     let user = try awaitResultValue {
       chat.createUser(
         id: randomString(),
@@ -79,7 +79,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testUpdateUser() throws {
+  func testChat_UpdateUser() throws {
     let newCustom: [String: JSONCodableScalar] = [
       "someValue": 17253575019298112,
       "someStr": "str"
@@ -107,7 +107,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     XCTAssertEqual(updatedUser.type, "regular")
   }
 
-  func testDelete() throws {
+  func testChat_Delete() throws {
     let user = try awaitResultValue {
       chat.createUser(
         id: randomString(),
@@ -140,7 +140,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testWherePresent() throws {
+  func testChat_WherePresent() throws {
     let channelId = randomString()
     let channel = try awaitResultValue { chat.createChannel(id: channelId, name: channelId, completion: $0) }
     let closeable = channel.connect(callback: { _ in })
@@ -165,7 +165,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testIsPresent() throws {
+  func testChat_IsPresent() throws {
     let channelId = randomString()
     let channel = try awaitResultValue { chat.createChannel(id: channelId, name: channelId, completion: $0) }
     let closeable = channel.connect(callback: { _ in })
@@ -197,7 +197,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testCreateChannel() throws {
+  func testChat_CreateChannel() throws {
     let customField: [String: JSONCodableScalar] = [
       "someValue": 17253575019298112,
       "someStr": "str"
@@ -230,7 +230,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testGetChannel() throws {
+  func testChat_GetChannel() throws {
     let channel = try awaitResultValue {
       chat.createChannel(
         id: randomString(),
@@ -248,7 +248,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     XCTAssertEqual(retrievedChannel?.id, channel.id)
   }
 
-  func testGetChannels() throws {
+  func testChat_GetChannels() throws {
     let channel = try awaitResultValue {
       chat.createChannel(
         id: randomString(),
@@ -275,7 +275,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testUpdateChannel() throws {
+  func testChat_UpdateChannel() throws {
     let channel = try awaitResultValue {
       chat.createChannel(
         id: randomString(),
@@ -315,7 +315,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testDeleteChannel() throws {
+  func testChat_DeleteChannel() throws {
     let channel = try awaitResultValue {
       chat.createChannel(
         id: randomString(),
@@ -348,7 +348,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testForward() throws {
+  func testChat_Forward() throws {
     let firstChannel = try XCTUnwrap(
       try awaitResultValue {
         chat.createChannel(
@@ -411,7 +411,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testWhoIsPresent() throws {
+  func testChat_WhoIsPresent() throws {
     let channel = try awaitResultValue {
       chat.createChannel(
         id: randomString(),
@@ -445,7 +445,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testEmitEvent() throws {
+  func testChat_EmitEvent() throws {
     let expectation = expectation(description: "Emit Event")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
@@ -485,7 +485,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testCreatePublicConversation() throws {
+  func testChat_CreatePublicConversation() throws {
     let customField: [String: JSONCodableScalar] = [
       "someValue": 17253575019298112,
       "someStr": "str"
@@ -516,7 +516,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testCreateDirectConversation() throws {
+  func testChat_CreateDirectConversation() throws {
     let customField: [String: JSONCodableScalar] = [
       "someValue": 17253575019298112,
       "someStr": "str"
@@ -575,7 +575,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testGroupConversation() throws {
+  func testChat_GroupConversation() throws {
     let anotherUser = try awaitResultValue {
       chat.createUser(
         id: randomString(),
@@ -634,7 +634,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testListenForEvents() throws {
+  func testChat_ListenForEvents() throws {
     let expectation = expectation(description: "Listen For Events")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
@@ -676,7 +676,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testRegisterUnregisterPushChannels() throws {
+  func testChat_RegisterUnregisterPushChannels() throws {
     let pushNotificationsConfig = PushNotificationsConfig(
       sendPushes: false,
       deviceToken: "4d3f92b6d7a9348e5f2b8c6d1e4f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f",
@@ -716,7 +716,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testUnregisterAllPushChannels() throws {
+  func testChat_UnregisterAllPushChannels() throws {
     let pushNotificationsConfig = PushNotificationsConfig(
       sendPushes: false,
       deviceToken: "4d3f92b6d7a9348e5f2b8c6d1e4f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f",
@@ -764,7 +764,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testGetThread() throws {
+  func testChat_GetThread() throws {
     let channel = try XCTUnwrap(
       try awaitResultValue {
         chat.createChannel(
@@ -820,7 +820,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testGetUnreadMessagesCount() throws {
+  func testChat_GetUnreadMessagesCount() throws {
     let channel = try awaitResultValue {
       chat.createChannel(
         id: randomString(),
@@ -866,7 +866,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testMarkAllMessagesAsRead() throws {
+  func testChat_MarkAllMessagesAsRead() throws {
     let channel = try awaitResultValue {
       chat.createChannel(
         id: randomString(),
@@ -915,7 +915,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testGetChannelSuggestions() throws {
+  func testChat_GetChannelSuggestions() throws {
     let channelName = "channel_\(randomString())"
     let channelId = channelName
 
@@ -949,7 +949,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testGetUserSuggestions() throws {
+  func testChat_GetUserSuggestions() throws {
     let username = "some_user_\(randomString())"
     let channelId = randomString()
 
@@ -1002,7 +1002,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testGetEventsHistory() throws {
+  func testChat_GetEventsHistory() throws {
     let channel = try awaitResultValue {
       chat.createChannel(
         id: randomString(),
@@ -1056,7 +1056,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testGetCurrentUserMentions() throws {
+  func testChat_GetCurrentUserMentions() throws {
     let channel = try awaitResultValue {
       chat.createChannel(
         id: randomString(),
@@ -1109,7 +1109,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testCustomPayload() throws {
+  func testChat_CustomPayload() throws {
     let getMessagePublishBody: GetMessagePublishBody? = { txtContent, _, _ in
       return ["payload": txtContent.text]
     }

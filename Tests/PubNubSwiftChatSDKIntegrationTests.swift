@@ -172,7 +172,7 @@ extension PubNubSwiftChatSDKIntegrationTests {
     // Define the expectation to fulfill
     let expectation = expectation(description: "Waiting for \(duration) seconds")
     // Dispatch a delay on a background queue
-    DispatchQueue.global().asyncAfter(deadline: .now() + duration) {
+    DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
       expectation.fulfill()
     }
     // Wait for the expectation to be fulfilled or timeout

@@ -28,7 +28,7 @@ final class UserIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     )
   }
 
-  func testCreateUser() throws {
+  func testUser_CreateUser() throws {
     let user = testableUser()
     let createdUser = try awaitResultValue { chat.createUser(user: user, completion: $0) }
 
@@ -49,7 +49,7 @@ final class UserIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testUpdateUser() throws {
+  func testUser_UpdateUser() throws {
     let newCustom: [String: JSONCodableScalar] = [
       "age": 21,
       "city": "Birmingham"
@@ -76,7 +76,7 @@ final class UserIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     XCTAssertEqual(updatedUser.type, "regular")
   }
 
-  func testUpdateNotExistingUser() throws {
+  func testUser_UpdateNotExistingUser() throws {
     let someUser = testableUser()
     let error = try awaitResultError {
       someUser.update(
@@ -89,7 +89,7 @@ final class UserIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     XCTAssertEqual((error as? ChatError)?.message, "User does not exist")
   }
 
-  func testIsPresentOn() throws {
+  func testUser_IsPresentOn() throws {
     let channelId = randomString()
     let createdChannel = try awaitResultValue { chat.createChannel(id: channelId, name: channelId, completion: $0) }
     let closeable = createdChannel.connect(callback: { _ in })
@@ -111,7 +111,7 @@ final class UserIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testDeleteUser() throws {
+  func testUser_DeleteUser() throws {
     let createdUser = try awaitResultValue {
       chat.createUser(
         user: testableUser(),
@@ -130,14 +130,14 @@ final class UserIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     )
   }
 
-  func testDeleteNotExistingUser() throws {
+  func testUser_DeleteNotExistingUser() throws {
     let someUser = testableUser()
     let error = try awaitResultError { someUser.delete(soft: false, completion: $0) }
 
     XCTAssertEqual((error as? ChatError)?.message, "User does not exist")
   }
 
-  func testWherePresent() throws {
+  func testUser_WherePresent() throws {
     let channelId = randomString()
     let channel = try awaitResultValue { chat.createChannel(id: channelId, name: channelId, completion: $0) }
     let closeable = channel.connect(callback: { _ in })
@@ -159,7 +159,7 @@ final class UserIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testIsActive() throws {
+  func testUser_IsActive() throws {
     let channelId = randomString()
     let channel = try awaitResultValue { chat.createChannel(id: channelId, name: channelId, completion: $0) }
     let closeable = channel.connect(callback: { _ in })
@@ -183,7 +183,7 @@ final class UserIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testGetMemberships() throws {
+  func testUser_GetMemberships() throws {
     let channel = try awaitResultValue {
       chat.createChannel(
         id: randomString(),
@@ -219,7 +219,7 @@ final class UserIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testStreamUpdates() throws {
+  func testUser_StreamUpdates() throws {
     let expectation = expectation(description: "StreamUpdates")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
@@ -272,7 +272,7 @@ final class UserIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testGlobalStreamUpdates() throws {
+  func testUser_GlobalStreamUpdates() throws {
     let expectation = expectation(description: "StreamUpdates")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 2

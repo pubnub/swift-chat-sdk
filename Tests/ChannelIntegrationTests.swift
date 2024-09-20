@@ -35,7 +35,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     channel = nil
   }
 
-  func testUpdate() throws {
+  func testChannel_Update() throws {
     let newCustom: [String: JSONCodableScalar] = [
       "a": 123,
       "b": "xyz"
@@ -57,7 +57,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     XCTAssertEqual(updatedChannel.type, .public)
   }
 
-  func testDelete() throws {
+  func testChannel_Delete() throws {
     try awaitResult {
       channel.delete(
         soft: false,
@@ -74,7 +74,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     )
   }
 
-  func testSoftDelete() throws {
+  func testChannel_SoftDelete() throws {
     try awaitResult {
       channel.delete(
         soft: true,
@@ -92,7 +92,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     XCTAssertEqual(retrievedChannel?.id, channel.id)
   }
 
-  func testForward() throws {
+  func testChannel_Forward() throws {
     let anotherChannel = try XCTUnwrap(
       try awaitResultValue {
         chat.createChannel(
@@ -139,7 +139,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testStartTyping() throws {
+  func testChannel_StartTyping() throws {
     let expectation = expectation(description: "GetTyping")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
@@ -164,7 +164,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testStopTyping() throws {
+  func testChannel_StopTyping() throws {
     XCTAssertNotNil(
       try awaitResultValue {
         channel.stopTyping(completion: $0)
@@ -172,7 +172,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     )
   }
 
-  func testWhoIsPresent() throws {
+  func testChannel_WhoIsPresent() throws {
     let joinValue = try awaitResultValue {
       channel.join(
         completion: $0
@@ -193,7 +193,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testIsPresent() throws {
+  func testChannel_IsPresent() throws {
     let joinValue = try awaitResultValue {
       channel.join(
         completion: $0
@@ -212,7 +212,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testGetHistory() throws {
+  func testChannel_GetHistory() throws {
     for counter in 1...3 {
       try awaitResultValue {
         channel.sendText(
@@ -221,7 +221,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
         )
       }
     }
-    let history = try awaitResultValue {
+    let history = try awaitResultValue(delay: 2) {
       channel.getHistory(
         completion: $0
       )
@@ -235,7 +235,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
 
   // TODO: Accessing mentionedUsers and referencedChannels cause crash
 
-  func testSendText() throws {
+  func testChannel_SendText() throws {
     var mentionedUsers = MessageMentionedUsers()
     var referencedChannels = MessageReferencedChannels()
 
@@ -265,7 +265,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     XCTAssertEqual(retrievedMessage?.meta?["b"]?.codableValue.rawValue as? String, "someString")
   }
 
-  func testInvite() throws {
+  func testChannel_Invite() throws {
     try awaitResultValue {
       channel.invite(
         user: chat.currentUser,
@@ -283,7 +283,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     XCTAssertEqual(member.user.id, chat.currentUser.id)
   }
 
-  func testInviteMultiple() throws {
+  func testChannel_InviteMultiple() throws {
     let someUser = UserImpl(
       chat: chat,
       id: randomString()
@@ -325,7 +325,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testGetMembers() throws {
+  func testChannel_GetMembers() throws {
     let someUser = UserImpl(
       chat: chat,
       id: randomString()
@@ -375,7 +375,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testConnect() throws {
+  func testChannel_Connect() throws {
     let expectation = XCTestExpectation(description: "Connect")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
@@ -404,7 +404,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testJoin() throws {
+  func testChannel_Join() throws {
     let expectation = XCTestExpectation(description: "Connect")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
@@ -439,7 +439,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testLeave() throws {
+  func testChannel_Leave() throws {
     let joinValue = try awaitResultValue {
       channel.join(
         completion: $0
@@ -465,7 +465,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
 
   // TODO: Not working
 
-  func testPinMessageGetPinnedMessage() throws {
+  func testChannel_PinMessageGetPinnedMessage() throws {
     let tt = try awaitResultValue {
       channel.sendText(
         text: "Pinned message",
@@ -500,7 +500,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     )
   }
 
-  func testGetMessage() throws {
+  func testChannel_GetMessage() throws {
     let tt = try awaitResultValue {
       channel.sendText(
         text: "Message text",
@@ -508,7 +508,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       )
     }
     let message = try XCTUnwrap(
-      try awaitResultValue {
+      try awaitResultValue(delay: 2) {
         channel.getMessage(
           timetoken: tt,
           completion: $0
@@ -520,7 +520,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     XCTAssertEqual(message.userId, chat.currentUser.id)
   }
 
-  func testRegisterUnregisterFromPush() throws {
+  func testChannel_RegisterUnregisterFromPush() throws {
     let pushNotificationsConfig = PushNotificationsConfig(
       sendPushes: false,
       deviceToken: "4d3f92b6d7a9348e5f2b8c6d1e4f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f",
@@ -558,7 +558,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testStreamUpdates() throws {
+  func testChannel_StreamUpdates() throws {
     let expectation = expectation(description: "StreamUpdates")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
@@ -586,7 +586,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testStreamReadReceipts() throws {
+  func testChannel_StreamReadReceipts() throws {
     let expectation = expectation(description: "StreamReadReceipts")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
@@ -638,7 +638,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testGetFiles() throws {
+  func testChannel_GetFiles() throws {
     let fileUrlSession = URLSession(
       configuration: URLSessionConfiguration.default,
       delegate: FileSessionManager(),
@@ -701,7 +701,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testDeleteFile() throws {
+  func testChannel_DeleteFile() throws {
     let fileUrlSession = URLSession(
       configuration: URLSessionConfiguration.default,
       delegate: FileSessionManager(),
@@ -771,7 +771,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testStreamPresence() throws {
+  func testChannel_StreamPresence() throws {
     let expectation = expectation(description: "StreamPresence")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
@@ -798,7 +798,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testGetUserSuggestions() throws {
+  func testChannel_GetUserSuggestions() throws {
     let usersToCreate = [
       UserImpl(chat: chat, id: randomString(), name: "user_\(randomString())"),
       UserImpl(chat: chat, id: randomString(), name: "user_\(randomString())"),
@@ -845,7 +845,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testStreamMessageReports() throws {
+  func testChannel_StreamMessageReports() throws {
     let expectation = expectation(description: "StreamMessageReports")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1

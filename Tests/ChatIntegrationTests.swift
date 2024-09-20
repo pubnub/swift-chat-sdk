@@ -890,13 +890,13 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       }
     }
 
-    try awaitResultValue {
+    try awaitResultValue(delay: 2) {
       chat.markAllMessagesAsRead(
         completion: $0
       )
     }
 
-    let getUnreadMessagesCount = try awaitResultValue {
+    let getUnreadMessagesCount = try awaitResultValue(delay: 2) {
       chat.getUnreadMessagesCount(
         completion: $0
       )

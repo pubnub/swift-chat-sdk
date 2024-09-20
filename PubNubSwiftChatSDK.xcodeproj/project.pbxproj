@@ -113,6 +113,7 @@
 		3D334BD12C8EEAA800F8793C /* PubNub.PushEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PubNub.PushEnvironment.swift; sourceTree = "<group>"; };
 		3D7BBF6E2C8893D400FBA623 /* ChatAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAdapter.swift; sourceTree = "<group>"; };
 		3D842D232C9DC0AA005C0B55 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		3D842D2B2C9DD7EB005C0B55 /* PubNubSwiftChatSDKTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = PubNubSwiftChatSDKTests.xctestplan; sourceTree = "<group>"; };
 		3DA530C52C87455200DDE763 /* ThreadChannelIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadChannelIntegrationTests.swift; sourceTree = "<group>"; };
 		3DA530C72C882F2500DDE763 /* ChatIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatIntegrationTests.swift; sourceTree = "<group>"; };
 		3DADCAED2C9896AF001B3DE2 /* Package.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
@@ -232,6 +233,7 @@
 			isa = PBXGroup;
 			children = (
 				3DB49E1A2C75F573006356ED /* PubNubSwiftChatSDKTests.plist */,
+				3D842D2B2C9DD7EB005C0B55 /* PubNubSwiftChatSDKTests.xctestplan */,
 				3DB73A162C4FE13C007FE249 /* PubNubSwiftChatSDKIntegrationTests.swift */,
 				3DB49E1C2C75F70C006356ED /* UserIntegrationTests.swift */,
 				3DB49E272C777ECD006356ED /* MembershipIntegrationTests.swift */,

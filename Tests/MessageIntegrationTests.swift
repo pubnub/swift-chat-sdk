@@ -261,26 +261,26 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
         completion: $0
       )
     }
-    try awaitResultValue {
+    try awaitResultValue(delay: 1) {
       threadChannel.sendText(
         text: "Text text text",
         completion: $0
       )
     }
     let message = try XCTUnwrap(
-      try awaitResultValue {
+      try awaitResultValue(delay: 1) {
         channel.getMessage(
           timetoken: testMessage.timetoken,
           completion: $0
         )
       }
     )
-    try awaitResultValue {
+    try awaitResultValue(delay: 1) {
       message.removeThread(completion: $0)
     }
 
     let retrievedMessage = try XCTUnwrap(
-      try awaitResultValue(delay: 2) {
+      try awaitResultValue(delay: 1) {
         channel.getMessage(
           timetoken: testMessage.timetoken,
           completion: $0

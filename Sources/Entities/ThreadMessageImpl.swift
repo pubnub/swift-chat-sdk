@@ -59,6 +59,12 @@ public final class ThreadMessageImpl {
   }
 }
 
+extension ThreadMessageImpl {
+  func asMessage() -> MessageImpl {
+    MessageImpl(message: target.message)
+  }
+}
+
 extension ThreadMessageImpl: ThreadMessage {
   public var chat: ChatImpl { target.chat }
   public var timetoken: Timetoken { target.timetoken }

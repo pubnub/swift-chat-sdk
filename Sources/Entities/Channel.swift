@@ -9,7 +9,6 @@
 //
 
 import Foundation
-import PubNubChat
 import PubNubSDK
 
 public protocol Channel {

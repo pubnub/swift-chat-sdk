@@ -92,7 +92,7 @@ extension ChatImpl: Chat {
         if let caller = result.caller {
           completion?(.success(caller))
         } else {
-          completion?(.failure(ChatError(message: "Object no longer exists")))
+          completion?(.failure(ChatError(message: objectNoLongerExists)))
         }
       case let .failure(error):
         completion?(.failure(error))
@@ -108,8 +108,8 @@ extension ChatImpl: Chat {
       user: user.user
     ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.User>) in
       switch result.result {
-      case let .success(user):
-        completion?(.success(UserImpl(user: user)))
+      case let .success(createdUser):
+        completion?(.success(UserImpl(user: createdUser)))
       case let .failure(error):
         completion?(.failure(error))
       }

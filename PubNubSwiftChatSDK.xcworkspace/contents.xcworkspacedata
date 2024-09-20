@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:/Users/jakub.guz/Development/SwiftChatSDK/PubNubSwiftChatSDK.xcodeproj">
+      location = "group:PubNubSwiftChatSDK.xcodeproj">
    </FileRef>
 </Workspace>

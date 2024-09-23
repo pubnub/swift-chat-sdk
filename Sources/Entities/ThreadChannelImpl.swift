@@ -234,7 +234,7 @@ extension ThreadChannelImpl: ThreadChannel {
     ttl: Int? = nil,
     quotedMessage: MessageImpl? = nil,
     files: [InputFile]?,
-    completion: ((Swift.Result<Timetoken, Error>) -> Void)?
+    completion: ((Swift.Result<Timetoken, Error>) -> Void)? = nil
   ) {
     target.sendText(
       text: text,

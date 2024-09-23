@@ -284,8 +284,6 @@ extension EventContent {
       KClassConstants.Companion.shared.moderation
     case is TextMessageContent.Type:
       KClassConstants.Companion.shared.textMessageContent
-    case is UnknownMessageFormat.Type:
-      KClassConstants.Companion.shared.unknownMessageFormat
     default:
       KClassConstants.Companion.shared.unknownMessageFormat
     }

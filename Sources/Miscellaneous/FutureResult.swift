@@ -38,12 +38,10 @@ class BaseFutureConsumer<T>: PubNubChat.Consumer {
         return .failure(ChatError(underlying: exception.asError(), message: exception.message ?? ""))
       } else if let value = result.getOrNull() as? T {
         return .success(value)
-      } else {
-        return .failure(ChatError(message: "Unexpected argument of type \(type(of: T.self))"))
       }
-    } else {
-      return .failure(ChatError(message: "Unexpected argument of type \(type(of: T.self))"))
     }
+    
+    return .failure(ChatError(message: "Unexpected argument of type \(type(of: T.self))"))
   }
 
   func accept(p: Any?) {

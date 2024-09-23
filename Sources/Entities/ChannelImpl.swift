@@ -193,6 +193,28 @@ extension ChannelImpl: Channel {
     )
   }
 
+  public func sendText(
+    text: String,
+    meta: [String: JSONCodable]? = nil,
+    shouldStore: Bool = true,
+    usePost: Bool = false,
+    ttl: Int? = nil,
+    quotedMessage: MessageImpl? = nil,
+    files: [InputFile]?,
+    completion: ((Swift.Result<Timetoken, Error>) -> Void)?
+  ) {
+    target.sendText(
+      text: text,
+      meta: meta,
+      shouldStore: shouldStore,
+      usePost: usePost,
+      ttl: ttl,
+      quotedMessage: quotedMessage,
+      files: files,
+      completion: completion
+    )
+  }
+
   public func invite(user: UserImpl, completion: ((Swift.Result<MembershipImpl, Error>) -> Void)? = nil) {
     target.invite(
       user: user,

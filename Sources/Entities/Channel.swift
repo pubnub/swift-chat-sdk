@@ -76,6 +76,7 @@ public protocol Channel {
     completion: ((Swift.Result<(messages: [MessageType], isMore: Bool), Error>) -> Void)?
   )
 
+  @available(*, deprecated, message: "Will be removed from SDK in the future")
   func sendText(
     text: String,
     meta: [String: JSONCodable]?,
@@ -85,6 +86,17 @@ public protocol Channel {
     mentionedUsers: MessageMentionedUsers?,
     referencedChannels: MessageReferencedChannels?,
     textLinks: [TextLink]?,
+    quotedMessage: ChatType.ChatMessageType?,
+    files: [InputFile]?,
+    completion: ((Swift.Result<Timetoken, Error>) -> Void)?
+  )
+
+  func sendText(
+    text: String,
+    meta: [String: JSONCodable]?,
+    shouldStore: Bool,
+    usePost: Bool,
+    ttl: Int?,
     quotedMessage: ChatType.ChatMessageType?,
     files: [InputFile]?,
     completion: ((Swift.Result<Timetoken, Error>) -> Void)?

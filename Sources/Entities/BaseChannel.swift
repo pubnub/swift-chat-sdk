@@ -208,6 +208,27 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     }
   }
 
+  func sendText(
+    text: String,
+    meta: [String: JSONCodable]?,
+    shouldStore: Bool,
+    usePost: Bool,
+    ttl: Int?,
+    quotedMessage: MessageImpl?,
+    files: [InputFile]?,
+    completion: ((Swift.Result<Timetoken, any Error>) -> Void)?
+  ) {
+    channel.sendText(
+      text: text,
+      meta: meta?.compactMapValues { $0.rawValue },
+      shouldStore: shouldStore,
+      usePost: usePost,
+      ttl: ttl?.asKotlinInt,
+      quotedMessage: quotedMessage?.target.message,
+      files: files?.compactMap { $0.transform() }
+    )
+  }
+
   func invite(user: ChatType.ChatUserType, completion: ((Swift.Result<MembershipImpl, Error>) -> Void)?) {
     channel.invite(
       user: user.user

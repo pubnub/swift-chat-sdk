@@ -22,7 +22,7 @@ class FutureResult<C: AnyObject, T> {
 }
 
 class WeakFutureResult<C: AnyObject, T> {
-  let caller: C?
+  weak var caller: C?
   let result: Swift.Result<T, Error>
 
   init(result: Swift.Result<T, Error>, caller: C?) {

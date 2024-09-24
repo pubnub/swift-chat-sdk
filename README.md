@@ -1,6 +1,14 @@
 # PubNub Swift Chat SDK
 
-PubNub's Swift Chat SDK provides out-of-the-box chat features like read receipts, unread message counts, and many more, which can be easily integrated into your own UI. It's a simple solution for developers looking to create new chat applications or add chat functionality to existing ones.
+PubNub takes care of the infrastructure and APIs needed for the realtime communication layer of your application. Work on your app's logic and let PubNub handle sending and receiving data across the world in less than 100ms.
+
+This SDK offers a set of handy methods to create your own feature-rich chat or add a chat to your existing application.
+
+It exposes various PubNub APIs with twists:
+
+* Tailored specifically to the chat use case by offering easy-to-use methods that let you do exactly what you want, like startTyping() (a message) or join() (a channel).
+* Meant to be easy & intuitive to use as it focuses on features you would most likely build in your chat app, not PubNub APIs and all the technicalities behind them.
+* Offers new chat options, like quotes, threads, or read receipts, that let you build a full-fledged app quickly.
 
 * [Requirements](#requirements)
 * [Get keys](#get-keys)

@@ -21,7 +21,6 @@
 		3D842D242C9DC0AA005C0B55 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D842D232C9DC0AA005C0B55 /* Constants.swift */; };
 		3DA530C62C87455200DDE763 /* ThreadChannelIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DA530C52C87455200DDE763 /* ThreadChannelIntegrationTests.swift */; };
 		3DA530C82C882F2500DDE763 /* ChatIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DA530C72C882F2500DDE763 /* ChatIntegrationTests.swift */; };
-		3DADCAEC2C98958D001B3DE2 /* PubNubSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 3DADCAEB2C98958D001B3DE2 /* PubNubSDK */; };
 		3DB2A8AF2C7F54A400167058 /* ChannelIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB2A8AE2C7F54A400167058 /* ChannelIntegrationTests.swift */; };
 		3DB2A8B32C807DDC00167058 /* UserImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB2A8B22C807DDC00167058 /* UserImpl.swift */; };
 		3DB2A8B52C807E2A00167058 /* MembershipImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB2A8B42C807E2A00167058 /* MembershipImpl.swift */; };
@@ -73,7 +72,8 @@
 		3DB73A7B2C57EA29007FE249 /* ChatImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB73A7A2C57EA29007FE249 /* ChatImpl.swift */; };
 		3DB73A7D2C57EA94007FE249 /* Timetoken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB73A7C2C57EA94007FE249 /* Timetoken.swift */; };
 		3DB73A7F2C58CCAE007FE249 /* GetCurrentUserMentionsResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB73A7E2C58CCAE007FE249 /* GetCurrentUserMentionsResult.swift */; };
-		3DE67D862CA1C9CD005F593C /* PubNubChat in Frameworks */ = {isa = PBXBuildFile; productRef = 3DE67D852CA1C9CD005F593C /* PubNubChat */; };
+		3DD5DBE52CA301C1008954FF /* PubNubSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 3DD5DBE42CA301C1008954FF /* PubNubSDK */; };
+		3DD5DBE82CA3034C008954FF /* PubNubChat in Frameworks */ = {isa = PBXBuildFile; productRef = 3DD5DBE72CA3034C008954FF /* PubNubChat */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -176,8 +176,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3DE67D862CA1C9CD005F593C /* PubNubChat in Frameworks */,
-				3DADCAEC2C98958D001B3DE2 /* PubNubSDK in Frameworks */,
+				3DD5DBE82CA3034C008954FF /* PubNubChat in Frameworks */,
+				3DD5DBE52CA301C1008954FF /* PubNubSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -368,8 +368,8 @@
 			);
 			name = PubNubSwiftChatSDK;
 			packageProductDependencies = (
-				3DADCAEB2C98958D001B3DE2 /* PubNubSDK */,
-				3DE67D852CA1C9CD005F593C /* PubNubChat */,
+				3DD5DBE42CA301C1008954FF /* PubNubSDK */,
+				3DD5DBE72CA3034C008954FF /* PubNubChat */,
 			);
 			productName = PubNubChatSDK;
 			productReference = 3DB73A072C4FE13C007FE249 /* PubNubSwiftChatSDK.framework */;
@@ -422,8 +422,8 @@
 			);
 			mainGroup = 3DB739FD2C4FE13B007FE249;
 			packageReferences = (
-				3DADCAEA2C98958D001B3DE2 /* XCRemoteSwiftPackageReference "swift" */,
-				3DE67D842CA1C9CD005F593C /* XCRemoteSwiftPackageReference "kmp-chat" */,
+				3DD5DBE32CA301C1008954FF /* XCRemoteSwiftPackageReference "swift" */,
+				3DD5DBE62CA3034C008954FF /* XCRemoteSwiftPackageReference "kmp-chat" */,
 			);
 			productRefGroup = 3DB73A082C4FE13C007FE249 /* Products */;
 			projectDirPath = "";
@@ -841,33 +841,33 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		3DADCAEA2C98958D001B3DE2 /* XCRemoteSwiftPackageReference "swift" */ = {
+		3DD5DBE32CA301C1008954FF /* XCRemoteSwiftPackageReference "swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/pubnub/swift.git";
+			repositoryURL = "https://github.com/pubnub/swift";
 			requirement = {
 				kind = exactVersion;
 				version = 8.0.0;
 			};
 		};
-		3DE67D842CA1C9CD005F593C /* XCRemoteSwiftPackageReference "kmp-chat" */ = {
+		3DD5DBE62CA3034C008954FF /* XCRemoteSwiftPackageReference "kmp-chat" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/pubnub/kmp-chat/";
+			repositoryURL = "https://github.com/pubnub/kmp-chat";
 			requirement = {
-				kind = exactVersion;
-				version = "0.0.1-DEV";
+				kind = revision;
+				revision = 910c9bd122ec408c577b78e96aff106c459926b9;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		3DADCAEB2C98958D001B3DE2 /* PubNubSDK */ = {
+		3DD5DBE42CA301C1008954FF /* PubNubSDK */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3DADCAEA2C98958D001B3DE2 /* XCRemoteSwiftPackageReference "swift" */;
+			package = 3DD5DBE32CA301C1008954FF /* XCRemoteSwiftPackageReference "swift" */;
 			productName = PubNubSDK;
 		};
-		3DE67D852CA1C9CD005F593C /* PubNubChat */ = {
+		3DD5DBE72CA3034C008954FF /* PubNubChat */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3DE67D842CA1C9CD005F593C /* XCRemoteSwiftPackageReference "kmp-chat" */;
+			package = 3DD5DBE62CA3034C008954FF /* XCRemoteSwiftPackageReference "kmp-chat" */;
 			productName = PubNubChat;
 		};
 /* End XCSwiftPackageProductDependency section */

@@ -1,19 +1,18 @@
 {
-  "originHash" : "9319948599adc9371fd0665a7a906ebb745d9fd656f10a0bc4a155f21d3c4c7a",
+  "originHash" : "160b44fbed91415c985f7829e32c01b952bd76451638cfaf3ec3add33864981b",
   "pins" : [
     {
       "identity" : "kmp-chat",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/pubnub/kmp-chat/",
+      "location" : "https://github.com/pubnub/kmp-chat",
       "state" : {
-        "revision" : "091d1310334b47a92fd0f056ec1662786b294054",
-        "version" : "0.0.1-DEV"
+        "revision" : "910c9bd122ec408c577b78e96aff106c459926b9"
       }
     },
     {
       "identity" : "swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/pubnub/swift.git",
+      "location" : "https://github.com/pubnub/swift",
       "state" : {
         "revision" : "7ec97085f008532fde807568409941badbc1e737",
         "version" : "8.0.0"

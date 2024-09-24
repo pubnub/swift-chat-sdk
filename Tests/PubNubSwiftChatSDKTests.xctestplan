@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "B2FFD29C-23BF-4550-A839-AF5A3B18B379",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:PubNubSwiftChatSDK.xcodeproj",
+        "identifier" : "3DB73A102C4FE13C007FE249",
+        "name" : "PubNubSwiftChatSDKTests"
+      }
+    }
+  ],
+  "version" : 1
+}

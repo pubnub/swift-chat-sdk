@@ -10,6 +10,7 @@ It exposes various PubNub APIs with twists:
 * Meant to be easy & intuitive to use as it focuses on features you would most likely build in your chat app, not PubNub APIs and all the technicalities behind them.
 * Offers new chat options, like quotes, threads, or read receipts, that let you build a full-fledged app quickly.
 
+## Table Of Contents
 
 * [Requirements](#requirements)
 * [Get keys](#get-keys)

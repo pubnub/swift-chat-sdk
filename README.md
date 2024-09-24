@@ -75,7 +75,7 @@ For more information see Apple's guide on [Adding Package Dependencies to Your A
 
 ## Support
 
-If you **need help** or have a **general question**, contact <support@pubnub.com>.
+If you **need help** or have a **general question**, contact [support@pubnub.com](mailto:support@pubnub.com).
 
 ## License
 

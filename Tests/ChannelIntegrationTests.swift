@@ -233,8 +233,6 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     XCTAssertEqual(history.messages[2].text, "Text 3")
   }
 
-  // TODO: Accessing mentionedUsers and referencedChannels cause crash
-
   func testChannel_SendText() throws {
     var mentionedUsers = MessageMentionedUsers()
     var referencedChannels = MessageReferencedChannels()
@@ -462,8 +460,6 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       joinValue.disconnect?.close()
     }
   }
-
-  // TODO: Not working
 
   func testChannel_PinMessageGetPinnedMessage() throws {
     let tt = try awaitResultValue {

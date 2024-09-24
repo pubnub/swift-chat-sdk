@@ -23,11 +23,8 @@ public final class ChatImpl {
     config = chatConfiguration
     chat = ChatImpl.createKMPChat(from: pubNub, config: chatConfiguration)
 
-    if let version = Bundle(for: ChatImpl.self).infoDictionary?["CFBundleShortVersionString"] as? String {
-      pubNub.setConsumer(identifier: "chat-sdk", value: "CA-SWIFT/\(version)")
-    } else {
-      preconditionFailure("Cannot retrieve CFBundleShortVersionString")
-    }
+    // Provide a mechanism for reading a version number from a .plist file.
+    pubNub.setConsumer(identifier: "chat-sdk", value: "CA-SWIFT/0.8.0")
 
     ChatAdapter.associate(
       chat: self,
@@ -40,11 +37,8 @@ public final class ChatImpl {
     config = configuration
     chat = ChatImpl.createKMPChat(from: pubNub, config: configuration)
 
-    if let version = Bundle(for: ChatImpl.self).infoDictionary?["CFBundleShortVersionString"] as? String {
-      self.pubNub.setConsumer(identifier: "chat-sdk", value: "CA-SWIFT/\(version)")
-    } else {
-      preconditionFailure("Cannot retrieve CFBundleShortVersionString")
-    }
+    // Provide a mechanism for reading a version number from a .plist file.
+    pubNub.setConsumer(identifier: "chat-sdk", value: "CA-SWIFT/0.8.0")
 
     ChatAdapter.associate(
       chat: self,

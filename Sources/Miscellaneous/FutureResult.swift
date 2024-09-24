@@ -40,7 +40,7 @@ class BaseFutureConsumer<T>: PubNubChat.Consumer {
         return .success(value)
       }
     }
-    
+
     return .failure(ChatError(message: "Unexpected argument of type \(type(of: T.self))"))
   }
 

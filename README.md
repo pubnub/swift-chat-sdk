@@ -25,9 +25,9 @@ You will need the publish and subscribe keys to authenticate your app. Get your 
 ### [Swift Package Manager](https://github.com/apple/swift-package-manager)
 
 1. Create or open your project inside of Xcode
-1. Navigate to File > Add Package Dependencies
-1. Search for `https://github.com/pubnub/swift-chat-sdk` and select the package owned by PubNub, and hit the Next button
-1. Use the `Up to Next Major Version` rule spanning from `1.0.0` < `2.0.0`, and hit the Next button
+2. Navigate to File > Add Package Dependencies
+3. Search for `https://github.com/pubnub/swift-chat-sdk` and hit the Add Package button
+4. Use the `Up to Next Major Version` rule spanning from `1.0.0` < `2.0.0`, and hit the Next button
 
 For more information see Apple's guide on [Adding Package Dependencies to Your App](https://developer.apple.com/documentation/xcode/adding_package_dependencies_to_your_app)
 
@@ -71,7 +71,7 @@ For more information see Apple's guide on [Adding Package Dependencies to Your A
     
 ## Documentation
 
-* [API reference for `PubNubSwiftChatSDK`](https://www.pubnub.com/docs/chat/swift-chat-sdk/overview)
+* [API reference for PubNubSwiftChatSDK](https://www.pubnub.com/docs/chat/swift-chat-sdk/overview)
 
 ## Support
 
@@ -81,4 +81,4 @@ If you **need help** or have a **general question**, contact <support@pubnub.com
 
 The PubNub Swift Chat SDK is released under the `PubNub Software Development Kit License`.
 
-[See LICENSE](https://github.com/pubnub/swift/blob/master/LICENSE) for details.
+[See LICENSE](https://github.com/pubnub/swift-chat-sdk/blob/master/LICENSE) for details.

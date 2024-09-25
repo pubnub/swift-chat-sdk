@@ -525,4 +525,6 @@ public protocol Chat: AnyObject {
 
   /// Clears resources of chat instance and related PubNub SDK instance.
   func destroy()
+
+  // swiftlint:disable:next file_length
 }

@@ -14,10 +14,13 @@ import PubNubSDK
 
 // MARK: - CustomPayloads
 
+/// Function that lets Chat SDK send your custom payload structure
 public typealias GetMessagePublishBody = (EventContent.TextMessageContent, String, DefaultGetMessagePublishBody) -> [String: Any]
+/// Default handler producing a `Dictionary` from the given ``EventContent.TextMessageContent``
 public typealias DefaultGetMessagePublishBody = (EventContent.TextMessageContent) -> [String: Any]
-
+/// Function that lets Chat SDK receive your custom payload structure
 public typealias GetMessageResponseBody = ((JSONCodable, String, DefaultGetMessageResponseBody) -> EventContent.TextMessageContent?)
+/// Default handler producing a `Dictionary` object from the given `JSONCodable`
 public typealias DefaultGetMessageResponseBody = (JSONCodable) -> EventContent.TextMessageContent?
 
 typealias KotlinGetMessagePublishBody = (PubNubChat.EventContent.TextMessageContent, String, KotlinDefaultGetMessagePublishBody) -> [String: Any]
@@ -25,12 +28,29 @@ typealias KotlinDefaultGetMessagePublishBody = (PubNubChat.EventContent.TextMess
 typealias KotlinGetMessageResponseBody = (JsonElement, String, KotlinDefaultGetMessageResponseBody) -> PubNubChat.EventContent.TextMessageContent?
 typealias KotlinDefaultGetMessageResponseBody = (JsonElement) -> PubNubChat.EventContent.TextMessageContent?
 
+/// Represents a class capable of performing custom payload transformations.
 public class CustomPayloads {
+  /// Function that lets Chat SDK send your custom payload structure. The function will take an ``EventContent.TextMessageContent`` object and channel id as input, and should
+  /// produce a `Dictionary` representing the message content, which will be sent as the message payload into PubNub. If you wish to bypass the custom mapping (e.g. for certain channels),
+  /// you can fall back to the default by calling the third parameter - ``DefaultGetMessagePublishBody`` and returning its result
   var getMessagePublishBody: GetMessagePublishBody?
+  /// Function that lets Chat SDK receive your custom payload structure. Use it to let Chat SDK translate your custom message payload into the default Chat SDK message format.
+  /// The function will take a `JSONCodable` object and channel id as input, and should produce ``EventContent.TextMessageContent`` representing the message content.
+  /// If you wish to bypass the custom mapping (e.g. for certain channels), you can fall back to the default by calling the third parameter - `DefaultGetMessageResponseBody` and returning its result.
+  /// Define `getMessagePublishBody` whenever you use `getMessageResponseBody`
   var getMessageResponseBody: GetMessageResponseBody?
+  /// A type of action you want to be added to your Message object whenever a published message is edited, like "changed" or `"modified"`.
   var editMessageActionName: String?
+  /// A type of action you want to be added to your [Message] object whenever a published message is deleted, like `"removed"`.
   var deleteMessageActionName: String?
 
+  /// Creates a new ``CustomPayloads`` object
+  ///
+  /// - Parameters:
+  ///   - getMessagePublishBody: Function that lets Chat SDK send your custom payload structure
+  ///   - getMessageResponseBody: Function that lets Chat SDK receive your custom payload structure
+  ///   - editMessageActionName: A type of action you want to be added to your Message object whenever a published message is edited, like "changed" or "modified. The default message action used by Chat SDK is `"edited"
+  ///   - deleteMessageActionName: A type of action you want to be added to your [Message] object whenever a published message is deleted, like "removed". The default message action used by Chat SDK is `"deleted"`
   public init(
     getMessagePublishBody: GetMessagePublishBody? = nil,
     getMessageResponseBody: GetMessageResponseBody? = nil,
@@ -88,12 +108,19 @@ public class CustomPayloads {
 
 // MARK: - LogLevel
 
+/// Represents the severity level of logs that will be printed
 public enum LogLevel {
+  /// Turn off logging
   case off
+  /// Only print errors
   case error
+  /// Print warnings and errors
   case warn
+  /// Print warnings, errors and info messages
   case info
+  /// Print warnings, errors, info messages and debugging information
   case debug
+  /// The most verbose logging - print all other types of logs and more
   case verbose
 
   func transform() -> PubNubChat.LogLevel {
@@ -116,16 +143,42 @@ public enum LogLevel {
 
 // MARK: - ChatConfiguration
 
+/// Defines a set of options for chat configuration
 public struct ChatConfiguration {
+  /// Specifies if any Chat SDK-related errors should be logged. It's disabled by default
   public var logLevel: LogLevel
+  /// Specifies the default timeout after which the typing indicator automatically stops when no typing signals are received
   public var typingTimeout: Int
+  /// Specifies how often the user global presence in the app should be updated. Requires `storeUserActivityTimestamps`
+  /// to be set to true. The default value is set to 60 seconds, and that's the minimum possible value.
+  /// If you try to set it to a lower value, you'll get the storeUserActivityInterval must be at least 60000ms error
   public var storeUserActivityInterval: Int
+  /// Specifies if you want to track the user's global presence in your chat app. The user's activity is tracked through ``User.lastActiveTimestamp``
   public var storeUserActivityTimestamps: Bool
+  /// List of parameters you must set if you want to enable sending/receiving mobile push notifications for phone devices, either through Apple Push Notification service (APNS) or Firebase Cloud Messaging (FCM)
   public var pushNotificationsConfig: PushNotificationsConfig
+  /// The so-called "exponential backoff" which multiplicatively decreases the rate at which messages are published on channels. It's bound to the `rateLimitPerChannel` parameter and is meant
+  /// to prevent message spamming caused by excessive retries. The default value of 2 means that if you set `rateLimitPerChannel` for direct channels to 1 second and try to send
+  /// three messages on such a channel type within the span of one second, the second message will be published
+  /// one second after the first one (just like the `rateLimitPerChannel` value states), but the third one will be published two seconds after the second one, meaning the publishing time is multiplied by 2.
   public var rateLimitFactor: Int
+  /// Client-side limit that states the rate at which messages can be published on a given channel type. Its purpose is to prevent message spamming in your chat app.
   public var rateLimitPerChannel: [ChannelType: Int64]
+  /// Property that lets you define your custom message payload to be sent and/or received by Chat SDK on one or all channels, whenever it differs from the default `message.text` Chat SDK payload.
+  /// It also lets you configure your own message actions whenever a message is edited or deleted
   public var customPayloads: CustomPayloads?
 
+  /// Creates a new ``ChatConfiguration`` object
+  ///
+  /// - Parameters:
+  ///   - logLevel: The severity level of logs
+  ///   - typingTimeout: The default timeout after which the typing indicator automatically stops when no typing signals are received
+  ///   - storeUserActivityInterval: Specifies how often the user global presence in the app should be updated
+  ///   - storeUserActivityTimestamps: Specifies if you want to track the user's global presence in your chat app
+  ///   - pushNotificationsConfig: List of parameters to enable sending/receiving mobile push notifications
+  ///   - rateLimitFactor: The so-called "exponential backoff" which multiplicatively decreases the rate at which messages are published on channels
+  ///   - rateLimitPerChannel: Client-side limit that states the rate at which messages can be published on a given channel type
+  ///   - customPayloads: Custom message payload to be sent and/or received by Chat SDK
   public init(
     logLevel: LogLevel = .off,
     typingTimeout: Int = 5,
@@ -170,13 +223,28 @@ public struct ChatConfiguration {
 
 // MARK: - PushNotificationsConfig
 
+/// Defines the list of parameters you must set if you want to enable sending/receiving mobile push notifications for phone devices,
+/// either through Apple Push Notification service (APNS) or Firebase Cloud Messaging (FCM)
 public struct PushNotificationsConfig {
+  /// The main option for enabling sending notifications
   public var sendPushes: Bool
+  /// Refers to the unique identifier assigned to a specific mobile device by a platform's push notification service
   public var deviceToken: String?
+  /// Option for receiving push notifications on Android (FCM) or iOS (APNS or APNS2) devices
   public var deviceGateway: PubNub.PushService
+  /// An Apple specific-option for sending and receiving notifications. Refer to [documentation](https://developer.apple.com/documentation/usernotifications/sending-notification-requests-to-apns)
   public var apnsTopic: String?
+  /// Option for receiving notifications on iOS devices. When registering for push notifications, this option specifies whether to use the development or production APNs environment
   public var apnsEnvironment: PubNub.PushEnvironment
 
+  /// Creates a new ``PushNotificationsConfig`` object
+  ///
+  /// - Parameters:
+  ///   - sendPushes: A flag indicating whether to send push notifications
+  ///   - deviceToken: Device token obtained during registration to use push notifications
+  ///   - deviceGateway: The type of Remote Notification service used to send the notifications
+  ///   - apnsTopic: The topic for the notification. In general, the topic is your app's bundle ID/app ID
+  ///   - apnsEnvironment: The APS environment to register the device
   public init(
     sendPushes: Bool = false,
     deviceToken: String? = nil,

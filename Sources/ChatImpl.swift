@@ -30,7 +30,7 @@ public final class ChatImpl {
   public let config: ChatConfiguration
   // Keeps an internal strong reference to KMP chat
   let chat: PubNubChat.ChatImpl
-  
+
   /// Initializes a new instance with the given chat and `PubNub` configurations
   ///
   /// This initializer sets up the object using the provided chat configuration and `PubNub` configuration.

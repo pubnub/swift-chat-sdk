@@ -37,7 +37,7 @@ You will need the publish and subscribe keys to authenticate your app. Get your 
 1. Create or open your project inside of Xcode
 2. Navigate to File > Add Package Dependencies
 3. Search for `https://github.com/pubnub/swift-chat-sdk` and hit the Add Package button
-4. Use the `Commit` rule with `c25b98d7a6c4ee095e8dd72dcd9b1fc63ee8764b` and hit the Next button. This is the initial pre-1.0 version that is subject to change
+4. Use the `Exact Version` rule with `0.8.0-dev` and hit the Next button
 
 For more information see Apple's guide on [Adding Package Dependencies to Your App](https://developer.apple.com/documentation/xcode/adding_package_dependencies_to_your_app)
 

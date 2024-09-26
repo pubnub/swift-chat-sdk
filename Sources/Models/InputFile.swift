@@ -12,11 +12,20 @@ import Foundation
 import PubNubChat
 import PubNubSDK
 
+/// Represents a file that can be attached to a message when sending text to a channel
 public struct InputFile {
+  /// The name of the file
   public var name: String
+  /// The type or MIME type of the file (e.g., "image/jpeg", "application/pdf")
   public var type: String
+  /// The  object representing the file's source, such as the file content or its location
   public var source: PubNub.FileUploadContent
 
+  /// Initializes a new instance of ``InputFile`` with the provided details
+  /// - Parameters:
+  ///   - name: The name of the file
+  ///   - type: The type or MIME type of the file (e.g., "image/jpeg", "application/pdf")
+  ///   - source: The  object representing the file's source, such as the file content or its location
   public init(name: String, type: String, source: PubNub.FileUploadContent) {
     self.name = name
     self.type = type

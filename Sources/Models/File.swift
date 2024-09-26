@@ -10,16 +10,14 @@
 
 import Foundation
 
+/// Represents a file that is associated with a message in the chat system
 public struct File {
+  /// The name of the file
   public var name: String
+  /// The unique identifier of the file
   public var id: String
+  /// The URL where the file can be accessed or downloaded
   public var url: String
+  /// The MIME type of the file (e.g., "image/jpeg", "application/pdf"). This is optional
   public var type: String?
-
-  public init(name: String, id: String, url: String, type: String?) {
-    self.name = name
-    self.id = id
-    self.url = url
-    self.type = type
-  }
 }

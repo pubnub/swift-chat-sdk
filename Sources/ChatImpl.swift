@@ -14,10 +14,8 @@ import PubNubSDK
 
 /// A concrete implementation of the ``Chat`` protocol.
 ///
-/// This class should be used as a ready-to-use solution for most use cases
-/// requiring the features defined by the ``Chat`` protocol. After creating an instance,
-/// make sure to call the `initialize(completion:)` method to properly set up the instance
-/// before use.
+/// This class should be used as a ready-to-use solution for most use cases requiring the features defined by the ``Chat`` protocol. After creating an instance,
+/// make sure to call the `initialize(completion:)` method to properly set up the instance before use.
 ///
 /// This class inherits all the documentation for methods defined in the ``Chat`` protocol.
 /// Refer to the ``Chat`` protocol for details on how individual methods work.
@@ -28,7 +26,7 @@ public final class ChatImpl {
   /// Contains chat app configuration settings, such as ``LogLevel`` or typing timeout
   /// that you can provide when initializing your chat app with the init method
   public let config: ChatConfiguration
-  // Keeps an internal strong reference to KMP chat
+  
   let chat: PubNubChat.ChatImpl
 
   /// Initializes a new instance with the given chat and `PubNub` configurations

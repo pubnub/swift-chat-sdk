@@ -62,6 +62,7 @@ public protocol Chat: AnyObject {
   )
 
   /// Creates a new user with a unique User ID
+  /// 
   /// - Parameters:
   ///   - id: Unique user identifier. A User ID is a UTF-8 encoded, unique string of up to 92 characters used to identify a single client (end user, device, or server)
   ///   - name: Display name for the user (must not be empty or consist only of whitespace characters)
@@ -209,7 +210,7 @@ public protocol Chat: AnyObject {
   /// - Parameters:
   ///   - filter: Expression used to filter the results. Returns only these channels whose properties satisfy the given expression are returned
   ///   - sort: A collection to specify the sort order
-  ///   - limit: Number of objects to return in response. The default (and maximum) value is 100
+  ///   - limit: Number of objects to return in response. The maximum value is 100
   ///   - page: Object used for pagination to define which previous or next result page you want to fetch.
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: A `Tuple` containing an `Array` of channels, and the next pagination `PubNubHashedPage` (if one exists)
@@ -368,7 +369,7 @@ public protocol Chat: AnyObject {
   /// - Parameters:
   ///   - type: The type of object that conforms to `EventContent` for which to listen
   ///   - channelId: Channel to listen for new events
-  ///   - customMethod: An optional custom method for emitting events. If not provided, defaults to null
+  ///   - customMethod: An optional custom method for emitting events
   ///   - callback: A function that is called with an ``EventWrapper`` as its parameter. It defines the custom behavior to be executed whenever an event is detected on the specified channel
   /// - Returns: ``AutoCloseable`` interface you can call to stop listening for new messages and clean up resources when they re no longer needed by invoking the `close()` method
   func listenForEvents<T: EventContent>(
@@ -420,7 +421,7 @@ public protocol Chat: AnyObject {
   /// Returns info on all messages you didn't read on all joined channels. You can display this number on UI in the channel list of your chat app
   ///
   /// - Parameters:
-  ///   - limit: Number of objects to return in response. The default (and maximum) value is 100
+  ///   - limit: Number of objects to return in response. The maximum value is 100
   ///   - page: Object used for pagination to define which previous or next result page you want to fetch
   ///   - filter: Expression used to filter the results. Returns only these channels whose properties satisfy the given expression are returned
   ///   - sort: A collection to specify the sort order
@@ -438,7 +439,7 @@ public protocol Chat: AnyObject {
   /// Allows you to mark as read all messages you didn't read on all joined channels
   ///
   /// - Parameters:
-  ///   - limit: Number of objects to return in response. The default (and maximum) value is 100
+  ///   - limit: Number of objects to return in response. The maximum value is 100
   ///   - page: Object used for pagination to define which previous or next result page you want to fetch
   ///   - filter: Expression used to filter the results. Returns only these channels whose properties satisfy the given expression are returned
   ///   - sort: A collection to specify the sort order
@@ -496,7 +497,7 @@ public protocol Chat: AnyObject {
   ///   - channelId: Channel from which you want to pull historical messages
   ///   - startTimetoken: Timetoken delimiting the start of a time slice (exclusive) to pull events from. For details, refer to the History section of PubNub Swift SDK
   ///   - endTimetoken: Timetoken delimiting the end of a time slice (inclusive) to pull events from.  For details, refer to the History section of PubNub Swift SDK
-  ///   - count: Number of historical events to return for the channel in a single call. You can pull a maximum number of 100 events in a single call. Default is 100
+  ///   - count: Number of historical events to return for the channel in a single call. You can pull a maximum number of 100 events in a single call
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: A `Tuple` containing an `Array` of events, and boolean indicating whether there are more events available beyond the current result set
   ///     - **Failure**: An `Error` describing the failure
@@ -512,7 +513,7 @@ public protocol Chat: AnyObject {
   /// - Parameters:
   ///   - startTimetoken: Timetoken delimiting the start of a time slice (exclusive) to pull messages with mentions from. For details, refer to the History section of PubNub Swift SDK
   ///   - endTimetoken: Timetoken delimiting the end of a time slice (inclusive) to pull messages with mentions from. For details, refer to the History section of PubNub Swift SDK
-  ///   - count: Number of users to return in a single call. You can pull a maximum number of 100 users in a single call. Default is 100
+  ///   - count: Number of users to return in a single call. You can pull a maximum number of 100 users in a single call.
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: A `Tuple` containing an `Array` of ``UserMentionDataWrapper``, and boolean indicating whether there are more events available beyond the current result set
   ///     - **Failure**: An `Error` describing the failure

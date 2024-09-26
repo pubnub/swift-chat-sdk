@@ -49,8 +49,8 @@ public class CustomPayloads {
   /// - Parameters:
   ///   - getMessagePublishBody: Function that lets Chat SDK send your custom payload structure
   ///   - getMessageResponseBody: Function that lets Chat SDK receive your custom payload structure
-  ///   - editMessageActionName: A type of action you want to be added to your Message object whenever a published message is edited, like "changed" or "modified. The default message action used by Chat SDK is `"edited"
-  ///   - deleteMessageActionName: A type of action you want to be added to your [Message] object whenever a published message is deleted, like "removed". The default message action used by Chat SDK is `"deleted"`
+  ///   - editMessageActionName: A type of action you want to be added to your Message object whenever a published message is edited, like "changed" or "modified. The default value is `"edited"`
+  ///   - deleteMessageActionName: A type of action you want to be added to your Message object whenever a published message is deleted, like "removed". The default value is `"deleted"`
   public init(
     getMessagePublishBody: GetMessagePublishBody? = nil,
     getMessageResponseBody: GetMessageResponseBody? = nil,
@@ -145,13 +145,12 @@ public enum LogLevel {
 
 /// Defines a set of options for chat configuration
 public struct ChatConfiguration {
-  /// Specifies if any Chat SDK-related errors should be logged. It's disabled by default
+  /// Specifies if any Chat SDK-related errors should be logged
   public var logLevel: LogLevel
   /// Specifies the default timeout after which the typing indicator automatically stops when no typing signals are received
   public var typingTimeout: Int
   /// Specifies how often the user global presence in the app should be updated. Requires `storeUserActivityTimestamps`
-  /// to be set to true. The default value is set to 60 seconds, and that's the minimum possible value.
-  /// If you try to set it to a lower value, you'll get the storeUserActivityInterval must be at least 60000ms error
+  /// to be set to true. The minimum possible value is 60 seconds. If you try to set it to a lower value, you'll get the storeUserActivityInterval must be at least 60000ms error
   public var storeUserActivityInterval: Int
   /// Specifies if you want to track the user's global presence in your chat app. The user's activity is tracked through ``User.lastActiveTimestamp``
   public var storeUserActivityTimestamps: Bool

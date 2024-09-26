@@ -26,7 +26,7 @@ public final class ChatImpl {
   /// Contains chat app configuration settings, such as ``LogLevel`` or typing timeout
   /// that you can provide when initializing your chat app with the init method
   public let config: ChatConfiguration
-  
+
   let chat: PubNubChat.ChatImpl
 
   /// Initializes a new instance with the given chat and `PubNub` configurations

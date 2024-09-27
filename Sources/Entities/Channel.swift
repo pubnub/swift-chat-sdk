@@ -258,7 +258,7 @@ public protocol Channel {
     completion: ((Swift.Result<(memberships: [ChatType.ChatMembershipType], page: PubNubHashedPage?), Error>) -> Void)?
   )
 
-  /// Watch the ``Channel`` content without a need to join the Channel
+  /// Watch the ``Channel`` content without a need to join the ``Channel``
   ///
   /// - Parameter callback: Defines the custom behavior to be executed whenever a message is received on the ``Channel``
   /// - Returns: ``AutoCloseable`` interface you can call to stop listening for new messages and clean up resources when they are no longer needed by invoking the `close()` method
@@ -290,62 +290,149 @@ public protocol Channel {
     completion: ((Swift.Result<Void, Error>) -> Void)?
   )
 
+  /// Fetches the message that is currently pinned to the channel
+  ///
+  /// There can be only one pinned message on a channel at a time.
+  ///
+  /// - Parameters:
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: A pinned ``Message``
+  ///     - **Failure**: An `Error` describing the failure
   func getPinnedMessage(
     completion: ((Swift.Result<(ChatType.ChatMessageType)?, Error>) -> Void)?
   )
 
+  /// Fetches the message from Message Persistence based on the message `timetoken`
+  ///
+  /// - Parameters:
+  ///   - timetoken: Timetoken of the message you want to retrieve from Message Persistence
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: A message object (if any)
+  ///     - **Failure**: An `Error` describing the failure
   func getMessage(
     timetoken: Timetoken,
     completion: ((Swift.Result<(ChatType.ChatMessageType)?, Error>) -> Void)?
   )
 
+  /// Register a device on the ``Channel`` to receive push notifications. Push options can be configured in ``ChatConfiguration``
+  ///
+  /// - Parameters:
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: A `Void` indicating a success
+  ///     - **Failure**: An `Error` describing the failure
   func registerForPush(
     completion: ((Swift.Result<Void, Error>) -> Void)?
   )
 
+  /// Unregister a device from the ``Channel``
+  ///
+  /// - Parameters:
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: A `Void` indicating a success
+  ///     - **Failure**: An `Error` describing the failure
   func unregisterFromPush(
     completion: ((Swift.Result<Void, Error>) -> Void)?
   )
 
+  /// Attaches messages to the ``Channel``. Replace an already pinned message
+  ///
+  /// There can be only one pinned message on a channel at a time.
+  ///
+  /// - Parameters:
+  ///   - message: Message that you want to pin to the selected channel
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: A channel with updated `custom` field
+  ///     - **Failure**: An `Error` describing the failure
   func pinMessage(
     message: ChatType.ChatMessageType,
     completion: ((Swift.Result<Self, Error>) -> Void)?
   )
 
+  /// Unpins a message from the ``Channel``
+  ///
+  /// - Parameters:
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: A channel with updated `custom` field
+  ///     - **Failure**: An `Error` describing the failure
   func unpinMessage(
     completion: ((Swift.Result<Self, Error>) -> Void)?
   )
 
+  /// Receives updates on a single ``Channel`` object
+  ///
+  /// - Parameter callback: Function that takes a single Channel object. It defines the custom behavior to be executed when detecting channel changes
+  /// - Returns: ``AutoCloseable`` interface that lets you stop receiving channel-related updates (objects events) and clean up resources by invoking the `close()` method
   func streamUpdates(
     callback: @escaping ((ChatType.ChatChannelType)?) -> Void
   ) -> AutoCloseable
 
+  /// Lets you get a read confirmation status for messages you published on a channel.
+  ///
+  /// - Parameter callback: Defines the custom behavior to be executed when receiving a read confirmation status on the joined channel.
+  /// - Returns: AutoCloseable Interface you can call to stop listening for message read receipts and clean up resources by invoking the close() method
   func streamReadReceipts(
     callback: @escaping (([Timetoken: [String]]) -> Void)
   ) -> AutoCloseable
 
+  /// Returns all files attached to messages on a given channel
+  ///
+  /// - Parameters:
+  ///   - limit: Number of files to return
+  ///   - next: Token to get the next batch of files
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: A `Tuple` containing an array of ``GetFileItem``, and the next pagination `PubNubHashedPage` (if one exists)
+  ///     - **Failure**: An `Error` describing the failure
   func getFiles(
     limit: Int,
     next: String?,
     completion: ((Swift.Result<(files: [GetFileItem], page: PubNubHashedPage?), Error>) -> Void)?
   )
 
+  /// Delete sent files or files from published messages
+  ///
+  /// - Parameters:
+  ///   - id: Unique identifier assigned to the file by `PubNub`
+  ///   - name: Name of the file
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: A `Void` indicating a success
+  ///     - **Failure**: An `Error` describing the failure
   func deleteFile(
     id: String,
     name: String,
     completion: ((Swift.Result<Void, Error>) -> Void)?
   )
 
+  /// Enables real-time tracking of users connecting to or disconnecting from a ``Channel``
+  ///
+  /// - Parameter callback: Defines the custom behavior to be executed when detecting user presence event
+  /// - Returns: ``AutoCloseable`` interface that lets you stop receiving presence-related updates (presence events) by invoking the `close()` method
   func streamPresence(
     callback: @escaping (Set<String>) -> Void
   ) -> AutoCloseable
 
+  /// Fetches all suggested users that match the provided 3-letter string from [Channel]
+  ///
+  /// - Parameters:
+  ///   - text: At least a 3-letter string typed in after `@` with the user name you want to mention
+  ///   - limit: Maximum number of returned usernames that match the typed 3-letter suggestion
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: An array of matching memberships
+  ///     - **Failure**: An `Error` describing the failure
   func getUserSuggestions(
     text: String,
     limit: Int,
     completion: ((Swift.Result<[ChatType.ChatMembershipType], Error>) -> Void)?
   )
 
+  /// Fetches a list of reported message events for ``Channel`` within optional time and count constraints
+  ///
+  /// - Parameters:
+  ///   - startTimetoken: The start timetoken for fetching the history of reported messages, which allows specifying the point in time where the history retrieval should begin
+  ///   - endTimetoken: The end time token for fetching the history of reported messages, which allows specifying the point in time where the history retrieval should end
+  ///   - count: The number of reported message events to fetch from the history
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: A `Tuple` containing an array of ``EventWrapper<EventContent>``, and a boolean indicating whether there are more messages available beyond the current result set
+  ///     - **Failure**: An `Error` describing the failure
   func getMessageReportsHistory(
     startTimetoken: Timetoken?,
     endTimetoken: Timetoken?,
@@ -353,6 +440,10 @@ public protocol Channel {
     completion: ((Swift.Result<(events: [EventWrapper<EventContent>], isMore: Bool), Error>) -> Void)?
   )
 
+  /// As an admin of your chat app, monitor all events emitted when someone reports an offensive message
+  ///
+  /// - Parameter callback: Callback function passed as a parameter. It defines the custom behavior to be executed when detecting new message report events
+  /// - Returns: ``AutoCloseable`` interface that lets you stop receiving report-related updates (report events) by invoking the close() method
   func streamMessageReports(
     callback: @escaping (any Event<EventContent.Report>) -> Void
   ) -> AutoCloseable
@@ -360,16 +451,37 @@ public protocol Channel {
 
 // MARK: - ThreadChannel
 
+/// Represents an object that refers to a single thread (channel) in a chat.
+///
+/// ``ThreadChannel`` inherits all the functionalities provided by the ``Channel`` protocol, and include additional behaviors and properties specific to threaded conversations.
+/// This type allows for finer control and representation of threads within a parent channel.
 public protocol ThreadChannel: Channel {
+  /// Unique identifier of the main channel on which you create a subchannel (thread channel) and thread messages
   var parentChannelId: String { get }
+  /// Message for which the thread was created.
   var parentMessage: ChatType.ChatMessageType { get }
 
+  /// Pins a selected thread message to the thread channel
+  ///
+  /// - Parameters:
+  ///   - message: A message you want to pin to the selected thread channel
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: An updated `TheadChannel`
+  ///     - **Failure**: An `Error` describing the failure
   func pinMessageToParentChannel(
     message: ChatType.ChatThreadMessageType,
     completion: ((Swift.Result<ChatType.ChatChannelType, Error>) -> Void)?
   )
 
+  /// Unpins the previously pinned thread message from the thread channel
+  ///
+  /// - Parameters:
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: An updated `TheadChannel`
+  ///     - **Failure**: An `Error` describing the failure
   func unpinMessageFromParentChannel(
     completion: ((Swift.Result<ChatType.ChatChannelType, Error>) -> Void)?
   )
+
+  // swiftlint:disable:next file_length
 }

@@ -152,7 +152,7 @@ public struct ChatConfiguration {
   /// Specifies how often the user global presence in the app should be updated. Requires `storeUserActivityTimestamps`
   /// to be set to true. The minimum possible value is 60 seconds. If you try to set it to a lower value, you'll get the storeUserActivityInterval must be at least 60000ms error
   public var storeUserActivityInterval: Int
-  /// Specifies if you want to track the user's global presence in your chat app. The user's activity is tracked through ``User.lastActiveTimestamp``
+  /// Specifies if you want to track the user's global presence in your chat app. The user's activity is tracked through `user.lastActiveTimestamp`
   public var storeUserActivityTimestamps: Bool
   /// List of parameters you must set if you want to enable sending/receiving mobile push notifications for phone devices, either through Apple Push Notification service (APNS) or Firebase Cloud Messaging (FCM)
   public var pushNotificationsConfig: PushNotificationsConfig

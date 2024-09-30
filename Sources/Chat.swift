@@ -456,7 +456,7 @@ public protocol Chat: AnyObject {
     completion: ((Swift.Result<(memberships: [ChatMembershipType], page: PubNubHashedPage?), Error>) -> Void)?
   )
 
-  /// Retrieves all channels referenced in the ``Channel.sendText``  that match the provided 3-letter string from your app's keyset
+  /// Retrieves all channels referenced in the `channel.sendText(...)`  that match the provided 3-letter string from your app's keyset
   ///
   /// - Parameters:
   ///   - text: At least a 3-letter string typed in after `#` with the channel name you want to reference

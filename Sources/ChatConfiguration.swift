@@ -16,7 +16,7 @@ import PubNubSDK
 
 /// Function that lets Chat SDK send your custom payload structure
 public typealias GetMessagePublishBody = (EventContent.TextMessageContent, String, DefaultGetMessagePublishBody) -> [String: Any]
-/// Default handler producing a `Dictionary` from the given ``EventContent.TextMessageContent``
+/// Default handler producing a `Dictionary` from the given `EventContent.TextMessageContent`
 public typealias DefaultGetMessagePublishBody = (EventContent.TextMessageContent) -> [String: Any]
 /// Function that lets Chat SDK receive your custom payload structure
 public typealias GetMessageResponseBody = ((JSONCodable, String, DefaultGetMessageResponseBody) -> EventContent.TextMessageContent?)
@@ -30,12 +30,12 @@ typealias KotlinDefaultGetMessageResponseBody = (JsonElement) -> PubNubChat.Even
 
 /// Represents a class capable of performing custom payload transformations.
 public class CustomPayloads {
-  /// Function that lets Chat SDK send your custom payload structure. The function will take an ``EventContent.TextMessageContent`` object and channel id as input, and should
+  /// Function that lets Chat SDK send your custom payload structure. The function will take an `EventContent.TextMessageContent` object and channel id as input, and should
   /// produce a `Dictionary` representing the message content, which will be sent as the message payload into PubNub. If you wish to bypass the custom mapping (e.g. for certain channels),
   /// you can fall back to the default by calling the third parameter - ``DefaultGetMessagePublishBody`` and returning its result
   var getMessagePublishBody: GetMessagePublishBody?
   /// Function that lets Chat SDK receive your custom payload structure. Use it to let Chat SDK translate your custom message payload into the default Chat SDK message format.
-  /// The function will take a `JSONCodable` object and channel id as input, and should produce ``EventContent.TextMessageContent`` representing the message content.
+  /// The function will take a `JSONCodable` object and channel id as input, and should produce `EventContent.TextMessageContent` representing the message content.
   /// If you wish to bypass the custom mapping (e.g. for certain channels), you can fall back to the default by calling the third parameter - `DefaultGetMessageResponseBody` and returning its result.
   /// Define `getMessagePublishBody` whenever you use `getMessageResponseBody`
   var getMessageResponseBody: GetMessageResponseBody?

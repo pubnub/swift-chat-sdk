@@ -12,10 +12,10 @@ import Foundation
 import PubNubChat
 import PubNubSDK
 
-/// A concrete implementation of the ``ThreadChannelImpl`` protocol.
+/// A concrete implementation of the ``ThreadChannel`` protocol.
 ///
-/// This class should be used as a ready-to-use solution for most use cases requiring the features defined by the ``ThreadChannelImpl`` protocol. Also, this class inherits all the documentation
-/// for methods defined in the ``ThreadChannelImpl`` protocol. Refer to the ``ThreadChannelImpl`` protocol for details on how individual methods work.
+/// This class should be used as a ready-to-use solution for most use cases requiring the features defined by the ``ThreadChannel`` protocol. Also, this class inherits all the documentation
+/// for methods defined in the ``ThreadChannel`` protocol. Refer to the ``ThreadChannel`` protocol for details on how individual methods work.
 public final class ThreadChannelImpl {
   let target: BaseChannel<PubNubChat.ThreadChannel, PubNubChat.ThreadMessage>
 

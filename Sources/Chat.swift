@@ -12,7 +12,9 @@ import Foundation
 import PubNubSDK
 import Combine
 
-/// To communicate with PubNub, you can use various methods on ``Chat`` object. For example, you can use ``deleteChannel(id:soft:completion:)``
+/// To communicate with PubNub, you can use various methods on ``Chat`` object.
+///
+/// For example, you can use ``deleteChannel(id:soft:completion:)``
 /// to remove a given channel or ``wherePresent(userId:completion:)`` to check which channels a given user is subscribed to.
 ///
 /// By calling methods on the ``Chat`` entity, you create chat objects like ``Channel``, ``User``, ``Message``, ``Membership``,  ``ThreadChannel``,

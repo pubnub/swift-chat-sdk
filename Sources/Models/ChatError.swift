@@ -10,7 +10,7 @@
 
 import Foundation
 
-struct ChatError: Error {
+public struct ChatError: Error {
   public let underlying: Error?
   public let message: String
 

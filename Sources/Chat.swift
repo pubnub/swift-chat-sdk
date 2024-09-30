@@ -185,16 +185,6 @@ public protocol Chat: AnyObject {
     completion: ((Swift.Result<Bool, Error>) -> Void)?
   )
 
-  func createChannel(
-    id: String,
-    name: String?,
-    description: String?,
-    custom: [String: JSONCodableScalar]?,
-    type: ChannelType?,
-    status: String?,
-    completion: ((Swift.Result<ChatChannelType, Error>) -> Void)?
-  )
-
   /// Fetches details of a specific channel.
   ///
   /// - Parameters:
@@ -259,12 +249,6 @@ public protocol Chat: AnyObject {
     id: String,
     soft: Bool,
     completion: ((Swift.Result<ChatChannelType, Error>) -> Void)?
-  )
-
-  func forwardMessage(
-    message: ChatMessageType,
-    channelId: String,
-    completion: ((Swift.Result<Timetoken, Error>) -> Void)?
   )
 
   /// Returns a list of ``User`` identifiers present on the given ``Channel``
@@ -413,11 +397,6 @@ public protocol Chat: AnyObject {
   ///     - **Failure**: An `Error` describing the failure
   func unregisterAllPushChannels(
     completion: ((Swift.Result<Void, Error>) -> Void)?
-  )
-
-  func getThreadChannel(
-    message: ChatMessageType,
-    completion: ((Swift.Result<ChatThreadChannelType, Error>) -> Void)?
   )
 
   /// Returns info on all messages you didn't read on all joined channels. You can display this number on UI in the channel list of your chat app

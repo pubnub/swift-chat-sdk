@@ -78,6 +78,32 @@ extension ChatImpl {
       timerManager: TimerManagerImpl()
     )
   }
+
+  func createChannel(
+    id: String,
+    name: String? = nil,
+    description: String? = nil,
+    custom: [String: JSONCodableScalar]? = nil,
+    type: ChannelType? = nil,
+    status: String? = nil,
+    completion: ((Swift.Result<ChannelImpl, Error>) -> Void)? = nil
+  ) {
+    chat.createChannel(
+      id: id,
+      name: name,
+      description: description,
+      custom: custom?.asCustomObject(),
+      type: type?.transform(),
+      status: status
+    ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.Channel_>) in
+      switch result.result {
+      case let .success(channel):
+        completion?(.success(ChannelImpl(channel: channel)))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
 }
 
 extension ChatImpl: Chat {
@@ -286,32 +312,6 @@ extension ChatImpl: Chat {
     }
   }
 
-  public func createChannel(
-    id: String,
-    name: String? = nil,
-    description: String? = nil,
-    custom: [String: JSONCodableScalar]? = nil,
-    type: ChannelType? = nil,
-    status: String? = nil,
-    completion: ((Swift.Result<ChannelImpl, Error>) -> Void)? = nil
-  ) {
-    chat.createChannel(
-      id: id,
-      name: name,
-      description: description,
-      custom: custom?.asCustomObject(),
-      type: type?.transform(),
-      status: status
-    ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.Channel_>) in
-      switch result.result {
-      case let .success(channel):
-        completion?(.success(ChannelImpl(channel: channel)))
-      case let .failure(error):
-        completion?(.failure(error))
-      }
-    }
-  }
-
   public func getChannel(
     channelId: String,
     completion: ((Swift.Result<ChannelImpl?, Error>) -> Void)? = nil
@@ -401,23 +401,6 @@ extension ChatImpl: Chat {
       switch result.result {
       case let .success(channel):
         completion?(.success(ChannelImpl(channel: channel)))
-      case let .failure(error):
-        completion?(.failure(error))
-      }
-    }
-  }
-
-  public func forwardMessage(
-    message: MessageImpl,
-    channelId: String,
-    completion: ((Swift.Result<Timetoken, Error>) -> Void)? = nil
-  ) {
-    chat.forwardMessage(
-      message: message.target.message, channelId: channelId
-    ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.PNPublishResult>) in
-      switch result.result {
-      case let .success(publishResult):
-        completion?(.success(Timetoken(publishResult.timetoken)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -615,22 +598,6 @@ extension ChatImpl: Chat {
       switch result.result {
       case .success:
         completion?(.success(()))
-      case let .failure(error):
-        completion?(.failure(error))
-      }
-    }
-  }
-
-  public func getThreadChannel(
-    message: MessageImpl,
-    completion: ((Swift.Result<ThreadChannelImpl, Error>) -> Void)? = nil
-  ) {
-    chat.getThreadChannel(
-      message: message.target.message
-    ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.ThreadChannel>) in
-      switch result.result {
-      case let .success(threadChannel):
-        completion?(.success(ThreadChannelImpl(channel: threadChannel)))
       case let .failure(error):
         completion?(.failure(error))
       }

@@ -12,9 +12,24 @@ import Foundation
 import PubNubChat
 import PubNubSDK
 
+/// A concrete implementation of the ``Channel`` protocol.
+///
+/// This class should be used as a ready-to-use solution for most use cases requiring the features defined by the ``Channel`` protocol. Also, this class inherits all the documentation
+/// for methods defined in the ``Channel`` protocol. Refer to the ``Channel`` protocol for details on how individual methods work.
 public final class ChannelImpl {
   let target: BaseChannel<PubNubChat.Channel_, PubNubChat.Message>
 
+  /// Creates a new ``ChannelImpl`` object
+  ///
+  /// - Parameters:
+  ///   - chat: Reference to the main Chat object
+  ///   - id: Unique identifier for the channel
+  ///   - name: Display name or title of the channel
+  ///   - custom: Any custom properties or metadata associated with the channel in the form of a map of key-value pairs
+  ///   - description: Brief description or summary of the channel's purpose or content
+  ///   - updated: The last updated timestamp for the object
+  ///   - status: Current status of the channel, like online, offline, or archived
+  ///   - type: Represents the type of channel
   public convenience init(
     chat: ChatImpl,
     id: String,
@@ -385,4 +400,6 @@ extension ChannelImpl: Channel {
       callback: callback
     )
   }
+
+  // swiftlint:disable:next file_length
 }

@@ -447,41 +447,6 @@ public protocol Channel {
   func streamMessageReports(
     callback: @escaping (any Event<EventContent.Report>) -> Void
   ) -> AutoCloseable
-}
-
-// MARK: - ThreadChannel
-
-/// Represents an object that refers to a single thread (channel) in a chat.
-///
-/// ``ThreadChannel`` inherits all the functionalities provided by the ``Channel`` protocol, and include additional behaviors and properties specific to threaded conversations.
-/// This type allows for finer control and representation of threads within a parent channel.
-public protocol ThreadChannel: Channel {
-  /// Unique identifier of the main channel on which you create a subchannel (thread channel) and thread messages
-  var parentChannelId: String { get }
-  /// Message for which the thread was created.
-  var parentMessage: ChatType.ChatMessageType { get }
-
-  /// Pins a selected thread message to the thread channel
-  ///
-  /// - Parameters:
-  ///   - message: A message you want to pin to the selected thread channel
-  ///   - completion: The async `Result` of the method call
-  ///     - **Success**: An updated `TheadChannel`
-  ///     - **Failure**: An `Error` describing the failure
-  func pinMessageToParentChannel(
-    message: ChatType.ChatThreadMessageType,
-    completion: ((Swift.Result<ChatType.ChatChannelType, Error>) -> Void)?
-  )
-
-  /// Unpins the previously pinned thread message from the thread channel
-  ///
-  /// - Parameters:
-  ///   - completion: The async `Result` of the method call
-  ///     - **Success**: An updated `TheadChannel`
-  ///     - **Failure**: An `Error` describing the failure
-  func unpinMessageFromParentChannel(
-    completion: ((Swift.Result<ChatType.ChatChannelType, Error>) -> Void)?
-  )
 
   // swiftlint:disable:next file_length
 }

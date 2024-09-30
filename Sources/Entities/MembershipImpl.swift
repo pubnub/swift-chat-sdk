@@ -12,9 +12,21 @@ import Foundation
 import PubNubChat
 import PubNubSDK
 
+/// A concrete implementation of the ``Membership`` protocol.
+///
+/// This class should be used as a ready-to-use solution for most use cases requiring the features defined by the ``Membership`` protocol. Also, this class inherits all the documentation
+/// for methods defined in the ``Membership`` protocol. Refer to the ``Membership`` protocol for details on how individual methods work.
 public final class MembershipImpl {
   let membership: PubNubChat.Membership
 
+  /// Creates a new ``MembershipImpl`` instance
+  /// - Parameters:
+  ///   - chat: Reference to the main Chat object
+  ///   - channel: The ``Channel`` of this ``Membership``
+  ///   - user: The ``User`` of this ``Membership``
+  ///   - custom: Any custom properties or metadata associated with the user-channel relationship in the form of a map of key-value pairs
+  ///   - updated: Last time the Membership object was changed
+  ///   - eTag: Caching value that changes whenever the Membership object change
   public convenience init(
     chat: ChatImpl,
     channel: ChannelImpl,

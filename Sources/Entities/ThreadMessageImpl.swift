@@ -12,9 +12,27 @@ import Foundation
 import PubNubChat
 import PubNubSDK
 
+/// A concrete implementation of the ``ThreadMessage`` protocol.
+///
+/// This class should be used as a ready-to-use solution for most use cases requiring the features defined by the ``ThreadMessage`` protocol. Also, this class inherits all the documentation
+/// for methods defined in the ``ThreadMessage`` protocol. Refer to the ``ThreadMessage`` protocol for details on how individual methods work.
 public final class ThreadMessageImpl {
   let target: BaseMessage<PubNubChat.ThreadMessage>
 
+  /// Creates a new ``ThreadMessageImpl`` instance
+  /// 
+  /// - Parameters:
+  ///   - chat: Reference to the main Chat object
+  ///   - parentChannelId: Unique identifier of the main channel on which you create a subchannel (thread channel)
+  ///   - timetoken: Timetoken for the message
+  ///   - content: Original text content of the message
+  ///   - channelId: Unique identifier for the channel in which the message was sent
+  ///   - userId: Unique ID of the user who sent the message
+  ///   - actions: Any actions associated with the message, such as reactions, replies, or other interactive elements
+  ///   - meta: Extra information added to the message giving additional context
+  ///   - mentionedUsers: List of mentioned users with IDs and names
+  ///   - referencedChannels: List of referenced channels with IDs and names
+  ///   - quotedMessage: Access the original quoted message
   public convenience init(
     chat: ChatImpl,
     parentChannelId: String,
@@ -60,7 +78,7 @@ public final class ThreadMessageImpl {
 }
 
 extension ThreadMessageImpl {
-  func asMessage() -> MessageImpl {
+  public func asMessage() -> MessageImpl {
     MessageImpl(message: target.message)
   }
 }

@@ -24,7 +24,7 @@ public struct Restriction {
   /// An optional description or explanation for the restriction
   public var reason: String?
 
-  /// Initializes a new instance of ``EventContent.Custom`` with the provided details
+  /// Initializes a new instance of `EventContent.Custom` with the provided details
   ///
   /// - Parameters:
   ///   - userId: The unique identifier of the user who is subject to the restriction

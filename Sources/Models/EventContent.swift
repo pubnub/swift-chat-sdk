@@ -27,7 +27,7 @@ public class EventContent {
     /// The ID of the user being reported
     public let reportedUserId: String?
 
-    /// Initializes a new instance of ``EventContent.Report`` with the provided details
+    /// Initializes a new instance of `EventContent.Report` with the provided details
     ///
     /// - Parameters:
     ///   - text: The text of the report
@@ -55,7 +55,7 @@ public class EventContent {
     /// A boolean value indicating whether the user is typing (true) or not (false)
     public let value: Bool
 
-    /// Initializes a new instance of ``EventContent.Typing`` with the provided details
+    /// Initializes a new instance of `EventContent.Typing` with the provided details
     ///
     /// - Parameter value: A boolean value indicating whether the user is typing (true) or not (false)
     public init(value: Bool) {
@@ -68,7 +68,7 @@ public class EventContent {
     /// The timetoken of the message for which the receipt is being acknowledged
     public let messageTimetoken: Timetoken
 
-    /// Initializes a new instance of ``EventContent.Receipt`` with the provided details
+    /// Initializes a new instance of `EventContent.Receipt` with the provided details
     ///
     /// - Parameter messageTimetoken: The timetoken of the message for which the receipt is being acknowledged
     public init(messageTimetoken: Timetoken) {
@@ -85,7 +85,7 @@ public class EventContent {
     /// The ID of the parent channel if the mention occurred in a thread, otherwise null
     public let parentChannel: String?
 
-    /// Initializes a new instance of ``EventContent.Mention`` with the provided details
+    /// Initializes a new instance of `EventContent.Mention` with the provided details
     ///
     /// - Parameters:
     ///   - messageTimetoken: The timetoken of the message in which the user was mentioned
@@ -105,7 +105,7 @@ public class EventContent {
     /// The ID of the channel to which the user is invited
     public let channelId: String
 
-    /// Initializes a new instance of ``EventContent.Invite`` with the provided details
+    /// Initializes a new instance of `EventContent.Invite` with the provided details
     ///
     /// - Parameters:
     ///   - channelType: The type of the channel (e.g., direct, group)
@@ -123,7 +123,7 @@ public class EventContent {
     /// The method by which the event was emitted
     public let method: EmitEventMethod
 
-    /// Initializes a new instance of ``EventContent.Custom`` with the provided details
+    /// Initializes a new instance of `EventContent.Custom` with the provided details
     ///
     /// - Parameters:
     ///   - data: A map containing key-value pairs of custom data associated with the event
@@ -143,7 +143,7 @@ public class EventContent {
     /// The reason for the restriction, if provided
     public let reason: String?
 
-    /// Initializes a new instance of ``EventContent.Custom`` with the provided details
+    /// Initializes a new instance of `EventContent.Custom` with the provided details
     ///
     /// - Parameters:
     ///   - channelId: The ID of the channel where the moderation event occurred
@@ -163,7 +163,7 @@ public class EventContent {
     /// A list of files attached to the message, if any
     public let files: [File]?
 
-    /// Initializes a new instance of ``EventContent.TextMessageContent`` with the provided details
+    /// Initializes a new instance of `EventContent.TextMessageContent` with the provided details
     ///
     /// - Parameters:
     ///   - text: The text content of the message
@@ -193,7 +193,7 @@ public class EventContent {
     /// The raw JSON element representing the message with the unknown format
     public let element: Any?
 
-    /// Initializes a new instance of ``EventContent.UnknownMessageFormat`` with the provided details
+    /// Initializes a new instance of `EventContent.UnknownMessageFormat` with the provided details
     /// - Parameter element: The raw JSON element representing the message with the unknown format
     public init(element: Any? = nil) {
       self.element = element

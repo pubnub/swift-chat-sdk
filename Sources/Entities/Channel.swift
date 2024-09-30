@@ -431,7 +431,7 @@ public protocol Channel {
   ///   - endTimetoken: The end time token for fetching the history of reported messages, which allows specifying the point in time where the history retrieval should end
   ///   - count: The number of reported message events to fetch from the history
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: A `Tuple` containing an array of ``EventWrapper<EventContent>``, and a boolean indicating whether there are more messages available beyond the current result set
+  ///     - **Success**: A `Tuple` containing an array of `EventWrapper<EventContent>`, and a boolean indicating whether there are more messages available beyond the current result set
   ///     - **Failure**: An `Error` describing the failure
   func getMessageReportsHistory(
     startTimetoken: Timetoken?,

@@ -283,7 +283,7 @@ public protocol Chat: AnyObject {
   ///
   /// - Parameters:
   ///   - channelId: Channel where you want to send the events
-  ///   - payload: The payload of the emitted event. Use one of ``EventContent`` subclasses. For example: ``EventContent.TextMessageContent``, ``EventContent.Mention``
+  ///   - payload: The payload of the emitted event. Use one of ``EventContent`` subclasses. For example: `EventContent.TextMessageContent`, `EventContent.Mention`
   ///   - mergePayloadWith: Metadata in the form of key-value pairs you want to pass as events from your chat app. Can contain anything in case of custom events, but has a predefined structure for other types of events
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: A `timetoken` value that holds the timestamp of the emitted event

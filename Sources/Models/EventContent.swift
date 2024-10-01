@@ -143,7 +143,7 @@ public class EventContent {
     /// The reason for the restriction, if provided
     public let reason: String?
 
-    /// Initializes a new instance of `EventContent.Custom` with the provided details
+    /// Initializes a new instance of `EventContent.Moderation` with the provided details
     ///
     /// - Parameters:
     ///   - channelId: The ID of the channel where the moderation event occurred

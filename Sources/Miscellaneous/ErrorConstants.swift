@@ -10,4 +10,4 @@
 
 import Foundation
 
-let pubNubSwiftChatSDKVersion = "0.8.0"
+let objectNoLongerExists = "Object no longer exists"

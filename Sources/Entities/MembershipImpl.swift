@@ -23,15 +23,7 @@ import PubNubSDK
 public final class MembershipImpl {
   let membership: PubNubChat.Membership
 
-  /// Creates a new ``MembershipImpl`` instance
-  /// - Parameters:
-  ///   - chat: Reference to the main Chat object
-  ///   - channel: The ``Channel`` of this ``Membership``
-  ///   - user: The ``User`` of this ``Membership``
-  ///   - custom: Any custom properties or metadata associated with the user-channel relationship in the form of a map of key-value pairs
-  ///   - updated: Last time the Membership object was changed
-  ///   - eTag: Caching value that changes whenever the Membership object change
-  public convenience init(
+  convenience init(
     chat: ChatImpl,
     channel: ChannelImpl,
     user: UserImpl,

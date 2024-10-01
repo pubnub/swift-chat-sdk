@@ -23,21 +23,7 @@ import PubNubSDK
 public final class UserImpl {
   let user: PubNubChat.User
 
-  /// Creates a new ``UserImpl`` object
-  ///
-  /// - Parameters:
-  ///   - chat: Reference to the main chat object
-  ///   - id: Unique identifier for user
-  ///   - name: Display name or username of the user (must not be empty or consist only of whitespace characters)
-  ///   - externalId: Identifier for the user from an external system, such as a third-party authentication provider or a user directory
-  ///   - profileUrl: URL to the user's profile or avatar image
-  ///   - email: User's email address
-  ///   - custom: Any custom properties or metadata associated with the user in the form of a map of key-value pairs
-  ///   - status: Current status of the user, like online, offline, or away
-  ///   - type: Type of the user, like admin, member, guest
-  ///   - updated: The last updated timestamp for the object
-  ///   - lastActiveTimestamp: Timestamp for the last time the user information was updated or modified
-  public convenience init(
+  convenience init(
     chat: ChatImpl,
     id: String,
     name: String? = nil,

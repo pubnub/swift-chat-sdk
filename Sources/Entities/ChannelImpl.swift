@@ -24,18 +24,7 @@ import PubNubSDK
 public final class ChannelImpl {
   let target: BaseChannel<PubNubChat.Channel_, PubNubChat.Message>
 
-  /// Creates a new ``ChannelImpl`` object
-  ///
-  /// - Parameters:
-  ///   - chat: Reference to the main Chat object
-  ///   - id: Unique identifier for the channel
-  ///   - name: Display name or title of the channel
-  ///   - custom: Any custom properties or metadata associated with the channel in the form of a map of key-value pairs
-  ///   - description: Brief description or summary of the channel's purpose or content
-  ///   - updated: The last updated timestamp for the object
-  ///   - status: Current status of the channel, like online, offline, or archived
-  ///   - type: Represents the type of channel
-  public convenience init(
+  convenience init(
     chat: ChatImpl,
     id: String,
     name: String? = nil,
@@ -405,6 +394,4 @@ extension ChannelImpl: Channel {
       callback: callback
     )
   }
-
-  // swiftlint:disable:next file_length
 }

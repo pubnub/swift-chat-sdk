@@ -48,7 +48,8 @@ lane :test do
       workspace: ENV['WORKSPACE'],
       scheme: ENV['SCHEME_SDK'],
       destination: ENV['DESTINATION'],
-      disable_concurrent_testing: true
+      disable_concurrent_testing: true,
+      clear: true
     )
   # Test using simulators
   else
@@ -58,7 +59,8 @@ lane :test do
         scheme: ENV['SCHEME_SDK'],
         device: device,
         disable_concurrent_testing: true,
-        code_coverage: true
+        code_coverage: true,
+        clear: true
       )
     end
   end

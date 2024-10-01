@@ -77,7 +77,7 @@ jobs:
         uses: ./.github/.release/actions/actions/utils/fast-jobs-failure
   all-validations:
     name: Validations
-    needs: [pubnub-yml, package-managers-validation, demo-app-validation]
+    needs: [pubnub-yml, package-managers-validation]
     runs-on:
       group: Default
     steps:

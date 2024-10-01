@@ -33,6 +33,8 @@ sdks:
                     - Swift 5.x
                   minimum-os-version:
                     - iOS 14.0
+                  maximum-os-version:
+                    - iOS 18.0
                   target-architecture:
                     - arm64
                   target-devices:

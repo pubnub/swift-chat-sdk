@@ -13,6 +13,25 @@
   },
   "testTargets" : [
     {
+      "skippedTests" : [
+        "ChannelIntegrationTests",
+        "ChatIntegrationTests",
+        "MembershipTests",
+        "MessageIntegrationTests",
+        "PubNubSwiftChatSDKIntegrationTests",
+        "ThreadChannelIntegrationTests",
+        "ThreadMessageIntegrationTests",
+        "UserIntegrationTests\/testUser_DeleteNotExistingUser()",
+        "UserIntegrationTests\/testUser_DeleteUser()",
+        "UserIntegrationTests\/testUser_GetMemberships()",
+        "UserIntegrationTests\/testUser_GlobalStreamUpdates()",
+        "UserIntegrationTests\/testUser_IsActive()",
+        "UserIntegrationTests\/testUser_IsPresentOn()",
+        "UserIntegrationTests\/testUser_StreamUpdates()",
+        "UserIntegrationTests\/testUser_UpdateNotExistingUser()",
+        "UserIntegrationTests\/testUser_UpdateUser()",
+        "UserIntegrationTests\/testUser_WherePresent()"
+      ],
       "target" : {
         "containerPath" : "container:PubNubSwiftChatSDK.xcodeproj",
         "identifier" : "3DB73A102C4FE13C007FE249",

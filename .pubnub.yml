@@ -34,7 +34,7 @@ sdks:
                   minimum-os-version:
                     - iOS 14.0
                   maximum-os-version:
-                    - iOS 18.0
+                    - iOS 14.6
                   target-architecture:
                     - arm64
                   target-devices:

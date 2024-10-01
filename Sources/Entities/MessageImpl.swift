@@ -14,8 +14,12 @@ import PubNubSDK
 
 /// A concrete implementation of the ``Message`` protocol.
 ///
-/// This class should be used as a ready-to-use solution for most use cases requiring the features defined by the ``Message`` protocol. Also, this class inherits all the documentation
-/// for methods defined in the ``Message`` protocol. Refer to the ``Message`` protocol for details on how individual methods work.
+/// This class provides a ready-to-use solution for most use cases requiring
+/// the features defined by the ``Message`` protocol, offering default behavior for
+/// associated types and default parameter values where applicable.
+///
+/// It inherits all the documentation for methods defined in the ``Message`` protocol.
+/// Refer to the ``Message`` protocol for detailed information on how individual methods work.
 public final class MessageImpl {
   let target: BaseMessage<PubNubChat.Message>
 

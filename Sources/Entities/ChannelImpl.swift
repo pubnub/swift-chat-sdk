@@ -14,8 +14,13 @@ import PubNubSDK
 
 /// A concrete implementation of the ``Channel`` protocol.
 ///
-/// This class should be used as a ready-to-use solution for most use cases requiring the features defined by the ``Channel`` protocol. Also, this class inherits all the documentation
-/// for methods defined in the ``Channel`` protocol. Refer to the ``Channel`` protocol for details on how individual methods work.
+/// This class provides a ready-to-use solution for most use cases requiring
+/// the features defined by the ``Channel`` protocol, offering default behavior for
+/// associated types and default parameter values where applicable.
+///
+/// It inherits all the documentation for methods defined in the ``Channel`` protocol.
+/// Refer to the ``Channel`` protocol for detailed information on how individual methods work.
+///
 public final class ChannelImpl {
   let target: BaseChannel<PubNubChat.Channel_, PubNubChat.Message>
 

@@ -14,8 +14,12 @@ import PubNubSDK
 
 /// A concrete implementation of the ``Membership`` protocol.
 ///
-/// This class should be used as a ready-to-use solution for most use cases requiring the features defined by the ``Membership`` protocol. Also, this class inherits all the documentation
-/// for methods defined in the ``Membership`` protocol. Refer to the ``Membership`` protocol for details on how individual methods work.
+/// This class provides a ready-to-use solution for most use cases requiring
+/// the features defined by the ``Membership`` protocol, offering default behavior for
+/// associated types and default parameter values where applicable.
+///
+/// It inherits all the documentation for methods defined in the ``Membership`` protocol.
+/// Refer to the ``Membership`` protocol for detailed information on how individual methods work.
 public final class MembershipImpl {
   let membership: PubNubChat.Membership
 

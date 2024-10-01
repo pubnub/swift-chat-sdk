@@ -19,15 +19,7 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 [bundle exec] fastlane test
 ```
 
-Executes SDK Unit Tests
-
-### code_coverage
-
-```sh
-[bundle exec] fastlane code_coverage
-```
-
-Generates Code Coverage Files
+Executes SDK Integration Tests
 
 ### lint_swift_package_manager
 

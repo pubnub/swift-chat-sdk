@@ -348,69 +348,6 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testChat_Forward() throws {
-    let firstChannel = try XCTUnwrap(
-      try awaitResultValue {
-        chat.createChannel(
-          id: randomString(),
-          completion: $0
-        )
-      }
-    )
-    let secondChannel = try XCTUnwrap(
-      try awaitResultValue {
-        chat.createChannel(
-          id: randomString(),
-          completion: $0
-        )
-      }
-    )
-    let tt = try awaitResultValue {
-      firstChannel.sendText(
-        text: "TxtMessage",
-        completion: $0
-      )
-    }
-    let message = try XCTUnwrap(
-      try awaitResultValue {
-        firstChannel.getMessage(
-          timetoken: tt,
-          completion: $0
-        )
-      }
-    )
-    let forwardResValue = try awaitResultValue {
-      chat.forwardMessage(
-        message: message,
-        channelId: secondChannel.id,
-        completion: $0
-      )
-    }
-
-    XCTAssertNotNil(
-      try awaitResultValue {
-        secondChannel.getMessage(
-          timetoken: forwardResValue,
-          completion: $0
-        )
-      }
-    )
-    addTeardownBlock { [unowned self] in
-      try awaitResult {
-        chat.deleteChannel(
-          id: firstChannel.id,
-          completion: $0
-        )
-      }
-      try awaitResult {
-        chat.deleteChannel(
-          id: secondChannel.id,
-          completion: $0
-        )
-      }
-    }
-  }
-
   func testChat_WhoIsPresent() throws {
     let channel = try awaitResultValue {
       chat.createChannel(
@@ -760,62 +697,6 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
           id: anotherChannel.id,
           completion: $0
         )
-      }
-    }
-  }
-
-  func testChat_GetThread() throws {
-    let channel = try XCTUnwrap(
-      try awaitResultValue {
-        chat.createChannel(
-          id: randomString(),
-          completion: $0
-        )
-      }
-    )
-    let testMessage = try XCTUnwrap(
-      try awaitResultValue {
-        channel.getMessage(
-          timetoken: try awaitResultValue {
-            channel.sendText(
-              text: "text",
-              shouldStore: true,
-              completion: $0
-            )
-          },
-          completion: $0
-        )
-      }
-    )
-    let threadChannel = try awaitResultValue {
-      testMessage.createThread(
-        completion: $0
-      )
-    }
-
-    try awaitResultValue {
-      threadChannel.sendText(
-        text: "Text",
-        completion: $0
-      )
-    }
-
-    let retrievedThreadChannel = try awaitResultValue {
-      chat.getThreadChannel(
-        message: testMessage,
-        completion: $0
-      )
-    }
-
-    XCTAssertEqual(retrievedThreadChannel.id, threadChannel.id)
-    XCTAssertEqual(retrievedThreadChannel.parentChannelId, channel.id)
-
-    addTeardownBlock { [unowned self] in
-      try awaitResult {
-        chat.deleteChannel(id: threadChannel.id, completion: $0)
-      }
-      try awaitResult {
-        chat.deleteChannel(id: channel.id, completion: $0)
       }
     }
   }

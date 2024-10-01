@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3D043A7A2CA6AAA000F91C05 /* ThreadChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D043A792CA6AAA000F91C05 /* ThreadChannel.swift */; };
+		3D043A7C2CAAABBD00F91C05 /* ThreadMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D043A7B2CAAABBD00F91C05 /* ThreadMessage.swift */; };
 		3D2CA2362C5B9320008D2284 /* PubNubChat+Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2CA2352C5B9320008D2284 /* PubNubChat+Transform.swift */; };
 		3D2CA2382C5B9ACA008D2284 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2CA2372C5B9ACA008D2284 /* File.swift */; };
 		3D2CA23A2C5B9CF6008D2284 /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2CA2392C5B9CF6008D2284 /* Dictionary.swift */; };
@@ -100,6 +102,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3D043A792CA6AAA000F91C05 /* ThreadChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadChannel.swift; sourceTree = "<group>"; };
+		3D043A7B2CAAABBD00F91C05 /* ThreadMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadMessage.swift; sourceTree = "<group>"; };
 		3D1C44A52C918A2200E68446 /* PubNubSwiftChatSDK_Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PubNubSwiftChatSDK_Info.plist; sourceTree = "<group>"; };
 		3D2CA2352C5B9320008D2284 /* PubNubChat+Transform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PubNubChat+Transform.swift"; sourceTree = "<group>"; };
 		3D2CA2372C5B9ACA008D2284 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
@@ -300,12 +304,14 @@
 				3DB73A3B2C50F42B007FE249 /* User.swift */,
 				3DB2A8B22C807DDC00167058 /* UserImpl.swift */,
 				3DB73A3F2C51051C007FE249 /* Channel.swift */,
-				3DB73A3D2C50F5F3007FE249 /* Membership.swift */,
-				3DB2A8B42C807E2A00167058 /* MembershipImpl.swift */,
+				3D043A792CA6AAA000F91C05 /* ThreadChannel.swift */,
 				3DB73A5A2C53CAB1007FE249 /* BaseChannel.swift */,
 				3DB73A6E2C57BB97007FE249 /* ChannelImpl.swift */,
 				3DB73A5C2C53CC0A007FE249 /* ThreadChannelImpl.swift */,
+				3DB73A3D2C50F5F3007FE249 /* Membership.swift */,
+				3DB2A8B42C807E2A00167058 /* MembershipImpl.swift */,
 				3DB73A412C511900007FE249 /* Message.swift */,
+				3D043A7B2CAAABBD00F91C05 /* ThreadMessage.swift */,
 				3DB73A6C2C57BB35007FE249 /* BaseMessage.swift */,
 				3DB73A522C53A20C007FE249 /* MessageImpl.swift */,
 				3DB73A542C53A22F007FE249 /* ThreadMessageImpl.swift */,
@@ -485,6 +491,7 @@
 				3DB73A472C51353B007FE249 /* MessageMentionedUser.swift in Sources */,
 				3DB73A7D2C57EA94007FE249 /* Timetoken.swift in Sources */,
 				3DB73A712C57C034007FE249 /* Event.swift in Sources */,
+				3D043A7A2CA6AAA000F91C05 /* ThreadChannel.swift in Sources */,
 				3DB2A8BD2C809A1400167058 /* ChatError.swift in Sources */,
 				3DB73A3C2C50F42B007FE249 /* User.swift in Sources */,
 				3DB73A652C57A782007FE249 /* CreateDirectConversationResult.swift in Sources */,
@@ -508,6 +515,7 @@
 				3D2CA23A2C5B9CF6008D2284 /* Dictionary.swift in Sources */,
 				3DB73A422C511900007FE249 /* Message.swift in Sources */,
 				3DB73A4B2C5135C3007FE249 /* QuotedMessage.swift in Sources */,
+				3D043A7C2CAAABBD00F91C05 /* ThreadMessage.swift in Sources */,
 				3DB2A8BB2C8099F300167058 /* EventContent.swift in Sources */,
 				3D334BD02C8EE9E500F8793C /* PubNub.PushService.swift in Sources */,
 				3DB73A512C539421007FE249 /* InputFile.swift in Sources */,

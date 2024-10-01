@@ -9,9 +9,10 @@
 //
 
 import Foundation
-import PubNubSwiftChatSDK
 import PubNubSDK
 import XCTest
+
+@testable import PubNubSwiftChatSDK
 
 class ThreadChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
   var parentChannel: ChannelImpl!

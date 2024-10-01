@@ -10,8 +10,9 @@
 
 import Foundation
 import XCTest
-import PubNubSwiftChatSDK
 import PubNubSDK
+
+@testable import PubNubSwiftChatSDK
 
 final class UserIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
   func testableUser() -> PubNubSwiftChatSDK.UserImpl {

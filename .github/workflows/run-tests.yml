@@ -32,7 +32,7 @@ jobs:
         environment: [iOS]
     timeout-minutes: 10
     steps:
-       - name: Remove Specific Git Config Lines
+      - name: Remove Specific Git Config Lines
         run: |
           echo "Removing malformed Git configuration entries..."
           # Correct usage of sed for in-place editing on macOS

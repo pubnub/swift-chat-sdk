@@ -32,24 +32,15 @@ jobs:
         environment: [iOS]
     timeout-minutes: 10
     steps:
-      - name: Remove Leftover Git Configurations
+      - name: Remove Specific Git Config Line
         run: |
-          echo "Removing leftover Git configurations..."
-          # Try unsetting the specific configuration
-          git config --global --unset "url.github.com/.insteadof" || echo "Key not found"
-          git config --global --unset "github.com/.insteadof" || echo "Key not found"
+          echo "Removing leftover Git configuration for github.com..."
+          # Using sed to remove the specific line from .gitconfig
+          sed -i '/github.com\/.insteadof=https:\/\/github.com\//d' ~/.gitconfig || echo "No matching line found."
           
-          # Optional: Check if the key is still there, and remove the entire url section if necessary
-          echo "Current Git Configurations:"
-          git config --global -l
-          
-          # Remove the entire section if the key still exists
-          if git config --global --get-regexp 'url.' | grep -q 'github.com'; then
-            echo "Removing entire url section due to leftovers..."
-            git config --global --remove-section url || echo "No url section to remove"
-          fi
-          
-          echo "Verifying Git config..."
+      - name: Verify Git Config After Removal
+        run: |
+          echo "Verifying Git config after removal..."
           git config --global -l
       - name: Checkout repository
         uses: actions/checkout@v4

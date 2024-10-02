@@ -32,11 +32,16 @@ jobs:
         environment: [iOS]
     timeout-minutes: 10
     steps:
-      - name: Remove Specific Git Config Lines
+      - name: Display Current Git Config
         run: |
-          echo "Removing malformed Git configuration entries..."
-          # Correct usage of sed for in-place editing on macOS
-          sed -i '' '/\*\*\*/d' ~/.gitconfig || echo "No matching lines found."
+          echo "Current Git Configurations:"
+          git config --global -l
+
+      - name: Remove Last Two Lines from Git Config
+        run: |
+          echo "Removing the last two lines from .gitconfig..."
+          # Using sed to remove the last two lines
+          sed -i '' -e '$d' -e '$d' ~/.gitconfig || echo "No lines removed."
           
       - name: Verify Git Config After Removal
         run: |

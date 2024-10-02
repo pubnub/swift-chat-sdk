@@ -60,6 +60,8 @@ jobs:
       - name: Pre-load simulators list
         if: ${{ matrix.environment != 'macOS' }}
         run: xcrun simctl list -j
+      - name: List SSH Directory
+        run: ls -la ~/.ssh
       - name: Run ${{ matrix.environment }} unit tests
         run: bundle exec fastlane test --env $(echo ${{ matrix.environment }} | tr '[:upper:]' '[:lower:]')
       - name: Cancel workflow runs for commit on error

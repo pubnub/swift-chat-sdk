@@ -36,12 +36,11 @@ jobs:
         run: |
           echo "Current Git Configurations:"
           git config --global -l
-      - name: Remove Line Starting with ***
+      - name: Remove the Last Line from Git Config
         run: |
-          echo "Removing the line starting with *** from .gitconfig..."
-          # Using sed to remove the line starting with ***
-          sed -i '' '/^\*\*\*/d' ~/.gitconfig || echo "No matching lines found."
-          
+          echo "Removing the last line from .gitconfig..."
+          # Using sed to remove the last line
+          sed -i '' -e '$d' ~/.gitconfig || echo "No lines to remove."
       - name: Verify Git Config After Removal
         run: |
           echo "Verifying Git config after removal..."

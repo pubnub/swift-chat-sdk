@@ -36,13 +36,10 @@ jobs:
         run: |
           echo "Current Git Configurations:"
           git config --global -l
-
-      - name: Remove Last Two Lines from Git Config
+      - name: Remove the Last Remaining Line from Git Config
         run: |
-          echo "Removing the last two lines from .gitconfig..."
-          # Using sed to remove the last two lines
-          sed -i '' -e '$d' -e '$d' ~/.gitconfig || echo "No lines removed."
-          
+          echo "Removing the last remaining line from .gitconfig..."
+          sed -i '' -e '$d' ~/.gitconfig || echo "No more lines to remove."
       - name: Verify Git Config After Removal
         run: |
           echo "Verifying Git config after removal..."

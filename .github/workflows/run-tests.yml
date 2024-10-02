@@ -41,6 +41,7 @@ jobs:
         with:
           repository: pubnub/kmp-chat
           submodules: recursive
+          ref: refs/tags/0.8.0-dev
           token: ${{ secrets.GH_TOKEN }}
           path: Checkouts/kmp-chat
       - name: Checkout swift

@@ -35,8 +35,20 @@ jobs:
       - name: Remove Leftover Git Configurations
         run: |
           echo "Removing leftover Git configurations..."
+          # Try unsetting the specific configuration
+          git config --global --unset "url.github.com/.insteadof" || echo "Key not found"
+          git config --global --unset "github.com/.insteadof" || echo "Key not found"
+          
+          # Optional: Check if the key is still there, and remove the entire url section if necessary
+          echo "Current Git Configurations:"
           git config --global -l
-          git config --global --remove-section url
+          
+          # Remove the entire section if the key still exists
+          if git config --global --get-regexp 'url.' | grep -q 'github.com'; then
+            echo "Removing entire url section due to leftovers..."
+            git config --global --remove-section url || echo "No url section to remove"
+          fi
+          
           echo "Verifying Git config..."
           git config --global -l
       - name: Checkout repository

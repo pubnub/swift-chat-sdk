@@ -80,8 +80,8 @@ jobs:
           pwd
       - name: Print Workspace Contents
         run: |
-          echo "Listing all files in the workspace:"
-          ls -R
+          echo "Listing all files in the Checkouts:"
+          ls -l Checkouts
       - name: Run ${{ matrix.environment }} unit tests
         run: bundle exec fastlane test --env $(echo ${{ matrix.environment }} | tr '[:upper:]' '[:lower:]')
       - name: Cancel workflow runs for commit on error

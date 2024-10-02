@@ -31,6 +31,8 @@ lane :test do
   pub_key = ENV['SDK_PUB_KEY']
   sub_key = ENV['SDK_SUB_KEY']
 
+  Action.sh('swift package resolve --verbose')
+
   set_info_plist_value(
     path: "Tests/PubNubSwiftChatSDKTests.plist",
     key: "publishKey",

@@ -32,10 +32,10 @@ jobs:
         environment: [iOS]
     timeout-minutes: 10
     steps:
-      - name: Revert Git Config
+       - name: Update Git Config
         run: |
-          echo "Reverting Git config for URL transformation..."
-          git config --global --unset url."https://${{ secrets.GH_TOKEN }}@github.com/"
+          echo "Updating Git config for URL transformation..."
+          git config --global url."https://github.com/".insteadOf "https://${{ secrets.GH_TOKEN }}@github.com/"
           echo "Verifying Git config..."
           git config --global -l
       - name: Checkout repository

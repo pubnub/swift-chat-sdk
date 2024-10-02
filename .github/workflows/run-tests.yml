@@ -74,6 +74,14 @@ jobs:
       - name: Pre-load simulators list
         if: ${{ matrix.environment != 'macOS' }}
         run: xcrun simctl list -j
+      - name: Print Current Working Directory
+        run: |
+          echo "Current Working Directory:"
+          pwd
+      - name: Print Workspace Contents
+        run: |
+          echo "Listing all files in the workspace:"
+          ls -R
       - name: Run ${{ matrix.environment }} unit tests
         run: bundle exec fastlane test --env $(echo ${{ matrix.environment }} | tr '[:upper:]' '[:lower:]')
       - name: Cancel workflow runs for commit on error

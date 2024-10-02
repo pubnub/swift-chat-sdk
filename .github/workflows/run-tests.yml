@@ -34,6 +34,9 @@ jobs:
     steps:
       - name: Remove Leftover Git Configurations
         run: |
+          echo "Removing leftover Git configurations..."
+          git config --global --unset ***github.com/.insteadof=https://github.com/
+          git config --global --unset url.https://github.com/.insteadof=https://***@github.com/
           echo "Verifying Git config..."
           git config --global -l
       - name: Checkout repository

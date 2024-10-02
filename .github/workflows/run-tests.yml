@@ -32,7 +32,7 @@ jobs:
         environment: [iOS]
     timeout-minutes: 10
     steps:
-       - name: Update Git Config
+      - name: Update Git Config
         run: |
           echo "Updating Git config for URL transformation..."
           git config --global url."https://github.com/".insteadOf "https://${{ secrets.GH_TOKEN }}@github.com/"

@@ -50,7 +50,7 @@ lane :test do
       destination: ENV['DESTINATION'],
       disable_concurrent_testing: true,
       clean: true,
-      cloned_source_packages_path: "../Checkouts"
+      cloned_source_packages_path: "Checkouts"
     )
   # Test using simulators
   else
@@ -62,7 +62,7 @@ lane :test do
         disable_concurrent_testing: true,
         code_coverage: true,
         clean: true,
-        cloned_source_packages_path: "../Checkouts"
+        cloned_source_packages_path: "Checkouts"
       )
     end
   end

@@ -32,11 +32,11 @@ jobs:
         environment: [iOS]
     timeout-minutes: 10
     steps:
-      - name: Remove Specific Git Config Lines
+       - name: Remove Specific Git Config Lines
         run: |
           echo "Removing malformed Git configuration entries..."
-          # Using sed to remove lines with ***
-          sed -i '/\*\*\*/d' ~/.gitconfig || echo "No matching lines found."
+          # Correct usage of sed for in-place editing on macOS
+          sed -i '' '/\*\*\*/d' ~/.gitconfig || echo "No matching lines found."
           
       - name: Verify Git Config After Removal
         run: |

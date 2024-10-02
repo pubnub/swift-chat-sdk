@@ -36,6 +36,19 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_TOKEN }}
+      - name: Checkout kmp-chat
+        uses: actions/checkout@v4
+        with:
+          repository: pubnub/kmp-chat
+          submodules: recursive
+          token: ${{ secrets.GH_TOKEN }}
+          path: Checkouts/kmp-chat
+      - name: Checkout swift
+        uses: actions/checkout@v4
+        with:
+          repository: pubnub/swift
+          token: ${{ secrets.GH_TOKEN }}
+          path: Checkouts/swift
       - name: Checkout actions
         uses: actions/checkout@v4
         with:

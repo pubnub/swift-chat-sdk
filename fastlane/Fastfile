@@ -49,7 +49,8 @@ lane :test do
       scheme: ENV['SCHEME_SDK'],
       destination: ENV['DESTINATION'],
       disable_concurrent_testing: true,
-      clean: true
+      clean: true,
+      cloned_source_packages_path: "../Checkouts"
     )
   # Test using simulators
   else
@@ -60,7 +61,8 @@ lane :test do
         device: device,
         disable_concurrent_testing: true,
         code_coverage: true,
-        clean: true
+        clean: true,
+        cloned_source_packages_path: "../Checkouts"
       )
     end
   end

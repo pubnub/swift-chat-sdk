@@ -13,8 +13,6 @@ import PubNubChat
 import PubNubSwiftChatSDK
 import PubNubSDK
 
-// MARK: - SwiftChatSDKIntegrationTests
-
 class PubNubSwiftChatSDKIntegrationTests: XCTestCase {
   var chat: PubNubSwiftChatSDK.ChatImpl!
 

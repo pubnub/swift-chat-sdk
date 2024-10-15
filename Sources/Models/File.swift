@@ -10,7 +10,7 @@
 
 import Foundation
 
-/// Represents a file that is associated with a message in the chat system
+/// Represents a file that is associated with a message in the chat system.
 public struct File {
   /// The name of the file
   public var name: String

@@ -10,7 +10,7 @@
 
 import Foundation
 
-/// Represents a file attached to a message in a channel
+/// Represents a file attached to a message in a channel.
 public struct GetFileItem {
   /// The name of the file
   public var name: String

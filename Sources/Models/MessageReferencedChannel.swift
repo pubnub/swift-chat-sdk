@@ -16,14 +16,14 @@ import PubNubChat
 /// details about the referenced channel.
 public typealias MessageReferencedChannels = [Int: MessageReferencedChannel]
 
-/// Represents a channel which was mentioned in a message
+/// Represents a channel which was mentioned in a message.
 public struct MessageReferencedChannel {
   /// The unique identifier of the referenced channel
   public var id: String
   /// The display name of the referenced channel
   public var name: String
 
-  /// Initializes a new instance of ``MessageReferencedChannels`` with the provided details
+  /// Initializes a new instance of ``MessageReferencedChannels`` with the provided details.
   ///
   /// - Parameters:
   ///   - id: The unique identifier of the referenced channel

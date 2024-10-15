@@ -14,13 +14,13 @@ import PubNubSDK
 
 // MARK: - CustomPayloads
 
-/// Function that lets Chat SDK send your custom payload structure
+/// Function that lets Chat SDK send your custom payload structure.
 public typealias GetMessagePublishBody = (EventContent.TextMessageContent, String, DefaultGetMessagePublishBody) -> [String: Any]
-/// Default handler producing a `Dictionary` from the given `EventContent.TextMessageContent`
+/// Default handler producing a `Dictionary` from the given `EventContent.TextMessageContent`.
 public typealias DefaultGetMessagePublishBody = (EventContent.TextMessageContent) -> [String: Any]
-/// Function that lets Chat SDK receive your custom payload structure
+/// Function that lets Chat SDK receive your custom payload structure.
 public typealias GetMessageResponseBody = ((JSONCodable, String, DefaultGetMessageResponseBody) -> EventContent.TextMessageContent?)
-/// Default handler producing a `Dictionary` object from the given `JSONCodable`
+/// Default handler producing a `Dictionary` object from the given `JSONCodable`.
 public typealias DefaultGetMessageResponseBody = (JSONCodable) -> EventContent.TextMessageContent?
 
 typealias KotlinGetMessagePublishBody = (PubNubChat.EventContent.TextMessageContent, String, KotlinDefaultGetMessagePublishBody) -> [String: Any]
@@ -36,15 +36,15 @@ public class CustomPayloads {
   var getMessagePublishBody: GetMessagePublishBody?
   /// Function that lets Chat SDK receive your custom payload structure. Use it to let Chat SDK translate your custom message payload into the default Chat SDK message format.
   /// The function will take a `JSONCodable` object and channel id as input, and should produce `EventContent.TextMessageContent` representing the message content.
-  /// If you wish to bypass the custom mapping (e.g. for certain channels), you can fall back to the default by calling the third parameter - `DefaultGetMessageResponseBody` and returning its result.
+  /// If you wish to bypass the custom mapping (e.g. for certain channels), you can fall back to the default by calling the third parameter - `DefaultGetMessageResponseBody` and returning its result
   /// Define `getMessagePublishBody` whenever you use `getMessageResponseBody`
   var getMessageResponseBody: GetMessageResponseBody?
-  /// A type of action you want to be added to your Message object whenever a published message is edited, like "changed" or `"modified"`.
+  /// A type of action you want to be added to your Message object whenever a published message is edited, like "changed" or `"modified"`
   var editMessageActionName: String?
-  /// A type of action you want to be added to your [Message] object whenever a published message is deleted, like `"removed"`.
+  /// A type of action you want to be added to your [Message] object whenever a published message is deleted, like `"removed"`
   var deleteMessageActionName: String?
 
-  /// Creates a new ``CustomPayloads`` object
+  /// Creates a new ``CustomPayloads`` object.
   ///
   /// - Parameters:
   ///   - getMessagePublishBody: Function that lets Chat SDK send your custom payload structure
@@ -108,7 +108,7 @@ public class CustomPayloads {
 
 // MARK: - LogLevel
 
-/// Represents the severity level of logs that will be printed
+/// Represents the severity level of logs that will be printed.
 public enum LogLevel {
   /// Turn off logging
   case off
@@ -143,7 +143,7 @@ public enum LogLevel {
 
 // MARK: - ChatConfiguration
 
-/// Defines a set of options for chat configuration
+/// Defines a set of options for chat configuration.
 public struct ChatConfiguration {
   /// Specifies if any Chat SDK-related errors should be logged
   public var logLevel: LogLevel
@@ -223,7 +223,7 @@ public struct ChatConfiguration {
 // MARK: - PushNotificationsConfig
 
 /// Defines the list of parameters you must set if you want to enable sending/receiving mobile push notifications for phone devices,
-/// either through Apple Push Notification service (APNS) or Firebase Cloud Messaging (FCM)
+/// either through Apple Push Notification service (APNS) or Firebase Cloud Messaging (FCM).
 public struct PushNotificationsConfig {
   /// The main option for enabling sending notifications
   public var sendPushes: Bool

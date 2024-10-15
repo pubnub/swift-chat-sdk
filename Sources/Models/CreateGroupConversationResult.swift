@@ -10,7 +10,7 @@
 
 import Foundation
 
-/// Represents the result of creating a group conversation (group channel) for collaborative communication
+/// Represents the result of creating a group conversation (group channel) for collaborative communication.
 public struct CreateGroupConversationResult<C: Channel, M: Membership> {
   /// The ``Channel`` object representing the newly created group conversation
   public var channel: C

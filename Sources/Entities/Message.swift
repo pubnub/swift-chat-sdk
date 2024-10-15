@@ -11,7 +11,7 @@
 import Foundation
 import PubNubSDK
 
-/// Represents an object that refers to a single message in a chat
+/// Represents an object that refers to a single message in a chat.
 public protocol Message {
   associatedtype ChatType: Chat
 
@@ -33,7 +33,11 @@ public protocol Message {
   var mentionedUsers: MessageMentionedUsers? { get }
   /// List of referenced channels with IDs and names
   var referencedChannels: MessageReferencedChannels? { get }
-  /// Access the original quoted message
+  /// Access the original quoted message in the given ``Message``
+  ///
+  /// Stores only values for the timetoken, text, and userId parameters. If you want to return the full quoted Message object,
+  /// use the ``PubNubSwiftChatSDK/Channel/getMessage(timetoken:completion:)`` method and the timetoken
+  /// from the quote that you can extract from the `quotedMessage` parameter added to the published message.
   var quotedMessage: QuotedMessage? { get }
   /// Content of the message
   var text: String { get }
@@ -43,14 +47,14 @@ public protocol Message {
   var hasThread: Bool { get }
   /// Message type (currently `"text"` for all Messages)
   var type: String { get }
-  /// List of attached files with their names, types, and sources
+  /// List of attached files to the given ``Message`` with their names, types, and sources
   var files: [File] { get }
-  /// List of reactions attached to the message
+  /// List of reactions attached to the given ``Message``
   var reactions: [String: [Action]] { get }
   /// List of included text links and their position
   var textLinks: [TextLink]? { get }
 
-  /// Receive updates when specific messages and related message reactions are added, edited, or removed
+  /// Receive updates when specific messages and related message reactions are added, edited, or removed.
   ///
   /// - Parameters:
   ///   - messages: A collection of ``Message`` objects for which you want to get updates on changed messages
@@ -61,7 +65,7 @@ public protocol Message {
     callback: @escaping (([Self]) -> Void)
   ) -> AutoCloseable
 
-  /// Checks if the current user added a given emoji to the message
+  /// Checks if the current user added a given emoji to the message.
   ///
   /// - Parameter reaction: Specific emoji added to the message
   /// - Returns: A boolean value indicating if the current user added a given emoji to the message or not
@@ -69,7 +73,7 @@ public protocol Message {
     reaction: String
   ) -> Bool
 
-  /// Changes the content of the existing message to a new one
+  /// Changes the content of the existing message to a new one.
   ///
   /// - Parameters:
   ///   - newText: New/updated text that you want to add in place of the existing message
@@ -81,7 +85,7 @@ public protocol Message {
     completion: ((Swift.Result<ChatType.ChatMessageType, Error>) -> Void)?
   )
 
-  /// Either permanently removes a historical message from Message Persistence or marks it as deleted (if you remove the message with the soft option)
+  /// Either permanently removes a historical message from Message Persistence or marks it as deleted (if you remove the message with the soft option).
   ///
   /// - Parameters:
   ///   - soft: Decide if you want to permanently remove message data
@@ -95,7 +99,7 @@ public protocol Message {
     completion: ((Swift.Result<(ChatType.ChatMessageType)?, Error>) -> Void)?
   )
 
-  /// Get the thread channel on which the thread message is published
+  /// Get the thread channel on which the thread message is published.
   ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call
@@ -105,7 +109,7 @@ public protocol Message {
     completion: ((Swift.Result<ChatType.ChatThreadChannelType, Error>) -> Void)?
   )
 
-  /// Forward a given message from one channel to another
+  /// Forward a given message from one channel to another.
   ///
   /// - Parameters:
   ///   - channelId: Unique identifier of the channel to which you want to forward the message. You can forward a message to the same channel on which it was published or to any other
@@ -117,7 +121,7 @@ public protocol Message {
     completion: ((Swift.Result<Timetoken, Error>) -> Void)?
   )
 
-  /// Attach this message to its channel
+  /// Attach this message to its channel.
   ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call
@@ -127,7 +131,7 @@ public protocol Message {
     completion: ((Swift.Result<ChatType.ChatChannelType, Error>) -> Void)?
   )
 
-  /// Flag and report an inappropriate message to the admin
+  /// Flag and report an inappropriate message to the admin.
   ///
   /// - Parameters:
   ///   - reason: Reason for reporting/flagging a given message
@@ -139,7 +143,7 @@ public protocol Message {
     completion: ((Swift.Result<Timetoken, Error>) -> Void)?
   )
 
-  /// Create a thread (channel) for a selected message
+  /// Create a thread (channel) for a selected message.
   ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call
@@ -149,7 +153,7 @@ public protocol Message {
     completion: ((Swift.Result<ChatType.ChatThreadChannelType, Error>) -> Void)?
   )
 
-  /// Removes a thread (channel) for a selected message
+  /// Removes a thread (channel) for a selected message.
   ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call
@@ -159,10 +163,10 @@ public protocol Message {
     completion: ((Swift.Result<ChatType.ChatChannelType, Error>) -> Void)?
   )
 
-  /// Add or remove a reaction to a message
+  /// Add or remove a reaction to a message.
   ///
   /// It's a method for both adding and removing message reactions. It adds a string flag to the message if the current user hasn't added it yet
-  /// or removes it if the current user already added it before
+  /// or removes it if the current user already added it before.
   ///
   /// - Parameters:
   ///   - reaction: Emoji added to the message or removed from it by the current user
@@ -174,7 +178,7 @@ public protocol Message {
     completion: ((Swift.Result<Self, Error>) -> Void)?
   )
 
-  /// You can receive updates when this message and related message reactions are added, edited, or removed
+  /// You can receive updates when this message and related message reactions are added, edited, or removed.
   ///
   /// - Parameter completion: Function that takes a single Message object. It defines the custom behavior to be executed when detecting message or message reaction changes
   /// - Returns: Interface that lets you stop receiving message-related updates by invoking the `close()` method
@@ -182,11 +186,11 @@ public protocol Message {
     completion: @escaping ((Self) -> Void)
   ) -> AutoCloseable
 
-  /// If you delete a message, you can restore its content together with the attached files using the `restore()` method
+  /// If you delete a message, you can restore its content together with the attached files using the `restore()` method.
   ///
   /// This is possible, however, only if the message you want to restore was soft deleted (the soft parameter was set to true when deleting it). Hard deleted messages cannot be restored as their data
   /// is no longer available in Message Persistence. This method also requires Message Persistence configuration. To manage messages, you must enable Message Persistence for your app's keyset
-  /// in the Admin Portal and mark the Enable Delete-From-History option
+  /// in the Admin Portal and mark the Enable Delete-From-History option.
   ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call

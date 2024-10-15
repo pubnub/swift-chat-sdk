@@ -11,7 +11,7 @@
 import Foundation
 import PubNubSDK
 
-/// Represents an object that refers to a single user in a chat, including details about the user's identity, metadata, and actions they can perform
+/// Represents an object that refers to a single user in a chat, including details about the user's identity, metadata, and actions they can perform.
 public protocol User {
   associatedtype ChatType: Chat
 
@@ -38,7 +38,7 @@ public protocol User {
   /// Timestamp for the last time the user information was updated or modified
   var lastActiveTimestamp: TimeInterval? { get }
 
-  /// Receive updates when specific users are added, edited or removed
+  /// Receive updates when specific users are added, edited or removed.
   ///
   /// - Parameters:
   ///   - users: Collection containing the users to watch for updates
@@ -49,7 +49,7 @@ public protocol User {
     callback: @escaping (([ChatType.ChatUserType]) -> Void)
   ) -> AutoCloseable
 
-  /// Updates the metadata of the user with the provided details
+  /// Updates the metadata of the user with the provided details.
   ///
   /// - Parameters:
   ///   - name: The new name for the user
@@ -73,7 +73,7 @@ public protocol User {
     completion: ((Swift.Result<ChatType.ChatUserType, Error>) -> Void)?
   )
 
-  /// Deletes the user. If soft deletion is enabled, the user's data is retained but marked as inactive
+  /// Deletes the user. If soft deletion is enabled, the user's data is retained but marked as inactive.
   ///
   /// - Parameters:
   ///   - soft: If true, the user is soft deleted, retaining their data but making them inactive
@@ -85,7 +85,7 @@ public protocol User {
     completion: ((Swift.Result<ChatType.ChatUserType, Error>) -> Void)?
   )
 
-  /// Retrieves a list of channels where the user is currently present
+  /// Retrieves a list of channels where the user is currently present.
   ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call
@@ -95,7 +95,7 @@ public protocol User {
     completion: ((Swift.Result<[String], Error>) -> Void)?
   )
 
-  /// Checks whether the user is present in the specified channel
+  /// Checks whether the user is present in the specified channel.
   ///
   /// - Parameters:
   ///   - channelId: The ID of the channel to check for the user's presence
@@ -107,7 +107,7 @@ public protocol User {
     completion: ((Swift.Result<Bool, Error>) -> Void)?
   )
 
-  /// Retrieves the memberships associated with the user across different channels
+  /// Retrieves the memberships associated with the user across different channels.
   ///
   /// - Parameters:
   ///   - limit: The maximum number of memberships to retrieve
@@ -125,19 +125,17 @@ public protocol User {
     completion: ((Swift.Result<(memberships: [ChatType.ChatMembershipType], page: PubNubHashedPage?), Error>) -> Void)?
   )
 
-  /// Receives updates on a single User object
+  /// Receives updates on a single User object.
   ///
   /// - Parameters:
-  ///   - completion: The async `Result` of the method call
-  ///     - **Success**: A function that is triggered whenever the user's information are changed (added, edited, or removed)
-  ///     - **Failure**: An `Error` describing the failure
+  ///   - callback: A function that is triggered whenever the user's information are changed (added, edited, or removed)
   /// - Returns: An ``AutoCloseable`` that you can use to stop receiving objects events by invoking its `close()` method
   func streamUpdates(
     callback: @escaping ((ChatType.ChatUserType?) -> Void)
   ) -> AutoCloseable
 
-  /// Checks if the user is currently active
-  /// 
+  /// Checks if the user is currently active.
+  ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: A boolean value indicating whether the user is active

@@ -12,7 +12,7 @@ import Foundation
 import PubNubSDK
 
 /// An object that refers to a single piece of information emitted when someone is typing, receiving a message, mentioning others in a message, or reporting a message/user to the admin.
-/// Contrary to other Chat SDK entities, this object provides no methods. Its only purpose is to pass payloads of different types emitted when certain chat operations occur
+/// Contrary to other Chat SDK entities, this object provides no methods. Its only purpose is to pass payloads of different types emitted when certain chat operations occur.
 public protocol Event<T> {
   associatedtype C: Chat
   associatedtype T: EventContent
@@ -32,7 +32,7 @@ public protocol Event<T> {
 // This class was introduced due to the lack of support for runtime parameterized protocols, which are available starting from iOS 16.
 // We will be able to remove this class once we increase the deployment target.
 
-/// An object that wraps an ``Event``
+/// An object that wraps an ``Event``.
 public struct EventWrapper<T: EventContent> {
   /// Stores the underlying ``Event`` object
   public var event: any Event<T>

@@ -21,7 +21,7 @@ public struct QuotedMessage {
   /// Unique user identifier that identifies the user who published the quoted message
   public var userId: String
 
-  /// Initializes a new instance of ``QuotedMessage`` with the provided details
+  /// Initializes a new instance of ``QuotedMessage`` with the provided details.
   /// 
   /// - Parameters:
   ///   - timetoken: Timetoken of the orginal message that you quote

@@ -10,7 +10,7 @@
 
 import Foundation
 
-/// Enum representing different types of message actions that can be performed on a message
+/// Enum representing different types of message actions that can be performed on a message.
 public enum MessageActionType: String {
   /// Represents a message action related to adding or removing a reaction
   case reactions

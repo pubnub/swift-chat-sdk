@@ -20,7 +20,6 @@ import PubNubSDK
 ///
 /// It inherits all the documentation for methods defined in the ``Channel`` protocol.
 /// Refer to the ``Channel`` protocol for detailed information on how individual methods work.
-///
 public final class ChannelImpl {
   let target: BaseChannel<PubNubChat.Channel_, PubNubChat.Message>
 

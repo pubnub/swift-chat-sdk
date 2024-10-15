@@ -11,7 +11,7 @@
 import Foundation
 import PubNubSDK
 
-/// Encapsulates a message action in terms of batch history
+/// Encapsulates a message action in terms of batch history.
 public struct Action {
   /// The UUID of the publisher
   public var uuid: String

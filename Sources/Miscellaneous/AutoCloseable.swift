@@ -11,9 +11,9 @@
 import Foundation
 import PubNubChat
 
-/// A resource that can be closed or released
+/// A resource that can be closed or released.
 public protocol AutoCloseable {
-  /// Closes this resource
+  /// Closes this resource.
   func close()
 }
 

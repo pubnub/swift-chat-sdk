@@ -10,9 +10,9 @@
 
 import Foundation
 
-/// Represents a single message in a thread
+/// Represents a single message in a thread.
 ///
-/// ``ThreadMessage`` inherits all the functionalities provided by the ``Message`` protocol, and include additional behaviors and properties specific to threaded conversations
+/// ``ThreadMessage`` inherits all the functionalities provided by the ``Message`` protocol, and include additional behaviors and properties specific to threaded conversations.
 public protocol ThreadMessage: Message {
   /// Unique identifier of the main channel on which you create a subchannel (thread channel) and thread messages
   var parentChannelId: String { get }

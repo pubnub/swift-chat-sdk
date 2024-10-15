@@ -8,6 +8,53 @@ Our Chat SDK provides a number of out-of-the-box chat features like read receipt
 
 ## Topics
 
-### <!--@START_MENU_TOKEN@-->Group<!--@END_MENU_TOKEN@-->
+### Configuring your Chat
 
-- <!--@START_MENU_TOKEN@-->``Symbol``<!--@END_MENU_TOKEN@-->
+- ``ChatConfiguration``
+- ``PushNotificationsConfig``
+
+### Working with Chat instance
+
+- ``Chat``
+- ``ChatImpl``
+
+### Working with Channels
+
+- ``Channel``
+- ``ChannelImpl``
+- ``ThreadChannel``
+- ``ThreadChannelImpl``
+
+### Working with Users
+
+- ``User``
+- ``UserImpl``
+
+### Working with Memberships
+
+- ``Membership``
+- ``MembershipImpl``
+
+### Working with Messages
+
+- ``Message``
+- ``MessageImpl``
+- ``ThreadMessage``
+- ``ThreadMessageImpl``
+
+### Working with Custom Payloads
+
+- ``MessageActionType``
+- ``CustomPayloads``
+- ``GetMessagePublishBody``
+- ``GetMessageResponseBody``
+- ``DefaultGetMessagePublishBody``
+- ``DefaultGetMessageResponseBody``
+
+### Message Draft
+
+- ``MessageMentionedUsers``
+- ``MessageMentionedUser``
+- ``MessageReferencedChannels``
+- ``MessageReferencedChannel``
+- ``TextLink``

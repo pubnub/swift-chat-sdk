@@ -11,7 +11,7 @@
 import Foundation
 import PubNubSDK
 
-/// Represents the result of fetching all instances where a specific user was mentioned in channels or threads
+/// Represents the result of fetching all instances where a specific user was mentioned in channels or threads.
 public struct GetCurrentUserMentionsResult<M: Message> {
   /// An array of ``UserMentionDataWrapper`` objects representing the details of each mention of the user
   public var enhancedMentionsData: [UserMentionDataWrapper<M>]
@@ -22,13 +22,13 @@ public struct GetCurrentUserMentionsResult<M: Message> {
 // This class was introduced due to the lack of support for runtime parameterized protocols, which are available starting from iOS 16.
 // We will be able to remove this class once we increase the deployment target.
 
-/// A struct that wraps ``UserMentionData``
+/// A struct that wraps ``UserMentionData``.
 public struct UserMentionDataWrapper<M> {
   /// Stores the underlying mention data
   public var userMentionData: any UserMentionData<M>
 }
 
-/// A protocol representing the data related to a user mention event
+/// A protocol representing the data related to a user mention event.
 public protocol UserMentionData<M> {
   associatedtype M: Message
 
@@ -40,7 +40,7 @@ public protocol UserMentionData<M> {
   var userId: String { get }
 }
 
-/// Represents data related to a mention of a user in a channel
+/// Represents data related to a mention of a user in a channel.
 public struct ChannelMentionData<M: Message>: UserMentionData {
   /// The content containing information about the mention event
   public var event: EventContent.Mention
@@ -52,7 +52,7 @@ public struct ChannelMentionData<M: Message>: UserMentionData {
   public var channelId: String
 }
 
-/// Represents data related to a mention of a user in a thread channel
+/// Represents data related to a mention of a user in a thread channel.
 public struct ThreadMentionData<M: Message>: UserMentionData {
   /// The content containing information about the mention event
   public var event: EventContent.Mention

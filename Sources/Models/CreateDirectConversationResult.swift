@@ -10,7 +10,7 @@
 
 import Foundation
 
-/// Represents the result of creating a direct conversation (private channel) between two users
+/// Represents the result of creating a direct conversation (private channel) between two users.
 public struct CreateDirectConversationResult<C: Channel, M: Membership> {
   /// The ``Channel`` object representing the newly created direct conversation
   public var channel: C

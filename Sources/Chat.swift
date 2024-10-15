@@ -12,14 +12,14 @@ import Foundation
 import PubNubSDK
 import Combine
 
-/// To communicate with PubNub, you can use various methods on ``Chat`` object.
+/// A protocol that defines the basic structure and behavior for a chat.
 ///
 /// For example, you can use ``deleteChannel(id:soft:completion:)``
 /// to remove a given channel or ``wherePresent(userId:completion:)`` to check which channels a given user is subscribed to.
 ///
 /// By calling methods on the ``Chat`` entity, you create chat objects like ``Channel``, ``User``, ``Message``, ``Membership``,  ``ThreadChannel``,
 /// and ``ThreadMessage``. These objects also expose Chat API under various methods, letting you perform CRUD operations
-/// on messages, channels, users, the related user-channel membership, and many more
+/// on messages, channels, users, the related user-channel membership, and many more.
 public protocol Chat: AnyObject {
   associatedtype ChatUserType: User
   associatedtype ChatChannelType: Channel
@@ -36,12 +36,12 @@ public protocol Chat: AnyObject {
   var pubNub: PubNub { get }
   /// Object representing current user
   var currentUser: ChatUserType { get }
-  /// The name of the action that represents editing a message.
+  /// The name of the action that represents editing a message
   var editMessageActionName: String { get }
-  /// The name of the action that represents deleting a message.
+  /// The name of the action that represents deleting a message
   var deleteMessageActionName: String { get }
 
-  /// Initializes the current instance and performs any necessary setup
+  /// Initializes the current instance and performs any necessary setup.
   ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call
@@ -51,7 +51,7 @@ public protocol Chat: AnyObject {
     completion: ((Swift.Result<Self, Error>) -> Void)?
   )
 
-  /// Creates a new user
+  /// Creates a new user.
   ///
   /// - Parameters:
   ///   - user: A `User` object containing the details of the user to be created.
@@ -63,8 +63,8 @@ public protocol Chat: AnyObject {
     completion: ((Swift.Result<ChatUserType, Error>) -> Void)?
   )
 
-  /// Creates a new user with a unique User ID
-  /// 
+  /// Creates a new user with a unique User ID.
+  ///
   /// - Parameters:
   ///   - id: Unique user identifier. A User ID is a UTF-8 encoded, unique string of up to 92 characters used to identify a single client (end user, device, or server)
   ///   - name: Display name for the user (must not be empty or consist only of whitespace characters)
@@ -101,7 +101,7 @@ public protocol Chat: AnyObject {
     completion: ((Swift.Result<ChatUserType?, Error>) -> Void)?
   )
 
-  /// Returns a paginated list of all users and their details
+  /// Returns a paginated list of all users and their details.
   ///
   /// - Parameters:
   ///   - filter: Expression used to filter the results. Returns only these users whose properties satisfy the given expression are returned. The filtering language is defined in [documentation](https://www.pubnub.com/docs/general/metadata/filtering)
@@ -119,7 +119,7 @@ public protocol Chat: AnyObject {
     completion: ((Swift.Result<(users: [ChatUserType], page: PubNubHashedPage?), Error>) -> Void)?
   )
 
-  /// Updates a user's metadata
+  /// Updates a user's metadata.
   ///
   /// - Parameters:
   ///   - id: Unique user identifier. A User ID is a UTF-8 encoded, unique string of up to 92 characters used to identify a single client (end user, device, or server)
@@ -145,7 +145,7 @@ public protocol Chat: AnyObject {
     completion: ((Swift.Result<ChatUserType, Error>) -> Void)?
   )
 
-  /// Deletes a user with or without deleting its historical data from the App Context storage
+  /// Deletes a user with or without deleting its historical data from the App Context storage.
   ///
   /// - Parameters:
   ///   - id: Unique user identifier
@@ -159,7 +159,7 @@ public protocol Chat: AnyObject {
     completion: ((Swift.Result<ChatUserType, Error>) -> Void)?
   )
 
-  /// Retrieves list of channel identifiers where a given user is present
+  /// Retrieves list of channel identifiers where a given user is present.
   ///
   /// - Parameters:
   ///   - userId: Unique user identifier
@@ -171,7 +171,7 @@ public protocol Chat: AnyObject {
     completion: ((Swift.Result<[String], Error>) -> Void)?
   )
 
-  /// Returns information if the user is present on a specified channel
+  /// Returns information if the user is present on a specified channel.
   ///
   /// - Parameters:
   ///   - userId: Unique user identifier
@@ -215,7 +215,7 @@ public protocol Chat: AnyObject {
     completion: ((Swift.Result<(channels: [ChatChannelType], page: PubNubHashedPage?), Error>) -> Void)?
   )
 
-  /// Allows to update the ``Channel`` metadata
+  /// Allows to update the ``Channel`` metadata.
   ///
   /// - Parameters:
   ///   - id: Unique channel identifier
@@ -237,7 +237,7 @@ public protocol Chat: AnyObject {
     completion: ((Swift.Result<ChatChannelType, Error>) -> Void)?
   )
 
-  /// Allows to delete ``Channel`` (with or without deleting its historical data from the App Context storage)
+  /// Allows to delete ``Channel`` with or without deleting its historical data from the App Context storage.
   ///
   /// - Parameters:
   ///   - id: Unique channel identifier (up to 92 UTF-8 byte sequences)
@@ -251,7 +251,7 @@ public protocol Chat: AnyObject {
     completion: ((Swift.Result<ChatChannelType, Error>) -> Void)?
   )
 
-  /// Returns a list of ``User`` identifiers present on the given ``Channel``
+  /// Returns a list of ``User`` identifiers present on the given ``Channel``.
   ///
   /// - Parameters:
   ///   - channelId: Unique identifier of the channel where you want to check all present users
@@ -268,7 +268,7 @@ public protocol Chat: AnyObject {
   /// - Parameters:
   ///   - channelId: Channel where you want to send the events
   ///   - payload: The payload of the emitted event. Use one of ``EventContent`` subclasses. For example: `EventContent.TextMessageContent`, `EventContent.Mention`
-  ///   - mergePayloadWith: Metadata in the form of key-value pairs you want to pass as events from your chat app. Can contain anything in case of custom events, but has a predefined structure for other types of events
+  ///   - otherPayload: Metadata in the form of key-value pairs you want to pass as events from your chat app. Can contain anything in case of custom events, but has a predefined structure for other types of events
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: A `timetoken` value that holds the timestamp of the emitted event
   ///     - **Failure**: An `Error` describing the failure
@@ -279,7 +279,7 @@ public protocol Chat: AnyObject {
     completion: ((Swift.Result<Timetoken, Error>) -> Void)?
   )
 
-  /// Creates a public channel that let users engage in open conversations with many people. Unlike group chats, anyone can join public channels
+  /// Creates a public channel that let users engage in open conversations with many people. Unlike group chats, anyone can join public channels.
   ///
   /// - Parameters:
   ///   - channelId: ID of the public channel. The channel ID is created automatically using the UUID generator. You can override it by providing your own ID
@@ -299,10 +299,10 @@ public protocol Chat: AnyObject {
     completion: ((Swift.Result<ChatChannelType, Error>) -> Void)?
   )
 
-  /// Creates channel for private conversations between two users, letting one person initiate the chat, letting one person initiate the chat and send an invitation to another person
+  /// Creates channel for private conversations between two users, letting one person initiate the chat, letting one person initiate the chat and send an invitation to another person.
   ///
   /// The channel ID is created automatically by a hashing function that takes the string of two user names joined by &, computes a numeric value based on the characters
-  /// in that string, and adds the direct prefix in front. For example, `direct.1234567890`. You can override this default value by providing your own ID
+  /// in that string, and adds the direct prefix in front. For example, `direct.1234567890`. You can override this default value by providing your own ID.
   ///
   /// - Parameters:
   ///   - invitedUser: User that you invite to join a channel
@@ -326,7 +326,7 @@ public protocol Chat: AnyObject {
     completion: ((Swift.Result<CreateDirectConversationResult<ChatChannelType, ChatMembershipType>, Error>) -> Void)?
   )
 
-  /// Create channel for group communication, promoting collaboration and teamwork
+  /// Create channel for group communication, promoting collaboration and teamwork.
   ///
   /// - Parameters:
   ///   - invitedUsers: Users that you invite to join a channel
@@ -350,7 +350,7 @@ public protocol Chat: AnyObject {
     completion: ((Swift.Result<CreateGroupConversationResult<ChatChannelType, ChatMembershipType>, Error>) -> Void)?
   )
 
-  /// Lets you watch a selected channel for any new custom events emitted by your chat app
+  /// Lets you watch a selected channel for any new custom events emitted by your chat app.
   ///
   /// - Parameters:
   ///   - type: The type of object that conforms to `EventContent` for which to listen
@@ -365,7 +365,7 @@ public protocol Chat: AnyObject {
     callback: @escaping ((EventWrapper<T>) -> Void)
   ) -> AutoCloseable
 
-  /// Specifies the channel or channels on which a previously registered device will receive push notifications for new messages
+  /// Specifies the channel or channels on which a previously registered device will receive push notifications for new messages.
   ///
   /// - Parameters:
   ///   - channels: List of channel identifiers
@@ -377,7 +377,7 @@ public protocol Chat: AnyObject {
     completion: ((Swift.Result<Void, Error>) -> Void)?
   )
 
-  /// Specifies the channel or channels on which a registered device will no longer receive push notifications for new messages
+  /// Specifies the channel or channels on which a registered device will no longer receive push notifications for new messages.
   ///
   /// - Parameters:
   ///   - channels: List of channel identifiers
@@ -389,7 +389,7 @@ public protocol Chat: AnyObject {
     completion: ((Swift.Result<Void, Error>) -> Void)?
   )
 
-  /// Disable push notifications for a device on all registered channels
+  /// Disable push notifications for a device on all registered channels.
   ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call
@@ -399,7 +399,7 @@ public protocol Chat: AnyObject {
     completion: ((Swift.Result<Void, Error>) -> Void)?
   )
 
-  /// Returns info on all messages you didn't read on all joined channels. You can display this number on UI in the channel list of your chat app
+  /// Returns info on all messages you didn't read on all joined channels. You can display this number on UI in the channel list of your chat app.
   ///
   /// - Parameters:
   ///   - limit: Number of objects to return in response. The maximum value is 100
@@ -417,7 +417,7 @@ public protocol Chat: AnyObject {
     completion: ((Swift.Result<[GetUnreadMessagesCount<ChannelImpl, MembershipImpl>], Error>) -> Void)?
   )
 
-  /// Allows you to mark as read all messages you didn't read on all joined channels
+  /// Allows you to mark as read all messages you didn't read on all joined channels.
   ///
   /// - Parameters:
   ///   - limit: Number of objects to return in response. The maximum value is 100
@@ -435,7 +435,7 @@ public protocol Chat: AnyObject {
     completion: ((Swift.Result<(memberships: [ChatMembershipType], page: PubNubHashedPage?), Error>) -> Void)?
   )
 
-  /// Retrieves all channels referenced in the `channel.sendText(...)`  that match the provided 3-letter string from your app's keyset
+  /// Retrieves all channels referenced in the `channel.sendText(...)`  that match the provided 3-letter string from your app's keyset.
   ///
   /// - Parameters:
   ///   - text: At least a 3-letter string typed in after `#` with the channel name you want to reference
@@ -449,7 +449,7 @@ public protocol Chat: AnyObject {
     completion: ((Swift.Result<[ChatChannelType], Error>) -> Void)?
   )
 
-  /// Returns all suggested users that match the provided 3-letter string
+  /// Returns all suggested users that match the provided 3-letter string.
   ///
   /// - Parameters:
   ///   - text: At least a 3-letter string typed in after `@` with the user name you want to mention
@@ -463,7 +463,7 @@ public protocol Chat: AnyObject {
     completion: ((Swift.Result<[ChatUserType], Error>) -> Void)?
   )
 
-  /// Retrieves all channels where your registered device receives push notifications
+  /// Retrieves all channels where your registered device receives push notifications.
   ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call
@@ -473,7 +473,8 @@ public protocol Chat: AnyObject {
     completion: ((Swift.Result<[String], Error>) -> Void)?
   )
 
-  /// Returns historical events that were emitted with the `EmitEventMethod.publish` method on selected ``Channel``
+  /// Returns historical events that were emitted with the `EmitEventMethod.publish` method on selected ``Channel``.
+  ///
   /// - Parameters:
   ///   - channelId: Channel from which you want to pull historical messages
   ///   - startTimetoken: Timetoken delimiting the start of a time slice (exclusive) to pull events from. For details, refer to the History section of PubNub Swift SDK
@@ -490,11 +491,12 @@ public protocol Chat: AnyObject {
     completion: ((Swift.Result<(events: [EventWrapper<EventContent>], isMore: Bool), Error>) -> Void)?
   )
 
-  /// Returns all instances when a specific user was mentioned by someone - either in channels or threads
+  /// Returns all instances when a specific user was mentioned by someone - either in channels or threads.
+  ///
   /// - Parameters:
   ///   - startTimetoken: Timetoken delimiting the start of a time slice (exclusive) to pull messages with mentions from. For details, refer to the History section of PubNub Swift SDK
   ///   - endTimetoken: Timetoken delimiting the end of a time slice (inclusive) to pull messages with mentions from. For details, refer to the History section of PubNub Swift SDK
-  ///   - count: Number of users to return in a single call. You can pull a maximum number of 100 users in a single call.
+  ///   - count: Number of users to return in a single call. You can pull a maximum number of 100 users in a single call
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: A `Tuple` containing an `Array` of ``UserMentionDataWrapper``, and boolean indicating whether there are more events available beyond the current result set
   ///     - **Failure**: An `Error` describing the failure

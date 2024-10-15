@@ -11,7 +11,7 @@
 import Foundation
 import PubNubSDK
 
-/// Membership is an object that refers to a single user-channel relationship in a chat
+/// Membership is an object that refers to a single user-channel relationship in a chat.
 public protocol Membership {
   associatedtype ChatType: Chat
 
@@ -30,7 +30,7 @@ public protocol Membership {
   /// Timetoken of the last message a user read on a given channel
   var lastReadMessageTimetoken: Timetoken? { get }
 
-  /// You can receive updates when specific user-channel ``Membership`` object(s) are added, edited, or removed
+  /// Receive updates when specific memberships are added, edited or removed.
   ///
   /// - Parameters:
   ///   - memberships: Collection containing the ``Membership`` to watch for updates
@@ -41,7 +41,7 @@ public protocol Membership {
     callback: @escaping (([Self]) -> Void)
   ) -> AutoCloseable
 
-  /// Setting the last read message for users lets you implement the Read Receipts feature and monitor which channel member read which message
+  /// Setting the last read message for users lets you implement the Read Receipts feature and monitor which channel member read which message.
   ///
   /// - Parameters:
   ///   - message: Last read message on a given channel with the timestamp that gets added to the user-channel membership as the `lastReadMessageTimetoken` property
@@ -65,7 +65,7 @@ public protocol Membership {
     completion: ((Swift.Result<ChatType.ChatMembershipType, Error>) -> Void)?
   )
 
-  /// Setting the last read message for users lets you implement the Read Receipts feature and monitor which channel member read which message
+  /// Setting the last read message for users lets you implement the Read Receipts feature and monitor which channel member read which message.
   ///
   /// - Parameters:
   ///   - timetoken: Timetoken of the last read message on a given channel that gets added to the user-channel membership as the `lastReadMessageTimetoken` property
@@ -77,7 +77,7 @@ public protocol Membership {
     completion: ((Swift.Result<ChatType.ChatMembershipType, Error>) -> Void)?
   )
 
-  /// Returns the number of messages you didn't read on a given channel. You can display this number on UI in the channel list of your chat app
+  /// Returns the number of messages you didn't read on a given channel. You can display this number on UI in the channel list of your chat app.
   ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call

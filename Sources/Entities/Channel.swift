@@ -11,7 +11,7 @@
 import Foundation
 import PubNubSDK
 
-/// Channel is an object that refers to a single chat room
+/// Channel is an object that refers to a single chat room.
 public protocol Channel {
   associatedtype ChatType: Chat
   associatedtype MessageType: Message
@@ -30,11 +30,11 @@ public protocol Channel {
   var updated: String? { get }
   /// Current status of the channel, like online, offline, or archived
   var status: String? { get }
-  /// Represents the type of channel
+  /// Represents the type of the given ``Channel``
   var type: ChannelType? { get }
 
-  /// Receive updates when specific channels are added, edited or removed
-  /// 
+  /// Receive updates when specific channels are added, edited or removed.
+  ///
   /// - Parameters:
   ///   - channels: Collection containing the channels to watch for updates
   ///   - callback: Defines the custom behavior to be executed when detecting channels changes
@@ -44,7 +44,8 @@ public protocol Channel {
     callback: @escaping (([Self]) -> Void)
   ) -> AutoCloseable
 
-  /// Allows to update the ``Channel`` metadata
+  /// Allows to update the ``Channel`` metadata.
+  ///
   /// - Parameters:
   ///   - name: Display name for the channel
   ///   - custom:  Any custom properties or metadata associated with the channel in the form key-value pairs
@@ -63,7 +64,8 @@ public protocol Channel {
     completion: ((Swift.Result<ChatType.ChatChannelType, Error>) -> Void)?
   )
 
-  /// Allows to delete  an existing ``Channel`` (with or without deleting its historical data from the App Context storage)
+  /// Allows to delete  an existing ``Channel`` with or without deleting its historical data from the App Context storage.
+  ///
   /// - Parameters:
   ///   - soft: Decide if you want to permanently remove channel metadata
   ///   - completion: The async `Result` of the method call
@@ -74,7 +76,7 @@ public protocol Channel {
     completion: ((Swift.Result<ChatType.ChatChannelType, Error>) -> Void)?
   )
 
-  /// Forwards a message to existing channel
+  /// Forwards a message to existing channel.
   ///
   /// - Parameters:
   ///   - message: Message object that you want to forward to the channel
@@ -100,7 +102,7 @@ public protocol Channel {
     completion: ((Swift.Result<Void, Error>) -> Void)?
   )
 
-  /// Deactivates a typing indicator on a given channel
+  /// Deactivates a typing indicator on a given channel.
   ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call
@@ -110,7 +112,7 @@ public protocol Channel {
     completion: ((Swift.Result<Void, Error>) -> Void)?
   )
 
-  /// Enables continuous tracking of typing activity within the ``Channel``
+  /// Enables continuous tracking of typing activity within the ``Channel``.
   ///
   /// - Parameter callback: Callback function passed as a parameter. It defines the custom behavior to be executed whenever a user starts/stops typin
   /// - Returns: ``AutoCloseable`` you can call to disconnect (unsubscribe) from the channel and stop receiving signal events for someone typing by invoking the `close()` method
@@ -118,7 +120,7 @@ public protocol Channel {
     callback: @escaping (([String]) -> Void)
   ) -> AutoCloseable
 
-  /// Returns a list of users present on the ``Channel``
+  /// Returns a list of users present on the ``Channel``.
   ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call
@@ -128,7 +130,7 @@ public protocol Channel {
     completion: ((Swift.Result<[String], Error>) -> Void)?
   )
 
-  /// Returns information if the user is present on the ``Channel``
+  /// Returns information if the user is present on the ``Channel``.
   ///
   /// - Parameters:
   ///   - userId: ID of the user whose presence you want to check
@@ -140,8 +142,8 @@ public protocol Channel {
     completion: ((Swift.Result<Bool, Error>) -> Void)?
   )
 
-  /// Returns historical messages for the ``Channel``
-  /// 
+  /// Returns historical messages for the ``Channel``.
+  ///
   /// - Parameters:
   ///   - startTimetoken: The start value for the set of remote data
   ///   - endTimetoken: The bounded end value that will be eventually fetched to
@@ -156,12 +158,12 @@ public protocol Channel {
     completion: ((Swift.Result<(messages: [MessageType], isMore: Bool), Error>) -> Void)?
   )
 
-  /// Sends text to the ``Channel``
+  /// Sends text to the ``Channel``.
   ///
   /// The following example describes how `mentionedUsers` and `referencedChannels` work.
   /// For example, `{ 0: { id: 123, name: "Mark" }, 2: { id: 345, name: "Rob" } }` means that Mark will be shown on the first mention (@) in the message
   /// and Rob on the third. The same rule applies for referenced channels. For example, `{ 0: { id: 123, name: "Support" }, 2: { id: 345, name: "Off-topic" } }`
-  /// means that Support will be shown on the first reference in the message and Off-topic on the third
+  /// means that Support will be shown on the first reference in the message and Off-topic on the third.
   ///
   /// - Parameters:
   ///   - text: Text that you want to send to the selected channel
@@ -192,7 +194,12 @@ public protocol Channel {
     completion: ((Swift.Result<Timetoken, Error>) -> Void)?
   )
 
-  /// Sends text to the ``Channel``
+  /// Sends text to the ``Channel``.
+  ///
+  /// The following example describes how `mentionedUsers` and `referencedChannels` work.
+  /// For example, `{ 0: { id: 123, name: "Mark" }, 2: { id: 345, name: "Rob" } }` means that Mark will be shown on the first mention (@) in the message
+  /// and Rob on the third. The same rule applies for referenced channels. For example, `{ 0: { id: 123, name: "Support" }, 2: { id: 345, name: "Off-topic" } }`
+  /// means that Support will be shown on the first reference in the message and Off-topic on the third.
   ///
   /// - Parameters:
   ///   - text: Text that you want to send to the selected channel
@@ -216,7 +223,7 @@ public protocol Channel {
     completion: ((Swift.Result<Timetoken, Error>) -> Void)?
   )
 
-  /// Requests another user to join a channel (except public channel) and become its member
+  /// Requests another user to join a channel (except public channel) and become its member.
   ///
   /// - Parameters:
   ///   - user: A user that you want to invite to a channel
@@ -228,7 +235,7 @@ public protocol Channel {
     completion: ((Swift.Result<ChatType.ChatMembershipType, Error>) -> Void)?
   )
 
-  /// Requests other users to join a channel and become its members. You can invite up to 100 users at once
+  /// Requests other users to join a channel and become its members. You can invite up to 100 users at once.
   ///
   /// - Parameters:
   ///   - users: List of users you want to invite to the ``Channel``. You can invite up to 100 users in one call
@@ -240,7 +247,7 @@ public protocol Channel {
     completion: ((Swift.Result<[ChatType.ChatMembershipType], Error>) -> Void)?
   )
 
-  /// Returns the list of all channel members
+  /// Returns the list of all channel members.
   ///
   /// - Parameters:
   ///   - limit: Number of objects to return in response
@@ -258,7 +265,7 @@ public protocol Channel {
     completion: ((Swift.Result<(memberships: [ChatType.ChatMembershipType], page: PubNubHashedPage?), Error>) -> Void)?
   )
 
-  /// Watch the ``Channel`` content without a need to join the ``Channel``
+  /// Watch the ``Channel`` content without a need to join the ``Channel``.
   ///
   /// - Parameter callback: Defines the custom behavior to be executed whenever a message is received on the ``Channel``
   /// - Returns: ``AutoCloseable`` interface you can call to stop listening for new messages and clean up resources when they are no longer needed by invoking the `close()` method
@@ -280,7 +287,7 @@ public protocol Channel {
     completion: ((Swift.Result<(membership: ChatType.ChatMembershipType, disconnect: AutoCloseable?), Error>) -> Void)?
   )
 
-  /// Remove user's channel membership
+  /// Remove user's channel membership.
   ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call
@@ -290,7 +297,7 @@ public protocol Channel {
     completion: ((Swift.Result<Void, Error>) -> Void)?
   )
 
-  /// Fetches the message that is currently pinned to the channel
+  /// Fetches the message that is currently pinned to the channel.
   ///
   /// There can be only one pinned message on a channel at a time.
   ///
@@ -302,7 +309,7 @@ public protocol Channel {
     completion: ((Swift.Result<(ChatType.ChatMessageType)?, Error>) -> Void)?
   )
 
-  /// Fetches the message from Message Persistence based on the message `timetoken`
+  /// Fetches the message from Message Persistence based on the message `timetoken`.
   ///
   /// - Parameters:
   ///   - timetoken: Timetoken of the message you want to retrieve from Message Persistence
@@ -314,7 +321,7 @@ public protocol Channel {
     completion: ((Swift.Result<(ChatType.ChatMessageType)?, Error>) -> Void)?
   )
 
-  /// Register a device on the ``Channel`` to receive push notifications. Push options can be configured in ``ChatConfiguration``
+  /// Register a device on the ``Channel`` to receive push notifications. Push options can be configured in ``ChatConfiguration``.
   ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call
@@ -324,7 +331,7 @@ public protocol Channel {
     completion: ((Swift.Result<Void, Error>) -> Void)?
   )
 
-  /// Unregister a device from the ``Channel``
+  /// Unregister a device from the ``Channel``.
   ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call
@@ -334,7 +341,7 @@ public protocol Channel {
     completion: ((Swift.Result<Void, Error>) -> Void)?
   )
 
-  /// Attaches messages to the ``Channel``. Replace an already pinned message
+  /// Attaches messages to the ``Channel``. Replace an already pinned message.
   ///
   /// There can be only one pinned message on a channel at a time.
   ///
@@ -348,7 +355,7 @@ public protocol Channel {
     completion: ((Swift.Result<Self, Error>) -> Void)?
   )
 
-  /// Unpins a message from the ``Channel``
+  /// Unpins a message from the ``Channel``.
   ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call
@@ -358,7 +365,7 @@ public protocol Channel {
     completion: ((Swift.Result<Self, Error>) -> Void)?
   )
 
-  /// Receives updates on a single ``Channel`` object
+  /// Receives updates on a single ``Channel`` object.
   ///
   /// - Parameter callback: Function that takes a single Channel object. It defines the custom behavior to be executed when detecting channel changes
   /// - Returns: ``AutoCloseable`` interface that lets you stop receiving channel-related updates (objects events) and clean up resources by invoking the `close()` method
@@ -374,7 +381,7 @@ public protocol Channel {
     callback: @escaping (([Timetoken: [String]]) -> Void)
   ) -> AutoCloseable
 
-  /// Returns all files attached to messages on a given channel
+  /// Returns all files attached to messages on a given channel.
   ///
   /// - Parameters:
   ///   - limit: Number of files to return
@@ -388,7 +395,7 @@ public protocol Channel {
     completion: ((Swift.Result<(files: [GetFileItem], page: PubNubHashedPage?), Error>) -> Void)?
   )
 
-  /// Delete sent files or files from published messages
+  /// Delete sent files or files from published messages.
   ///
   /// - Parameters:
   ///   - id: Unique identifier assigned to the file by `PubNub`
@@ -402,7 +409,7 @@ public protocol Channel {
     completion: ((Swift.Result<Void, Error>) -> Void)?
   )
 
-  /// Enables real-time tracking of users connecting to or disconnecting from a ``Channel``
+  /// Enables real-time tracking of users connecting to or disconnecting from a ``Channel``.
   ///
   /// - Parameter callback: Defines the custom behavior to be executed when detecting user presence event
   /// - Returns: ``AutoCloseable`` interface that lets you stop receiving presence-related updates (presence events) by invoking the `close()` method
@@ -410,7 +417,7 @@ public protocol Channel {
     callback: @escaping (Set<String>) -> Void
   ) -> AutoCloseable
 
-  /// Fetches all suggested users that match the provided 3-letter string from [Channel]
+  /// Fetches all suggested users that match the provided 3-letter string from ``Channel``.
   ///
   /// - Parameters:
   ///   - text: At least a 3-letter string typed in after `@` with the user name you want to mention
@@ -424,7 +431,7 @@ public protocol Channel {
     completion: ((Swift.Result<[ChatType.ChatMembershipType], Error>) -> Void)?
   )
 
-  /// Fetches a list of reported message events for ``Channel`` within optional time and count constraints
+  /// Fetches a list of reported message events for ``Channel`` within optional time and count constraints.
   ///
   /// - Parameters:
   ///   - startTimetoken: The start timetoken for fetching the history of reported messages, which allows specifying the point in time where the history retrieval should begin
@@ -440,7 +447,7 @@ public protocol Channel {
     completion: ((Swift.Result<(events: [EventWrapper<EventContent>], isMore: Bool), Error>) -> Void)?
   )
 
-  /// As an admin of your chat app, monitor all events emitted when someone reports an offensive message
+  /// As an admin of your chat app, monitor all events emitted when someone reports an offensive message.
   ///
   /// - Parameter callback: Callback function passed as a parameter. It defines the custom behavior to be executed when detecting new message report events
   /// - Returns: ``AutoCloseable`` interface that lets you stop receiving report-related updates (report events) by invoking the close() method

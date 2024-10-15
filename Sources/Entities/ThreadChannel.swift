@@ -22,7 +22,7 @@ public protocol ThreadChannel: Channel {
   /// Message for which the thread was created
   var parentMessage: ChatType.ChatMessageType { get }
 
-  /// Pins a selected thread message to the thread channel
+  /// Pins a selected thread message to the thread channel.
   ///
   /// - Parameters:
   ///   - message: A message you want to pin to the selected thread channel
@@ -34,7 +34,7 @@ public protocol ThreadChannel: Channel {
     completion: ((Swift.Result<ChatType.ChatChannelType, Error>) -> Void)?
   )
 
-  /// Unpins the previously pinned thread message from the thread channel
+  /// Unpins the previously pinned thread message from the thread channel.
   ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call

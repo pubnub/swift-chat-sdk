@@ -25,7 +25,7 @@
 
 - ``whoIsPresent(completion:)``
 - ``isPresent(userId:completion:)``
-- ``join(fil:callback:completion:)``
+- ``join(custom:callback:completion:)``
 - ``leave(completion:)``
 - ``streamPresence(callback:)``
 

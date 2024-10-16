@@ -11,12 +11,23 @@
 import Foundation
 import PubNubChat
 
+/// The `MessageReferencedChannels` typealias represents a collection of channels that are referenced in a message,
+/// where the key indicates the occurrence of the channel reference in the text (starting from 0) and the value is a ``MessageReferencedChannel`` object containing
+/// details about the referenced channel.
 public typealias MessageReferencedChannels = [Int: MessageReferencedChannel]
 
+/// Represents a channel which was mentioned in a message.
 public struct MessageReferencedChannel {
+  /// The unique identifier of the referenced channel
   public var id: String
+  /// The display name of the referenced channel
   public var name: String
 
+  /// Initializes a new instance of ``MessageReferencedChannels`` with the provided details.
+  ///
+  /// - Parameters:
+  ///   - id: The unique identifier of the referenced channel
+  ///   - name: The display name of the referenced channel
   public init(id: String, name: String) {
     self.id = id
     self.name = name

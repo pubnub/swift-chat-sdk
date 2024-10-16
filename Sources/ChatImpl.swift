@@ -12,12 +12,31 @@ import Foundation
 import PubNubChat
 import PubNubSDK
 
+/// A concrete implementation of the ``Chat`` protocol.
+///
+/// This class should be used as a ready-to-use solution for most use cases requiring the features defined by the ``Chat`` protocol. After creating an instance,
+/// make sure to call the `initialize(completion:)` method to properly set up the instance before use.
+///
+/// This class inherits all the documentation for methods defined in the ``Chat`` protocol.
+/// Refer to the ``Chat`` protocol for details on how individual methods work.
 public final class ChatImpl {
+  /// Allows you to access any Swift SDK method. For example, if you want to call a method available in the
+  /// App Context API, you'd use `pubNub.allUUIDMetadata(include:filter:sort:limit:page:custom:completion)`
   public let pubNub: PubNub
+  /// Contains chat app configuration settings, such as ``LogLevel`` or typing timeout
+  /// that you can provide when initializing your chat app with the init method
   public let config: ChatConfiguration
 
   let chat: PubNubChat.ChatImpl
 
+  /// Initializes a new instance with the given chat and `PubNub` configurations.
+  ///
+  /// This initializer sets up the object using the provided chat configuration and `PubNub` configuration.
+  /// After creating an instance, you must call the ``initialize(completion:)`` method before using the object.
+  ///
+  /// - Parameters:
+  ///   - chatConfiguration: A configuration object of type ``ChatConfiguration`` that defines the chat settings
+  ///   - pubNubConfiguration: A configuration object of type `PubNubConfiguration` that defines the `PubNub` settings
   public init(chatConfiguration: ChatConfiguration, pubNubConfiguration: PubNubConfiguration) {
     pubNub = PubNub(configuration: pubNubConfiguration)
     config = chatConfiguration
@@ -25,11 +44,8 @@ public final class ChatImpl {
 
     // Provide a mechanism for reading a version number from a .plist file.
     pubNub.setConsumer(identifier: "chat-sdk", value: "CA-SWIFT/0.8.0")
-
-    ChatAdapter.associate(
-      chat: self,
-      rawChat: chat
-    )
+    // Creates an association between KMP chat and the current instance
+    ChatAdapter.associate(chat: self, rawChat: chat)
   }
 
   init(pubNub: PubNub, configuration: ChatConfiguration) {
@@ -39,11 +55,8 @@ public final class ChatImpl {
 
     // Provide a mechanism for reading a version number from a .plist file.
     pubNub.setConsumer(identifier: "chat-sdk", value: "CA-SWIFT/0.8.0")
-
-    ChatAdapter.associate(
-      chat: self,
-      rawChat: chat
-    )
+    // Creates an association between KMP chat and the current instance
+    ChatAdapter.associate(chat: self, rawChat: chat)
   }
 
   deinit {
@@ -64,6 +77,32 @@ extension ChatImpl {
       deleteMessageActionName: config.customPayloads?.deleteMessageActionName ?? MessageActionType.deleted.rawValue,
       timerManager: TimerManagerImpl()
     )
+  }
+
+  func createChannel(
+    id: String,
+    name: String? = nil,
+    description: String? = nil,
+    custom: [String: JSONCodableScalar]? = nil,
+    type: ChannelType? = nil,
+    status: String? = nil,
+    completion: ((Swift.Result<ChannelImpl, Error>) -> Void)? = nil
+  ) {
+    chat.createChannel(
+      id: id,
+      name: name,
+      description: description,
+      custom: custom?.asCustomObject(),
+      type: type?.transform(),
+      status: status
+    ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.Channel_>) in
+      switch result.result {
+      case let .success(channel):
+        completion?(.success(ChannelImpl(channel: channel)))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
   }
 }
 
@@ -273,32 +312,6 @@ extension ChatImpl: Chat {
     }
   }
 
-  public func createChannel(
-    id: String,
-    name: String? = nil,
-    description: String? = nil,
-    custom: [String: JSONCodableScalar]? = nil,
-    type: ChannelType? = nil,
-    status: String? = nil,
-    completion: ((Swift.Result<ChannelImpl, Error>) -> Void)? = nil
-  ) {
-    chat.createChannel(
-      id: id,
-      name: name,
-      description: description,
-      custom: custom?.asCustomObject(),
-      type: type?.transform(),
-      status: status
-    ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.Channel_>) in
-      switch result.result {
-      case let .success(channel):
-        completion?(.success(ChannelImpl(channel: channel)))
-      case let .failure(error):
-        completion?(.failure(error))
-      }
-    }
-  }
-
   public func getChannel(
     channelId: String,
     completion: ((Swift.Result<ChannelImpl?, Error>) -> Void)? = nil
@@ -388,23 +401,6 @@ extension ChatImpl: Chat {
       switch result.result {
       case let .success(channel):
         completion?(.success(ChannelImpl(channel: channel)))
-      case let .failure(error):
-        completion?(.failure(error))
-      }
-    }
-  }
-
-  public func forwardMessage(
-    message: MessageImpl,
-    channelId: String,
-    completion: ((Swift.Result<Timetoken, Error>) -> Void)? = nil
-  ) {
-    chat.forwardMessage(
-      message: message.target.message, channelId: channelId
-    ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.PNPublishResult>) in
-      switch result.result {
-      case let .success(publishResult):
-        completion?(.success(Timetoken(publishResult.timetoken)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -602,22 +598,6 @@ extension ChatImpl: Chat {
       switch result.result {
       case .success:
         completion?(.success(()))
-      case let .failure(error):
-        completion?(.failure(error))
-      }
-    }
-  }
-
-  public func getThreadChannel(
-    message: MessageImpl,
-    completion: ((Swift.Result<ThreadChannelImpl, Error>) -> Void)? = nil
-  ) {
-    chat.getThreadChannel(
-      message: message.target.message
-    ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.ThreadChannel>) in
-      switch result.result {
-      case let .success(threadChannel):
-        completion?(.success(ThreadChannelImpl(channel: threadChannel)))
       case let .failure(error):
         completion?(.failure(error))
       }

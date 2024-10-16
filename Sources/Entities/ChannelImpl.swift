@@ -12,10 +12,18 @@ import Foundation
 import PubNubChat
 import PubNubSDK
 
+/// A concrete implementation of the ``Channel`` protocol.
+///
+/// This class provides a ready-to-use solution for most use cases requiring
+/// the features defined by the ``Channel`` protocol, offering default behavior for
+/// associated types and default parameter values where applicable.
+///
+/// It inherits all the documentation for methods defined in the ``Channel`` protocol.
+/// Refer to the ``Channel`` protocol for detailed information on how individual methods work.
 public final class ChannelImpl {
   let target: BaseChannel<PubNubChat.Channel_, PubNubChat.Message>
 
-  public convenience init(
+  convenience init(
     chat: ChatImpl,
     id: String,
     name: String? = nil,

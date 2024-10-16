@@ -11,25 +11,13 @@
 import Foundation
 import PubNubChat
 
-public struct Restriction {
-  public var userId: String
-  public var channelId: String
-  public var ban: Bool
-  public var mute: Bool
-  public var reason: String?
-
-  public init(userId: String, channelId: String, ban: Bool, mute: Bool, reason: String? = nil) {
-    self.userId = userId
-    self.channelId = channelId
-    self.ban = ban
-    self.mute = mute
-    self.reason = reason
-  }
-}
-
-public enum RestrictionType {
+/// Representing the type of restriction applied to a user.
+public enum RestrictionType: String {
+  /// Represents a ban restriction
   case ban
+  /// Represents a mute restriction
   case mute
+  /// Represents the lifting of any restriction
   case lift
 
   func transform() -> PubNubChat.RestrictionType {
@@ -41,5 +29,21 @@ public enum RestrictionType {
     case .lift:
       .lift
     }
+  }
+}
+
+struct Restriction {
+  var userId: String
+  var channelId: String
+  var ban: Bool
+  var mute: Bool
+  var reason: String?
+
+  init(userId: String, channelId: String, ban: Bool, mute: Bool, reason: String? = nil) {
+    self.userId = userId
+    self.channelId = channelId
+    self.ban = ban
+    self.mute = mute
+    self.reason = reason
   }
 }

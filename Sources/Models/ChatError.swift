@@ -10,8 +10,11 @@
 
 import Foundation
 
+/// Represents an error that can occur.
 public struct ChatError: Error {
+  /// An optional error that provides more context about the failure
   public let underlying: Error?
+  /// A string describing the error
   public let message: String
 
   init(underlying: Error? = nil, message: String? = nil) {

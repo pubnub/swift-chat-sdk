@@ -10,7 +10,10 @@
 
 import Foundation
 
+/// Enum representing the method used to emit an event in the chat system.
 public enum EmitEventMethod {
+  /// Represents events emitted using the "signal" method, typically for lightweight real-time updates
   case signal
+  /// Represents events emitted using the "publish" method, typically for broadcasting messages to a channel
   case publish
 }

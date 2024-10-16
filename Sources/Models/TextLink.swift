@@ -11,16 +11,14 @@
 import Foundation
 import PubNubChat
 
+/// Describes a text link.
 public struct TextLink {
+  /// Starts with 0 and indicates the position in the whole message where the link should start
   public var startIndex: Int
+  /// Indicates the position in the whole message where the link should end
   public var endIndex: Int
+  /// A url link
   public var link: String
-
-  public init(startIndex: Int, endIndex: Int, link: String) {
-    self.startIndex = startIndex
-    self.endIndex = endIndex
-    self.link = link
-  }
 
   func transform() -> PubNubChat.TextLink {
     PubNubChat.TextLink(

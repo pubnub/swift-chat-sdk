@@ -10,8 +10,12 @@
 
 import Foundation
 
+/// Represents the result of creating a direct conversation (private channel) between two users.
 public struct CreateDirectConversationResult<C: Channel, M: Membership> {
+  /// The ``Channel`` object representing the newly created direct conversation
   public var channel: C
+  /// The ``Membership`` object representing the channel membership of the user who initiated the conversation
   public var hostMembership: M
+  /// The ``Membership`` object representing the channel membership of the invited user.
   public var inviteeMembership: M
 }

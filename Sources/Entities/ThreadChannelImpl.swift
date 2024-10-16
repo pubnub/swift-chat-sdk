@@ -12,10 +12,18 @@ import Foundation
 import PubNubChat
 import PubNubSDK
 
+/// A concrete implementation of the ``ThreadChannel`` protocol.
+///
+/// This class provides a ready-to-use solution for most use cases requiring
+/// the features defined by the ``ThreadChannel`` protocol, offering default behavior for
+/// associated types and default parameter values where applicable.
+///
+/// It inherits all the documentation for methods defined in the ``ThreadChannel`` protocol.
+/// Refer to the ``ThreadChannel`` protocol for detailed information on how individual methods work.
 public final class ThreadChannelImpl {
   let target: BaseChannel<PubNubChat.ThreadChannel, PubNubChat.ThreadMessage>
 
-  public convenience init(
+  convenience init(
     parentMessage: MessageImpl,
     chat: ChatImpl,
     id: String,
@@ -24,8 +32,7 @@ public final class ThreadChannelImpl {
     description: String? = nil,
     updated: String? = nil,
     status: String? = nil,
-    type: ChannelType? = nil,
-    threadCreated: Bool = true
+    type: ChannelType? = nil
   ) {
     let underlyingThreadChannel = PubNubChat.ThreadChannelImpl(
       parentMessage: parentMessage.target.message,
@@ -38,7 +45,7 @@ public final class ThreadChannelImpl {
       updated: updated,
       status: status,
       type: type?.transform(),
-      threadCreated: threadCreated
+      threadCreated: true
     )
     self.init(
       channel: underlyingThreadChannel

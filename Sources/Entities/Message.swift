@@ -30,9 +30,16 @@ public protocol Message {
   /// Extra information added to the message giving additional context
   var meta: [String: JSONCodable]? { get }
   /// List of mentioned users with IDs and names
+
+  @available(*, deprecated, message: "Use `Message.getMessageElements()` instead")
   var mentionedUsers: MessageMentionedUsers? { get }
   /// List of referenced channels with IDs and names
+  @available(*, deprecated, message: "Use `Message.getMessageElements()` instead")
   var referencedChannels: MessageReferencedChannels? { get }
+  /// List of included text links and their position
+  @available(*, deprecated, message: "Use `Message.getMessageElements()` instead")
+  var textLinks: [TextLink]? { get }
+
   /// Access the original quoted message in the given ``Message``
   ///
   /// Stores only values for the timetoken, text, and userId parameters. If you want to return the full quoted Message object,
@@ -51,8 +58,6 @@ public protocol Message {
   var files: [File] { get }
   /// List of reactions attached to the given ``Message``
   var reactions: [String: [Action]] { get }
-  /// List of included text links and their position
-  var textLinks: [TextLink]? { get }
 
   /// Receive updates when specific messages and related message reactions are added, edited, or removed.
   ///
@@ -199,4 +204,8 @@ public protocol Message {
   func restore(
     completion: ((Swift.Result<Self, Error>) -> Void)?
   )
+
+  /// Use this on the receiving end if a message was sent using ``MessageDraft`` to parse the `Message` text into parts
+  /// representing plain text or additional information such as user mentions, channel references and links.
+  func getMessageElements() -> [MessageElement]
 }

@@ -209,6 +209,7 @@ public protocol Channel {
   ///   - ttl: Defines if/how long (in hours) the message should be stored in Message Persistence
   ///   - quotedMessage: Object added to a message when you quote another message
   ///   - files: One or multiple files attached to the text message
+  ///   - usersToMention: A collection of user ids to automatically notify with a mention after this message is sent
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: The timetoken of the sent message
   ///     - **Failure**: An `Error` describing the failure
@@ -220,6 +221,7 @@ public protocol Channel {
     ttl: Int?,
     quotedMessage: ChatType.ChatMessageType?,
     files: [InputFile]?,
+    usersToMention: [String]?,
     completion: ((Swift.Result<Timetoken, Error>) -> Void)?
   )
 
@@ -454,6 +456,20 @@ public protocol Channel {
   func streamMessageReports(
     callback: @escaping (any Event<EventContent.Report>) -> Void
   ) -> AutoCloseable
+
+  /// Creates a ``MessageDraft`` for composing a message that will be sent to this ``Channel``
+  ///
+  /// - Parameters:
+  ///   - userSuggestionSource: The scope for searching for suggested users
+  ///   - isTypingIndicatorTriggered: Whether modifying the message text triggers the typing indicator on channel
+  ///   - userLimit: The limit on the number of users returned when searching for users to mention
+  ///   - channelLimit: The limit on the number of channels returned when searching for channels to reference
+  func createMessageDraft(
+    userSuggestionSource: UserSuggestionSource,
+    isTypingIndicatorTriggered: Bool,
+    userLimit: Int,
+    channelLimit: Int
+  ) -> any MessageDraft
 
   // swiftlint:disable:next file_length
 }

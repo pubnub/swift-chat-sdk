@@ -79,6 +79,7 @@ extension UserImpl: User {
   public var type: String? { user.type }
   public var updated: String? { user.updated }
   public var lastActiveTimestamp: TimeInterval? { user.lastActiveTimestamp?.doubleValue }
+  public var active: Bool { user.active }
 
   public static func streamUpdatesOn(users: [UserImpl], callback: @escaping (([UserImpl]) -> Void)) -> AutoCloseable {
     AutoCloseableImpl(

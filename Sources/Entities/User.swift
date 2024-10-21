@@ -37,6 +37,8 @@ public protocol User {
   var updated: String? { get }
   /// Timestamp for the last time the user information was updated or modified
   var lastActiveTimestamp: TimeInterval? { get }
+  /// Indicates whether the user is currently (at the time of obtaining this ``User`` object) active
+  var active: Bool { get }
 
   /// Receive updates when specific users are added, edited or removed.
   ///

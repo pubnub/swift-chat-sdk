@@ -217,4 +217,8 @@ extension BaseMessage: Message {
       }
     }
   }
+
+  func getMessageElements() -> [MessageElement] {
+    MediatorsKt.getMessageElements(message).compactMap { MessageElement.from(element: $0) }
+  }
 }

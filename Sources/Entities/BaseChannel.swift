@@ -216,6 +216,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     ttl: Int?,
     quotedMessage: MessageImpl?,
     files: [InputFile]?,
+    usersToMention: [String]? = nil,
     completion: ((Swift.Result<Timetoken, any Error>) -> Void)?
   ) {
     channel.sendText(
@@ -225,7 +226,8 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
       usePost: usePost,
       ttl: ttl?.asKotlinInt,
       quotedMessage: quotedMessage?.target.message,
-      files: files?.compactMap { $0.transform() }
+      files: files?.compactMap { $0.transform() },
+      usersToMention: usersToMention
     )
   }
 
@@ -573,6 +575,23 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
           )
         }
       }
+    )
+  }
+
+  func createMessageDraft(
+    userSuggestionSource: UserSuggestionSource = .channel,
+    isTypingIndicatorTriggered: Bool = true,
+    userLimit: Int = 10,
+    channelLimit: Int = 10
+  ) -> any MessageDraft {
+    MessageDraftImpl(
+      messageDraft: MediatorsKt.createMessageDraft(
+        channel,
+        userSuggestionSource: userSuggestionSource.transform(),
+        isTypingIndicatorTriggered: isTypingIndicatorTriggered,
+        userLimit: Int32(userLimit),
+        channelLimit: Int32(channelLimit)
+      )
     )
   }
 

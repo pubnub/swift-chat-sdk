@@ -43,7 +43,7 @@ public final class ChatImpl {
     chat = ChatImpl.createKMPChat(from: pubNub, config: chatConfiguration)
 
     // Provide a mechanism for reading a version number from a .plist file.
-    pubNub.setConsumer(identifier: "chat-sdk", value: "CA-SWIFT/0.8.0")
+    pubNub.setConsumer(identifier: "chat-sdk", value: "CA-SWIFT/0.8.1")
     // Creates an association between KMP chat and the current instance
     ChatAdapter.associate(chat: self, rawChat: chat)
   }
@@ -54,7 +54,7 @@ public final class ChatImpl {
     chat = ChatImpl.createKMPChat(from: pubNub, config: configuration)
 
     // Provide a mechanism for reading a version number from a .plist file.
-    pubNub.setConsumer(identifier: "chat-sdk", value: "CA-SWIFT/0.8.0")
+    pubNub.setConsumer(identifier: "chat-sdk", value: "CA-SWIFT/0.8.1")
     // Creates an association between KMP chat and the current instance
     ChatAdapter.associate(chat: self, rawChat: chat)
   }

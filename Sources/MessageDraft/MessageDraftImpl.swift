@@ -53,7 +53,7 @@ extension MessageDraftImpl: MessageDraft {
     let underlyingListener = KMPMessageDraftStateListener { elements, mentions in
       listener.onChange(
         messageElements: elements.compactMap { MessageElement.from(element: $0) },
-        suggestedMentions: SuggestedMentionsFuture(future: mentions)
+        suggestedMentions: SuggestedMentionsFutureImpl(future: mentions)
       )
     }
 

@@ -12,12 +12,6 @@ import Foundation
 import PubNubSDK
 import PubNubChat
 
-/// A listener that can be used with ``MessageDraft/addMessageElementsListener(_:)`` to listen for changes to the message draft
-/// text and get current mention suggestions.
-public protocol MessageDraftStateListener: AnyObject {
-  func onChange(messageElements: [MessageElement], suggestedMentions: SuggestedMentionsFuture)
-}
-
 /// An object that refers to a single message that has not been published yet.
 public protocol MessageDraft {
   /// An associated Channel type
@@ -134,39 +128,6 @@ public enum UserSuggestionSource {
   }
 }
 
-/// Defines the target of the mention attached to a ``MessageDraft``.
-public enum MentionTarget: Equatable {
-  /// Mention a user identified by `userId`
-  case user(userId: String)
-  /// Reference a channel identified by `channelId`
-  case channel(channelId: String)
-  /// Link to `url`
-  case url(url: String)
-
-  func transform() -> PubNubChat.MentionTarget {
-    switch self {
-    case let .channel(channelId):
-      return MentionTargetChannel(channelId: channelId)
-    case let .user(userId):
-      return MentionTargetUser(userId: userId)
-    case let .url(url):
-      return MentionTargetUrl(url: url)
-    }
-  }
-
-  static func from(target: PubNubChat.MentionTarget) -> MentionTarget? {
-    if let channelTarget = target as? PubNubChat.MentionTargetChannel {
-      return .channel(channelId: channelTarget.channelId)
-    } else if let userTarget = target as? PubNubChat.MentionTargetUser {
-      return .user(userId: userTarget.userId)
-    } else if let urlTarget = target as? PubNubChat.MentionTargetUrl {
-      return .url(url: urlTarget.url)
-    } else {
-      return nil
-    }
-  }
-}
-
 /// Part of a ``Message`` or ``MessageDraft`` content.
 public enum MessageElement: Equatable {
   /// Element that contains plain text, without any additional metadata or links
@@ -212,6 +173,39 @@ public extension Array where Element == MessageElement {
   }
 }
 
+/// Defines the target of the mention attached to a ``MessageDraft``.
+public enum MentionTarget: Equatable {
+  /// Mention a user identified by `userId`
+  case user(userId: String)
+  /// Reference a channel identified by `channelId`
+  case channel(channelId: String)
+  /// Link to `url`
+  case url(url: String)
+
+  func transform() -> PubNubChat.MentionTarget {
+    switch self {
+    case let .channel(channelId):
+      return MentionTargetChannel(channelId: channelId)
+    case let .user(userId):
+      return MentionTargetUser(userId: userId)
+    case let .url(url):
+      return MentionTargetUrl(url: url)
+    }
+  }
+
+  static func from(target: PubNubChat.MentionTarget) -> MentionTarget? {
+    if let channelTarget = target as? PubNubChat.MentionTargetChannel {
+      return .channel(channelId: channelTarget.channelId)
+    } else if let userTarget = target as? PubNubChat.MentionTargetUser {
+      return .user(userId: userTarget.userId)
+    } else if let urlTarget = target as? PubNubChat.MentionTargetUrl {
+      return .url(url: urlTarget.url)
+    } else {
+      return nil
+    }
+  }
+}
+
 /// A potential mention suggestion received from ``MessageDraftStateListener``.
 ///
 /// It can be used with ``MessageDraft/insertSuggestedMention(mention:text:)`` to accept the suggestion and attach a mention to a message draft.
@@ -220,7 +214,7 @@ public struct SuggestedMention {
   public let offset: Int
   /// The original text at the `offset` in the message draft text
   public let replaceFrom: String
-  /// The suggested replacement for the [replaceFrom] text, e.g. the user's full name
+  /// The suggested replacement for the `replaceFrom` text, e.g. the user's full name
   public let replaceTo: String
   /// The target of the mention, such as a user, channel or URL
   public let target: MentionTarget
@@ -244,33 +238,6 @@ public struct SuggestedMention {
       replaceTo: mention.replaceTo,
       target: target
     )
-  }
-}
-
-/// A class representing a value that will be available in the future.
-/// This class is designed to handle asynchronous operations and provide a way to observe the result once it becomes available.
-public class SuggestedMentionsFuture {
-  let future: PubNubChat.PNFuture
-
-  init(future: PubNubChat.PNFuture) {
-    self.future = future
-  }
-
-  /// Starts an asynchronous operation and provides the result upon completion.
-  ///
-  /// - Parameters:
-  ///   - completion: The async `Result` of the method call
-  ///     - **Success**: The successful result of the operation
-  ///     - **Failure**: An `Error` describing the failure
-  public func async(completion: @escaping (Swift.Result<[SuggestedMention], Error>) -> Void) {
-    future.async(caller: self, callback: { (result: FutureResult<SuggestedMentionsFuture, [PubNubChat.SuggestedMention]>) in
-      switch result.result {
-      case let .success(suggestedMentions):
-        completion(.success(suggestedMentions.compactMap { SuggestedMention.from(mention: $0) }))
-      case let .failure(error):
-        completion(.failure(error))
-      }
-    })
   }
 }
 

@@ -30,10 +30,7 @@ desc "Executes SDK Integration Tests"
 lane :test do
   pub_key = ENV['SDK_PUB_KEY']
   sub_key = ENV['SDK_SUB_KEY']
-  
-  UI.message("First 9 chars of pub_key: #{pub_key[0,9]}")
-  UI.message("First 9 chars of pub_key: #{sub_key[0,9]}")
-  
+    
   set_info_plist_value(
     path: "Tests/PubNubSwiftChatSDKTests.plist",
     key: "publishKey",
@@ -44,26 +41,14 @@ lane :test do
     key: "subscribeKey",
     value: sub_key
   )
+  run_tests(
+    workspace: ENV['WORKSPACE'],
+    scheme: ENV['SCHEME_SDK'],
+    destination: ENV['DESTINATION'],
+    disable_concurrent_testing: true,
+    output_types: "html" 
+  )
 
-  # Test using phyiscal device
-  if ENV['PLATFORM'] == 'mac'
-    scan(
-      workspace: ENV['WORKSPACE'],
-      scheme: ENV['SCHEME_SDK'],
-      destination: ENV['DESTINATION'],
-      disable_concurrent_testing: true
-    )
-  # Test using simulators
-  else
-    ENV["DEVICES"].split(',').each do |device|
-      scan(
-        workspace: ENV['WORKSPACE'],
-        scheme: ENV['SCHEME_SDK'],
-        device: device,
-        disable_concurrent_testing: true
-      )
-    end
-  end
 end
 
 desc "Lints a release using Swift Package Manager"

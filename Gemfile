@@ -1,5 +1,4 @@
 source "https://rubygems.org"
 
-gem "fastlane"
-gem "slather"
-gem "jazzy"
+gem "fastlane", '2.225.0'
+gem 'rexml', '3.3.8'

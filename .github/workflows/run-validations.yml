@@ -19,7 +19,7 @@ jobs:
   pubnub-yml:
     name: "Validate .pubnub.yml"
     runs-on:
-      group: Default
+      group: organization/Default
     steps:
       - name: Checkout project
         uses: actions/checkout@v4
@@ -40,7 +40,7 @@ jobs:
   package-managers-validation:
     name: Validate package managers
     runs-on:
-      group: macos-gh
+      group: macos-arm-gh
     strategy:
       matrix:
         managers: [Swift Package Manager]
@@ -79,7 +79,7 @@ jobs:
     name: Validations
     needs: [pubnub-yml, package-managers-validation]
     runs-on:
-      group: Default
+      group: organization/Default
     steps:
       - name: Validations summary
         run: echo -e "\033[38;2;95;215;0m\033[1mAll validations passed"

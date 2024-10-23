@@ -18,7 +18,7 @@ env:
 
 jobs:
   tests:
-    name: Integration and Unit tests
+    name: Integration tests
     env:
       SDK_PUB_KEY: ${{ secrets.SDK_PUB_KEY }}
       SDK_SUB_KEY: ${{ secrets.SDK_SUB_KEY }}
@@ -26,25 +26,12 @@ jobs:
       SDK_PAM_PUB_KEY: ${{ secrets.SDK_PAM_PUB_KEY }}
       SDK_PAM_SEC_KEY: ${{ secrets.SDK_PAM_SEC_KEY }}
     runs-on:
-      group: macos-gh
+      group: macos-arm-gh
     strategy:
       matrix:
         environment: [iOS]
     timeout-minutes: 10
     steps:
-      - name: Display Current Git Config
-        run: |
-          echo "Current Git Configurations:"
-          git config --global -l
-      - name: Remove the Last Line from Git Config
-        run: |
-          echo "Removing the last line from .gitconfig..."
-          # Using sed to remove the last line
-          sed -i '' -e '$d' ~/.gitconfig || echo "No lines to remove."
-      - name: Verify Git Config After Removal
-        run: |
-          echo "Verifying Git config after removal..."
-          git config --global -l
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -82,7 +69,7 @@ jobs:
     name: Tests
     needs: [tests]
     runs-on:
-      group: Default
+      group: organization/Default
     steps:
       - name: Tests summary
         run: echo -e "\033[38;2;95;215;0m\033[1mAll tests successfully passed"

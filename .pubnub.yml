@@ -4,6 +4,11 @@ scm: github.com/pubnub/swift-chat-sdk
 version: "0.8.0"
 schema: 1
 changelog:
+  - date: 2024-10-22
+    version: 0.8.1
+    changes:
+      - type: fix
+        text: "Fix dependency issues for kmp-chat and its submodules"
   - date: 2024-09-25
     version: 0.8.0
     changes:

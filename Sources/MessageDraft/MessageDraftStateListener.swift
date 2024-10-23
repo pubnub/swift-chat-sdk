@@ -33,7 +33,7 @@ final public class ClosureMessageDraftStateListener: MessageDraftStateListener {
   }
 }
 
-/// A protocol representing a `[SuggestedMention]` value  that will be available in the future.
+/// A protocol representing a `SuggestedMention` value  that will be available in the future.
 public protocol SuggestedMentionsFuture {
   /// Starts an asynchronous operation and provides the result upon completion.
   ///

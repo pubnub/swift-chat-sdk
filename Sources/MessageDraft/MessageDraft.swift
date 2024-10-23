@@ -28,9 +28,9 @@ public protocol MessageDraft {
   /// The limit on the number of channels returned when searching for channels to reference
   var channelLimit: Int { get }
   /// Can be used to set a ``Message`` to quote when sending this ``MessageDraft``
-  var quotedMessage: M? { get }
+  var quotedMessage: M? { get set }
   /// Can be used to attach files to send with this ``MessageDraft``
-  var files: [InputFile] { get }
+  var files: [InputFile] { get set }
 
   /// Add a ``MessageDraftStateListener`` to listen for changes to the contents of this ``MessageDraft``, as well as
   /// to retrieve the current mention suggestions for users and channels (e.g. when the message draft contains "... @name ..." or "... #chann ...").

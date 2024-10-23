@@ -15,6 +15,7 @@ import PubNubSDK
 public protocol Channel {
   associatedtype ChatType: Chat
   associatedtype MessageType: Message
+  associatedtype MessageDraftType: MessageDraft
 
   /// Reference to the main Chat object
   var chat: ChatType { get }
@@ -469,7 +470,7 @@ public protocol Channel {
     isTypingIndicatorTriggered: Bool,
     userLimit: Int,
     channelLimit: Int
-  ) -> any MessageDraft
+  ) -> MessageDraftType
 
   // swiftlint:disable:next file_length
 }

@@ -399,7 +399,7 @@ extension ChannelImpl: Channel {
     isTypingIndicatorTriggered: Bool = true,
     userLimit: Int = 10,
     channelLimit: Int = 10
-  ) -> any MessageDraft {
+  ) -> MessageDraftImpl {
     target.createMessageDraft(
       userSuggestionSource: userSuggestionSource,
       isTypingIndicatorTriggered: isTypingIndicatorTriggered,

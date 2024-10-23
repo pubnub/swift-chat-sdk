@@ -12,7 +12,15 @@ import Foundation
 import PubNubSDK
 import PubNubChat
 
-class MessageDraftImpl {
+/// A concrete implementation of the ``MessageDraft`` protocol.
+///
+/// This class provides a ready-to-use solution for most use cases requiring
+/// the features defined by the ``MessageDraft`` protocol, offering default behavior for
+/// associated types and default parameter values where applicable.
+///
+/// It inherits all the documentation for methods defined in the ``MessageDraft`` protocol.
+/// Refer to the ``MessageDraft`` protocol for detailed information on how individual methods work.
+public class MessageDraftImpl {
   private let messageDraft: PubNubChat.MessageDraft
   private var listeners: [(KMPMessageDraftStateListener, MessageDraftStateListener)] = []
 
@@ -22,34 +30,42 @@ class MessageDraftImpl {
 }
 
 extension MessageDraftImpl: MessageDraft {
-  typealias C = ChannelImpl
-  typealias M = MessageImpl
+  public typealias C = ChannelImpl
+  public typealias M = MessageImpl
 
-  var channel: C {
+  public var channel: C {
     ChannelImpl(channel: messageDraft.channel)
   }
 
-  var isTypingIndicatorTriggered: Bool {
+  public var isTypingIndicatorTriggered: Bool {
     messageDraft.isTypingIndicatorTriggered
   }
 
-  var userLimit: Int {
+  public var userLimit: Int {
     Int(messageDraft.userLimit)
   }
 
-  var channelLimit: Int {
+  public var channelLimit: Int {
     Int(messageDraft.channelLimit)
   }
 
-  var quotedMessage: M? {
-    MessageImpl(message: messageDraft.quotedMessage)
+  public var quotedMessage: M? {
+    get {
+      MessageImpl(message: messageDraft.quotedMessage)
+    } set {
+      messageDraft.quotedMessage = newValue?.target.message
+    }
   }
 
-  var files: [InputFile] {
-    messageDraft.files.compactMap { $0 as? PubNubChat.InputFile }.compactMap { InputFile.from(input: $0) }
+  public var files: [InputFile] {
+    get {
+      messageDraft.files.compactMap { $0 as? PubNubChat.InputFile }.compactMap { InputFile.from(input: $0) }
+    } set {
+      messageDraft.files.add(newValue.compactMap { $0.transform() })
+    }
   }
 
-  func addMessageElementsListener(_ listener: any MessageDraftStateListener) {
+  public func addMessageElementsListener(_ listener: any MessageDraftStateListener) {
     let underlyingListener = KMPMessageDraftStateListener { elements, mentions in
       listener.onChange(
         messageElements: elements.compactMap { MessageElement.from(element: $0) },
@@ -61,7 +77,7 @@ extension MessageDraftImpl: MessageDraft {
     messageDraft.addMessageElementsListener(callback: underlyingListener)
   }
 
-  func removeMessageElementsListener(_ listener: any MessageDraftStateListener) {
+  public func removeMessageElementsListener(_ listener: any MessageDraftStateListener) {
     for currentPair in listeners where currentPair.1 === listener {
       messageDraft.removeMessageElementsListener(callback: currentPair.0)
     }
@@ -70,36 +86,36 @@ extension MessageDraftImpl: MessageDraft {
     }
   }
 
-  func insertText(offset: Int, text: String) {
+  public func insertText(offset: Int, text: String) {
     messageDraft.insertText(offset: Int32(offset), text: text)
   }
 
-  func removeText(offset: Int, length: Int) {
+  public func removeText(offset: Int, length: Int) {
     messageDraft.removeText(offset: Int32(offset), length: Int32(length))
   }
 
-  func insertSuggestedMention(mention: SuggestedMention, text: String) {
+  public func insertSuggestedMention(mention: SuggestedMention, text: String) {
     messageDraft.insertSuggestedMention(mention: mention.transform(), text: text)
   }
 
-  func addMention(offset: Int, length: Int, target: MentionTarget) {
+  public func addMention(offset: Int, length: Int, target: MentionTarget) {
     messageDraft.addMention(offset: Int32(offset), length: Int32(length), target: target.transform())
   }
 
-  func removeMention(offset: Int) {
+  public func removeMention(offset: Int) {
     messageDraft.removeMention(offset: Int32(offset))
   }
 
-  func update(text: String) {
+  public func update(text: String) {
     messageDraft.update(text: text)
   }
 
-  func send(
+  public func send(
     meta: [String: JSONCodable]? = nil,
     shouldStore: Bool = true,
     usePost: Bool = false,
     ttl: Int? = nil,
-    completion: ((Swift.Result<Timetoken, Error>) -> Void)?
+    completion: ((Swift.Result<Timetoken, Error>) -> Void)? = nil
   ) {
     messageDraft.send(
       meta: meta?.compactMapValues { $0.rawValue },

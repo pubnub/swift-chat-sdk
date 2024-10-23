@@ -583,7 +583,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     isTypingIndicatorTriggered: Bool = true,
     userLimit: Int = 10,
     channelLimit: Int = 10
-  ) -> any MessageDraft {
+  ) -> MessageDraftImpl {
     MessageDraftImpl(
       messageDraft: MediatorsKt.createMessageDraft(
         channel,

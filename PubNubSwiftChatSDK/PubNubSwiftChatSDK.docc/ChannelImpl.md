@@ -43,12 +43,6 @@
 
 ### Creating Message Draft
 
-- ``MessageDraft``
-- ``MessageDraftStateListener``
-- ``SuggestedMention``
-- ``MentionTarget``
-- ``MessageElement``
-- ``UserSuggestionSource``
 - ``createMessageDraft(userSuggestionSource:isTypingIndicatorTriggered:userLimit:channelLimit:)``
 
 ### Messages Management

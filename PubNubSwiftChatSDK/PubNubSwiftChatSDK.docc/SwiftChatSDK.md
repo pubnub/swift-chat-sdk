@@ -53,8 +53,12 @@ Our Chat SDK provides a number of out-of-the-box chat features like read receipt
 
 ### Message Draft
 
-- ``MessageMentionedUsers``
-- ``MessageMentionedUser``
-- ``MessageReferencedChannels``
-- ``MessageReferencedChannel``
-- ``TextLink``
+- ``MessageDraft``
+- ``MessageDraftImpl``
+- ``MessageDraftStateListener``
+- ``ClosureMessageDraftStateListener``
+- ``SuggestedMention``
+- ``SuggestedMentionsFuture``
+- ``MentionTarget``
+- ``MessageElement``
+- ``UserSuggestionSource``

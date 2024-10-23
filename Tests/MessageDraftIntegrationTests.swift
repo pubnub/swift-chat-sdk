@@ -69,13 +69,12 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
         future.async() {
           switch $0 {
           case let .success(suggestedMentions):
-            suggestedMentions.forEach {
-              messageDraft.insertSuggestedMention(
-                mention: $0,
-                text: $0.replaceTo
-              )
+            if let mention = suggestedMentions.first {
+              messageDraft.insertSuggestedMention(mention: mention, text: mention.replaceTo)
+              expectation.fulfill()
+            } else {
+              XCTFail("Unexpected condition. There's no suggested mentions")
             }
-            expectation.fulfill()
           case let .failure(error):
             XCTFail("Unexpected condition due to error: \(error)")
           }
@@ -89,13 +88,7 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     wait(for: [expectation], timeout: 6)
     
     let timetoken = try awaitResultValue {
-      messageDraft.send(
-        meta: nil,
-        shouldStore: true,
-        usePost: false,
-        ttl: nil,
-        completion: $0
-      )
+      messageDraft.send(completion: $0)
     }
     
     let message = try awaitResultValue(delay: 3) {
@@ -126,13 +119,12 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
         future.async() {
           switch $0 {
           case let .success(suggestedMentions):
-            suggestedMentions.forEach {
-              messageDraft.insertSuggestedMention(
-                mention: $0,
-                text: $0.replaceTo
-              )
+            if let mention = suggestedMentions.first {
+              messageDraft.insertSuggestedMention(mention: mention, text: mention.replaceTo)
+              expectation.fulfill()
+            } else {
+              XCTFail("Unexpected condition. There's no suggested mentions")
             }
-            expectation.fulfill()
           case let .failure(error):
             XCTFail("Unexpected condition due to error: \(error)")
           }
@@ -146,13 +138,7 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     wait(for: [expectation], timeout: 6)
     
     let timetoken = try awaitResultValue {
-      messageDraft.send(
-        meta: nil,
-        shouldStore: true,
-        usePost: false,
-        ttl: nil,
-        completion: $0
-      )
+      messageDraft.send(completion: $0)
     }
     
     let message = try awaitResultValue(delay: 3) {
@@ -334,5 +320,38 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     messageDraft.removeText(offset: 12, length: 5)
     
     wait(for: [expectation], timeout: 6)
+  }
+  
+  func testMessageDraft_WithQuotedMessage() throws {
+    let originalText = "This is some text"
+    let messageDraft = channel.createMessageDraft()
+    
+    let quotedMessage = MessageImpl(
+      chat: chat,
+      timetoken: 17296737530374172,
+      content: .init(text: "Lorem ipsum"),
+      channelId: channel.id,
+      userId: user.id
+    )
+    
+    messageDraft.update(text: originalText)
+    messageDraft.quotedMessage = quotedMessage
+
+    let timetoken = try awaitResultValue {
+      messageDraft.send(
+        completion: $0
+      )
+    }
+    let message = try awaitResultValue(delay: 2) {
+      channel.getMessage(
+        timetoken: timetoken,
+        completion: $0
+      )
+    }
+    
+    let receivedQuotedMessage = try XCTUnwrap(message?.quotedMessage)
+    
+    XCTAssertEqual(receivedQuotedMessage.timetoken, 17296737530374172)
+    XCTAssertEqual(receivedQuotedMessage.text, "Lorem ipsum")
   }
 }

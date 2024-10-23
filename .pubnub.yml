@@ -7,7 +7,7 @@ changelog:
   - date: 2024-10-22
     version: 0.8.1
     changes:
-      - type: fix
+      - type: bug
         text: "Fix dependency issues for kmp-chat and its submodules"
   - date: 2024-09-25
     version: 0.8.0

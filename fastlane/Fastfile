@@ -30,7 +30,10 @@ desc "Executes SDK Integration Tests"
 lane :test do
   pub_key = ENV['SDK_PUB_KEY']
   sub_key = ENV['SDK_SUB_KEY']
-
+  
+  UI.message("First 9 chars of pub_key: #{pub_key[0,9]}")
+  UI.message("First 9 chars of pub_key: #{sub_key[0,9]}")
+  
   set_info_plist_value(
     path: "Tests/PubNubSwiftChatSDKTests.plist",
     key: "publishKey",
@@ -57,8 +60,7 @@ lane :test do
         workspace: ENV['WORKSPACE'],
         scheme: ENV['SCHEME_SDK'],
         device: device,
-        disable_concurrent_testing: true,
-        code_coverage: true
+        disable_concurrent_testing: true
       )
     end
   end

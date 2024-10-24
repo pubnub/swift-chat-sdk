@@ -60,7 +60,7 @@ jobs:
       - name: Pre-load simulators list
         if: ${{ matrix.environment != 'macOS' }}
         run: xcrun simctl list -j
-      - name: Run ${{ matrix.environment }} unit tests
+      - name: Run ${{ matrix.environment }} integration tests
         run: bundle exec fastlane test --env $(echo ${{ matrix.environment }} | tr '[:upper:]' '[:lower:]')
       - name: Cancel workflow runs for commit on error
         if: failure()

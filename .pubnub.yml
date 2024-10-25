@@ -4,6 +4,11 @@ scm: github.com/pubnub/swift-chat-sdk
 version: "0.8.0"
 schema: 1
 changelog:
+  - date: 2024-10-24
+    version: 0.8.2
+    changes:
+      - type: bug
+        text: "Use kmp-chat dependency without pubnub-kotlin submodule"
   - date: 2024-10-22
     version: 0.8.1
     changes:

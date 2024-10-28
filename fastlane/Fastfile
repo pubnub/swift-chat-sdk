@@ -30,7 +30,7 @@ desc "Executes SDK Integration Tests"
 lane :test do
   pub_key = ENV['SDK_PUB_KEY']
   sub_key = ENV['SDK_SUB_KEY']
-    
+  
   set_info_plist_value(
     path: "Tests/PubNubSwiftChatSDKTests.plist",
     key: "publishKey",
@@ -41,7 +41,7 @@ lane :test do
     key: "subscribeKey",
     value: sub_key
   )
-  run_tests(
+  scan(
     workspace: ENV['WORKSPACE'],
     scheme: ENV['SCHEME_SDK'],
     destination: ENV['DESTINATION'],

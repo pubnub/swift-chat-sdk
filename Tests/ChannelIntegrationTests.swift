@@ -108,7 +108,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       )
     }
     let message = try XCTUnwrap(
-      try awaitResultValue {
+      try awaitResultValue(delay: 2) {
         anotherChannel.getMessage(
           timetoken: tt,
           completion: $0
@@ -469,7 +469,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       )
     }
     let message = try XCTUnwrap(
-      try awaitResultValue {
+      try awaitResultValue(delay: 2) {
         channel.getMessage(
           timetoken: tt,
           completion: $0
@@ -483,7 +483,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       )
     }
     let getPinnedMessage = try XCTUnwrap(
-      try awaitResultValue {
+      try awaitResultValue(delay: 2) {
         updatedChannel.getPinnedMessage(
           completion: $0
         )

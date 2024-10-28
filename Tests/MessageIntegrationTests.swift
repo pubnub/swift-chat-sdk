@@ -64,7 +64,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       newText
     )
 
-    let editedMessage = try awaitResultValue {
+    let editedMessage = try awaitResultValue(delay: 2) {
       testMessage.editText(
         newText: newText,
         completion: $0
@@ -154,7 +154,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
         completion: $0
       )
     }
-    let message = try awaitResultValue {
+    let message = try awaitResultValue(delay: 2) {
       anotherChannel.getMessage(
         timetoken: forwardValue,
         completion: $0
@@ -213,7 +213,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       testMessage.channelId
     )
 
-    try awaitResultValue(delay: 1) {
+    try awaitResultValue(delay: 2) {
       threadChannel.sendText(
         text: "Text text text",
         meta: nil,

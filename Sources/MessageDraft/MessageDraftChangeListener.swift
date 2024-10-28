@@ -14,6 +14,12 @@ import PubNubChat
 /// A listener that can be used with ``MessageDraft/addChangeListener(_:)`` to listen for changes to the message draft
 /// text and get current mention suggestions.
 public protocol MessageDraftChangeListener: AnyObject {
+  
+  /// Called when there is a change in the message elements or suggested mentions.
+  ///
+  /// - Parameters:
+  ///   - messageElements: An array of `MessageElement` representing current elements within the message
+  ///   - suggestedMentions: A  future object that will return the result of suggested mentions after calling its ``SuggestedMentionsFuture/async(completion:)`` method
   func onChange(messageElements: [MessageElement], suggestedMentions: SuggestedMentionsFuture)
 }
 
@@ -33,7 +39,7 @@ final public class ClosureMessageDraftChangeListener: MessageDraftChangeListener
   }
 }
 
-/// A protocol representing a `SuggestedMention` value  that will be available in the future.
+/// A protocol representing a `[SuggestedMention]` value  that will be available in the future.
 public protocol SuggestedMentionsFuture {
   /// Starts an asynchronous operation and provides the result upon completion.
   ///

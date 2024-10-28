@@ -151,9 +151,9 @@ final class UserIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
 
   func testUser_DeleteNotExistingUser() throws {
     let someUser = testableUser()
-    let error = try awaitResultError { someUser.delete(soft: false, completion: $0) }
+    let resultValue = try awaitResultValue { someUser.delete(soft: false, completion: $0) }
 
-    XCTAssertEqual((error as? ChatError)?.message, "User does not exist")
+    XCTAssertNil(resultValue)
   }
 
   func testUser_WherePresent() throws {

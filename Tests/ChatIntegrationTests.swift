@@ -771,13 +771,13 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       }
     }
 
-    try awaitResultValue(delay: 2) {
+    try awaitResultValue(delay: 4) {
       chat.markAllMessagesAsRead(
         completion: $0
       )
     }
 
-    let getUnreadMessagesCount = try awaitResultValue(delay: 3) {
+    let getUnreadMessagesCount = try awaitResultValue(delay: 4) {
       chat.getUnreadMessagesCount(
         completion: $0
       )
@@ -797,7 +797,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
   }
 
   func testChat_GetChannelSuggestions() throws {
-    let channelName = "channel_\(randomString())"
+    let channelName = "chnl_\(randomString())"
     let channelId = channelName
 
     let channel = try awaitResultValue {
@@ -811,7 +811,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     let channelSuggestion = try XCTUnwrap(
       try awaitResultValue {
         chat.getChannelSuggestions(
-          text: "aaa#channel_",
+          text: "chnl_",
           completion: $0
         )
       }.first
@@ -831,7 +831,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
   }
 
   func testChat_GetUserSuggestions() throws {
-    let username = "some_user_\(randomString())"
+    let username = "someUser_\(randomString())"
     let channelId = randomString()
 
     let channel = try awaitResultValue {
@@ -858,7 +858,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     let userSuggestion = try XCTUnwrap(
       try awaitResultValue {
         chat.getUserSuggestions(
-          text: "aaa@some_user_",
+          text: "someUser_",
           completion: $0
         )
       }.first

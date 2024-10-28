@@ -144,7 +144,7 @@ public enum MessageElement: Equatable {
       return nil
     }
   }
-  
+
   func isLink() -> Bool {
     switch self {
     case .plainText:

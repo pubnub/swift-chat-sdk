@@ -45,7 +45,7 @@ public class CustomPayloads {
   var deleteMessageActionName: String?
   /// A name of action to add to your Message object whenever a reaction is added
   var reactionsActionName: String?
-  
+
   /// Creates a new ``CustomPayloads`` object.
   ///
   /// - Parameters:
@@ -207,9 +207,7 @@ public struct ChatConfiguration {
     ChatConfigurationKt.ChatConfiguration(
       logLevel: logLevel.transform(),
       typingTimeout: KotlinDurationUtils.companion.toSeconds(interval: Int32(typingTimeout)),
-      storeUserActivityInterval: KotlinDurationUtils.companion.toSeconds(
-        interval: Int32(storeUserActivityInterval)
-      ),
+      storeUserActivityInterval: KotlinDurationUtils.companion.toSeconds(interval: Int32(storeUserActivityInterval)),
       storeUserActivityTimestamps: storeUserActivityTimestamps,
       pushNotifications: PubNubChat.PushNotificationsConfig(
         sendPushes: pushNotificationsConfig.sendPushes,

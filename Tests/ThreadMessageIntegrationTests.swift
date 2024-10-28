@@ -29,19 +29,23 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
         )
       }
     )
+    
+    let timetoken = try awaitResultValue {
+      channel?.sendText(
+        text: "text",
+        completion: $0
+      )
+    }
+    
     let testMessage = try XCTUnwrap(
-      try awaitResultValue {
+      try awaitResultValue(delay: 3) {
         channel.getMessage(
-          timetoken: try awaitResultValue {
-            channel?.sendText(
-              text: "text",
-              completion: $0
-            )
-          },
+          timetoken: timetoken,
           completion: $0
         )
       }
     )
+    
     threadChannel = try XCTUnwrap(
       try awaitResultValue {
         testMessage.createThread(
@@ -58,7 +62,7 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
 
     threadMessage = try XCTUnwrap(
-      try awaitResultValue(delay: 2) {
+      try awaitResultValue(delay: 3) {
         threadChannel.getHistory(completion: $0)
       }.messages.first
     )
@@ -128,7 +132,7 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
   }
 
   func testThreadMessage_GetThread() throws {
-    let error = try awaitResultError(delay: 2) {
+    let error = try awaitResultError(delay: 3) {
       threadMessage.getThread(
         completion: $0
       )
@@ -153,7 +157,7 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
         completion: $0
       )
     }
-    let message = try awaitResultValue {
+    let message = try awaitResultValue(delay: 3) {
       anotherChannel.getMessage(
         timetoken: forwardValue,
         completion: $0
@@ -180,7 +184,7 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
         completion: $0
       )
     }
-    let message = try awaitResultValue(delay: 2) {
+    let message = try awaitResultValue(delay: 3) {
       resultingChannel.getPinnedMessage(
         completion: $0
       )
@@ -191,7 +195,7 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
   }
 
   func testThreadMessage_Report() throws {
-    XCTAssertNotNil(try awaitResultValue {
+    XCTAssertNotNil(try awaitResultValue(delay: 3) {
       threadMessage.report(reason: "ReportReason", completion: $0)
     })
   }
@@ -207,7 +211,7 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
   }
 
   func testThreadMessage_RemoveThread() throws {
-    let error = try awaitResultError {
+    let error = try awaitResultError(delay: 1) {
       threadMessage.removeThread(
         completion: $0
       )
@@ -239,7 +243,7 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     expectation.expectedFulfillmentCount = 1
 
     let message = try XCTUnwrap(
-      try awaitResultValue(delay: 2) {
+      try awaitResultValue(delay: 3) {
         threadChannel.getHistory(completion: $0)
       }.messages.first
     )
@@ -325,12 +329,12 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
         completion: $0
       )
     }
-    let updatedChannel = try awaitResultValue {
+    let updatedChannel = try awaitResultValue(delay: 2) {
       threadMessage.unpinFromParentChannel(
         completion: $0
       )
     }
-    let pinnedMessage = try awaitResultValue {
+    let pinnedMessage = try awaitResultValue(delay: 2) {
       updatedChannel.getPinnedMessage(
         completion: $0
       )

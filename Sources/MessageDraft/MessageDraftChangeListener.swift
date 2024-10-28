@@ -14,7 +14,7 @@ import PubNubChat
 /// A listener that can be used with ``MessageDraft/addChangeListener(_:)`` to listen for changes to the message draft
 /// text and get current mention suggestions.
 public protocol MessageDraftChangeListener: AnyObject {
-  
+
   /// Called when there is a change in the message elements or suggested mentions.
   ///
   /// - Parameters:
@@ -29,11 +29,11 @@ public protocol MessageDraftChangeListener: AnyObject {
 /// This is useful when you want to quickly handle messages without writing additional boilerplate code.
 final public class ClosureMessageDraftChangeListener: MessageDraftChangeListener {
   let onChangeClosure: (([MessageElement], SuggestedMentionsFuture) -> Void)
-  
+
   init(onChange: @escaping ([MessageElement], SuggestedMentionsFuture) -> Void) {
     self.onChangeClosure = onChange
   }
-  
+
   public func onChange(messageElements: [MessageElement], suggestedMentions: SuggestedMentionsFuture) {
     onChangeClosure(messageElements, suggestedMentions)
   }

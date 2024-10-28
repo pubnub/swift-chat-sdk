@@ -66,7 +66,7 @@ extension MessageDraftImpl: MessageDraft {
   }
 
   public func addChangeListener(_ listener: any MessageDraftChangeListener) {
-    let underlyingListener = KMPMessageDraftChangeListener() { elements, mentions in
+    let underlyingListener = KMPMessageDraftChangeListener { elements, mentions in
       listener.onChange(
         messageElements: elements.compactMap { MessageElement.from(element: $0) },
         suggestedMentions: SuggestedMentionsFutureImpl(future: mentions)

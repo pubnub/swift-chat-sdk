@@ -64,13 +64,13 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     expectation.expectedFulfillmentCount = 1
         
     let messageDraft = channel.createMessageDraft()
-    let listener = ClosureMessageDraftStateListener(onChange: { elements, future in
+    let listener = ClosureMessageDraftChangeListener(onChange: { elements, future in
       if !elements.containsAnyMention() {
         future.async() {
           switch $0 {
           case let .success(suggestedMentions):
             if let mention = suggestedMentions.first {
-              messageDraft.insertSuggestedMention(mention: mention, text: mention.replaceTo)
+              messageDraft.insertSuggestedMention(mention: mention, text: mention.replaceWith)
               expectation.fulfill()
             } else {
               XCTFail("Unexpected condition. There's no suggested mentions")
@@ -82,7 +82,7 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       }      
     })
     
-    messageDraft.addMessageElementsListener(listener)
+    messageDraft.addChangeListener(listener)
     messageDraft.update(text: "This is a @user")
     
     wait(for: [expectation], timeout: 6)
@@ -114,13 +114,13 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     expectation.expectedFulfillmentCount = 1
         
     let messageDraft = channel.createMessageDraft()
-    let listener = ClosureMessageDraftStateListener(onChange: { elements, future in
+    let listener = ClosureMessageDraftChangeListener(onChange: { elements, future in
       if !elements.containsAnyMention() {
         future.async() {
           switch $0 {
           case let .success(suggestedMentions):
             if let mention = suggestedMentions.first {
-              messageDraft.insertSuggestedMention(mention: mention, text: mention.replaceTo)
+              messageDraft.insertSuggestedMention(mention: mention, text: mention.replaceWith)
               expectation.fulfill()
             } else {
               XCTFail("Unexpected condition. There's no suggested mentions")
@@ -132,7 +132,7 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       }
     })
     
-    messageDraft.addMessageElementsListener(listener)
+    messageDraft.addChangeListener(listener)
     messageDraft.update(text: "This is a #chnl")
     
     wait(for: [expectation], timeout: 6)
@@ -169,23 +169,23 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     let suggestedMention = SuggestedMention(
       offset: 10,
       replaceFrom: "#chnl",
-      replaceTo: channel.name ?? "",
+      replaceWith: channel.name ?? "",
       target: .channel(channelId: channel.id)
     )
     
     messageDraft.insertSuggestedMention(
       mention: suggestedMention,
-      text: suggestedMention.replaceTo
+      text: suggestedMention.replaceWith
     )
     
-    let listener = ClosureMessageDraftStateListener(onChange: { [unowned self] elements, future in
+    let listener = ClosureMessageDraftChangeListener(onChange: { [unowned self] elements, future in
       XCTAssertEqual(elements.count, 2)
       XCTAssertEqual(elements[0], .plainText(text: "Some prefix. This is a "))
       XCTAssertEqual(elements[1], .link(text: channel.name ?? "", target: .channel(channelId: channel.id)))
       expectation.fulfill()
     })
     
-    messageDraft.addMessageElementsListener(listener)
+    messageDraft.addChangeListener(listener)
     messageDraft.insertText(offset: 0, text: "Some prefix. ")
     
     wait(for: [expectation], timeout: 6)
@@ -202,22 +202,22 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     let suggestedMention = SuggestedMention(
       offset: 10,
       replaceFrom: "#chnl",
-      replaceTo: channel.name ?? "",
+      replaceWith: channel.name ?? "",
       target: .channel(channelId: channel.id)
     )
     
     messageDraft.insertSuggestedMention(
       mention: suggestedMention,
-      text: suggestedMention.replaceTo
+      text: suggestedMention.replaceWith
     )
     
-    let listener = ClosureMessageDraftStateListener(onChange: { [unowned self] elements, future in
+    let listener = ClosureMessageDraftChangeListener(onChange: { [unowned self] elements, future in
       XCTAssertEqual(elements.count, 1)
       XCTAssertEqual(elements[0], .link(text: channel.name ?? "", target: .channel(channelId: channel.id)))
       expectation.fulfill()
     })
     
-    messageDraft.addMessageElementsListener(listener)
+    messageDraft.addChangeListener(listener)
     messageDraft.removeText(offset: 0, length: 10)
     
     wait(for: [expectation], timeout: 6)
@@ -234,21 +234,21 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     let suggestedMention = SuggestedMention(
       offset: 10,
       replaceFrom: "#chnl",
-      replaceTo: channel.name ?? "",
+      replaceWith: channel.name ?? "",
       target: .channel(channelId: channel.id)
     )
     
     messageDraft.insertSuggestedMention(
       mention: suggestedMention,
-      text: suggestedMention.replaceTo
+      text: suggestedMention.replaceWith
     )
     
-    let listener = ClosureMessageDraftStateListener(onChange: { [unowned self] elements, future in
+    let listener = ClosureMessageDraftChangeListener(onChange: { [unowned self] elements, future in
       XCTAssertEqual(elements[0], .plainText(text: "This is a \(channel.name ?? "")"))
       expectation.fulfill()
     })
     
-    messageDraft.addMessageElementsListener(listener)
+    messageDraft.addChangeListener(listener)
     messageDraft.removeMention(offset: suggestedMention.offset)
     
     wait(for: [expectation], timeout: 6)
@@ -267,22 +267,22 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     let suggestedMention = SuggestedMention(
       offset: 10,
       replaceFrom: "#chnl",
-      replaceTo: channel.name ?? "",
+      replaceWith: channel.name ?? "",
       target: .channel(channelId: channel.id)
     )
     
     messageDraft.insertSuggestedMention(
       mention: suggestedMention,
-      text: suggestedMention.replaceTo
+      text: suggestedMention.replaceWith
     )
         
-    let listener = ClosureMessageDraftStateListener(onChange: { elements, future in
+    let listener = ClosureMessageDraftChangeListener(onChange: { elements, future in
       XCTAssertEqual(elements.count, 1)
       XCTAssertFalse(elements[0].isLink())
       expectation.fulfill()
     })
     
-    messageDraft.addMessageElementsListener(listener)
+    messageDraft.addChangeListener(listener)
     messageDraft.insertText(offset: 12, text: "_!!!!!_")
     
     wait(for: [expectation], timeout: 6)
@@ -301,22 +301,22 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     let suggestedMention = SuggestedMention(
       offset: 10,
       replaceFrom: "#chnl",
-      replaceTo: channel.name ?? "",
+      replaceWith: channel.name ?? "",
       target: .channel(channelId: channel.id)
     )
     
     messageDraft.insertSuggestedMention(
       mention: suggestedMention,
-      text: suggestedMention.replaceTo
+      text: suggestedMention.replaceWith
     )
         
-    let listener = ClosureMessageDraftStateListener(onChange: { elements, future in
+    let listener = ClosureMessageDraftChangeListener(onChange: { elements, future in
       XCTAssertEqual(elements.count, 1)
       XCTAssertFalse(elements[0].isLink())
       expectation.fulfill()
     })
     
-    messageDraft.addMessageElementsListener(listener)
+    messageDraft.addChangeListener(listener)
     messageDraft.removeText(offset: 12, length: 5)
     
     wait(for: [expectation], timeout: 6)

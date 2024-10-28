@@ -165,7 +165,7 @@ public protocol Message {
   ///     - **Success**:  The updated channel object after the removal of the thread
   ///     - **Failure**: An `Error` describing the failure
   func removeThread(
-    completion: ((Swift.Result<ChatType.ChatChannelType, Error>) -> Void)?
+    completion: ((Swift.Result<ChatType.ChatChannelType?, Error>) -> Void)?
   )
 
   /// Add or remove a reaction to a message.

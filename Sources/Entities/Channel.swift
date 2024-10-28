@@ -177,7 +177,7 @@ public protocol Channel {
   ///   - textLinks: Returned list of text links that are shown as text in the message
   ///   - quotedMessage: Object added to a message when you quote another message
   ///   - files: One or multiple files attached to the text message
-  ///   - completion: The async `Result` of the method call
+  ///   - completion: The async `Result` of the method callnel
   ///     - **Success**: The timetoken of the sent message
   ///     - **Failure**: An `Error` describing the failure
   @available(*, deprecated, message: "Will be removed from SDK in the future")

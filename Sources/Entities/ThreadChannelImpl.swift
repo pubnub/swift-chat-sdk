@@ -137,7 +137,7 @@ extension ThreadChannelImpl: ThreadChannel {
     )
   }
 
-  public func delete(soft: Bool = false, completion: ((Swift.Result<ChannelImpl, Error>) -> Void)? = nil) {
+  public func delete(soft: Bool = false, completion: ((Swift.Result<ChannelImpl?, Error>) -> Void)? = nil) {
     target.delete(
       soft: soft,
       completion: completion

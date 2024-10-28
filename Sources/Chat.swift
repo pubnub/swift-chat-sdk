@@ -151,12 +151,12 @@ public protocol Chat: AnyObject {
   ///   - id: Unique user identifier
   ///   - soft: Decide if you want to permanently remove user metadata
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: A value containing user object
+  ///     - **Success**: For hard delete, the method returns `nil`. Otherwise, an updated ``User`` instance with the status field set to `"deleted"`
   ///     - **Failure**: An `Error` describing the failure
   func deleteUser(
     id: String,
     soft: Bool,
-    completion: ((Swift.Result<ChatUserType, Error>) -> Void)?
+    completion: ((Swift.Result<ChatUserType?, Error>) -> Void)?
   )
 
   /// Retrieves list of channel identifiers where a given user is present.
@@ -243,12 +243,12 @@ public protocol Chat: AnyObject {
   ///   - id: Unique channel identifier (up to 92 UTF-8 byte sequences)
   ///   - soft: Decide if you want to permanently remove channel metadata. If you set this parameter to true, the ``Channel`` object gets the deleted status, and you can still restore/get its data
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: For hard delete, the method returns the last version of the ``Channel`` object before it was permanently deleted. Otherwise, an updated ``Channel`` instance with the status field set to `"deleted"`.
+  ///     - **Success**: For hard delete, the method returns `nil`. Otherwise, an updated ``Channel`` instance with the status field set to `"deleted"`
   ///     - **Failure**: An `Error` describing the failure
   func deleteChannel(
     id: String,
     soft: Bool,
-    completion: ((Swift.Result<ChatChannelType, Error>) -> Void)?
+    completion: ((Swift.Result<ChatChannelType?, Error>) -> Void)?
   )
 
   /// Returns a list of ``User`` identifiers present on the given ``Channel``.

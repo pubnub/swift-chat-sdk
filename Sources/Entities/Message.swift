@@ -96,12 +96,12 @@ public protocol Message {
   ///   - soft: Decide if you want to permanently remove message data
   ///   - preserveFiles: Define if you want to keep the files attached to the message or remove them
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: For hard delete, the method returns the last version of the Message object before it was permanently deleted. For soft delete, an updated message instance with an added deleted action type
+  ///     - **Success**: For hard delete, the method returns `nil`. Otherwise, an updated ``Message`` instance with an added `"deleted"` action type
   ///     - **Failure**: An `Error` describing the failure
   func delete(
     soft: Bool,
     preserveFiles: Bool,
-    completion: ((Swift.Result<(ChatType.ChatMessageType)?, Error>) -> Void)?
+    completion: ((Swift.Result<ChatType.ChatMessageType?, Error>) -> Void)?
   )
 
   /// Get the thread channel on which the thread message is published.

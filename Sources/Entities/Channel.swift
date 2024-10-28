@@ -70,11 +70,11 @@ public protocol Channel {
   /// - Parameters:
   ///   - soft: Decide if you want to permanently remove channel metadata
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: For hard delete, the method returns the last version of the ``Channel`` object before it was permanently deleted. Otherwise, an updated ``Channel`` instance with the status field set to `"deleted"`
+  ///     - **Success**: For hard delete, the method returns `nil`. Otherwise, an updated ``Channel`` instance with the status field set to `"deleted"`
   ///     - **Failure**: An `Error` describing the failure
   func delete(
     soft: Bool,
-    completion: ((Swift.Result<ChatType.ChatChannelType, Error>) -> Void)?
+    completion: ((Swift.Result<ChatType.ChatChannelType?, Error>) -> Void)?
   )
 
   /// Forwards a message to existing channel.

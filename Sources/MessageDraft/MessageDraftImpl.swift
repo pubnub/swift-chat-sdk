@@ -22,7 +22,7 @@ import PubNubChat
 /// Refer to the ``MessageDraft`` protocol for detailed information on how individual methods work.
 public class MessageDraftImpl {
   private let messageDraft: PubNubChat.MessageDraft
-  private var listeners: [(KMPMessageDraftStateListener, MessageDraftStateListener)] = []
+  private var listeners: [(KMPMessageDraftChangeListener, MessageDraftChangeListener)] = []
 
   init(messageDraft: PubNubChat.MessageDraft) {
     self.messageDraft = messageDraft
@@ -65,8 +65,8 @@ extension MessageDraftImpl: MessageDraft {
     }
   }
 
-  public func addMessageElementsListener(_ listener: any MessageDraftStateListener) {
-    let underlyingListener = KMPMessageDraftStateListener { elements, mentions in
+  public func addChangeListener(_ listener: any MessageDraftChangeListener) {
+    let underlyingListener = KMPMessageDraftChangeListener() { elements, mentions in
       listener.onChange(
         messageElements: elements.compactMap { MessageElement.from(element: $0) },
         suggestedMentions: SuggestedMentionsFutureImpl(future: mentions)
@@ -74,12 +74,12 @@ extension MessageDraftImpl: MessageDraft {
     }
 
     listeners.append((underlyingListener, listener))
-    messageDraft.addMessageElementsListener(callback: underlyingListener)
+    messageDraft.addChangeListener(listener: underlyingListener)
   }
 
-  public func removeMessageElementsListener(_ listener: any MessageDraftStateListener) {
+  public func removeChangeListener(_ listener: any MessageDraftChangeListener) {
     for currentPair in listeners where currentPair.1 === listener {
-      messageDraft.removeMessageElementsListener(callback: currentPair.0)
+      messageDraft.removeChangeListener(listener: currentPair.0)
     }
     listeners.removeAll {
       $0.0 === listener
@@ -133,7 +133,7 @@ extension MessageDraftImpl: MessageDraft {
   }
 }
 
-class KMPMessageDraftStateListener: PubNubChat.MessageDraftStateListener {
+class KMPMessageDraftChangeListener: PubNubChat.MessageDraftChangeListener {
   let onChange: ([PubNubChat.MessageElement], PubNubChat.PNFuture) -> Void
 
   init(onChange: @escaping ([PubNubChat.MessageElement], PubNubChat.PNFuture) -> Void) {

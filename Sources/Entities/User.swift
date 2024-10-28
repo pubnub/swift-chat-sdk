@@ -80,11 +80,11 @@ public protocol User {
   /// - Parameters:
   ///   - soft: If true, the user is soft deleted, retaining their data but making them inactive
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: For hard delete, the method returns the last version of the ``User`` object before it was permanently deleted. Otherwise, an updated ``User`` instance with the status field set to `"deleted"`
+  ///     - **Success**: For hard delete, the method returns `nil`. Otherwise, an updated ``User`` instance with the status field set to `"deleted"`
   ///     - **Failure**: An `Error` describing the failure
   func delete(
     soft: Bool,
-    completion: ((Swift.Result<ChatType.ChatUserType, Error>) -> Void)?
+    completion: ((Swift.Result<ChatType.ChatUserType?, Error>) -> Void)?
   )
 
   /// Retrieves a list of channels where the user is currently present.

@@ -32,16 +32,16 @@ public protocol MessageDraft {
   /// Can be used to attach files to send with this ``MessageDraft``
   var files: [InputFile] { get set }
 
-  /// Add a ``MessageDraftStateListener`` to listen for changes to the contents of this ``MessageDraft``, as well as
+  /// Add a ``MessageDraftChangeListener`` to listen for changes to the contents of this ``MessageDraft``, as well as
   /// to retrieve the current mention suggestions for users and channels (e.g. when the message draft contains "... @name ..." or "... #chann ...").
   ///
-  /// - Parameter listener: The ``MessageDraftStateListener`` that will receive the most current message elements list and suggestions list
-  func addMessageElementsListener(_ listener: MessageDraftStateListener)
+  /// - Parameter listener: The ``MessageDraftChangeListener`` that will receive the most current message elements list and suggestions list
+  func addChangeListener(_ listener: MessageDraftChangeListener)
 
-  /// Remove the given ``MessageDraftStateListener`` from active listeners.
+  /// Remove the given ``MessageDraftChangeListener`` from active listeners.
   ///
   /// - Parameter listener: A listener to remove
-  func removeMessageElementsListener(_ listener: MessageDraftStateListener)
+  func removeChangeListener(_ listener: MessageDraftChangeListener)
 
   /// Insert some text into the ``MessageDraft`` text at the given offset.
   ///
@@ -215,7 +215,7 @@ public struct SuggestedMention {
   /// The original text at the `offset` in the message draft text
   public let replaceFrom: String
   /// The suggested replacement for the `replaceFrom` text, e.g. the user's full name
-  public let replaceTo: String
+  public let replaceWith: String
   /// The target of the mention, such as a user, channel or URL
   public let target: MentionTarget
 
@@ -223,7 +223,7 @@ public struct SuggestedMention {
     PubNubChat.SuggestedMention(
       offset: Int32(offset),
       replaceFrom: replaceFrom,
-      replaceTo: replaceTo,
+      replaceWith: replaceWith,
       target: target.transform()
     )
   }
@@ -235,7 +235,7 @@ public struct SuggestedMention {
     return SuggestedMention(
       offset: Int(mention.offset),
       replaceFrom: mention.replaceFrom,
-      replaceTo: mention.replaceTo,
+      replaceWith: mention.replaceWith,
       target: target
     )
   }

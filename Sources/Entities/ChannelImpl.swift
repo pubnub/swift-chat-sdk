@@ -105,7 +105,7 @@ extension ChannelImpl: Channel {
 
   public func delete(
     soft: Bool = false,
-    completion: ((Swift.Result<ChannelImpl, Error>) -> Void)? = nil
+    completion: ((Swift.Result<ChannelImpl?, Error>) -> Void)? = nil
   ) {
     target.delete(
       soft: soft,

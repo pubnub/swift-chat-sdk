@@ -75,6 +75,7 @@ extension ChatImpl {
       pubNub: PubNubImpl.Companion.shared.create(kmpPubNub: KMPPubNub(pubnub: pubnub)),
       editMessageActionName: config.customPayloads?.editMessageActionName ?? MessageActionType.edited.rawValue,
       deleteMessageActionName: config.customPayloads?.deleteMessageActionName ?? MessageActionType.deleted.rawValue,
+      reactionsActionName: config.customPayloads?.reactionsActionName ?? MessageActionType.reactions.rawValue,
       timerManager: TimerManagerImpl()
     )
   }
@@ -263,12 +264,12 @@ extension ChatImpl: Chat {
   public func deleteUser(
     id: String,
     soft: Bool = false,
-    completion: ((Swift.Result<UserImpl, Error>) -> Void)? = nil
+    completion: ((Swift.Result<UserImpl?, Error>) -> Void)? = nil
   ) {
     chat.deleteUser(
       id: id,
       soft: soft
-    ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.User>) in
+    ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.User?>) in
       switch result.result {
       case let .success(user):
         completion?(.success(UserImpl(user: user)))
@@ -392,12 +393,12 @@ extension ChatImpl: Chat {
   public func deleteChannel(
     id: String,
     soft: Bool = false,
-    completion: ((Swift.Result<ChannelImpl, Error>) -> Void)? = nil
+    completion: ((Swift.Result<ChannelImpl?, Error>) -> Void)? = nil
   ) {
     chat.deleteChannel(
       id: id,
       soft: soft
-    ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.Channel_>) in
+    ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.Channel_?>) in
       switch result.result {
       case let .success(channel):
         completion?(.success(ChannelImpl(channel: channel)))

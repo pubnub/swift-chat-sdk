@@ -11,17 +11,17 @@
 import Foundation
 import PubNubChat
 
-/// A listener that can be used with ``MessageDraft/addMessageElementsListener(_:)`` to listen for changes to the message draft
+/// A listener that can be used with ``MessageDraft/addChangeListener(_:)`` to listen for changes to the message draft
 /// text and get current mention suggestions.
-public protocol MessageDraftStateListener: AnyObject {
+public protocol MessageDraftChangeListener: AnyObject {
   func onChange(messageElements: [MessageElement], suggestedMentions: SuggestedMentionsFuture)
 }
 
-/// A closure-based implementation of the ``MessageDraftStateListener`` protocol.
+/// A closure-based implementation of the ``MessageDraftChangeListener`` protocol.
 ///
-/// This class allows you to handle delegate events by passing a closure, reducing the need to implement the ``MessageDraftStateListener`` protocol.
+/// This class allows you to handle delegate events by passing a closure, reducing the need to implement the ``MessageDraftChangeListener`` protocol.
 /// This is useful when you want to quickly handle messages without writing additional boilerplate code.
-final public class ClosureMessageDraftStateListener: MessageDraftStateListener {
+final public class ClosureMessageDraftChangeListener: MessageDraftChangeListener {
   let onChangeClosure: (([MessageElement], SuggestedMentionsFuture) -> Void)
   
   init(onChange: @escaping ([MessageElement], SuggestedMentionsFuture) -> Void) {

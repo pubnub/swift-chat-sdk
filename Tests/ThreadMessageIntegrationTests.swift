@@ -128,7 +128,7 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
   }
 
   func testThreadMessage_GetThread() throws {
-    let error = try awaitResultError {
+    let error = try awaitResultError(delay: 2) {
       threadMessage.getThread(
         completion: $0
       )
@@ -239,7 +239,7 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     expectation.expectedFulfillmentCount = 1
 
     let message = try XCTUnwrap(
-      try awaitResultValue {
+      try awaitResultValue(delay: 2) {
         threadChannel.getHistory(completion: $0)
       }.messages.first
     )
@@ -274,7 +274,7 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     expectation.expectedFulfillmentCount = 1
 
     let message = try XCTUnwrap(
-      try awaitResultValue {
+      try awaitResultValue(delay: 2) {
         threadChannel.getHistory(completion: $0)
       }.messages.first
     )

@@ -1,0 +1,60 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+before_all do |lane, opts|
+
+  # Need to use UTF-8 when using xcpretty
+  Encoding.default_external = Encoding::UTF_8
+  Encoding.default_internal = Encoding::UTF_8
+
+  setup_ci if ENV["CI"]
+
+  ENV["FASTLANE_XCODE_LIST_TIMEOUT"] = "120"
+  ENV["FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT"] = "120"
+  ENV["FASTLANE_XCODEBUILD_SETTINGS_RETRIES"] = "10"
+end
+
+desc "Executes SDK Integration Tests"
+lane :test do
+  pub_key = ENV['SDK_PUB_KEY']
+  sub_key = ENV['SDK_SUB_KEY']
+  
+  set_info_plist_value(
+    path: "Tests/PubNubSwiftChatSDKTests.plist",
+    key: "publishKey",
+    value: pub_key
+  )
+  set_info_plist_value(
+    path: "Tests/PubNubSwiftChatSDKTests.plist",
+    key: "subscribeKey",
+    value: sub_key
+  )
+  scan(
+    workspace: ENV['WORKSPACE'],
+    scheme: ENV['SCHEME_SDK'],
+    destination: ENV['DESTINATION'],
+    disable_concurrent_testing: true,
+    output_types: "html" 
+  )
+
+end
+
+desc "Lints a release using Swift Package Manager"
+lane :lint_swift_package_manager do
+  Dir.chdir("..") do
+    # TODO: Uncomment once macOS support is added
+    # Action.sh('swift build -c release -j 2')
+  end
+end

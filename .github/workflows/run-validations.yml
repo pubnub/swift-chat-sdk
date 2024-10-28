@@ -1,0 +1,85 @@
+name: Validations
+
+on:
+  push:
+  workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+defaults:
+  run:
+    shell: bash
+
+env:
+  LANG: en_US.UTF-8
+  LANGUAGE: en_US.UTF-8
+  LC_ALL: en_US.UTF-8
+
+jobs:
+  pubnub-yml:
+    name: "Validate .pubnub.yml"
+    runs-on:
+      group: organization/Default
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+      - name: Checkout validator action
+        uses: actions/checkout@v4
+        with:
+          repository: pubnub/client-engineering-deployment-tools
+          ref: v1
+          token: ${{ secrets.GH_TOKEN }}
+          path: .github/.release/actions
+      - name: "Run '.pubnub.yml' file validation"
+        uses: ./.github/.release/actions/actions/validators/pubnub-yml
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+      - name: Cancel workflow runs for commit on error
+        if: failure()
+        uses: ./.github/.release/actions/actions/utils/fast-jobs-failure
+  package-managers-validation:
+    name: Validate package managers
+    runs-on:
+      group: macos-arm-gh
+    strategy:
+      matrix:
+        managers: [Swift Package Manager]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+      - name: Checkout actions
+        uses: actions/checkout@v4
+        with:
+          repository: pubnub/client-engineering-deployment-tools
+          ref: v1
+          token: ${{ secrets.GH_TOKEN }}
+          path: .github/.release/actions
+      - name: Setup Ruby 3.2.2
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2.2
+          bundler-cache: true
+      - name: Cache Swift Package Manager
+        uses: actions/cache@v4
+        with:
+          path: |
+            .build
+            ~/Library/Developer/Xcode/DerivedData/**/SourcePackages/checkouts
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+      - name: ${{ matrix.managers }} validation
+        run: bundle exec fastlane lint_$(echo ${{ matrix.managers }} | tr '[:upper:]' '[:lower:]' | tr ' ' '_')
+      - name: Cancel workflow runs for commit on error
+        if: failure()
+        uses: ./.github/.release/actions/actions/utils/fast-jobs-failure
+  all-validations:
+    name: Validations
+    needs: [pubnub-yml, package-managers-validation]
+    runs-on:
+      group: organization/Default
+    steps:
+      - name: Validations summary
+        run: echo -e "\033[38;2;95;215;0m\033[1mAll validations passed"

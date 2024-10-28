@@ -1,0 +1,12 @@
+{
+  ".pubnub.yml": [
+    { "pattern": "^version: \"(.+)\"$", "cleared": true },
+    { "pattern": "\/refs\/tags\/((\\d+\\.?){2,}(-[a-zA-Z]+(.\\d+)?)?)\\.zip", "cleared": true }
+  ],
+  "PubNubSwiftChatSDK.xcodeproj/project.pbxproj": [
+    { "pattern": "MARKETING_VERSION = ([0-9]+\\.[0-9]+\\.[0-9]+(\\.[0-9]+)?);", "cleared": true }
+  ],
+  "Sources/Miscellaneous/Constants.swift": [
+    { "pattern": "pubNubSwiftChatSDKVersion\\:.+\"((\\d+\\.?){2,})\"$", "cleared": true }
+  ]
+}

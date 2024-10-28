@@ -777,7 +777,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       )
     }
 
-    let getUnreadMessagesCount = try awaitResultValue(delay: 2) {
+    let getUnreadMessagesCount = try awaitResultValue(delay: 3) {
       chat.getUnreadMessagesCount(
         completion: $0
       )
@@ -1025,7 +1025,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
 
     let message = try XCTUnwrap(
-      try awaitResultValue {
+      try awaitResultValue(delay: 2) {
         channel.getHistory(
           count: 1,
           completion: $0

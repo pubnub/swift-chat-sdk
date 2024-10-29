@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pubnub/kmp-chat",
       "state" : {
-        "revision" : "29395271f752c0354ca1dad984cb86161f4700ab",
-        "version" : "0.8.202-dev"
+        "revision" : "ead1e5c07b5b14a1acb5c69315b33faa7d24b5c9",
+        "version" : "0.8.3-dev"
       }
     },
     {

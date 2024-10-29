@@ -1,13 +1,13 @@
 {
-  "originHash" : "160b44fbed91415c985f7829e32c01b952bd76451638cfaf3ec3add33864981b",
+  "originHash" : "2b7f8558564acf72b5e5be5d437803cf7d29d74b8d155e01d97b3918fb30f48e",
   "pins" : [
     {
       "identity" : "kmp-chat",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pubnub/kmp-chat",
       "state" : {
-        "revision" : "b86e753b675d282e3fb7abd620b18eea58d8f353",
-        "version" : "0.8.3-dev"
+        "revision" : "7a98120764c0acc818362dee0f5ec52d1893450f",
+        "version" : "0.8.201-dev"
       }
     },
     {

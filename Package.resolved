@@ -1,0 +1,23 @@
+{
+  "pins" : [
+    {
+      "identity" : "kmp-chat",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pubnub/kmp-chat",
+      "state" : {
+        "revision" : "885e182a6ec55d597594a1d53b05d1ec16665b31",
+        "version" : "0.8.3-dev"
+      }
+    },
+    {
+      "identity" : "swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pubnub/swift",
+      "state" : {
+        "revision" : "be18a8c8d32f1426992d03cb3551101ab972fdb4",
+        "version" : "8.0.1"
+      }
+    }
+  ],
+  "version" : 2
+}

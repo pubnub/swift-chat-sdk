@@ -912,7 +912,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       )
     }
 
-    let history = try awaitResultValue {
+    let history = try awaitResultValue(delay: 3) {
       chat.getEventsHistory(
         channelId: chat.currentUser.id,
         completion: $0
@@ -968,7 +968,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
 
     let userMentionData = try XCTUnwrap(
-      try awaitResultValue {
+      try awaitResultValue(delay: 3) {
         chat.getCurrentUserMentions(
           completion: $0
         )

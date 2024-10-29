@@ -27,15 +27,18 @@ class ThreadChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
         )
       }
     )
+    
+    let timetoken = try awaitResultValue {
+      parentChannel?.sendText(
+        text: "Message",
+        completion: $0
+      )
+    }
+    
     let testMessage = try XCTUnwrap(
-      try awaitResultValue {
+      try awaitResultValue(delay: 3) {
         parentChannel.getMessage(
-          timetoken: try awaitResultValue {
-            parentChannel?.sendText(
-              text: "Message",
-              completion: $0
-            )
-          },
+          timetoken: timetoken,
           completion: $0
         )
       }

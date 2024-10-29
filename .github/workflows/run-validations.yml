@@ -67,9 +67,9 @@ jobs:
           path: |
             .build
             ~/Library/Developer/Xcode/DerivedData/**/SourcePackages/checkouts
-          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+          key: ${{ runner.os }}-spm-v1-${{ hashFiles('**/Package.resolved') }}
           restore-keys: |
-            ${{ runner.os }}-spm-
+            ${{ runner.os }}-spm-v1-
       - name: ${{ matrix.managers }} validation
         run: bundle exec fastlane lint_$(echo ${{ matrix.managers }} | tr '[:upper:]' '[:lower:]' | tr ' ' '_')
       - name: Cancel workflow runs for commit on error

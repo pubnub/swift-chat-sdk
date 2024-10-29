@@ -52,6 +52,8 @@ jobs:
         run: rm -rf ~/Library/Caches/org.swift.swiftpm
       - name: Reset SPM cache 2
         run: rm -rf ~/Library/org.swift.swiftpm
+      - name: Package.resolved
+        run: more Package.resolved
       - name: Pre-load simulators list
         if: ${{ matrix.environment != 'macOS' }}
         run: xcrun simctl list -j

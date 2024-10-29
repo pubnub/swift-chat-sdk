@@ -61,6 +61,15 @@ jobs:
         with:
           ruby-version: 3.2.2
           bundler-cache: true
+      - name: Cache Swift Package Manager
+        uses: actions/cache@v4
+        with:
+          path: |
+            .build
+            ~/Library/Developer/Xcode/DerivedData/**/SourcePackages/checkouts
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
       - name: ${{ matrix.managers }} validation
         run: bundle exec fastlane lint_$(echo ${{ matrix.managers }} | tr '[:upper:]' '[:lower:]' | tr ' ' '_')
       - name: Cancel workflow runs for commit on error

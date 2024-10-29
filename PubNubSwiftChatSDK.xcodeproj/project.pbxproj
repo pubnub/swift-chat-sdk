@@ -10,7 +10,6 @@
 		3D043A7A2CA6AAA000F91C05 /* ThreadChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D043A792CA6AAA000F91C05 /* ThreadChannel.swift */; };
 		3D043A7C2CAAABBD00F91C05 /* ThreadMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D043A7B2CAAABBD00F91C05 /* ThreadMessage.swift */; };
 		3D043A7E2CAC190200F91C05 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D043A7D2CAC190200F91C05 /* Constants.swift */; };
-		3D28C3E22CD0DC6C005F8BF5 /* PubNubChat in Frameworks */ = {isa = PBXBuildFile; productRef = 3D28C3E12CD0DC6C005F8BF5 /* PubNubChat */; };
 		3D2CA2362C5B9320008D2284 /* PubNubChat+Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2CA2352C5B9320008D2284 /* PubNubChat+Transform.swift */; };
 		3D2CA2382C5B9ACA008D2284 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2CA2372C5B9ACA008D2284 /* File.swift */; };
 		3D2CA23A2C5B9CF6008D2284 /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2CA2392C5B9CF6008D2284 /* Dictionary.swift */; };
@@ -81,6 +80,7 @@
 		3DB73A7D2C57EA94007FE249 /* Timetoken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB73A7C2C57EA94007FE249 /* Timetoken.swift */; };
 		3DB73A7F2C58CCAE007FE249 /* GetCurrentUserMentionsResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB73A7E2C58CCAE007FE249 /* GetCurrentUserMentionsResult.swift */; };
 		3DCF7DFC2CD0FFCC00889326 /* PubNubSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 3DCF7DFB2CD0FFCC00889326 /* PubNubSDK */; };
+		3DCF7DFF2CD1226100889326 /* PubNubChat in Frameworks */ = {isa = PBXBuildFile; productRef = 3DCF7DFE2CD1226100889326 /* PubNubChat */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -190,7 +190,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D28C3E22CD0DC6C005F8BF5 /* PubNubChat in Frameworks */,
+				3DCF7DFF2CD1226100889326 /* PubNubChat in Frameworks */,
 				3DCF7DFC2CD0FFCC00889326 /* PubNubSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -397,8 +397,8 @@
 			);
 			name = PubNubSwiftChatSDK;
 			packageProductDependencies = (
-				3D28C3E12CD0DC6C005F8BF5 /* PubNubChat */,
 				3DCF7DFB2CD0FFCC00889326 /* PubNubSDK */,
+				3DCF7DFE2CD1226100889326 /* PubNubChat */,
 			);
 			productName = PubNubChatSDK;
 			productReference = 3DB73A072C4FE13C007FE249 /* PubNubSwiftChatSDK.framework */;
@@ -451,8 +451,8 @@
 			);
 			mainGroup = 3DB739FD2C4FE13B007FE249;
 			packageReferences = (
-				3D28C3E02CD0DC6C005F8BF5 /* XCRemoteSwiftPackageReference "kmp-chat" */,
 				3DCF7DFA2CD0FFCC00889326 /* XCRemoteSwiftPackageReference "swift" */,
+				3DCF7DFD2CD1226100889326 /* XCRemoteSwiftPackageReference "kmp-chat" */,
 			);
 			productRefGroup = 3DB73A082C4FE13C007FE249 /* Products */;
 			projectDirPath = "";
@@ -877,14 +877,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		3D28C3E02CD0DC6C005F8BF5 /* XCRemoteSwiftPackageReference "kmp-chat" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/pubnub/kmp-chat";
-			requirement = {
-				kind = exactVersion;
-				version = "0.8.3-dev";
-			};
-		};
 		3DCF7DFA2CD0FFCC00889326 /* XCRemoteSwiftPackageReference "swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pubnub/swift";
@@ -893,18 +885,26 @@
 				version = 8.0.1;
 			};
 		};
+		3DCF7DFD2CD1226100889326 /* XCRemoteSwiftPackageReference "kmp-chat" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pubnub/kmp-chat";
+			requirement = {
+				kind = exactVersion;
+				version = "0.8.3-dev";
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		3D28C3E12CD0DC6C005F8BF5 /* PubNubChat */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 3D28C3E02CD0DC6C005F8BF5 /* XCRemoteSwiftPackageReference "kmp-chat" */;
-			productName = PubNubChat;
-		};
 		3DCF7DFB2CD0FFCC00889326 /* PubNubSDK */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 3DCF7DFA2CD0FFCC00889326 /* XCRemoteSwiftPackageReference "swift" */;
 			productName = PubNubSDK;
+		};
+		3DCF7DFE2CD1226100889326 /* PubNubChat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3DCF7DFD2CD1226100889326 /* XCRemoteSwiftPackageReference "kmp-chat" */;
+			productName = PubNubChat;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -48,8 +48,10 @@ jobs:
         with:
           ruby-version: 3.2.2
           bundler-cache: true
-      - name: Resolve Swift package dependencies
-        run: swift package resolve
+      - name: Reset SPM cache
+        run: rm -rf ~/Library/Caches/org.swift.swiftpm
+      - name: Reset SPM cache 2
+        run: rm -rf ~/Library/org.swift.swiftpm
       - name: Pre-load simulators list
         if: ${{ matrix.environment != 'macOS' }}
         run: xcrun simctl list -j

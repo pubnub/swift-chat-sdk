@@ -56,7 +56,6 @@ Packages/
 Package.pins
 .swiftpm
 .build
-PubNubSwiftChatSDK.xcworkspace/xcshareddata/swiftpm
 
 # CocoaPods
 #

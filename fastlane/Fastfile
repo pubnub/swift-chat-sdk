@@ -46,7 +46,8 @@ lane :test do
     scheme: ENV['SCHEME_SDK'],
     destination: ENV['DESTINATION'],
     disable_concurrent_testing: true,
-    output_types: "html" 
+    output_types: "html", 
+    clean: true
   )
 
 end

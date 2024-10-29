@@ -635,7 +635,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
   }
 
 //
-//  TODO: Broken in KMP
+//  TODO: Investigate
 //
 
 //  func testChannel_GetFiles() throws {

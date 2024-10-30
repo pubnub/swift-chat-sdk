@@ -19,8 +19,8 @@ public protocol MessageDraftChangeListener: AnyObject {
   ///
   /// - Parameters:
   ///   - messageElements: An array of `MessageElement` representing current elements within the message
-  ///   - suggestedMentions: A  future object that will return the result of suggested mentions after calling its ``SuggestedMentionsFuture/async(completion:)`` method
-  func onChange(messageElements: [MessageElement], suggestedMentions: SuggestedMentionsFuture)
+  ///   - suggestedMentions: A  future object that will return the result of suggested mentions after calling its ``FutureObject/async(completion:)`` method
+  func onChange(messageElements: [MessageElement], suggestedMentions: any FutureObject<[SuggestedMention]>)
 }
 
 /// A closure-based implementation of the ``MessageDraftChangeListener`` protocol.
@@ -28,37 +28,39 @@ public protocol MessageDraftChangeListener: AnyObject {
 /// This class allows you to handle delegate events by passing a closure, reducing the need to implement the ``MessageDraftChangeListener`` protocol.
 /// This is useful when you want to quickly handle messages without writing additional boilerplate code.
 final public class ClosureMessageDraftChangeListener: MessageDraftChangeListener {
-  let onChangeClosure: (([MessageElement], SuggestedMentionsFuture) -> Void)
+  let onChangeClosure: (([MessageElement], any FutureObject<[SuggestedMention]>) -> Void)
 
-  init(onChange: @escaping ([MessageElement], SuggestedMentionsFuture) -> Void) {
+  init(onChange: @escaping ([MessageElement], any FutureObject<[SuggestedMention]>) -> Void) {
     self.onChangeClosure = onChange
   }
 
-  public func onChange(messageElements: [MessageElement], suggestedMentions: SuggestedMentionsFuture) {
+  public func onChange(messageElements: [MessageElement], suggestedMentions: any FutureObject<[SuggestedMention]>) {
     onChangeClosure(messageElements, suggestedMentions)
   }
 }
 
-/// A protocol representing a `[SuggestedMention]` value  that will be available in the future.
-public protocol SuggestedMentionsFuture {
-  /// Starts an asynchronous operation and provides the result upon completion.
+/// A custom future-like object representing a value that will be provided asynchronously in the future.
+public protocol FutureObject<T> {
+  /// An associaded type representing the success value associated with this protocol or class. Defined by a conforming type
+  associatedtype T
+  /// Registers a completion handler to be called asynchronously with the result (success or failure).
   ///
   /// - Parameters:
-  ///   - completion: The async `Result` of the method call
-  ///     - **Success**: The successful result of the operation
+  ///    - completion: The async result of the call
+  ///     - **Success**: A successful value
   ///     - **Failure**: An `Error` describing the failure
-  func async(completion: @escaping (Swift.Result<[SuggestedMention], Error>) -> Void)
+  func async(completion: @escaping (Swift.Result<T, Error>) -> Void)
 }
 
-class SuggestedMentionsFutureImpl: SuggestedMentionsFuture {
+class SuggestedMentionsFuture: FutureObject {
   let future: PubNubChat.PNFuture
 
   init(future: PubNubChat.PNFuture) {
     self.future = future
   }
-
+  
   func async(completion: @escaping (Swift.Result<[SuggestedMention], Error>) -> Void) {
-    future.async(caller: self, callback: { (result: FutureResult<SuggestedMentionsFutureImpl, [PubNubChat.SuggestedMention]>) in
+    future.async(caller: self, callback: { (result: FutureResult<SuggestedMentionsFuture, [PubNubChat.SuggestedMention]>) in
       switch result.result {
       case let .success(suggestedMentions):
         completion(.success(suggestedMentions.compactMap { SuggestedMention.from(mention: $0) }))

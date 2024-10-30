@@ -64,7 +64,7 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     expectation.expectedFulfillmentCount = 1
         
     let messageDraft = channel.createMessageDraft()
-    let listener = ClosureMessageDraftChangeListener(onChange: { elements, future in
+    let listener = ClosureMessageDraftChangeListener() { elements, future in
       if !elements.containsAnyMention() {
         future.async() {
           switch $0 {
@@ -80,7 +80,7 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
           }
         }
       }      
-    })
+    }
     
     messageDraft.addChangeListener(listener)
     messageDraft.update(text: "This is a @user")
@@ -114,7 +114,7 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     expectation.expectedFulfillmentCount = 1
         
     let messageDraft = channel.createMessageDraft()
-    let listener = ClosureMessageDraftChangeListener(onChange: { elements, future in
+    let listener = ClosureMessageDraftChangeListener() { elements, future in
       if !elements.containsAnyMention() {
         future.async() {
           switch $0 {
@@ -130,7 +130,7 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
           }
         }
       }
-    })
+    }
     
     messageDraft.addChangeListener(listener)
     messageDraft.update(text: "This is a #chnl")
@@ -178,12 +178,12 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       text: suggestedMention.replaceWith
     )
     
-    let listener = ClosureMessageDraftChangeListener(onChange: { [unowned self] elements, future in
+    let listener = ClosureMessageDraftChangeListener() { [unowned self] elements, future in
       XCTAssertEqual(elements.count, 2)
       XCTAssertEqual(elements[0], .plainText(text: "Some prefix. This is a "))
       XCTAssertEqual(elements[1], .link(text: channel.name ?? "", target: .channel(channelId: channel.id)))
       expectation.fulfill()
-    })
+    }
     
     messageDraft.addChangeListener(listener)
     messageDraft.insertText(offset: 0, text: "Some prefix. ")
@@ -211,11 +211,11 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       text: suggestedMention.replaceWith
     )
     
-    let listener = ClosureMessageDraftChangeListener(onChange: { [unowned self] elements, future in
+    let listener = ClosureMessageDraftChangeListener() { [unowned self] elements, future in
       XCTAssertEqual(elements.count, 1)
       XCTAssertEqual(elements[0], .link(text: channel.name ?? "", target: .channel(channelId: channel.id)))
       expectation.fulfill()
-    })
+    }
     
     messageDraft.addChangeListener(listener)
     messageDraft.removeText(offset: 0, length: 10)
@@ -243,10 +243,10 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       text: suggestedMention.replaceWith
     )
     
-    let listener = ClosureMessageDraftChangeListener(onChange: { [unowned self] elements, future in
+    let listener = ClosureMessageDraftChangeListener() { [unowned self] elements, future in
       XCTAssertEqual(elements[0], .plainText(text: "This is a \(channel.name ?? "")"))
       expectation.fulfill()
-    })
+    }
     
     messageDraft.addChangeListener(listener)
     messageDraft.removeMention(offset: suggestedMention.offset)
@@ -276,11 +276,11 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       text: suggestedMention.replaceWith
     )
         
-    let listener = ClosureMessageDraftChangeListener(onChange: { elements, future in
+    let listener = ClosureMessageDraftChangeListener() { elements, future in
       XCTAssertEqual(elements.count, 1)
       XCTAssertFalse(elements[0].isLink())
       expectation.fulfill()
-    })
+    }
     
     messageDraft.addChangeListener(listener)
     messageDraft.insertText(offset: 12, text: "_!!!!!_")
@@ -310,11 +310,11 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       text: suggestedMention.replaceWith
     )
         
-    let listener = ClosureMessageDraftChangeListener(onChange: { elements, future in
+    let listener = ClosureMessageDraftChangeListener() { elements, future in
       XCTAssertEqual(elements.count, 1)
       XCTAssertFalse(elements[0].isLink())
       expectation.fulfill()
-    })
+    }
     
     messageDraft.addChangeListener(listener)
     messageDraft.removeText(offset: 12, length: 5)

@@ -747,58 +747,54 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-//
-//  TODO: Investigate
-//
+  func testChat_MarkAllMessagesAsRead() throws {
+    let channel = try awaitResultValue {
+      chat.createChannel(
+        id: randomString(),
+        completion: $0
+      )
+    }
 
-//  func testChat_MarkAllMessagesAsRead() throws {
-//    let channel = try awaitResultValue {
-//      chat.createChannel(
-//        id: randomString(),
-//        completion: $0
-//      )
-//    }
-//
-//    try awaitResultValue {
-//      channel.invite(
-//        user: chat.currentUser,
-//        completion: $0
-//      )
-//    }
-//
-//    for _ in (1...3) {
-//      try awaitResultValue {
-//        channel.sendText(
-//          text: "Some new text",
-//          completion: $0
-//        )
-//      }
-//    }
-//
-//    try awaitResultValue(delay: 4) {
-//      chat.markAllMessagesAsRead(
-//        completion: $0
-//      )
-//    }
-//
-//    let getUnreadMessagesCount = try awaitResultValue(delay: 4) {
-//      chat.getUnreadMessagesCount(
-//        completion: $0
-//      )
-//    }
-//
-//    XCTAssertTrue(
-//      getUnreadMessagesCount.isEmpty
-//    )
-//    addTeardownBlock { [unowned self] in
-//      try awaitResult {
-//        chat.deleteChannel(
-//          id: channel.id,
-//          completion: $0
-//        )
-//      }
-//    }
-//  }
+    try awaitResultValue {
+      channel.invite(
+        user: chat.currentUser,
+        completion: $0
+      )
+    }
+
+    for _ in (1...3) {
+      try awaitResultValue {
+        channel.sendText(
+          text: "Some new text",
+          completion: $0
+        )
+      }
+    }
+
+    try awaitResultValue(delay: 4) {
+      chat.markAllMessagesAsRead(
+        completion: $0
+      )
+    }
+
+    let getUnreadMessagesCount = try awaitResultValue(delay: 4) {
+      chat.getUnreadMessagesCount(
+        completion: $0
+      )
+    }
+
+    XCTAssertTrue(
+      getUnreadMessagesCount.isEmpty
+    )
+    addTeardownBlock { [unowned self] in
+      try awaitResult {
+        chat.deleteChannel(
+          id: channel.id,
+          completion: $0
+        )
+      }
+    }
+  }
 
   func testChat_GetChannelSuggestions() throws {
     let channelName = "chnl_\(randomString())"
@@ -818,11 +814,12 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
           text: "chnl_",
           completion: $0
         )
-      }.first
+      }
     )
-
-    XCTAssertEqual(channelSuggestion.id, channel.id)
-    XCTAssertEqual(channelSuggestion.name, channel.name)
+    
+    XCTAssertTrue(channelSuggestion.contains {
+      $0.name == channelName
+    })
 
     addTeardownBlock { [unowned self] in
       try awaitResult {

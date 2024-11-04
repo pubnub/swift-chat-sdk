@@ -511,12 +511,10 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     channel.getUserSuggestions(
       text: text,
       limit: Int32(limit)
-    ).async(caller: self) { (result: FutureResult<BaseChannel, Set<AnyHashable>>) in
+    ).async(caller: self) { (result: FutureResult<BaseChannel, [PubNubChat.Membership]>) in
       switch result.result {
       case let .success(userIds):
         completion?(.success(userIds.compactMap {
-          $0 as? PubNubChat.Membership
-        }.map {
           MembershipImpl(membership: $0)
         }))
       case let .failure(error):

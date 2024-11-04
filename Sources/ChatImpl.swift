@@ -212,8 +212,6 @@ extension ChatImpl: Chat {
         completion?(
           .success((
             users: getUserResponse.users.compactMap {
-              $0 as? PubNubChat.User
-            }.map {
               UserImpl(user: $0)
             },
             page: PubNubHashedPageBase(
@@ -345,8 +343,6 @@ extension ChatImpl: Chat {
         completion?(
           .success((
             channels: getChannelsResponse.channels.compactMap {
-              $0 as? PubNubChat.Channel_
-            }.map {
               ChannelImpl(channel: $0)
             },
             page: PubNubHashedPageBase(
@@ -615,7 +611,7 @@ extension ChatImpl: Chat {
       page: page?.transform(),
       filter: filter,
       sort: sort.compactMap { $0.transform() }
-    ).async(caller: self) { (result: FutureResult<ChatImpl, Set<PubNubChat.GetUnreadMessagesCounts>>) in
+    ).async(caller: self) { (result: FutureResult<ChatImpl, [PubNubChat.GetUnreadMessagesCounts]>) in
       switch result.result {
       case let .success(response):
         completion?(.success(response.map {
@@ -647,7 +643,7 @@ extension ChatImpl: Chat {
       switch result.result {
       case let .success(response):
         completion?(.success((
-          memberships: response.memberships.compactMap { $0 as? PubNubChat.Membership }.map {
+          memberships: response.memberships.compactMap {
             MembershipImpl(membership: $0)
           },
           page: PubNubHashedPageBase(
@@ -670,10 +666,10 @@ extension ChatImpl: Chat {
     chat.getChannelSuggestions(
       text: text,
       limit: Int32(limit)
-    ).async(caller: self) { (result: FutureResult<ChatImpl, Set<AnyHashable>>) in
+    ).async(caller: self) { (result: FutureResult<ChatImpl, [PubNubChat.Channel_]>) in
       switch result.result {
       case let .success(channels):
-        completion?(.success(channels.compactMap { $0 as? PubNubChat.Channel_ }.map {
+        completion?(.success(channels.compactMap {
           ChannelImpl(channel: $0)
         }))
       case let .failure(error):
@@ -690,12 +686,10 @@ extension ChatImpl: Chat {
     chat.getUserSuggestions(
       text: text,
       limit: Int32(limit)
-    ).async(caller: self) { (result: FutureResult<ChatImpl, Set<AnyHashable>>) in
+    ).async(caller: self) { (result: FutureResult<ChatImpl, [PubNubChat.User]>) in
       switch result.result {
       case let .success(users):
         completion?(.success(users.compactMap {
-          $0 as? PubNubChat.User
-        }.map {
           UserImpl(user: $0)
         }))
       case let .failure(error):

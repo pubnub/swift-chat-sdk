@@ -54,8 +54,8 @@ jobs:
         run: rm -rf "$HOME/Library/Caches/org.swift.swiftpm"
       - name: Clear build cache
         run: rm -rf .build    	    
-      - name: Resolve dependencies
-        run: xcodebuild -resolvePackageDependencies
+      - name: Reset Swift Package Manager
+        run: swift package reset
       - name: Pre-load simulators list
         if: ${{ matrix.environment != 'macOS' }}
         run: xcrun simctl list -j

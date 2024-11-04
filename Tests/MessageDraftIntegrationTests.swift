@@ -18,8 +18,8 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
   private var channel: ChannelImpl!
   
   override func customSetUpWitError() throws {
-    let channelId = "chnl\(randomString())"
-    let userId = "user\(randomString())"
+    let channelId = "cchnl\(randomString())"
+    let userId = "uuser\(randomString())"
     
     channel = try awaitResultValue {
       chat.createChannel(
@@ -83,7 +83,7 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
     
     messageDraft.addChangeListener(listener)
-    messageDraft.update(text: "This is a @user")
+    messageDraft.update(text: "This is a @uuser")
     
     wait(for: [expectation], timeout: 6)
     
@@ -133,7 +133,7 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
     
     messageDraft.addChangeListener(listener)
-    messageDraft.update(text: "This is a #chnl")
+    messageDraft.update(text: "This is a #cchnl")
     
     wait(for: [expectation], timeout: 6)
     
@@ -164,11 +164,11 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     expectation.expectedFulfillmentCount = 1
         
     let messageDraft = channel.createMessageDraft()
-    messageDraft.update(text: "This is a #chnl")
+    messageDraft.update(text: "This is a #cchnl")
     
     let suggestedMention = SuggestedMention(
       offset: 10,
-      replaceFrom: "#chnl",
+      replaceFrom: "#cchnl",
       replaceWith: channel.name ?? "",
       target: .channel(channelId: channel.id)
     )
@@ -197,11 +197,11 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     expectation.expectedFulfillmentCount = 1
         
     let messageDraft = channel.createMessageDraft()
-    messageDraft.update(text: "This is a #chnl")
+    messageDraft.update(text: "This is a #cchnl")
     
     let suggestedMention = SuggestedMention(
       offset: 10,
-      replaceFrom: "#chnl",
+      replaceFrom: "#cchnl",
       replaceWith: channel.name ?? "",
       target: .channel(channelId: channel.id)
     )
@@ -229,11 +229,11 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     expectation.expectedFulfillmentCount = 1
         
     let messageDraft = channel.createMessageDraft()
-    messageDraft.update(text: "This is a #chnl")
+    messageDraft.update(text: "This is a #cchnl")
     
     let suggestedMention = SuggestedMention(
       offset: 10,
-      replaceFrom: "#chnl",
+      replaceFrom: "#cchnl",
       replaceWith: channel.name ?? "",
       target: .channel(channelId: channel.id)
     )
@@ -259,14 +259,14 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
         
-    let originalText = "This is a #chnl"
+    let originalText = "This is a #cchnl"
     let messageDraft = channel.createMessageDraft()
     
     messageDraft.update(text: originalText)
     
     let suggestedMention = SuggestedMention(
       offset: 10,
-      replaceFrom: "#chnl",
+      replaceFrom: "#cchnl",
       replaceWith: channel.name ?? "",
       target: .channel(channelId: channel.id)
     )
@@ -293,14 +293,14 @@ class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
         
-    let originalText = "This is a #chnl"
+    let originalText = "This is a #cchnl"
     let messageDraft = channel.createMessageDraft()
     
     messageDraft.update(text: originalText)
     
     let suggestedMention = SuggestedMention(
       offset: 10,
-      replaceFrom: "#chnl",
+      replaceFrom: "#cchnl",
       replaceWith: channel.name ?? "",
       target: .channel(channelId: channel.id)
     )

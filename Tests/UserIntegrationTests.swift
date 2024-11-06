@@ -112,7 +112,7 @@ final class UserIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testUser_DeleteUser() throws {
+  func testUser_Delete() throws {
     let createdUser = try awaitResultValue {
       chat.createUser(
         user: testableUser(),
@@ -125,17 +125,35 @@ final class UserIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
         completion: $0
       )
     }
+    
+    XCTAssertNil(deletedUser)
+  }
+  
+  func testUser_SoftDelete() throws {
+    let createdUser = try awaitResultValue {
+      chat.createUser(
+        user: testableUser(),
+        completion: $0
+      )
+    }
+    let deletedUser = try awaitResultValue {
+      createdUser.delete(
+        soft: true,
+        completion: $0
+      )
+    }
+    
     XCTAssertEqual(
       createdUser.id,
-      deletedUser.id
+      deletedUser?.id
     )
   }
 
   func testUser_DeleteNotExistingUser() throws {
     let someUser = testableUser()
-    let error = try awaitResultError { someUser.delete(soft: false, completion: $0) }
+    let resultValue = try awaitResultValue { someUser.delete(soft: false, completion: $0) }
 
-    XCTAssertEqual((error as? ChatError)?.message, "User does not exist")
+    XCTAssertNil(resultValue)
   }
 
   func testUser_WherePresent() throws {

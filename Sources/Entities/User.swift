@@ -37,6 +37,8 @@ public protocol User {
   var updated: String? { get }
   /// Timestamp for the last time the user information was updated or modified
   var lastActiveTimestamp: TimeInterval? { get }
+  /// Indicates whether the user is currently (at the time of obtaining this ``User`` object) active
+  var active: Bool { get }
 
   /// Receive updates when specific users are added, edited or removed.
   ///
@@ -78,11 +80,11 @@ public protocol User {
   /// - Parameters:
   ///   - soft: If true, the user is soft deleted, retaining their data but making them inactive
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: For hard delete, the method returns the last version of the ``User`` object before it was permanently deleted. Otherwise, an updated ``User`` instance with the status field set to `"deleted"`
+  ///     - **Success**: For hard delete, the method returns `nil`. Otherwise, an updated ``User`` instance with the status field set to `"deleted"`
   ///     - **Failure**: An `Error` describing the failure
   func delete(
     soft: Bool,
-    completion: ((Swift.Result<ChatType.ChatUserType, Error>) -> Void)?
+    completion: ((Swift.Result<ChatType.ChatUserType?, Error>) -> Void)?
   )
 
   /// Retrieves a list of channels where the user is currently present.

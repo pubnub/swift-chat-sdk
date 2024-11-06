@@ -27,16 +27,19 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
         )
       }
     )
+    
+    let timetoken = try awaitResultValue {
+      channel?.sendText(
+        text: "text",
+        shouldStore: true,
+        completion: $0
+      )
+    }
+    
     testMessage = try XCTUnwrap(
-      try awaitResultValue {
+      try awaitResultValue(delay: 3) {
         channel.getMessage(
-          timetoken: try awaitResultValue {
-            channel?.sendText(
-              text: "text",
-              shouldStore: true,
-              completion: $0
-            )
-          },
+          timetoken: timetoken,
           completion: $0
         )
       }
@@ -51,8 +54,16 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     channel = nil
   }
 
-  func testMessage_HasUserReactions() throws {
-    XCTAssertFalse(testMessage.hasUserReaction(reaction: "someReaction"))
+  func testMessage_HasNoUserReaction() throws {
+    let someMessage = MessageImpl(
+      chat: chat,
+      timetoken: 17301310706849521,
+      content: .init(text: "Text text"),
+      channelId: randomString(),
+      userId: randomString()
+    )
+    
+    XCTAssertFalse(someMessage.hasUserReaction(reaction: "someReaction"))
   }
 
   func testMessage_EditText() throws {
@@ -64,7 +75,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       newText
     )
 
-    let editedMessage = try awaitResultValue {
+    let editedMessage = try awaitResultValue(delay: 3) {
       testMessage.editText(
         newText: newText,
         completion: $0
@@ -78,13 +89,14 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
   }
 
   func testMessage_Delete() throws {
-    XCTAssertNil(try awaitResultValue {
+    let deleteMessageResult = try awaitResultValue(delay: 3) {
       testMessage.delete(
         soft: false,
         preserveFiles: false,
         completion: $0
       )
-    })
+    }
+    XCTAssertNil(deleteMessageResult)
   }
 
   func testMessage_SoftDelete() throws {
@@ -154,7 +166,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
         completion: $0
       )
     }
-    let message = try awaitResultValue {
+    let message = try awaitResultValue(delay: 3) {
       anotherChannel.getMessage(
         timetoken: forwardValue,
         completion: $0
@@ -181,7 +193,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
         completion: $0
       )
     }
-    let message = try awaitResultValue(delay: 2) {
+    let message = try awaitResultValue(delay: 3) {
       resultingChannel.getPinnedMessage(
         completion: $0
       )
@@ -213,7 +225,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       testMessage.channelId
     )
 
-    try awaitResultValue(delay: 1) {
+    try awaitResultValue(delay: 3) {
       threadChannel.sendText(
         text: "Text text text",
         meta: nil,
@@ -230,7 +242,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
 
     let retrievedMessage = try XCTUnwrap(
-      try awaitResultValue(delay: 2) {
+      try awaitResultValue(delay: 3) {
         channel.getMessage(
           timetoken: testMessage.timetoken,
           completion: $0
@@ -269,7 +281,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       )
     }
     let message = try XCTUnwrap(
-      try awaitResultValue(delay: 1) {
+      try awaitResultValue(delay: 3) {
         channel.getMessage(
           timetoken: testMessage.timetoken,
           completion: $0
@@ -281,7 +293,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
 
     let retrievedMessage = try XCTUnwrap(
-      try awaitResultValue(delay: 1) {
+      try awaitResultValue(delay: 3) {
         channel.getMessage(
           timetoken: testMessage.timetoken,
           completion: $0
@@ -308,7 +320,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
   }
 
   func testMessage_ToggleReaction() throws {
-    let result = try awaitResultValue {
+    let result = try awaitResultValue(delay: 3) {
       testMessage.toggleReaction(
         reaction: ":+1",
         completion: $0
@@ -333,7 +345,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       )
     }
     let message = try XCTUnwrap(
-      try awaitResultValue {
+      try awaitResultValue(delay: 3) {
         channel.getMessage(
           timetoken: timetoken,
           completion: $0
@@ -377,7 +389,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       )
     }
     let message = try XCTUnwrap(
-      try awaitResultValue {
+      try awaitResultValue(delay: 3) {
         channel.getMessage(
           timetoken: timetoken,
           completion: $0

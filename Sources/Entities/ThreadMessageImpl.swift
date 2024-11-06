@@ -44,10 +44,7 @@ public final class ThreadMessageImpl {
       channelId: channelId,
       userId: userId,
       actions: actions?.transform(),
-      meta: meta?.compactMapValues { $0.rawValue },
-      mentionedUsers: mentionedUsers?.transform(),
-      referencedChannels: referencedChannels?.transform(),
-      quotedMessage: quotedMessage?.transform()
+      metaInternal: JsonElementImpl(value: meta?.compactMapValues { $0.rawValue })
     )
     self.init(
       message: underlyingThreadMessage
@@ -197,7 +194,7 @@ extension ThreadMessageImpl: ThreadMessage {
     )
   }
 
-  public func removeThread(completion: ((Swift.Result<ChannelImpl, Error>) -> Void)? = nil) {
+  public func removeThread(completion: ((Swift.Result<ChannelImpl?, Error>) -> Void)? = nil) {
     target.removeThread(
       completion: completion
     )
@@ -234,5 +231,9 @@ extension ThreadMessageImpl: ThreadMessage {
         completion?(.failure(error))
       }
     }
+  }
+
+  public func getMessageElements() -> [MessageElement] {
+    target.getMessageElements()
   }
 }

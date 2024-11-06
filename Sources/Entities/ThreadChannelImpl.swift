@@ -137,7 +137,7 @@ extension ThreadChannelImpl: ThreadChannel {
     )
   }
 
-  public func delete(soft: Bool = false, completion: ((Swift.Result<ChannelImpl, Error>) -> Void)? = nil) {
+  public func delete(soft: Bool = false, completion: ((Swift.Result<ChannelImpl?, Error>) -> Void)? = nil) {
     target.delete(
       soft: soft,
       completion: completion
@@ -241,18 +241,18 @@ extension ThreadChannelImpl: ThreadChannel {
     ttl: Int? = nil,
     quotedMessage: MessageImpl? = nil,
     files: [InputFile]?,
+    usersToMention: [String]? = nil,
     completion: ((Swift.Result<Timetoken, Error>) -> Void)? = nil
   ) {
-    sendText(
+    target.sendText(
       text: text,
+      meta: meta,
       shouldStore: shouldStore,
       usePost: usePost,
       ttl: ttl,
-      mentionedUsers: nil,
-      referencedChannels: nil,
-      textLinks: nil,
       quotedMessage: quotedMessage,
       files: files,
+      usersToMention: usersToMention,
       completion: completion
     )
   }
@@ -428,6 +428,20 @@ extension ThreadChannelImpl: ThreadChannel {
   public func streamMessageReports(callback: @escaping (any Event<EventContent.Report>) -> Void) -> AutoCloseable {
     target.streamMessageReports(
       callback: callback
+    )
+  }
+
+  public func createMessageDraft(
+    userSuggestionSource: UserSuggestionSource = .channel,
+    isTypingIndicatorTriggered: Bool = true,
+    userLimit: Int = 10,
+    channelLimit: Int = 10
+  ) -> MessageDraftImpl {
+    target.createMessageDraft(
+      userSuggestionSource: userSuggestionSource,
+      isTypingIndicatorTriggered: isTypingIndicatorTriggered,
+      userLimit: userLimit,
+      channelLimit: channelLimit
     )
   }
 

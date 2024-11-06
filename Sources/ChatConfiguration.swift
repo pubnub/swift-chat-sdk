@@ -39,23 +39,27 @@ public class CustomPayloads {
   /// If you wish to bypass the custom mapping (e.g. for certain channels), you can fall back to the default by calling the third parameter - `DefaultGetMessageResponseBody` and returning its result
   /// Define `getMessagePublishBody` whenever you use `getMessageResponseBody`
   var getMessageResponseBody: GetMessageResponseBody?
-  /// A type of action you want to be added to your Message object whenever a published message is edited, like "changed" or `"modified"`
+  /// A name of action to add to your Message object whenever a published message is edited
   var editMessageActionName: String?
-  /// A type of action you want to be added to your [Message] object whenever a published message is deleted, like `"removed"`
+  /// A name of action to add to your Message object whenever a published message is edited
   var deleteMessageActionName: String?
+  /// A name of action to add to your Message object whenever a reaction is added
+  var reactionsActionName: String?
 
   /// Creates a new ``CustomPayloads`` object.
   ///
   /// - Parameters:
   ///   - getMessagePublishBody: Function that lets Chat SDK send your custom payload structure
   ///   - getMessageResponseBody: Function that lets Chat SDK receive your custom payload structure
-  ///   - editMessageActionName: A type of action you want to be added to your Message object whenever a published message is edited, like "changed" or "modified. The default value is `"edited"`
-  ///   - deleteMessageActionName: A type of action you want to be added to your Message object whenever a published message is deleted, like "removed". The default value is `"deleted"`
+  ///   - editMessageActionName: A name of action to add to your Message object whenever a published message is edited, like "changed" or "modified. The default value is `"edited"`
+  ///   - deleteMessageActionName: A name of action to add to your Message object whenever a published message is deleted, like "removed". The default value is `"deleted"`
+  ///   - reactionsActionName: A name of action to add to your Message object whenever a reaction is added. The default value is `"reactions"`
   public init(
     getMessagePublishBody: GetMessagePublishBody? = nil,
     getMessageResponseBody: GetMessageResponseBody? = nil,
     editMessageActionName: String? = nil,
-    deleteMessageActionName: String? = nil
+    deleteMessageActionName: String? = nil,
+    reactionsActionName: String? = nil
   ) {
     self.getMessagePublishBody = getMessagePublishBody
     self.getMessageResponseBody = getMessageResponseBody
@@ -101,7 +105,8 @@ public class CustomPayloads {
       getMessagePublishBody: kmpGetMessagePublishBody,
       getMessageResponseBody: kmpGetMessageResponseBody,
       editMessageActionName: editMessageActionName,
-      deleteMessageActionName: deleteMessageActionName
+      deleteMessageActionName: deleteMessageActionName,
+      reactionsActionName: reactionsActionName
     )
   }
 }
@@ -202,9 +207,7 @@ public struct ChatConfiguration {
     ChatConfigurationKt.ChatConfiguration(
       logLevel: logLevel.transform(),
       typingTimeout: KotlinDurationUtils.companion.toSeconds(interval: Int32(typingTimeout)),
-      storeUserActivityInterval: KotlinDurationUtils.companion.toSeconds(
-        interval: Int32(storeUserActivityInterval)
-      ),
+      storeUserActivityInterval: KotlinDurationUtils.companion.toSeconds(interval: Int32(storeUserActivityInterval)),
       storeUserActivityTimestamps: storeUserActivityTimestamps,
       pushNotifications: PubNubChat.PushNotificationsConfig(
         sendPushes: pushNotificationsConfig.sendPushes,

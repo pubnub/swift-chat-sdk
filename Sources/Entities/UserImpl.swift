@@ -79,6 +79,7 @@ extension UserImpl: User {
   public var type: String? { user.type }
   public var updated: String? { user.updated }
   public var lastActiveTimestamp: TimeInterval? { user.lastActiveTimestamp?.doubleValue }
+  public var active: Bool { user.active }
 
   public static func streamUpdatesOn(users: [UserImpl], callback: @escaping (([UserImpl]) -> Void)) -> AutoCloseable {
     AutoCloseableImpl(
@@ -122,11 +123,11 @@ extension UserImpl: User {
 
   public func delete(
     soft: Bool = false,
-    completion: ((Swift.Result<UserImpl, Error>) -> Void)? = nil
+    completion: ((Swift.Result<UserImpl?, Error>) -> Void)? = nil
   ) {
     user.delete(
       soft: soft
-    ).async(caller: self) { (result: FutureResult<UserImpl, PubNubChat.UserImpl>) in
+    ).async(caller: self) { (result: FutureResult<UserImpl, PubNubChat.User?>) in
       switch result.result {
       case let .success(user):
         completion?(.success(UserImpl(user: user)))

@@ -27,15 +27,18 @@ class ThreadChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
         )
       }
     )
+    
+    let timetoken = try awaitResultValue {
+      parentChannel?.sendText(
+        text: "Message",
+        completion: $0
+      )
+    }
+    
     let testMessage = try XCTUnwrap(
-      try awaitResultValue {
+      try awaitResultValue(delay: 3) {
         parentChannel.getMessage(
-          timetoken: try awaitResultValue {
-            parentChannel?.sendText(
-              text: "Message",
-              completion: $0
-            )
-          },
+          timetoken: timetoken,
           completion: $0
         )
       }
@@ -63,7 +66,7 @@ class ThreadChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
 
   func testThreadChannel_PinMessageToParentChannel() throws {
     let message = try XCTUnwrap(
-      try awaitResultValue {
+      try awaitResultValue(delay: 3) {
         threadChannel.getHistory(
           completion: $0
         )
@@ -78,7 +81,7 @@ class ThreadChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
 
     XCTAssertNotNil(
-      try awaitResultValue {
+      try awaitResultValue(delay: 3) {
         updatedChannel.getPinnedMessage(
           completion: $0
         )

@@ -39,7 +39,11 @@
 
 - ``InputFile``
 - ``sendText(text:meta:shouldStore:usePost:ttl:mentionedUsers:referencedChannels:textLinks:quotedMessage:files:completion:)``
-- ``sendText(text:meta:shouldStore:usePost:ttl:quotedMessage:files:completion:)``
+- ``sendText(text:meta:shouldStore:usePost:ttl:quotedMessage:files:usersToMention:completion:)``
+
+### Creating Message Draft
+
+- ``createMessageDraft(userSuggestionSource:isTypingIndicatorTriggered:userLimit:channelLimit:)``
 
 ### Messages Management
 

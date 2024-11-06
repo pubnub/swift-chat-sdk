@@ -69,10 +69,10 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     }
   }
 
-  func delete(soft: Bool, completion: ((Swift.Result<ChatType.ChatChannelType, Error>) -> Void)?) {
+  func delete(soft: Bool, completion: ((Swift.Result<ChatType.ChatChannelType?, Error>) -> Void)?) {
     channel.delete(
       soft: soft
-    ).async(caller: self) { (result: FutureResult<BaseChannel, C>) in
+    ).async(caller: self) { (result: FutureResult<BaseChannel, C?>) in
       switch result.result {
       case let .success(channel):
         completion?(.success(ChannelImpl(channel: channel)))
@@ -216,6 +216,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     ttl: Int?,
     quotedMessage: MessageImpl?,
     files: [InputFile]?,
+    usersToMention: [String]? = nil,
     completion: ((Swift.Result<Timetoken, any Error>) -> Void)?
   ) {
     channel.sendText(
@@ -225,7 +226,8 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
       usePost: usePost,
       ttl: ttl?.asKotlinInt,
       quotedMessage: quotedMessage?.target.message,
-      files: files?.compactMap { $0.transform() }
+      files: files?.compactMap { $0.transform() },
+      usersToMention: usersToMention
     )
   }
 
@@ -509,12 +511,10 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     channel.getUserSuggestions(
       text: text,
       limit: Int32(limit)
-    ).async(caller: self) { (result: FutureResult<BaseChannel, Set<AnyHashable>>) in
+    ).async(caller: self) { (result: FutureResult<BaseChannel, [PubNubChat.Membership]>) in
       switch result.result {
       case let .success(userIds):
         completion?(.success(userIds.compactMap {
-          $0 as? PubNubChat.Membership
-        }.map {
           MembershipImpl(membership: $0)
         }))
       case let .failure(error):
@@ -573,6 +573,23 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
           )
         }
       }
+    )
+  }
+
+  func createMessageDraft(
+    userSuggestionSource: UserSuggestionSource = .channel,
+    isTypingIndicatorTriggered: Bool = true,
+    userLimit: Int = 10,
+    channelLimit: Int = 10
+  ) -> MessageDraftImpl {
+    MessageDraftImpl(
+      messageDraft: MediatorsKt.createMessageDraft(
+        channel,
+        userSuggestionSource: userSuggestionSource.transform(),
+        isTypingIndicatorTriggered: isTypingIndicatorTriggered,
+        userLimit: Int32(userLimit),
+        channelLimit: Int32(channelLimit)
+      )
     )
   }
 

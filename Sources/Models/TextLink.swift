@@ -12,6 +12,7 @@ import Foundation
 import PubNubChat
 
 /// Describes a text link.
+@available(*, deprecated, message: "Use `Message.getMessageElements()` instead")
 public struct TextLink {
   /// Starts with 0 and indicates the position in the whole message where the link should start
   public var startIndex: Int

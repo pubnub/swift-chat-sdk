@@ -14,9 +14,11 @@ import PubNubChat
 /// The `MessageMentionedUsers` typealias represents a collection of users who are mentioned in a message,
 /// where the key indicates the occurrence of the user mention in the text (starting from 0), and the value is a ``MessageMentionedUser`` object that contains
 /// details about the mentioned user.
+@available(*, deprecated, message: "Use Message.getMessageElements() instead")
 public typealias MessageMentionedUsers = [Int: MessageMentionedUser]
 
 /// Represents a user who was mentioned in a message.
+@available(*, deprecated, message: "Use Message.getMessageElements() instead")
 public struct MessageMentionedUser {
   /// The unique identifier of the mentioned user
   public var id: String

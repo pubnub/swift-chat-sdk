@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		3D043A7A2CA6AAA000F91C05 /* ThreadChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D043A792CA6AAA000F91C05 /* ThreadChannel.swift */; };
 		3D043A7C2CAAABBD00F91C05 /* ThreadMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D043A7B2CAAABBD00F91C05 /* ThreadMessage.swift */; };
+		3D043A7E2CAC190200F91C05 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D043A7D2CAC190200F91C05 /* Constants.swift */; };
 		3D2CA2362C5B9320008D2284 /* PubNubChat+Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2CA2352C5B9320008D2284 /* PubNubChat+Transform.swift */; };
 		3D2CA2382C5B9ACA008D2284 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2CA2372C5B9ACA008D2284 /* File.swift */; };
 		3D2CA23A2C5B9CF6008D2284 /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2CA2392C5B9CF6008D2284 /* Dictionary.swift */; };
@@ -20,7 +21,11 @@
 		3D334BD02C8EE9E500F8793C /* PubNub.PushService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D334BCF2C8EE9E500F8793C /* PubNub.PushService.swift */; };
 		3D334BD22C8EEAA800F8793C /* PubNub.PushEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D334BD12C8EEAA800F8793C /* PubNub.PushEnvironment.swift */; };
 		3D7BBF6F2C8893D400FBA623 /* ChatAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7BBF6E2C8893D400FBA623 /* ChatAdapter.swift */; };
-		3D842D242C9DC0AA005C0B55 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D842D232C9DC0AA005C0B55 /* Constants.swift */; };
+		3D83621A2CC7B35200A21B9A /* MessageDraftChangeListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D8362192CC7B35200A21B9A /* MessageDraftChangeListener.swift */; };
+		3D842D242C9DC0AA005C0B55 /* ErrorConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D842D232C9DC0AA005C0B55 /* ErrorConstants.swift */; };
+		3D9A17942CC1573100F3F8AB /* MessageDraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D9A17932CC1573100F3F8AB /* MessageDraft.swift */; };
+		3D9A17962CC250A300F3F8AB /* MessageDraftImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D9A17952CC250A300F3F8AB /* MessageDraftImpl.swift */; };
+		3D9A179B2CC65A0700F3F8AB /* MessageDraftIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D9A17992CC659E800F3F8AB /* MessageDraftIntegrationTests.swift */; };
 		3DA530C62C87455200DDE763 /* ThreadChannelIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DA530C52C87455200DDE763 /* ThreadChannelIntegrationTests.swift */; };
 		3DA530C82C882F2500DDE763 /* ChatIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DA530C72C882F2500DDE763 /* ChatIntegrationTests.swift */; };
 		3DB2A8AF2C7F54A400167058 /* ChannelIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB2A8AE2C7F54A400167058 /* ChannelIntegrationTests.swift */; };
@@ -74,8 +79,8 @@
 		3DB73A7B2C57EA29007FE249 /* ChatImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB73A7A2C57EA29007FE249 /* ChatImpl.swift */; };
 		3DB73A7D2C57EA94007FE249 /* Timetoken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB73A7C2C57EA94007FE249 /* Timetoken.swift */; };
 		3DB73A7F2C58CCAE007FE249 /* GetCurrentUserMentionsResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB73A7E2C58CCAE007FE249 /* GetCurrentUserMentionsResult.swift */; };
-		3DD5DBE52CA301C1008954FF /* PubNubSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 3DD5DBE42CA301C1008954FF /* PubNubSDK */; };
-		3DD5DBE82CA3034C008954FF /* PubNubChat in Frameworks */ = {isa = PBXBuildFile; productRef = 3DD5DBE72CA3034C008954FF /* PubNubChat */; };
+		3DCF7DFC2CD0FFCC00889326 /* PubNubSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 3DCF7DFB2CD0FFCC00889326 /* PubNubSDK */; };
+		3DCF7DFF2CD1226100889326 /* PubNubChat in Frameworks */ = {isa = PBXBuildFile; productRef = 3DCF7DFE2CD1226100889326 /* PubNubChat */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -104,6 +109,7 @@
 /* Begin PBXFileReference section */
 		3D043A792CA6AAA000F91C05 /* ThreadChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadChannel.swift; sourceTree = "<group>"; };
 		3D043A7B2CAAABBD00F91C05 /* ThreadMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadMessage.swift; sourceTree = "<group>"; };
+		3D043A7D2CAC190200F91C05 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		3D1C44A52C918A2200E68446 /* PubNubSwiftChatSDK_Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PubNubSwiftChatSDK_Info.plist; sourceTree = "<group>"; };
 		3D2CA2352C5B9320008D2284 /* PubNubChat+Transform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PubNubChat+Transform.swift"; sourceTree = "<group>"; };
 		3D2CA2372C5B9ACA008D2284 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
@@ -116,8 +122,12 @@
 		3D334BCF2C8EE9E500F8793C /* PubNub.PushService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PubNub.PushService.swift; sourceTree = "<group>"; };
 		3D334BD12C8EEAA800F8793C /* PubNub.PushEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PubNub.PushEnvironment.swift; sourceTree = "<group>"; };
 		3D7BBF6E2C8893D400FBA623 /* ChatAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAdapter.swift; sourceTree = "<group>"; };
-		3D842D232C9DC0AA005C0B55 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		3D8362192CC7B35200A21B9A /* MessageDraftChangeListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDraftChangeListener.swift; sourceTree = "<group>"; };
+		3D842D232C9DC0AA005C0B55 /* ErrorConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorConstants.swift; sourceTree = "<group>"; };
 		3D842D2B2C9DD7EB005C0B55 /* PubNubSwiftChatSDKTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = PubNubSwiftChatSDKTests.xctestplan; sourceTree = "<group>"; };
+		3D9A17932CC1573100F3F8AB /* MessageDraft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDraft.swift; sourceTree = "<group>"; };
+		3D9A17952CC250A300F3F8AB /* MessageDraftImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDraftImpl.swift; sourceTree = "<group>"; };
+		3D9A17992CC659E800F3F8AB /* MessageDraftIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDraftIntegrationTests.swift; sourceTree = "<group>"; };
 		3DA530C52C87455200DDE763 /* ThreadChannelIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadChannelIntegrationTests.swift; sourceTree = "<group>"; };
 		3DA530C72C882F2500DDE763 /* ChatIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatIntegrationTests.swift; sourceTree = "<group>"; };
 		3DADCAED2C9896AF001B3DE2 /* Package.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
@@ -180,8 +190,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3DD5DBE82CA3034C008954FF /* PubNubChat in Frameworks */,
-				3DD5DBE52CA301C1008954FF /* PubNubSDK in Frameworks */,
+				3DCF7DFF2CD1226100889326 /* PubNubChat in Frameworks */,
+				3DCF7DFC2CD0FFCC00889326 /* PubNubSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -196,6 +206,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3D9A17922CC156F100F3F8AB /* MessageDraft */ = {
+			isa = PBXGroup;
+			children = (
+				3D9A17932CC1573100F3F8AB /* MessageDraft.swift */,
+				3D8362192CC7B35200A21B9A /* MessageDraftChangeListener.swift */,
+				3D9A17952CC250A300F3F8AB /* MessageDraftImpl.swift */,
+			);
+			path = MessageDraft;
+			sourceTree = "<group>";
+		};
 		3DB49DE92C75E0C3006356ED /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -246,6 +266,7 @@
 				3DB2A8AE2C7F54A400167058 /* ChannelIntegrationTests.swift */,
 				3DA530C52C87455200DDE763 /* ThreadChannelIntegrationTests.swift */,
 				3DA530C72C882F2500DDE763 /* ChatIntegrationTests.swift */,
+				3D9A17992CC659E800F3F8AB /* MessageDraftIntegrationTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -257,6 +278,7 @@
 				3DB73A252C4FE1F6007FE249 /* Chat.swift */,
 				3DB73A7A2C57EA29007FE249 /* ChatImpl.swift */,
 				3DB73A242C4FE1F6007FE249 /* ChatConfiguration.swift */,
+				3D9A17922CC156F100F3F8AB /* MessageDraft */,
 				3DB73A432C511D36007FE249 /* Models */,
 				3DB73A3A2C50F415007FE249 /* Entities */,
 				3DB73A312C502670007FE249 /* Extensions */,
@@ -271,7 +293,8 @@
 				3D2CA2432C5CFBE7008D2284 /* FutureResult.swift */,
 				3DB49E202C761BD1006356ED /* AutoCloseable.swift */,
 				3D7BBF6E2C8893D400FBA623 /* ChatAdapter.swift */,
-				3D842D232C9DC0AA005C0B55 /* Constants.swift */,
+				3D842D232C9DC0AA005C0B55 /* ErrorConstants.swift */,
+				3D043A7D2CAC190200F91C05 /* Constants.swift */,
 			);
 			path = Miscellaneous;
 			sourceTree = "<group>";
@@ -374,8 +397,8 @@
 			);
 			name = PubNubSwiftChatSDK;
 			packageProductDependencies = (
-				3DD5DBE42CA301C1008954FF /* PubNubSDK */,
-				3DD5DBE72CA3034C008954FF /* PubNubChat */,
+				3DCF7DFB2CD0FFCC00889326 /* PubNubSDK */,
+				3DCF7DFE2CD1226100889326 /* PubNubChat */,
 			);
 			productName = PubNubChatSDK;
 			productReference = 3DB73A072C4FE13C007FE249 /* PubNubSwiftChatSDK.framework */;
@@ -428,8 +451,8 @@
 			);
 			mainGroup = 3DB739FD2C4FE13B007FE249;
 			packageReferences = (
-				3DD5DBE32CA301C1008954FF /* XCRemoteSwiftPackageReference "swift" */,
-				3DD5DBE62CA3034C008954FF /* XCRemoteSwiftPackageReference "kmp-chat" */,
+				3DCF7DFA2CD0FFCC00889326 /* XCRemoteSwiftPackageReference "swift" */,
+				3DCF7DFD2CD1226100889326 /* XCRemoteSwiftPackageReference "kmp-chat" */,
 			);
 			productRefGroup = 3DB73A082C4FE13C007FE249 /* Products */;
 			projectDirPath = "";
@@ -470,6 +493,8 @@
 				3D2CA2402C5BBDB6008D2284 /* PubNubChat.PNPushEnvironment.swift in Sources */,
 				3DB73A4D2C513646007FE249 /* TextLink.swift in Sources */,
 				3DB73A692C57AA1B007FE249 /* PubNubChat.KotlinArray.swift in Sources */,
+				3D9A17942CC1573100F3F8AB /* MessageDraft.swift in Sources */,
+				3D83621A2CC7B35200A21B9A /* MessageDraftChangeListener.swift in Sources */,
 				3D2CA2442C5CFBE7008D2284 /* FutureResult.swift in Sources */,
 				3DB73A372C5026B4007FE249 /* PubNubHashedPage.swift in Sources */,
 				3DB73A6F2C57BB97007FE249 /* ChannelImpl.swift in Sources */,
@@ -510,16 +535,18 @@
 				3DB73A6D2C57BB35007FE249 /* BaseMessage.swift in Sources */,
 				3DB73A5B2C53CAB1007FE249 /* BaseChannel.swift in Sources */,
 				3DB73A7F2C58CCAE007FE249 /* GetCurrentUserMentionsResult.swift in Sources */,
+				3D043A7E2CAC190200F91C05 /* Constants.swift in Sources */,
 				3DB73A3E2C50F5F3007FE249 /* Membership.swift in Sources */,
 				3DB73A7B2C57EA29007FE249 /* ChatImpl.swift in Sources */,
 				3D2CA23A2C5B9CF6008D2284 /* Dictionary.swift in Sources */,
 				3DB73A422C511900007FE249 /* Message.swift in Sources */,
+				3D9A17962CC250A300F3F8AB /* MessageDraftImpl.swift in Sources */,
 				3DB73A4B2C5135C3007FE249 /* QuotedMessage.swift in Sources */,
 				3D043A7C2CAAABBD00F91C05 /* ThreadMessage.swift in Sources */,
 				3DB2A8BB2C8099F300167058 /* EventContent.swift in Sources */,
 				3D334BD02C8EE9E500F8793C /* PubNub.PushService.swift in Sources */,
 				3DB73A512C539421007FE249 /* InputFile.swift in Sources */,
-				3D842D242C9DC0AA005C0B55 /* Constants.swift in Sources */,
+				3D842D242C9DC0AA005C0B55 /* ErrorConstants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -534,6 +561,7 @@
 				3DB49E282C777ECD006356ED /* MembershipIntegrationTests.swift in Sources */,
 				3DA530C82C882F2500DDE763 /* ChatIntegrationTests.swift in Sources */,
 				3DB551DB2C7C983000634BDC /* ThreadMessageIntegrationTests.swift in Sources */,
+				3D9A179B2CC65A0700F3F8AB /* MessageDraftIntegrationTests.swift in Sources */,
 				3DB73A172C4FE13C007FE249 /* PubNubSwiftChatSDKIntegrationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -701,7 +729,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				MARKETING_VERSION = 0.8.2;
+				MARKETING_VERSION = 0.9.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";
@@ -716,7 +744,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6,7";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 14.0;
 				WATCHOS_DEPLOYMENT_TARGET = 8;
 				XROS_DEPLOYMENT_TARGET = 1.1;
@@ -750,7 +778,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				MARKETING_VERSION = 0.8.2;
+				MARKETING_VERSION = 0.9.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";
@@ -765,7 +793,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6,7";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 14.0;
 				WATCHOS_DEPLOYMENT_TARGET = 8;
 				XROS_DEPLOYMENT_TARGET = 1.1;
@@ -849,33 +877,33 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		3DD5DBE32CA301C1008954FF /* XCRemoteSwiftPackageReference "swift" */ = {
+		3DCF7DFA2CD0FFCC00889326 /* XCRemoteSwiftPackageReference "swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pubnub/swift";
 			requirement = {
 				kind = exactVersion;
-				version = 8.0.0;
+				version = 8.0.1;
 			};
 		};
-		3DD5DBE62CA3034C008954FF /* XCRemoteSwiftPackageReference "kmp-chat" */ = {
+		3DCF7DFD2CD1226100889326 /* XCRemoteSwiftPackageReference "kmp-chat" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pubnub/kmp-chat";
 			requirement = {
 				kind = exactVersion;
-				version = "0.8.2-dev";
+				version = "0.9.0-dev";
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		3DD5DBE42CA301C1008954FF /* PubNubSDK */ = {
+		3DCF7DFB2CD0FFCC00889326 /* PubNubSDK */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3DD5DBE32CA301C1008954FF /* XCRemoteSwiftPackageReference "swift" */;
+			package = 3DCF7DFA2CD0FFCC00889326 /* XCRemoteSwiftPackageReference "swift" */;
 			productName = PubNubSDK;
 		};
-		3DD5DBE72CA3034C008954FF /* PubNubChat */ = {
+		3DCF7DFE2CD1226100889326 /* PubNubChat */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3DD5DBE62CA3034C008954FF /* XCRemoteSwiftPackageReference "kmp-chat" */;
+			package = 3DCF7DFD2CD1226100889326 /* XCRemoteSwiftPackageReference "kmp-chat" */;
 			productName = PubNubChat;
 		};
 /* End XCSwiftPackageProductDependency section */

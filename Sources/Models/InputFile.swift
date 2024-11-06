@@ -59,4 +59,33 @@ public struct InputFile {
       )
     }
   }
+
+  static func from(input: PubNubChat.InputFile) -> InputFile? {
+    switch input.source {
+    case let source as PubNubChat.FileUploadContent:
+      return InputFile(
+        name: input.name,
+        type: input.type,
+        source: .file(url: source.url)
+      )
+    case let source as PubNubChat.DataUploadContent:
+      return InputFile(
+        name: input.name,
+        type: input.type,
+        source: .data(source.data, contentType: source.contentType)
+      )
+    case let source as PubNubChat.StreamUploadContent:
+      return InputFile(
+        name: input.name,
+        type: input.type,
+        source: .stream(
+          source.stream,
+          contentType: source.contentType,
+          contentLength: Int(source.contentLength)
+        )
+      )
+    default:
+      return nil
+    }
+  }
 }

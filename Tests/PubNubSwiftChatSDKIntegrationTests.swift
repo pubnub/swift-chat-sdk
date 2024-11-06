@@ -13,8 +13,6 @@ import PubNubChat
 import PubNubSwiftChatSDK
 import PubNubSDK
 
-// MARK: - SwiftChatSDKIntegrationTests
-
 class PubNubSwiftChatSDKIntegrationTests: XCTestCase {
   var chat: PubNubSwiftChatSDK.ChatImpl!
 
@@ -105,11 +103,13 @@ extension PubNubSwiftChatSDKIntegrationTests {
   func awaitResultValue<T, E: Error>(
     delay: TimeInterval = 0,
     timeout: TimeInterval = 5,
+    description: String = "Waiting for the operation to complete",
     operation: (@escaping (Swift.Result<T, E>) -> Void) throws -> Void
   ) throws -> T {
     try awaitResult(
       delay: delay,
       timeout: timeout,
+      description: description,
       operation: operation
     ).get()
   }
@@ -120,9 +120,10 @@ extension PubNubSwiftChatSDKIntegrationTests {
   func awaitResultError<T, E: Error>(
     delay: TimeInterval = 0,
     timeout: TimeInterval = 5,
+    description: String = "Waiting for the operation to complete",
     operation: (@escaping (Swift.Result<T, E>) -> Void) throws -> Void
   ) throws -> E {
-    switch try awaitResult(delay: delay, timeout: timeout, operation: operation) {
+    switch try awaitResult(delay: delay, timeout: timeout, description: description, operation: operation) {
     case .success:
       fatalError("Unexpected condition")
     case .failure(let error):
@@ -136,6 +137,7 @@ extension PubNubSwiftChatSDKIntegrationTests {
   func awaitResult<T, E: Error>(
     delay: TimeInterval = 0,
     timeout: TimeInterval = 5,
+    description: String = "Waiting for the operation to complete",
     operation: (@escaping (Swift.Result<T, E>) -> Void) throws -> Void
   ) throws -> Swift.Result<T, E> {
 
@@ -146,7 +148,7 @@ extension PubNubSwiftChatSDKIntegrationTests {
 
     // Create an XCTestExpectation to pause the test execution
     // until the asynchronous operation completes
-    let expectation = expectation(description: "Waiting for an async operation")
+    let expectation = expectation(description: description)
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
 

@@ -42,8 +42,7 @@ public final class ChatImpl {
     config = chatConfiguration
     chat = ChatImpl.createKMPChat(from: pubNub, config: chatConfiguration)
 
-    // Provide a mechanism for reading a version number from a .plist file.
-    pubNub.setConsumer(identifier: "chat-sdk", value: "CA-SWIFT/0.8.2")
+    pubNub.setConsumer(identifier: "chat-sdk", value: "CA-SWIFT/\(pubNubSwiftChatSDKVersion)")
     // Creates an association between KMP chat and the current instance
     ChatAdapter.associate(chat: self, rawChat: chat)
   }
@@ -53,8 +52,7 @@ public final class ChatImpl {
     config = configuration
     chat = ChatImpl.createKMPChat(from: pubNub, config: configuration)
 
-    // Provide a mechanism for reading a version number from a .plist file.
-    pubNub.setConsumer(identifier: "chat-sdk", value: "CA-SWIFT/0.8.2")
+    pubNub.setConsumer(identifier: "chat-sdk", value: "CA-SWIFT/\(pubNubSwiftChatSDKVersion)")
     // Creates an association between KMP chat and the current instance
     ChatAdapter.associate(chat: self, rawChat: chat)
   }
@@ -75,6 +73,7 @@ extension ChatImpl {
       pubNub: PubNubImpl.Companion.shared.create(kmpPubNub: KMPPubNub(pubnub: pubnub)),
       editMessageActionName: config.customPayloads?.editMessageActionName ?? MessageActionType.edited.rawValue,
       deleteMessageActionName: config.customPayloads?.deleteMessageActionName ?? MessageActionType.deleted.rawValue,
+      reactionsActionName: config.customPayloads?.reactionsActionName ?? MessageActionType.reactions.rawValue,
       timerManager: TimerManagerImpl()
     )
   }
@@ -213,8 +212,6 @@ extension ChatImpl: Chat {
         completion?(
           .success((
             users: getUserResponse.users.compactMap {
-              $0 as? PubNubChat.User
-            }.map {
               UserImpl(user: $0)
             },
             page: PubNubHashedPageBase(
@@ -263,12 +260,12 @@ extension ChatImpl: Chat {
   public func deleteUser(
     id: String,
     soft: Bool = false,
-    completion: ((Swift.Result<UserImpl, Error>) -> Void)? = nil
+    completion: ((Swift.Result<UserImpl?, Error>) -> Void)? = nil
   ) {
     chat.deleteUser(
       id: id,
       soft: soft
-    ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.User>) in
+    ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.User?>) in
       switch result.result {
       case let .success(user):
         completion?(.success(UserImpl(user: user)))
@@ -346,8 +343,6 @@ extension ChatImpl: Chat {
         completion?(
           .success((
             channels: getChannelsResponse.channels.compactMap {
-              $0 as? PubNubChat.Channel_
-            }.map {
               ChannelImpl(channel: $0)
             },
             page: PubNubHashedPageBase(
@@ -392,12 +387,12 @@ extension ChatImpl: Chat {
   public func deleteChannel(
     id: String,
     soft: Bool = false,
-    completion: ((Swift.Result<ChannelImpl, Error>) -> Void)? = nil
+    completion: ((Swift.Result<ChannelImpl?, Error>) -> Void)? = nil
   ) {
     chat.deleteChannel(
       id: id,
       soft: soft
-    ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.Channel_>) in
+    ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.Channel_?>) in
       switch result.result {
       case let .success(channel):
         completion?(.success(ChannelImpl(channel: channel)))
@@ -616,7 +611,7 @@ extension ChatImpl: Chat {
       page: page?.transform(),
       filter: filter,
       sort: sort.compactMap { $0.transform() }
-    ).async(caller: self) { (result: FutureResult<ChatImpl, Set<PubNubChat.GetUnreadMessagesCounts>>) in
+    ).async(caller: self) { (result: FutureResult<ChatImpl, [PubNubChat.GetUnreadMessagesCounts]>) in
       switch result.result {
       case let .success(response):
         completion?(.success(response.map {
@@ -648,7 +643,7 @@ extension ChatImpl: Chat {
       switch result.result {
       case let .success(response):
         completion?(.success((
-          memberships: response.memberships.compactMap { $0 as? PubNubChat.Membership }.map {
+          memberships: response.memberships.compactMap {
             MembershipImpl(membership: $0)
           },
           page: PubNubHashedPageBase(
@@ -671,10 +666,10 @@ extension ChatImpl: Chat {
     chat.getChannelSuggestions(
       text: text,
       limit: Int32(limit)
-    ).async(caller: self) { (result: FutureResult<ChatImpl, Set<AnyHashable>>) in
+    ).async(caller: self) { (result: FutureResult<ChatImpl, [PubNubChat.Channel_]>) in
       switch result.result {
       case let .success(channels):
-        completion?(.success(channels.compactMap { $0 as? PubNubChat.Channel_ }.map {
+        completion?(.success(channels.compactMap {
           ChannelImpl(channel: $0)
         }))
       case let .failure(error):
@@ -691,12 +686,10 @@ extension ChatImpl: Chat {
     chat.getUserSuggestions(
       text: text,
       limit: Int32(limit)
-    ).async(caller: self) { (result: FutureResult<ChatImpl, Set<AnyHashable>>) in
+    ).async(caller: self) { (result: FutureResult<ChatImpl, [PubNubChat.User]>) in
       switch result.result {
       case let .success(users):
         completion?(.success(users.compactMap {
-          $0 as? PubNubChat.User
-        }.map {
           UserImpl(user: $0)
         }))
       case let .failure(error):

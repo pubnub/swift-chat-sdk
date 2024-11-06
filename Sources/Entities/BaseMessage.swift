@@ -167,14 +167,13 @@ extension BaseMessage: Message {
     }
   }
 
-  public func removeThread(completion: ((Swift.Result<ChannelImpl, Error>) -> Void)? = nil) {
+  public func removeThread(completion: ((Swift.Result<ChannelImpl?, Error>) -> Void)? = nil) {
     message.removeThread().async(
       caller: self
     ) { (result: FutureResult<BaseMessage, KotlinPair<PNRemoveMessageActionResult, PubNubChat.ThreadChannel>>) in
       switch result.result {
       case let .success(pair):
-        // swiftlint:disable:next force_unwrapping
-        completion?(.success(ChannelImpl(channel: pair.second!)))
+        completion?(.success(ChannelImpl(channel: pair.second)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -216,5 +215,9 @@ extension BaseMessage: Message {
         completion?(.failure(error))
       }
     }
+  }
+
+  func getMessageElements() -> [MessageElement] {
+    MediatorsKt.getMessageElements(message).compactMap { MessageElement.from(element: $0) }
   }
 }

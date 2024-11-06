@@ -30,9 +30,16 @@ public protocol Message {
   /// Extra information added to the message giving additional context
   var meta: [String: JSONCodable]? { get }
   /// List of mentioned users with IDs and names
+
+  @available(*, deprecated, message: "Use `Message.getMessageElements()` instead")
   var mentionedUsers: MessageMentionedUsers? { get }
   /// List of referenced channels with IDs and names
+  @available(*, deprecated, message: "Use `Message.getMessageElements()` instead")
   var referencedChannels: MessageReferencedChannels? { get }
+  /// List of included text links and their position
+  @available(*, deprecated, message: "Use `Message.getMessageElements()` instead")
+  var textLinks: [TextLink]? { get }
+
   /// Access the original quoted message in the given ``Message``
   ///
   /// Stores only values for the timetoken, text, and userId parameters. If you want to return the full quoted Message object,
@@ -51,8 +58,6 @@ public protocol Message {
   var files: [File] { get }
   /// List of reactions attached to the given ``Message``
   var reactions: [String: [Action]] { get }
-  /// List of included text links and their position
-  var textLinks: [TextLink]? { get }
 
   /// Receive updates when specific messages and related message reactions are added, edited, or removed.
   ///
@@ -91,12 +96,12 @@ public protocol Message {
   ///   - soft: Decide if you want to permanently remove message data
   ///   - preserveFiles: Define if you want to keep the files attached to the message or remove them
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: For hard delete, the method returns the last version of the Message object before it was permanently deleted. For soft delete, an updated message instance with an added deleted action type
+  ///     - **Success**: For hard delete, the method returns `nil`. Otherwise, an updated ``Message`` instance with an added `"deleted"` action type
   ///     - **Failure**: An `Error` describing the failure
   func delete(
     soft: Bool,
     preserveFiles: Bool,
-    completion: ((Swift.Result<(ChatType.ChatMessageType)?, Error>) -> Void)?
+    completion: ((Swift.Result<ChatType.ChatMessageType?, Error>) -> Void)?
   )
 
   /// Get the thread channel on which the thread message is published.
@@ -160,7 +165,7 @@ public protocol Message {
   ///     - **Success**:  The updated channel object after the removal of the thread
   ///     - **Failure**: An `Error` describing the failure
   func removeThread(
-    completion: ((Swift.Result<ChatType.ChatChannelType, Error>) -> Void)?
+    completion: ((Swift.Result<ChatType.ChatChannelType?, Error>) -> Void)?
   )
 
   /// Add or remove a reaction to a message.
@@ -199,4 +204,8 @@ public protocol Message {
   func restore(
     completion: ((Swift.Result<Self, Error>) -> Void)?
   )
+
+  /// Use this on the receiving end if a message was sent using ``MessageDraft`` to parse the `Message` text into parts
+  /// representing plain text or additional information such as user mentions, channel references and links.
+  func getMessageElements() -> [MessageElement]
 }

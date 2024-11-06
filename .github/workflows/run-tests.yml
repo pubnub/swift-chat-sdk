@@ -1,0 +1,75 @@
+name: Tests
+
+on:
+  push:
+  workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+defaults:
+  run:
+    shell: bash
+
+env:
+  LANG: en_US.UTF-8
+  LANGUAGE: en_US.UTF-8
+  LC_ALL: en_US.UTF-8
+  LC_CTYPE: en_US.UTF-8
+
+jobs:
+  tests:
+    name: Integration tests
+    env:
+      SDK_PUB_KEY: ${{ secrets.SDK_PUB_KEY }}
+      SDK_SUB_KEY: ${{ secrets.SDK_SUB_KEY }}
+      SDK_PAM_SUB_KEY: ${{ secrets.SDK_PAM_SUB_KEY }}
+      SDK_PAM_PUB_KEY: ${{ secrets.SDK_PAM_PUB_KEY }}
+      SDK_PAM_SEC_KEY: ${{ secrets.SDK_PAM_SEC_KEY }}
+    runs-on:
+      group: macos-arm-gh
+    strategy:
+      matrix:
+        environment: [iOS]
+    timeout-minutes: 17
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          clean: true
+          fetch-depth: 0
+      - name: Checkout actions
+        uses: actions/checkout@v4
+        with:
+          repository: pubnub/client-engineering-deployment-tools
+          ref: v1
+          token: ${{ secrets.GH_TOKEN }}
+          path: .github/.release/actions
+      - name: Setup Ruby 3.2.2
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2.2
+          bundler-cache: true
+      - name: Clear SPM and DerivedData caches
+        run: |
+          rm -rf "$HOME/Library/Caches/org.swift.swiftpm"
+          rm -rf ~/Library/Developer/Xcode/DerivedData
+          rm -rf ~/.swiftpm
+      - name: Clear build cache
+        run: rm -rf .build    	    
+      - name: Pre-load simulators list
+        if: ${{ matrix.environment != 'macOS' }}
+        run: xcrun simctl list -j
+      - name: Run ${{ matrix.environment }} integration tests
+        run: bundle exec fastlane test --env $(echo ${{ matrix.environment }} | tr '[:upper:]' '[:lower:]')
+      - name: Cancel workflow runs for commit on error
+        if: failure()
+        uses: ./.github/.release/actions/actions/utils/fast-jobs-failure
+  all-tests:
+    name: Tests
+    needs: [tests]
+    runs-on:
+      group: organization/Default
+    steps:
+      - name: Tests summary
+        run: echo -e "\033[38;2;95;215;0m\033[1mAll tests successfully passed"

@@ -30,10 +30,7 @@ public final class MessageImpl {
     channelId: String,
     userId: String,
     actions: [String: [String: [Action]]]? = nil,
-    meta: [String: JSONCodable]? = nil,
-    mentionedUsers: MessageMentionedUsers? = nil,
-    referencedChannels: MessageReferencedChannels? = nil,
-    quotedMessage: QuotedMessage? = nil
+    meta: [String: JSONCodable]? = nil
   ) {
     let underlyingMessage = PubNubChat.MessageImpl(
       chat: chat.chat,
@@ -42,10 +39,7 @@ public final class MessageImpl {
       channelId: channelId,
       userId: userId,
       actions: actions?.transform(),
-      meta: meta?.compactMapValues { $0.rawValue },
-      mentionedUsers: mentionedUsers?.transform(),
-      referencedChannels: referencedChannels?.transform(),
-      quotedMessage: quotedMessage?.transform()
+      metaInternal: JsonElementImpl(value: meta?.compactMapValues { $0.rawValue })
     )
     self.init(
       message: underlyingMessage
@@ -162,7 +156,7 @@ extension MessageImpl: Message {
     )
   }
 
-  public func removeThread(completion: ((Swift.Result<ChannelImpl, Error>) -> Void)? = nil) {
+  public func removeThread(completion: ((Swift.Result<ChannelImpl?, Error>) -> Void)? = nil) {
     target.removeThread(
       completion: completion
     )
@@ -199,5 +193,9 @@ extension MessageImpl: Message {
         completion?(.failure(error))
       }
     }
+  }
+
+  public func getMessageElements() -> [MessageElement] {
+    target.getMessageElements()
   }
 }

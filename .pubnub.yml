@@ -1,7 +1,7 @@
 ---
 name: swift-chat-sdk
 scm: github.com/pubnub/swift-chat-sdk
-version: "0.8.0"
+version: "0.8.2"
 schema: 1
 changelog:
   - date: 2024-10-24
@@ -51,6 +51,6 @@ sdks:
                     - iPhone
                     - iPad
 supported-platforms:
-  - version: PubNub Swift SDK
+  - version: PubNub Swift Chat SDK
     platforms:
       - iOS 14.0 or higher

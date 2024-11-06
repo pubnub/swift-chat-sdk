@@ -9,12 +9,10 @@ changelog:
     changes:
       - type: feature
         text: "Add Message Draft feature"
-      - type: fix
+      - type: bug
         text: "Return nil for hard delete operations"
-      - type: fix
+      - type: bug
         text: "Add missing reactionsActionName property"
-      - type: improvement
-        text: "Add GH workflow files"
   - date: 2024-10-24
     version: 0.8.2
     changes:

@@ -13,7 +13,7 @@ changelog:
         text: "Return nil for hard delete operations"
       - type: fix
         text: "Add missing reactionsActionName property"
-      - type: chore
+      - type: improvement
         text: "Add GH workflow files"
   - date: 2024-10-24
     version: 0.8.2

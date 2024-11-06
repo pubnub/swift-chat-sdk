@@ -35,7 +35,7 @@ sdks:
           - distribution-type: source
             distribution-repository: GitHub release
             package-name: PubNubSwiftChatSDK
-            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.8.0-dev.zip
+            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.8.2-dev.zip
             supported-platforms:
               supported-operating-systems:
                 iOS:

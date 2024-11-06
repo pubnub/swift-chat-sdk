@@ -1,9 +1,20 @@
 ---
 name: swift-chat-sdk
 scm: github.com/pubnub/swift-chat-sdk
-version: "0.8.2"
+version: "0.9.0"
 schema: 1
 changelog:
+  - date: 2024-11-06
+    version: 0.9.0
+    changes:
+      - type: feature
+        text: "Add Message Draft feature"
+      - type: fix
+        text: "Return nil for hard delete operations"
+      - type: fix
+        text: "Add missing reactionsActionName property"
+      - type: chore
+        text: "Add GH workflow files"
   - date: 2024-10-24
     version: 0.8.2
     changes:
@@ -35,7 +46,7 @@ sdks:
           - distribution-type: source
             distribution-repository: GitHub release
             package-name: PubNubSwiftChatSDK
-            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.8.2-dev.zip
+            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.9.0-dev.zip
             supported-platforms:
               supported-operating-systems:
                 iOS:

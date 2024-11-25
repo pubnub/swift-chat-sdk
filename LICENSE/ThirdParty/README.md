@@ -8,7 +8,7 @@ Each license file in this directory corresponds to a specific dependency or lice
 ### [Kotlin](https://kotlinlang.org/), [Apache Harmony](https://harmony.apache.org/), [GWT](https://www.gwtproject.org/), [Guava](https://guava.dev/)
 
 [Apache license 2.0](https://github.com/pubnub/swift-chat-sdk/blob/tst/LICENSE/ThirdParty/Apache%20license%202.0.txt)
-[Apache Harmony](https://github.com/pubnub/swift-chat-sdk/blob/tst/LICENSE/ThirdParty/Apache Harmony%20copyright%20notice.txt)
+[Apache Harmony](https://github.com/pubnub/swift-chat-sdk/blob/tst/LICENSE/ThirdParty/Apache%20Harmony%20copyright%20notice.txt)
 
 ### [libbacktrace](https://github.com/ianlancetaylor/libbacktrace)
 
@@ -24,6 +24,6 @@ Each license file in this directory corresponds to a specific dependency or lice
 
 [Unicode license](https://github.com/pubnub/swift-chat-sdk/blob/tst/LICENSE/ThirdParty/Unicode%20license.txt)
 
-### [Multi-producer/multi-consumer bounded queue]
+### Multi-producer/multi-consumer bounded queue
 
 [Copyright notice](https://github.com/pubnub/swift-chat-sdk/blob/tst/LICENSE/ThirdParty/Copyright%20notice.txt)

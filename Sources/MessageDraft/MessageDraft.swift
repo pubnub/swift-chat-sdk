@@ -23,6 +23,8 @@ public protocol MessageDraft {
   var channel: C { get }
   /// Whether modifying the message text triggers the typing indicator on ``channel``
   var isTypingIndicatorTriggered: Bool { get }
+  /// The scope for searching for suggested users
+  var userSuggestionSource: UserSuggestionSource { get }
   /// The limit on the number of users returned when searching for users to mention
   var userLimit: Int { get }
   /// The limit on the number of channels returned when searching for channels to reference
@@ -124,6 +126,17 @@ public enum UserSuggestionSource {
       return .global
     case .channel:
       return .channel
+    }
+  }
+
+  static func from(source: PubNubChat.MessageDraftUserSuggestionSource) -> UserSuggestionSource {
+    switch source {
+    case .global:
+      return .global
+    case .channel:
+      return .channel
+    default:
+      return .global
     }
   }
 }

@@ -41,6 +41,10 @@ extension MessageDraftImpl: MessageDraft {
     messageDraft.isTypingIndicatorTriggered
   }
 
+  public var userSuggestionSource: UserSuggestionSource {
+    UserSuggestionSource.from(source: messageDraft.userSuggestionSource)
+  }
+
   public var userLimit: Int {
     Int(messageDraft.userLimit)
   }

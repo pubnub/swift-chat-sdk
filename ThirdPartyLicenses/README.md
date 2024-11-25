@@ -6,18 +6,18 @@ Each license file in this directory corresponds to a specific dependency or lice
 
 ### [Kotlin](https://kotlinlang.org/), [Apache Harmony](https://harmony.apache.org/), [GWT](https://www.gwtproject.org/), [Guava](https://guava.dev/)
 
-[Apache license 2.0](https://github.com/pubnub/swift-chat-sdk/blob/tst/ThirdPartyLicenses/Apache%20license%202.0.txt)
+[Apache license 2.0](https://github.com/pubnub/swift-chat-sdk/blob/master/ThirdPartyLicenses/Apache%20license%202.0.txt)
 
-[Apache Harmony copyright notice](https://github.com/pubnub/swift-chat-sdk/blob/tst/ThirdPartyLicenses/Apache%20Harmony%20copyright%20notice.txt)
+[Apache Harmony copyright notice](https://github.com/pubnub/swift-chat-sdk/blob/master/ThirdPartyLicenses/Apache%20Harmony%20copyright%20notice.txt)
 
 ### [libbacktrace](https://github.com/ianlancetaylor/libbacktrace)
 
-[3-clause BSD license with copyright notice](https://github.com/pubnub/swift-chat-sdk/blob/tst/ThirdPartyLicenses/3-clause%20BSD%20license%20with%20copyright%20notice.txt)
+[3-clause BSD license with copyright notice](https://github.com/pubnub/swift-chat-sdk/blob/master/ThirdPartyLicenses/3-clause%20BSD%20license%20with%20copyright%20notice.txt)
 
 ### [Unicode character database](https://www.unicode.org/)
 
-[Unicode license](https://github.com/pubnub/swift-chat-sdk/blob/tst/ThirdPartyLicenses/Unicode%20license.txt)
+[Unicode license](https://github.com/pubnub/swift-chat-sdk/blob/master/ThirdPartyLicenses/Unicode%20license.txt)
 
 ### Multi-producer/multi-consumer bounded queue
 
-[Copyright notice](https://github.com/pubnub/swift-chat-sdk/blob/tst/ThirdPartyLicenses/Copyright%20notice.txt)
+[Copyright notice](https://github.com/pubnub/swift-chat-sdk/blob/master/ThirdPartyLicenses/Copyright%20notice.txt)

@@ -7,23 +7,23 @@ Each license file in this directory corresponds to a specific dependency or lice
 
 ### [Kotlin](https://kotlinlang.org/), [Apache Harmony](https://harmony.apache.org/), [GWT](https://www.gwtproject.org/), [Guava](https://guava.dev/)
 
-[Apache license 2.0](https://github.com/pubnub/swift-chat-sdk/blob/tst/LICENSE/ThirdParty/Apache license 2.0.txt)
-[Apache Harmony](https://github.com/pubnub/swift-chat-sdk/blob/tst/LICENSE/ThirdParty/Apache Harmony copyright notice.txt)
+[Apache license 2.0](https://github.com/pubnub/swift-chat-sdk/blob/tst/LICENSE/ThirdParty/Apache%20license%202.0.txt)
+[Apache Harmony](https://github.com/pubnub/swift-chat-sdk/blob/tst/LICENSE/ThirdParty/Apache Harmony%20copyright%20notice.txt)
 
 ### [libbacktrace](https://github.com/ianlancetaylor/libbacktrace)
 
 
-[3-clause BSD license with copyright notice](https://github.com/pubnub/swift-chat-sdk/blob/tst/LICENSE/ThirdParty/3-clause BSD license with copyright notice.txt)
+[3-clause BSD license with copyright notice](https://github.com/pubnub/swift-chat-sdk/blob/tst/LICENSE/ThirdParty/3-clause BSD%20license%20with%20copyright%20notice.txt)
 
 ### [mimalloc](https://github.com/microsoft/mimalloc)
 
-[MIT license](https://github.com/pubnub/swift-chat-sdk/blob/tst/LICENSE/ThirdParty/MIT license.txt)
+[MIT license](https://github.com/pubnub/swift-chat-sdk/blob/tst/LICENSE/ThirdParty/MIT%20license.txt)
 
 
 ### [Unicode character database](https://www.unicode.org/)
 
-[Unicode license](https://github.com/pubnub/swift-chat-sdk/blob/tst/LICENSE/ThirdParty/Unicode license.txt)
+[Unicode license](https://github.com/pubnub/swift-chat-sdk/blob/tst/LICENSE/ThirdParty/Unicode%20license.txt)
 
 ### [Multi-producer/multi-consumer bounded queue]
 
-[Copyright notice](https://github.com/pubnub/swift-chat-sdk/blob/tst/LICENSE/ThirdParty/Copyright notice.txt)
+[Copyright notice](https://github.com/pubnub/swift-chat-sdk/blob/tst/LICENSE/ThirdParty/Copyright%20notice.txt)

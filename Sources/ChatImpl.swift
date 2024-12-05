@@ -725,14 +725,12 @@ extension ChatImpl: Chat {
       switch result.result {
       case let .success(response):
         let eventImplArray = response.events.compactMap {
-          $0 as? PubNubChat.Event
-        }.compactMap { (event: PubNubChat.Event) -> EventWrapper? in
           EventWrapper(event: EventImpl(
             chat: result.caller,
-            timetoken: Timetoken(event.timetoken_),
-            payload: EventContent.from(rawValue: event.payload),
-            channelId: event.channelId,
-            userId: event.userId
+            timetoken: Timetoken($0.timetoken_),
+            payload: EventContent.from(rawValue: $0.payload),
+            channelId: $0.channelId,
+            userId: $0.userId
           ))
         }
         completion?(.success((

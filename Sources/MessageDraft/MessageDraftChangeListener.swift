@@ -58,7 +58,7 @@ class SuggestedMentionsFuture: FutureObject {
   init(future: PubNubChat.PNFuture) {
     self.future = future
   }
-  
+
   func async(completion: @escaping (Swift.Result<[SuggestedMention], Error>) -> Void) {
     future.async(caller: self, callback: { (result: FutureResult<SuggestedMentionsFuture, [PubNubChat.SuggestedMention]>) in
       switch result.result {

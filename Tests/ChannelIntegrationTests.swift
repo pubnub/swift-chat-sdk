@@ -165,11 +165,9 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
   }
 
   func testChannel_StopTyping() throws {
-    XCTAssertNotNil(
-      try awaitResultValue {
-        channel.stopTyping(completion: $0)
-      }
-    )
+    try awaitResultValue {
+      channel.stopTyping(completion: $0)
+    }
   }
 
   func testChannel_WhoIsPresent() throws {

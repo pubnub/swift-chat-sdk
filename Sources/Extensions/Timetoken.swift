@@ -17,3 +17,9 @@ extension Timetoken {
     KotlinLong(value: Int64(self))
   }
 }
+
+extension Int64 {
+  func asTimetoken() -> Timetoken {
+    Timetoken(self)
+  }
+}

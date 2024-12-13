@@ -95,22 +95,22 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     }
   }
 
-  func startTyping(completion: ((Swift.Result<Void, Error>) -> Void)?) {
-    channel.startTyping().async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.KotlinUnit>) in
+  func startTyping(completion: ((Swift.Result<Timetoken?, Error>) -> Void)?) {
+    channel.startTyping().async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.PNPublishResult?>) in
       switch result.result {
-      case .success:
-        completion?(.success(()))
+      case let .success(publishRes):
+        completion?(.success(publishRes?.timetoken.asTimetoken()))
       case let .failure(error):
         completion?(.failure(error))
       }
     }
   }
 
-  func stopTyping(completion: ((Swift.Result<Void, Error>) -> Void)?) {
-    channel.stopTyping().async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.KotlinUnit>) in
+  func stopTyping(completion: ((Swift.Result<Timetoken?, Error>) -> Void)?) {
+    channel.stopTyping().async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.PNPublishResult?>) in
       switch result.result {
-      case .success:
-        completion?(.success(()))
+      case let .success(publishRes):
+        completion?(.success(publishRes?.timetoken.asTimetoken()))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -274,9 +274,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
       case let .success(response):
         completion?(.success(
           (
-            memberships: response.members.compactMap {
-              $0 as? PubNubChat.Membership
-            }.map {
+            memberships: response.members.map {
               MembershipImpl(membership: $0)
             },
             page: PubNubHashedPageBase(

@@ -31,10 +31,7 @@ public final class ThreadMessageImpl {
     channelId: String,
     userId: String,
     actions: [String: [String: [Action]]]? = nil,
-    meta: [String: JSONCodable]? = nil,
-    mentionedUsers: MessageMentionedUsers? = nil,
-    referencedChannels: MessageReferencedChannels? = nil,
-    quotedMessage: QuotedMessage? = nil
+    meta: [String: JSONCodable]? = nil
   ) {
     let underlyingThreadMessage = PubNubChat.ThreadMessageImpl(
       chat: chat.chat,
@@ -44,7 +41,8 @@ public final class ThreadMessageImpl {
       channelId: channelId,
       userId: userId,
       actions: actions?.transform(),
-      metaInternal: JsonElementImpl(value: meta?.compactMapValues { $0.rawValue })
+      metaInternal: JsonElementImpl(value: meta?.compactMapValues { $0.rawValue }),
+      error: nil
     )
     self.init(
       message: underlyingThreadMessage
@@ -89,6 +87,7 @@ extension ThreadMessageImpl: ThreadMessage {
   public var reactions: [String: [Action]] { target.reactions }
   public var textLinks: [TextLink]? { target.textLinks }
   public var parentChannelId: String { target.message.parentChannelId }
+  public var error: Error? { target.message.error }
 
   public static func streamUpdatesOn(
     messages: [ThreadMessageImpl],

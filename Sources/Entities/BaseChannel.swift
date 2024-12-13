@@ -537,9 +537,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
       switch result.result {
       case let .success(response):
         completion?(.success((
-          events: response.events.compactMap {
-            $0 as? PubNubChat.Event
-          }.compactMap { (event: PubNubChat.Event) -> EventWrapper? in
+          events: response.events.compactMap { (event: PubNubChat.Event) -> EventWrapper? in
             EventWrapper(
               event: EventImpl(
                 chat: result.caller.chat,

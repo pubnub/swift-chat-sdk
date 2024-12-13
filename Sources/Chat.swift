@@ -435,34 +435,6 @@ public protocol Chat: AnyObject {
     completion: ((Swift.Result<(memberships: [ChatMembershipType], page: PubNubHashedPage?), Error>) -> Void)?
   )
 
-  /// Retrieves all channels that match the provided 3-letter string from your app's keyset.
-  ///
-  /// - Parameters:
-  ///   - text: At least a 3-letter string typed in after `#` with the channel name you want to reference
-  ///   - limit: Maximum number of returned channel names that match the typed 3-letter suggestion
-  ///   - completion: The async `Result` of the method call
-  ///     - **Success**: An array of ``Channel`` objects
-  ///     - **Failure**: An `Error` describing the failure
-  func getChannelSuggestions(
-    text: String,
-    limit: Int,
-    completion: ((Swift.Result<[ChatChannelType], Error>) -> Void)?
-  )
-
-  /// Returns all suggested users that match the provided 3-letter string.
-  ///
-  /// - Parameters:
-  ///   - text: At least a 3-letter string typed in after `@` with the user name you want to mention
-  ///   - limit: Maximum number of returned usernames that match the typed 3-letter suggestion
-  ///   - completion: The async `Result` of the method call
-  ///     - **Success**: An array of ``Channel`` objects
-  ///     - **Failure**: An `Error` describing the failure
-  func getUserSuggestions(
-    text: String,
-    limit: Int,
-    completion: ((Swift.Result<[ChatUserType], Error>) -> Void)?
-  )
-
   /// Retrieves all channels where your registered device receives push notifications.
   ///
   /// - Parameters:

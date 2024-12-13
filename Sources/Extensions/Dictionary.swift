@@ -44,8 +44,8 @@ extension [String: [String: [Action]]] {
 }
 
 extension [String: JSONCodableScalar] {
-  func asCustomObject() -> PubNubChat.CustomObject {
-    PubNubChat.CustomObject(value: self)
+  func asCustomObject() -> [String: Any] {
+    Factories_nonJvmKt.createCustomObject(map: self)
   }
 }
 

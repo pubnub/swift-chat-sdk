@@ -46,6 +46,7 @@ extension BaseMessage: Message {
   public var files: [File] { message.files.transform() }
   public var reactions: [String: [Action]] { message.reactions.transform() }
   public var textLinks: [TextLink]? { message.textLinks?.transform() }
+  public var error: Error? { message.error }
 
   static func streamUpdatesOn(
     messages: [BaseMessage],

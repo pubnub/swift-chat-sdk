@@ -5,7 +5,11 @@ import PackageDescription
 
 let package = Package(
   name: "PubNubSwiftChatSDK",
-  platforms: [.iOS(.v14)],
+  platforms: [
+    .iOS(.v14),
+    .macOS(.v11),
+    .tvOS(.v14)
+  ],
   products: [
     // Products define the executables and libraries a package produces, making them visible to other packages.
     .library(
@@ -14,8 +18,8 @@ let package = Package(
     )
   ],
   dependencies: [
-    .package(url: "https://github.com/pubnub/kmp-chat", exact: "0.9.0-dev"),
-    .package(url: "https://github.com/pubnub/swift", exact: "8.0.1")
+    .package(url: "https://github.com/pubnub/kmp-chat", exact: "0.9.2-dev"),
+    .package(url: "https://github.com/pubnub/swift", exact: "8.2.2")
   ],
   targets: [
     // Targets are the basic building blocks of a package, defining a module or a test suite.

@@ -39,7 +39,8 @@ public final class MessageImpl {
       channelId: channelId,
       userId: userId,
       actions: actions?.transform(),
-      metaInternal: JsonElementImpl(value: meta?.compactMapValues { $0.rawValue })
+      metaInternal: JsonElementImpl(value: meta?.compactMapValues { $0.rawValue }),
+      error: nil
     )
     self.init(
       message: underlyingMessage
@@ -77,6 +78,7 @@ extension MessageImpl: Message {
   public var files: [File] { target.files }
   public var reactions: [String: [Action]] { target.reactions }
   public var textLinks: [TextLink]? { target.textLinks }
+  public var error: Error? { target.error }
 
   public static func streamUpdatesOn(
     messages: [MessageImpl],

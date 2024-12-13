@@ -58,6 +58,8 @@ public protocol Message {
   var files: [File] { get }
   /// List of reactions attached to the given ``Message``
   var reactions: [String: [Action]] { get }
+  /// Error associated with the message, if any
+  var error: Error? { get }
 
   /// Receive updates when specific messages and related message reactions are added, edited, or removed.
   ///

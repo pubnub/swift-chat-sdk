@@ -54,7 +54,6 @@ end
 desc "Lints a release using Swift Package Manager"
 lane :lint_swift_package_manager do
   Dir.chdir("..") do
-    # TODO: Uncomment once macOS support is added
-    # Action.sh('swift build -c release -j 2')
+    Action.sh('swift build -c release -j 2')
   end
 end

@@ -597,7 +597,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
         completion: $0
       )
     }
-    let anotherMembership = try awaitResultValue {
+    let anotherMembership = try awaitResultValue(delay: 1) {
       channel.invite(
         user: anotherUser,
         completion: $0

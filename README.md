@@ -22,7 +22,7 @@ It exposes various PubNub APIs with twists:
 
 ## Requirements
 
-* iOS 14.0+ (support for other platforms is coming in future releases)
+* iOS 14.0+ / macOS 11.0+ / tvOS 14.0+
 * Xcode 15+
 * Swift 5+
 

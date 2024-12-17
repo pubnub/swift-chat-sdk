@@ -658,46 +658,6 @@ extension ChatImpl: Chat {
     }
   }
 
-  public func getChannelSuggestions(
-    text: String,
-    limit: Int = 10,
-    completion: ((Swift.Result<[ChannelImpl], Error>) -> Void)? = nil
-  ) {
-    chat.getChannelSuggestions(
-      text: text,
-      limit: Int32(limit)
-    ).async(caller: self) { (result: FutureResult<ChatImpl, [PubNubChat.Channel_]>) in
-      switch result.result {
-      case let .success(channels):
-        completion?(.success(channels.compactMap {
-          ChannelImpl(channel: $0)
-        }))
-      case let .failure(error):
-        completion?(.failure(error))
-      }
-    }
-  }
-
-  public func getUserSuggestions(
-    text: String,
-    limit: Int = 10,
-    completion: ((Swift.Result<[UserImpl], Error>) -> Void)? = nil
-  ) {
-    chat.getUserSuggestions(
-      text: text,
-      limit: Int32(limit)
-    ).async(caller: self) { (result: FutureResult<ChatImpl, [PubNubChat.User]>) in
-      switch result.result {
-      case let .success(users):
-        completion?(.success(users.compactMap {
-          UserImpl(user: $0)
-        }))
-      case let .failure(error):
-        completion?(.failure(error))
-      }
-    }
-  }
-
   public func getPushChannels(completion: ((Swift.Result<[String], Error>) -> Void)? = nil) {
     chat.getPushChannels().async(caller: self) { (result: FutureResult<ChatImpl, [String]>) in
       switch result.result {

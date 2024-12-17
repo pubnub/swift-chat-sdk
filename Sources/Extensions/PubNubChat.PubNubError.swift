@@ -1,5 +1,5 @@
 //
-//  Timetoken.swift
+//  PubNubChat.PubNubError.swift
 //
 //  Copyright (c) PubNub Inc.
 //  All rights reserved.
@@ -10,16 +10,7 @@
 
 import Foundation
 import PubNubChat
-import PubNubSDK
 
-extension Timetoken {
-  func asKotlinLong() -> KotlinLong {
-    KotlinLong(value: Int64(self))
-  }
-}
+extension PubNubChat.PubNubError: Error {
 
-extension Int64 {
-  func asTimetoken() -> Timetoken {
-    Timetoken(self)
-  }
 }

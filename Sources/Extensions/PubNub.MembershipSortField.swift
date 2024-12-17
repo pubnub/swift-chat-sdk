@@ -26,7 +26,7 @@ extension PubNub.MembershipSortField {
       case .type, .status:
         return nil
       }
-    case .status:
+    case .type, .status:
       return nil
     case .updated:
       return ascending ? PNSortKeyPNAsc(key: PNMembershipKey.updated) : PNSortKeyPNDesc(key: .updated)

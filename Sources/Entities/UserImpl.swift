@@ -180,9 +180,7 @@ extension UserImpl: User {
       switch result.result {
       case let .success(response):
         completion?(.success((
-          memberships: response.memberships.compactMap {
-            $0 as? PubNubChat.Membership
-          }.map {
+          memberships: response.memberships.map {
             MembershipImpl(membership: $0)
           },
           page: PubNubHashedPageBase(

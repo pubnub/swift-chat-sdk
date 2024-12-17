@@ -94,7 +94,7 @@ extension MembershipImpl: Membership {
     completion: ((Swift.Result<MembershipImpl, Error>) -> Void)? = nil
   ) {
     membership.update(
-      custom: CustomObject(value: custom)
+      custom: custom
     ).async(caller: self) { (result: FutureResult<MembershipImpl, PubNubChat.Membership>) in
       switch result.result {
       case let .success(membership):

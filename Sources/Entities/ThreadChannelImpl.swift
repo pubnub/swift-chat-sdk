@@ -151,13 +151,13 @@ extension ThreadChannelImpl: ThreadChannel {
     )
   }
 
-  public func startTyping(completion: ((Swift.Result<Void, Error>) -> Void)? = nil) {
+  public func startTyping(completion: ((Swift.Result<Timetoken?, Error>) -> Void)? = nil) {
     target.startTyping(
       completion: completion
     )
   }
 
-  public func stopTyping(completion: ((Swift.Result<Void, Error>) -> Void)? = nil) {
+  public func stopTyping(completion: ((Swift.Result<Timetoken?, Error>) -> Void)? = nil) {
     target.stopTyping(
       completion: completion
     )

@@ -165,11 +165,9 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
   }
 
   func testChannel_StopTyping() throws {
-    XCTAssertNotNil(
-      try awaitResultValue {
-        channel.stopTyping(completion: $0)
-      }
-    )
+    try awaitResultValue {
+      channel.stopTyping(completion: $0)
+    }
   }
 
   func testChannel_WhoIsPresent() throws {
@@ -599,7 +597,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
         completion: $0
       )
     }
-    let anotherMembership = try awaitResultValue {
+    let anotherMembership = try awaitResultValue(delay: 1) {
       channel.invite(
         user: anotherUser,
         completion: $0

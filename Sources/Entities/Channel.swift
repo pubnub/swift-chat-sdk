@@ -97,20 +97,20 @@ public protocol Channel {
   ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: A `Void` indicating a success
+  ///     - **Success**: A `Timetoken` indicating the action timestamp
   ///     - **Failure**: An `Error` describing the failure
   func startTyping(
-    completion: ((Swift.Result<Void, Error>) -> Void)?
+    completion: ((Swift.Result<Timetoken?, Error>) -> Void)?
   )
 
   /// Deactivates a typing indicator on a given channel.
   ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: A `Void` indicating a success
+  ///     - **Success**: A `Timetoken` indicating the action timestamp
   ///     - **Failure**: An `Error` describing the failure
   func stopTyping(
-    completion: ((Swift.Result<Void, Error>) -> Void)?
+    completion: ((Swift.Result<Timetoken?, Error>) -> Void)?
   )
 
   /// Enables continuous tracking of typing activity within the ``Channel``.

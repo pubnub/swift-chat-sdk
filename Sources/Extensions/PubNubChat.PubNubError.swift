@@ -11,6 +11,4 @@
 import Foundation
 import PubNubChat
 
-extension PubNubChat.PubNubError: Error {
-
-}
+extension PubNubChat.PubNubError: Error {}

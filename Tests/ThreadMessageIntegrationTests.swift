@@ -1,5 +1,5 @@
 //
-//  ThreadMessageTests.swift
+//  ThreadMessageIntegrationTests.swift
 //
 //  Copyright (c) PubNub Inc.
 //  All rights reserved.
@@ -9,8 +9,8 @@
 //
 
 import Foundation
-import XCTest
 import PubNubSDK
+import XCTest
 
 @testable import PubNubSwiftChatSDK
 
@@ -22,32 +22,32 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
 
   override func customSetUpWitError() throws {
     channel = try XCTUnwrap(
-      try awaitResultValue {
+      awaitResultValue {
         chat.createChannel(
           id: randomString(),
           completion: $0
         )
       }
     )
-    
+
     let timetoken = try awaitResultValue {
       channel?.sendText(
         text: "text",
         completion: $0
       )
     }
-    
+
     let testMessage = try XCTUnwrap(
-      try awaitResultValue(delay: 3) {
+      awaitResultValue(delay: 3) {
         channel.getMessage(
           timetoken: timetoken,
           completion: $0
         )
       }
     )
-    
+
     threadChannel = try XCTUnwrap(
-      try awaitResultValue {
+      awaitResultValue {
         testMessage.createThread(
           completion: $0
         )
@@ -62,7 +62,7 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
 
     threadMessage = try XCTUnwrap(
-      try awaitResultValue(delay: 3) {
+      awaitResultValue(delay: 3) {
         threadChannel.getHistory(completion: $0)
       }.messages.first
     )
@@ -143,7 +143,7 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
 
   func testThreadMessage_Forward() throws {
     let anotherChannel = try XCTUnwrap(
-      try awaitResultValue {
+      awaitResultValue {
         chat.createChannel(
           id: randomString(),
           completion: $0
@@ -243,7 +243,7 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     expectation.expectedFulfillmentCount = 1
 
     let message = try XCTUnwrap(
-      try awaitResultValue(delay: 3) {
+      awaitResultValue(delay: 3) {
         threadChannel.getHistory(completion: $0)
       }.messages.first
     )
@@ -278,7 +278,7 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     expectation.expectedFulfillmentCount = 1
 
     let message = try XCTUnwrap(
-      try awaitResultValue(delay: 2) {
+      awaitResultValue(delay: 2) {
         threadChannel.getHistory(completion: $0)
       }.messages.first
     )

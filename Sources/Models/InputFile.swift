@@ -22,7 +22,7 @@ public struct InputFile {
   public var source: PubNub.FileUploadContent
 
   /// Initializes a new instance of ``InputFile`` with the provided details.
-  /// 
+  ///
   /// - Parameters:
   ///   - name: The name of the file
   ///   - type: The type or MIME type of the file (e.g., "image/jpeg", "application/pdf")
@@ -63,19 +63,19 @@ public struct InputFile {
   static func from(input: PubNubChat.InputFile) -> InputFile? {
     switch input.source {
     case let source as PubNubChat.FileUploadContent:
-      return InputFile(
+      InputFile(
         name: input.name,
         type: input.type,
         source: .file(url: source.url)
       )
     case let source as PubNubChat.DataUploadContent:
-      return InputFile(
+      InputFile(
         name: input.name,
         type: input.type,
         source: .data(source.data, contentType: source.contentType)
       )
     case let source as PubNubChat.StreamUploadContent:
-      return InputFile(
+      InputFile(
         name: input.name,
         type: input.type,
         source: .stream(
@@ -85,7 +85,7 @@ public struct InputFile {
         )
       )
     default:
-      return nil
+      nil
     }
   }
 }

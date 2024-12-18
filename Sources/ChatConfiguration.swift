@@ -65,6 +65,7 @@ public class CustomPayloads {
     self.getMessageResponseBody = getMessageResponseBody
     self.editMessageActionName = editMessageActionName
     self.deleteMessageActionName = deleteMessageActionName
+    self.reactionsActionName = reactionsActionName
   }
 
   func transform() -> PubNubChat.CustomPayloads {

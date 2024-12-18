@@ -1,5 +1,5 @@
 //
-//  ThreadChannelTests.swift
+//  ThreadChannelIntegrationTests.swift
 //
 //  Copyright (c) PubNub Inc.
 //  All rights reserved.
@@ -20,23 +20,23 @@ class ThreadChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
 
   override func customSetUpWitError() throws {
     parentChannel = try XCTUnwrap(
-      try awaitResultValue {
+      awaitResultValue {
         chat.createChannel(
           id: randomString(),
           completion: $0
         )
       }
     )
-    
+
     let timetoken = try awaitResultValue {
       parentChannel?.sendText(
         text: "Message",
         completion: $0
       )
     }
-    
+
     let testMessage = try XCTUnwrap(
-      try awaitResultValue(delay: 3) {
+      awaitResultValue(delay: 3) {
         parentChannel.getMessage(
           timetoken: timetoken,
           completion: $0
@@ -44,7 +44,7 @@ class ThreadChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       }
     )
     threadChannel = try XCTUnwrap(
-      try awaitResultValue {
+      awaitResultValue {
         testMessage.createThread(
           completion: $0
         )
@@ -66,7 +66,7 @@ class ThreadChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
 
   func testThreadChannel_PinMessageToParentChannel() throws {
     let message = try XCTUnwrap(
-      try awaitResultValue(delay: 3) {
+      awaitResultValue(delay: 3) {
         threadChannel.getHistory(
           completion: $0
         )

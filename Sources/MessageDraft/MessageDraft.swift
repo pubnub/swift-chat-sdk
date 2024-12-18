@@ -9,8 +9,8 @@
 //
 
 import Foundation
-import PubNubSDK
 import PubNubChat
+import PubNubSDK
 
 /// An object that refers to a single message that has not been published yet.
 public protocol MessageDraft {
@@ -123,20 +123,20 @@ public enum UserSuggestionSource {
   func transform() -> PubNubChat.MessageDraftUserSuggestionSource {
     switch self {
     case .global:
-      return .global
+      .global
     case .channel:
-      return .channel
+      .channel
     }
   }
 
   static func from(source: PubNubChat.MessageDraftUserSuggestionSource) -> UserSuggestionSource {
     switch source {
     case .global:
-      return .global
+      .global
     case .channel:
-      return .channel
+      .channel
     default:
-      return .global
+      .global
     }
   }
 }
@@ -150,34 +150,34 @@ public enum MessageElement: Equatable {
 
   static func from(element: PubNubChat.MessageElement) -> MessageElement? {
     if let plainTextElement = element as? PubNubChat.MessageElementPlainText {
-      return .plainText(text: plainTextElement.text)
+      .plainText(text: plainTextElement.text)
     } else if let linkElement = element as? PubNubChat.MessageElementLink, let target = MentionTarget.from(target: linkElement.target) {
-      return .link(text: linkElement.text, target: target)
+      .link(text: linkElement.text, target: target)
     } else {
-      return nil
+      nil
     }
   }
 
   func isLink() -> Bool {
     switch self {
     case .plainText:
-      return false
+      false
     case .link:
-      return true
+      true
     }
   }
 
   func transform() -> PubNubChat.MessageElement {
     switch self {
     case let .plainText(text):
-      return MessageElementPlainText(text: text)
+      MessageElementPlainText(text: text)
     case let .link(text, target):
-      return MessageElementLink(text: text, target: target.transform())
+      MessageElementLink(text: text, target: target.transform())
     }
   }
 }
 
-public extension Array where Element == MessageElement {
+public extension [MessageElement] {
   /// Returns `true` if the underlying Array contains any mention (user/channel)
   func containsAnyMention() -> Bool {
     reduce(into: false) { accumulatedResult, currentElement in
@@ -198,23 +198,23 @@ public enum MentionTarget: Equatable {
   func transform() -> PubNubChat.MentionTarget {
     switch self {
     case let .channel(channelId):
-      return MentionTargetChannel(channelId: channelId)
+      MentionTargetChannel(channelId: channelId)
     case let .user(userId):
-      return MentionTargetUser(userId: userId)
+      MentionTargetUser(userId: userId)
     case let .url(url):
-      return MentionTargetUrl(url: url)
+      MentionTargetUrl(url: url)
     }
   }
 
   static func from(target: PubNubChat.MentionTarget) -> MentionTarget? {
     if let channelTarget = target as? PubNubChat.MentionTargetChannel {
-      return .channel(channelId: channelTarget.channelId)
+      .channel(channelId: channelTarget.channelId)
     } else if let userTarget = target as? PubNubChat.MentionTargetUser {
-      return .user(userId: userTarget.userId)
+      .user(userId: userTarget.userId)
     } else if let urlTarget = target as? PubNubChat.MentionTargetUrl {
-      return .url(url: urlTarget.url)
+      .url(url: urlTarget.url)
     } else {
-      return nil
+      nil
     }
   }
 }
@@ -254,7 +254,7 @@ public struct SuggestedMention {
   }
 }
 
-public extension Array where Element == SuggestedMention {
+public extension [SuggestedMention] {
   /// Utility function for filtering suggestions for a specific position in the message draft text.
   ///
   /// - Parameter position: The cursor position in the message draft text

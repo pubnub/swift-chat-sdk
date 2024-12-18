@@ -1,5 +1,5 @@
 //
-//  ChannelTests.swift
+//  ChannelIntegrationTests.swift
 //
 //  Copyright (c) PubNub Inc.
 //  All rights reserved.
@@ -9,8 +9,8 @@
 //
 
 import Foundation
-import XCTest
 import PubNubSDK
+import XCTest
 
 @testable import PubNubSwiftChatSDK
 
@@ -94,7 +94,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
 
   func testChannel_Forward() throws {
     let anotherChannel = try XCTUnwrap(
-      try awaitResultValue {
+      awaitResultValue {
         chat.createChannel(
           id: randomString(),
           completion: $0
@@ -108,7 +108,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       )
     }
     let message = try XCTUnwrap(
-      try awaitResultValue(delay: 2) {
+      awaitResultValue(delay: 2) {
         anotherChannel.getMessage(
           timetoken: tt,
           completion: $0
@@ -211,7 +211,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
   }
 
   func testChannel_GetHistory() throws {
-    for counter in 1...3 {
+    for counter in 1 ... 3 {
       try awaitResultValue {
         channel.sendText(
           text: "Text \(counter)",
@@ -232,19 +232,11 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
   }
 
   func testChannel_SendText() throws {
-    var mentionedUsers = MessageMentionedUsers()
-    var referencedChannels = MessageReferencedChannels()
-
-    mentionedUsers[0] = MessageMentionedUser(id: randomString(), name: "User 1")
-    referencedChannels[0] = MessageReferencedChannel(id: randomString(), name: "Channel 1")
-
     let tt = try awaitResultValue {
       channel.sendText(
-        text: "Please welcome @User who joined the @Chann channel!",
+        text: "Some text to send",
         meta: ["a": 123, "b": "someString"],
         shouldStore: true,
-        mentionedUsers: mentionedUsers,
-        referencedChannels: referencedChannels,
         completion: $0
       )
     }
@@ -256,7 +248,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       )
     }
 
-    XCTAssertEqual(retrievedMessage?.text, "Please welcome @User who joined the @Chann channel!")
+    XCTAssertEqual(retrievedMessage?.text, "Some text to send")
     XCTAssertEqual(retrievedMessage?.meta?["a"]?.codableValue.rawValue as? Int, 123)
     XCTAssertEqual(retrievedMessage?.meta?["b"]?.codableValue.rawValue as? String, "someString")
   }
@@ -269,7 +261,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       )
     }
     let member = try XCTUnwrap(
-      try awaitResultValue {
+      awaitResultValue {
         channel.getMembers(
           completion: $0
         )
@@ -342,7 +334,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
 
     let memberships = try XCTUnwrap(
-      try awaitResultValue {
+      awaitResultValue {
         channel.getMembers(
           completion: $0
         )
@@ -467,7 +459,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       )
     }
     let message = try XCTUnwrap(
-      try awaitResultValue(delay: 2) {
+      awaitResultValue(delay: 2) {
         channel.getMessage(
           timetoken: tt,
           completion: $0
@@ -481,7 +473,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       )
     }
     let getPinnedMessage = try XCTUnwrap(
-      try awaitResultValue(delay: 2) {
+      awaitResultValue(delay: 2) {
         updatedChannel.getPinnedMessage(
           completion: $0
         )
@@ -502,7 +494,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       )
     }
     let message = try XCTUnwrap(
-      try awaitResultValue(delay: 2) {
+      awaitResultValue(delay: 2) {
         channel.getMessage(
           timetoken: tt,
           completion: $0
@@ -827,8 +819,8 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
 
     XCTAssertEqual(
-      users.compactMap { $0.user.name }.sorted(by: <),
-      usersToCreate.compactMap { $0.name }.sorted(by: <)
+      users.compactMap(\.user.name).sorted(by: <),
+      usersToCreate.compactMap(\.name).sorted(by: <)
     )
 
     addTeardownBlock { [unowned self] in

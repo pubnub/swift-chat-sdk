@@ -1,5 +1,5 @@
 //
-//  UserTests.swift
+//  UserIntegrationTests.swift
 //
 //  Copyright (c) PubNub Inc.
 //  All rights reserved.
@@ -9,8 +9,8 @@
 //
 
 import Foundation
-import XCTest
 import PubNubSDK
+import XCTest
 
 @testable import PubNubSwiftChatSDK
 
@@ -46,7 +46,7 @@ final class UserIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       try awaitResult { chat.deleteUser(
         id: user.id,
         completion: $0
-      )}
+      ) }
     }
   }
 
@@ -125,10 +125,10 @@ final class UserIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
         completion: $0
       )
     }
-    
+
     XCTAssertNil(deletedUser)
   }
-  
+
   func testUser_SoftDelete() throws {
     let createdUser = try awaitResultValue {
       chat.createUser(
@@ -142,7 +142,7 @@ final class UserIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
         completion: $0
       )
     }
-    
+
     XCTAssertEqual(
       createdUser.id,
       deletedUser?.id
@@ -225,8 +225,8 @@ final class UserIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       )
     }
 
-    XCTAssertEqual((try XCTUnwrap(resultValue.memberships.first)).user.id, chat.currentUser.id)
-    XCTAssertEqual((try XCTUnwrap(resultValue.memberships.first)).channel.id, channel.id)
+    XCTAssertEqual(try (XCTUnwrap(resultValue.memberships.first)).user.id, chat.currentUser.id)
+    XCTAssertEqual(try (XCTUnwrap(resultValue.memberships.first)).channel.id, channel.id)
 
     addTeardownBlock { [unowned self] in
       try awaitResultValue {
@@ -309,7 +309,7 @@ final class UserIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       }
     }
 
-    try [firstUser, secondUser].forEach { user in
+    for user in [firstUser, secondUser] {
       try awaitResultValue(delay: 3) {
         user.update(
           name: randomString(),

@@ -1,5 +1,5 @@
 //
-//  SwiftChatSDKIntegrationTests.swift
+//  PubNubSwiftChatSDKIntegrationTests.swift
 //
 //  Copyright (c) PubNub Inc.
 //  All rights reserved.
@@ -8,17 +8,15 @@
 //  LICENSE file in the root directory of this source tree.
 //
 
-import XCTest
 import PubNubChat
-import PubNubSwiftChatSDK
 import PubNubSDK
+import PubNubSwiftChatSDK
+import XCTest
 
 class PubNubSwiftChatSDKIntegrationTests: XCTestCase {
   var chat: PubNubSwiftChatSDK.ChatImpl!
 
-  private lazy var configuration: [String: String] = {
-    readPropertyList()
-  }()
+  private lazy var configuration: [String: String] = readPropertyList()
 
   override func setUpWithError() throws {
     try super.setUpWithError()
@@ -40,9 +38,9 @@ class PubNubSwiftChatSDKIntegrationTests: XCTestCase {
   override func tearDownWithError() throws {
     try customTearDownWithError()
     try awaitResultValue { chat.deleteUser(id: chat.currentUser.id, completion: $0) }
-    
+
     chat = nil
-    
+
     try super.tearDownWithError()
   }
 }
@@ -91,12 +89,11 @@ extension PubNubSwiftChatSDKIntegrationTests {
     // Ensure length is within the desired range
     let length = max(1, min(length, 6))
     // Generate the random string
-    return String((0..<length).map { _ in letters.randomElement()! })
+    return String((0 ..< length).map { _ in letters.randomElement()! })
   }
 }
 
 extension PubNubSwiftChatSDKIntegrationTests {
-
   // Synchronously waits for an asynchronous operation that returns a `Result`
   // and retrieves the successful value
   @discardableResult
@@ -126,8 +123,8 @@ extension PubNubSwiftChatSDKIntegrationTests {
     switch try awaitResult(delay: delay, timeout: timeout, description: description, operation: operation) {
     case .success:
       fatalError("Unexpected condition")
-    case .failure(let error):
-      return error
+    case let .failure(error):
+      error
     }
   }
 
@@ -140,7 +137,6 @@ extension PubNubSwiftChatSDKIntegrationTests {
     description: String = "Waiting for the operation to complete",
     operation: (@escaping (Swift.Result<T, E>) -> Void) throws -> Void
   ) throws -> Swift.Result<T, E> {
-
     // Waits for the specified number of seconds if the call needs to be delayed
     if delay > 0 {
       wait(delay)

@@ -22,7 +22,7 @@ public struct QuotedMessage {
   public var userId: String
 
   /// Initializes a new instance of ``QuotedMessage`` with the provided details.
-  /// 
+  ///
   /// - Parameters:
   ///   - timetoken: Timetoken of the orginal message that you quote
   ///   - text: Original message content

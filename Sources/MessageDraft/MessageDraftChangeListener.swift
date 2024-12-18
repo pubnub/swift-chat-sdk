@@ -1,5 +1,5 @@
 //
-//  MessageDraftStateListener.swift
+//  MessageDraftChangeListener.swift
 //
 //  Copyright (c) PubNub Inc.
 //  All rights reserved.
@@ -14,7 +14,6 @@ import PubNubChat
 /// A listener that can be used with ``MessageDraft/addChangeListener(_:)`` to listen for changes to the message draft
 /// text and get current mention suggestions.
 public protocol MessageDraftChangeListener: AnyObject {
-
   /// Called when there is a change in the message elements or suggested mentions.
   ///
   /// - Parameters:
@@ -27,11 +26,11 @@ public protocol MessageDraftChangeListener: AnyObject {
 ///
 /// This class allows you to handle delegate events by passing a closure, reducing the need to implement the ``MessageDraftChangeListener`` protocol.
 /// This is useful when you want to quickly handle messages without writing additional boilerplate code.
-final public class ClosureMessageDraftChangeListener: MessageDraftChangeListener {
-  let onChangeClosure: (([MessageElement], any FutureObject<[SuggestedMention]>) -> Void)
+public final class ClosureMessageDraftChangeListener: MessageDraftChangeListener {
+  let onChangeClosure: ([MessageElement], any FutureObject<[SuggestedMention]>) -> Void
 
   init(onChange: @escaping ([MessageElement], any FutureObject<[SuggestedMention]>) -> Void) {
-    self.onChangeClosure = onChange
+    onChangeClosure = onChange
   }
 
   public func onChange(messageElements: [MessageElement], suggestedMentions: any FutureObject<[SuggestedMention]>) {
@@ -60,13 +59,13 @@ class SuggestedMentionsFuture: FutureObject {
   }
 
   func async(completion: @escaping (Swift.Result<[SuggestedMention], Error>) -> Void) {
-    future.async(caller: self, callback: { (result: FutureResult<SuggestedMentionsFuture, [PubNubChat.SuggestedMention]>) in
+    future.async(caller: self) { (result: FutureResult<SuggestedMentionsFuture, [PubNubChat.SuggestedMention]>) in
       switch result.result {
       case let .success(suggestedMentions):
         completion(.success(suggestedMentions.compactMap { SuggestedMention.from(mention: $0) }))
       case let .failure(error):
         completion(.failure(error))
       }
-    })
+    }
   }
 }

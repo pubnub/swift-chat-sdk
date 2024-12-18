@@ -1,5 +1,5 @@
 //
-//  ChatTests.swift
+//  ChatIntegrationTests.swift
 //
 //  Copyright (c) PubNub Inc.
 //  All rights reserved.
@@ -81,7 +81,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
 
   func testChat_UpdateUser() throws {
     let newCustom: [String: JSONCodableScalar] = [
-      "someValue": 17253575019298112,
+      "someValue": 17_253_575_019_298_112,
       "someStr": "str"
     ]
     let updatedUser = try awaitResultValue {
@@ -199,7 +199,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
 
   func testChat_CreateChannel() throws {
     let customField: [String: JSONCodableScalar] = [
-      "someValue": 17253575019298112,
+      "someValue": 17_253_575_019_298_112,
       "someStr": "str"
     ]
     let channel = try awaitResultValue {
@@ -283,7 +283,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       )
     }
     let customField: [String: JSONCodableScalar] = [
-      "someValue": 17253575019298112,
+      "someValue": 17_253_575_019_298_112,
       "someStr": "str"
     ]
     let updatedChannel = try awaitResultValue {
@@ -424,7 +424,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
 
   func testChat_CreatePublicConversation() throws {
     let customField: [String: JSONCodableScalar] = [
-      "someValue": 17253575019298112,
+      "someValue": 17_253_575_019_298_112,
       "someStr": "str"
     ]
     let channel = try awaitResultValue {
@@ -455,7 +455,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
 
   func testChat_CreateDirectConversation() throws {
     let customField: [String: JSONCodableScalar] = [
-      "someValue": 17253575019298112,
+      "someValue": 17_253_575_019_298_112,
       "someStr": "str"
     ]
     let membershipCustom: [String: JSONCodableScalar] = [
@@ -522,7 +522,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
 
     let customField: [String: JSONCodableScalar] = [
-      "someValue": 17253575019298112,
+      "someValue": 17_253_575_019_298_112,
       "someStr": "str"
     ]
     let membershipCustom: [String: JSONCodableScalar] = [
@@ -716,7 +716,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       )
     }
 
-    for _ in (1...3) {
+    for _ in 1 ... 3 {
       try awaitResultValue {
         channel.sendText(
           text: "Some new text",
@@ -726,7 +726,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
 
     let getUnreadMessagesCount = try XCTUnwrap(
-      try awaitResultValue {
+      awaitResultValue {
         chat.getUnreadMessagesCount(
           completion: $0
         )
@@ -762,7 +762,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       )
     }
 
-    for _ in (1...3) {
+    for _ in 1 ... 3 {
       try awaitResultValue {
         channel.sendText(
           text: "Some new text",
@@ -881,7 +881,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
 
     let userMentionData = try XCTUnwrap(
-      try awaitResultValue(delay: 3) {
+      awaitResultValue(delay: 3) {
         chat.getCurrentUserMentions(
           completion: $0
         )
@@ -905,13 +905,13 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
 
   func testChat_CustomPayload() throws {
     let getMessagePublishBody: GetMessagePublishBody? = { txtContent, _, _ in
-      return ["payload": txtContent.text]
+      ["payload": txtContent.text]
     }
     let getMessageResponseBody: GetMessageResponseBody? = { value, _, _ in
       if let decodedValue = try? value.decode([String: String].self) {
-        return EventContent.TextMessageContent(text: decodedValue["payload"] ?? "")
+        EventContent.TextMessageContent(text: decodedValue["payload"] ?? "")
       } else {
-        return nil
+        nil
       }
     }
 
@@ -938,7 +938,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
 
     let message = try XCTUnwrap(
-      try awaitResultValue(delay: 2) {
+      awaitResultValue(delay: 2) {
         channel.getHistory(
           count: 1,
           completion: $0

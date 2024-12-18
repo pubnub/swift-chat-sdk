@@ -18,18 +18,18 @@ extension PubNub.MembershipSortField {
     case let .object(objectSortProperty):
       switch objectSortProperty {
       case .id:
-        return ascending ? PNSortKeyPNAsc(key: PNMembershipKey.channelId) : PNSortKeyPNDesc(key: .channelId)
+        ascending ? PNSortKeyPNAsc(key: PNMembershipKey.channelId) : PNSortKeyPNDesc(key: .channelId)
       case .name:
-        return ascending ? PNSortKeyPNAsc(key: PNMembershipKey.channelName) : PNSortKeyPNDesc(key: .channelName)
+        ascending ? PNSortKeyPNAsc(key: PNMembershipKey.channelName) : PNSortKeyPNDesc(key: .channelName)
       case .updated:
-        return ascending ? PNSortKeyPNAsc(key: PNMembershipKey.channelUpdated) : PNSortKeyPNDesc(key: .channelUpdated)
+        ascending ? PNSortKeyPNAsc(key: PNMembershipKey.channelUpdated) : PNSortKeyPNDesc(key: .channelUpdated)
       case .type, .status:
-        return nil
+        nil
       }
     case .type, .status:
-      return nil
+      nil
     case .updated:
-      return ascending ? PNSortKeyPNAsc(key: PNMembershipKey.updated) : PNSortKeyPNDesc(key: .updated)
+      ascending ? PNSortKeyPNAsc(key: PNMembershipKey.updated) : PNSortKeyPNDesc(key: .updated)
     }
   }
 }

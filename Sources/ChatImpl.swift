@@ -37,7 +37,10 @@ public final class ChatImpl {
   /// - Parameters:
   ///   - chatConfiguration: A configuration object of type ``ChatConfiguration`` that defines the chat settings
   ///   - pubNubConfiguration: A configuration object of type `PubNubConfiguration` that defines the `PubNub` settings
-  public init(chatConfiguration: ChatConfiguration, pubNubConfiguration: PubNubConfiguration) {
+  public init(
+    chatConfiguration: ChatConfiguration = ChatConfiguration(),
+    pubNubConfiguration: PubNubConfiguration
+  ) {
     pubNub = PubNub(configuration: pubNubConfiguration)
     config = chatConfiguration
     chat = ChatImpl.createKMPChat(from: pubNub, config: chatConfiguration)

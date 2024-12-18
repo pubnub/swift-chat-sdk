@@ -14,7 +14,7 @@ import XCTest
 
 @testable import PubNubSwiftChatSDK
 
-class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
+class ChatIntegrationTests: BaseClosureIntegrationTestCase {
   func testChat_CreateUser() throws {
     let user = try awaitResultValue {
       chat.createUser(

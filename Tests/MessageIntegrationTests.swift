@@ -14,7 +14,7 @@ import XCTest
 
 @testable import PubNubSwiftChatSDK
 
-final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
+final class MessageIntegrationTests: BaseClosureIntegrationTestCase {
   var channel: ChannelImpl!
   var testMessage: MessageImpl!
 

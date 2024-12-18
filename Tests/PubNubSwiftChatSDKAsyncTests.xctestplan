@@ -12,7 +12,13 @@
     "testTimeoutsEnabled" : true
   },
   "testTargets" : [
-
+    {
+      "target" : {
+        "containerPath" : "container:PubNubSwiftChatSDK.xcodeproj",
+        "identifier" : "3D46D4552D131EB2007D08DB",
+        "name" : "PubNubSwiftChatSDKAsyncTests"
+      }
+    }
   ],
   "version" : 1
 }

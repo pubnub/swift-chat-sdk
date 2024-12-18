@@ -29,7 +29,7 @@ public extension Message {
       }
     }
   }
-  
+
   /// Changes the content of the existing message to a new one.
   ///
   /// - Parameter newText: New/updated text that you want to add in place of the existing message
@@ -46,13 +46,14 @@ public extension Message {
       }
     }
   }
-  
+
   /// Either permanently removes a historical message from Message Persistence or marks it as deleted (if you remove the message with the soft option).
   ///
   /// - Parameters:
   ///   - soft: Decide if you want to permanently remove message data
   ///   - preserveFiles: Define if you want to keep the files attached to the message or remove them
   /// - Returns: For hard delete, the method returns `nil`. Otherwise, an updated ``Message`` instance with an added `"deleted"` action type
+  @discardableResult
   func delete(
     soft: Bool = false,
     preserveFiles: Bool = false
@@ -68,7 +69,7 @@ public extension Message {
       }
     }
   }
-  
+
   /// Get the thread channel on which the thread message is published.
   ///
   /// - Returns: A ``ThreadChannel`` object which can be used for sending and reading messages from the message thread
@@ -84,7 +85,7 @@ public extension Message {
       }
     }
   }
-  
+
   /// Forward a given message from one channel to another.
   ///
   /// - Parameter channelId: Unique identifier of the channel to which you want to forward the message. You can forward a message to the same channel on which it was published or to any other
@@ -101,7 +102,7 @@ public extension Message {
       }
     }
   }
-  
+
   /// Attach this message to its channel.
   ///
   /// - Returns: The updated Channel metadata
@@ -117,11 +118,12 @@ public extension Message {
       }
     }
   }
-  
+
   /// Flag and report an inappropriate message to the admin.
   ///
   /// - Parameter reason: Reason for reporting/flagging a given message
   /// - Returns: The timetoken of the reported message
+  @discardableResult
   func report(reason: String) async throws -> Timetoken {
     try await withCheckedThrowingContinuation { continuation in
       report(reason: reason) {
@@ -134,7 +136,7 @@ public extension Message {
       }
     }
   }
-  
+
   /// Create a thread (channel) for a selected message.
   ///
   /// - Returns: A ``ThreadChannel`` object which can be used for sending and reading messages from the newly created message thread
@@ -150,10 +152,11 @@ public extension Message {
       }
     }
   }
-  
+
   /// Removes a thread (channel) for a selected message.
   ///
   /// - Returns: The updated channel object after the removal of the thread
+  @discardableResult
   func removeThread() async throws -> ChatType.ChatChannelType? {
     try await withCheckedThrowingContinuation { continuation in
       removeThread {
@@ -166,7 +169,7 @@ public extension Message {
       }
     }
   }
-  
+
   /// Add or remove a reaction to a message.
   ///
   /// It's a method for both adding and removing message reactions. It adds a string flag to the message if the current user hasn't added it yet
@@ -174,6 +177,7 @@ public extension Message {
   ///
   /// - Parameter reaction: Emoji added to the message or removed from it by the current user
   /// - Returns: An updated message instance
+  @discardableResult
   func toggleReaction(reaction: String) async throws -> Self {
     try await withCheckedThrowingContinuation { continuation in
       toggleReaction(reaction: reaction) {
@@ -186,12 +190,12 @@ public extension Message {
       }
     }
   }
-  
+
   /// You can receive updates when this message and related message reactions are added, edited, or removed.
   ///
   /// - Parameter completion: Function that takes a single Message object. It defines the custom behavior to be executed when detecting message or message reaction changes
   /// - Returns: An asynchronous stream that produces updates when the current Message is edited or removed.
-  func streamUpdates() -> AsyncStream<Self?> {
+  func streamUpdates() -> AsyncStream<Self> {
     AsyncStream { continuation in
       let autoCloseable = streamUpdates {
         continuation.yield($0)
@@ -201,7 +205,7 @@ public extension Message {
       }
     }
   }
-  
+
   /// If you delete a message, you can restore its content together with the attached files using the `restore()` method.
   ///
   /// This is possible, however, only if the message you want to restore was soft deleted (the soft parameter was set to true when deleting it). Hard deleted messages cannot be restored as their data

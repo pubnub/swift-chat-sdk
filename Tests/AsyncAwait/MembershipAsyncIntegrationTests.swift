@@ -40,11 +40,7 @@ class MembershipAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     )
     
     let updatedMembership = try await membership.setLastReadMessage(message: message)
-    
-    XCTAssertEqual(
-      updatedMembership.lastReadMessageTimetoken,
-      message.timetoken
-    )
+    XCTAssertEqual(updatedMembership.lastReadMessageTimetoken, message.timetoken)
   }
   
   func testMembershipAsync_Update() async throws {
@@ -61,10 +57,7 @@ class MembershipAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     let timetoken = Timetoken(Int(Date().timeIntervalSince1970 * 10_000_000))
     let updatedMembership = try await membership.setLastReadMessageTimetoken(timetoken)
 
-    XCTAssertEqual(
-      updatedMembership.lastReadMessageTimetoken,
-      timetoken
-    )
+    XCTAssertEqual(updatedMembership.lastReadMessageTimetoken, timetoken)
   }
 
   func testMembership_GetUnreadMessagesCount() async throws {
@@ -74,7 +67,6 @@ class MembershipAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     try await Task.sleep(nanoseconds: 2000000000)
     
     let unreadMessagesCount = try await membership.getUnreadMessagesCount()
-    
     XCTAssertEqual(unreadMessagesCount, 3)
   }
 

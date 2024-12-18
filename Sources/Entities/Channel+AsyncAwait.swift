@@ -31,7 +31,7 @@ public extension Channel {
       }
     }
   }
-  
+
   /// Sends text to the ``Channel``.
   ///
   /// - Parameters:
@@ -69,6 +69,41 @@ public extension Channel {
         switch $0 {
         case let .success(timetoken):
           continuation.resume(returning: timetoken)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+
+  /// Fetches the message from Message Persistence based on the message `timetoken`.
+  ///
+  /// - Parameter timetoken: Timetoken of the message you want to retrieve from Message Persistence
+  /// - Returns: A message object (if any)
+  func getMessage(timetoken: Timetoken) async throws -> ChatType.ChatMessageType? {
+    try await withCheckedThrowingContinuation { continuation in
+      getMessage(timetoken: timetoken) {
+        switch $0 {
+        case let .success(message):
+          continuation.resume(returning: message)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+
+  /// Fetches the message that is currently pinned to the channel.
+  ///
+  /// There can be only one pinned message on a channel at a time.
+  ///
+  /// - Returns: A pinned ``Message``
+  func getPinnedMessage() async throws -> ChatType.ChatMessageType? {
+    try await withCheckedThrowingContinuation { continuation in
+      getPinnedMessage {
+        switch $0 {
+        case let .success(message):
+          continuation.resume(returning: message)
         case let .failure(error):
           continuation.resume(throwing: error)
         }

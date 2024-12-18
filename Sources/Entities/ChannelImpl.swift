@@ -208,7 +208,7 @@ extension ChannelImpl: Channel {
     usePost: Bool = false,
     ttl: Int? = nil,
     quotedMessage: MessageImpl? = nil,
-    files: [InputFile]?,
+    files: [InputFile]? = nil,
     usersToMention: [String]? = nil,
     completion: ((Swift.Result<Timetoken, Error>) -> Void)? = nil
   ) {

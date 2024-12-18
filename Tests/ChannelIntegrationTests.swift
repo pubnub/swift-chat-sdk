@@ -237,11 +237,12 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
         text: "Some text to send",
         meta: ["a": 123, "b": "someString"],
         shouldStore: true,
+        usersToMention: nil,
         completion: $0
       )
     }
 
-    let retrievedMessage = try awaitResultValue {
+    let retrievedMessage = try awaitResultValue(delay: 2) {
       channel.getMessage(
         timetoken: tt,
         completion: $0

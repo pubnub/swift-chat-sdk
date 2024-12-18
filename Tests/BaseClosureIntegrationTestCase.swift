@@ -13,15 +13,7 @@ import PubNubSDK
 import PubNubSwiftChatSDK
 import XCTest
 
-<<<<<<< Updated upstream:Tests/PubNubSwiftChatSDKIntegrationTests.swift
-class PubNubSwiftChatSDKIntegrationTests: XCTestCase {
-  var chat: PubNubSwiftChatSDK.ChatImpl!
-
-  private lazy var configuration: [String: String] = readPropertyList()
-
-=======
 class BaseClosureIntegrationTestCase: BaseIntegrationTestCase {
->>>>>>> Stashed changes:Tests/BaseClosureIntegrationTestCase.swift
   override func setUpWithError() throws {
     try super.setUpWithError()
 
@@ -31,13 +23,8 @@ class BaseClosureIntegrationTestCase: BaseIntegrationTestCase {
 
   override func tearDownWithError() throws {
     try customTearDownWithError()
-<<<<<<< Updated upstream:Tests/PubNubSwiftChatSDKIntegrationTests.swift
     try awaitResultValue { chat.deleteUser(id: chat.currentUser.id, completion: $0) }
 
-=======
-    try awaitResult { chat.deleteUser(id: chat.currentUser.id, completion: $0) }
-    
->>>>>>> Stashed changes:Tests/BaseClosureIntegrationTestCase.swift
     chat = nil
 
     try super.tearDownWithError()
@@ -52,52 +39,6 @@ extension BaseClosureIntegrationTestCase {
   func customTearDownWithError() throws {}
 }
 
-<<<<<<< Updated upstream:Tests/PubNubSwiftChatSDKIntegrationTests.swift
-// MARK: - Helpers
-
-extension PubNubSwiftChatSDKIntegrationTests {
-  private func readPropertyList() -> [String: String] {
-    let resourceName = "PubNubSwiftChatSDKTests"
-    let resourceExtension = "plist"
-
-    guard let infoPlistPath = Bundle(
-      for: PubNubSwiftChatSDKIntegrationTests.self
-    ).url(
-      forResource: resourceName,
-      withExtension: resourceExtension
-    ) else {
-      fatalError("Cannot read \(resourceName).\(resourceExtension) file")
-    }
-
-    guard let infoPlistData = try? Data(contentsOf: infoPlistPath) else {
-      fatalError("Cannot read content of \(resourceName).\(resourceExtension) file")
-    }
-
-    guard let dictionary = try? PropertyListSerialization.propertyList(
-      from: infoPlistData,
-      options: [],
-      format: nil
-    ) as? [String: String] else {
-      fatalError("Cannot serialize \(resourceName).\(resourceExtension) into Dictionary")
-    }
-
-    return dictionary
-  }
-}
-
-extension PubNubSwiftChatSDKIntegrationTests {
-  func randomString(length: Int = 6) -> String {
-    // Define the characters set (alphanumeric)
-    let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-    // Ensure length is within the desired range
-    let length = max(1, min(length, 6))
-    // Generate the random string
-    return String((0 ..< length).map { _ in letters.randomElement()! })
-  }
-}
-
-extension PubNubSwiftChatSDKIntegrationTests {
-=======
 // An extension to simplify testing of closure-based methods by providing a cleaner, linear syntax.
 //
 // This extension uses `XCTestExpectation` to flatten the structure of closure-based tests,
@@ -107,7 +48,6 @@ extension PubNubSwiftChatSDKIntegrationTests {
 // This is not a replacement for Swift's native `async-await` but rather a way to improve
 // the readability of tests that involve multiple asynchronous calls with completion handlers.
 extension BaseClosureIntegrationTestCase {
->>>>>>> Stashed changes:Tests/BaseClosureIntegrationTestCase.swift
   // Synchronously waits for an asynchronous operation that returns a `Result`
   // and retrieves the successful value
   @discardableResult

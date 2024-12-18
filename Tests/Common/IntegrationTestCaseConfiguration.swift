@@ -38,7 +38,7 @@ final class IntegrationTestCaseConfiguration {
     let resourceExtension = "plist"
     
     guard let infoPlistPath = Bundle(
-      for: BaseClosureIntegrationTestCase.self
+      for: BaseIntegrationTestCase.self
     ).url(
       forResource: resourceName,
       withExtension: resourceExtension

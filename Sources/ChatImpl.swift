@@ -106,7 +106,7 @@ extension ChatImpl {
       }
     }
   }
-  
+
   func createChannel(
     id: String,
     name: String? = nil,

@@ -30,7 +30,7 @@ public extension Chat {
       }
     }
   }
-  
+
   /// Deletes a user with or without deleting its historical data from the App Context storage.
   ///
   /// - Parameters:
@@ -49,7 +49,7 @@ public extension Chat {
       }
     }
   }
-  
+
   /// Allows to delete ``Channel`` with or without deleting its historical data from the App Context storage.
   ///
   /// - Parameters:

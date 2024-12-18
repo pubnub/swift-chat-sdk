@@ -13,6 +13,10 @@
   },
   "testTargets" : [
     {
+      "skippedTests" : [
+        "BaseAsyncIntegrationTestCase",
+        "MembershipAsyncIntegrationTests"
+      ],
       "target" : {
         "containerPath" : "container:PubNubSwiftChatSDK.xcodeproj",
         "identifier" : "3DB73A102C4FE13C007FE249",

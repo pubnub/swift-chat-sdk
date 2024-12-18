@@ -13,7 +13,7 @@ import XCTest
 
 @testable import PubNubSwiftChatSDK
 
-class MessageDraftIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
+class MessageDraftIntegrationTests: BaseClosureIntegrationTestCase {
   private var user: UserImpl!
   private var channel: ChannelImpl!
 

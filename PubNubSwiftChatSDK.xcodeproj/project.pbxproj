@@ -20,6 +20,16 @@
 		3D2CA2482C621876008D2284 /* MessageActionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2CA2472C621876008D2284 /* MessageActionType.swift */; };
 		3D334BD02C8EE9E500F8793C /* PubNub.PushService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D334BCF2C8EE9E500F8793C /* PubNub.PushService.swift */; };
 		3D334BD22C8EEAA800F8793C /* PubNub.PushEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D334BD12C8EEAA800F8793C /* PubNub.PushEnvironment.swift */; };
+		3D46D4292D11D8D2007D08DB /* BaseIntegrationTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46D4282D11D8D2007D08DB /* BaseIntegrationTestCase.swift */; };
+		3D46D42B2D11DC8D007D08DB /* BaseAsyncIntegrationTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46D42A2D11DC8D007D08DB /* BaseAsyncIntegrationTestCase.swift */; };
+		3D46D42D2D1213C0007D08DB /* MembershipAsyncIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46D42C2D1213C0007D08DB /* MembershipAsyncIntegrationTests.swift */; };
+		3D46D4302D122C8F007D08DB /* IntegrationTestCaseConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46D42F2D122C8F007D08DB /* IntegrationTestCaseConfiguration.swift */; };
+		3D46D4322D122CD6007D08DB /* RandomStringGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46D4312D122CD6007D08DB /* RandomStringGenerator.swift */; };
+		3D46D4372D12306A007D08DB /* Membership+AsyncAwait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46D4352D12302E007D08DB /* Membership+AsyncAwait.swift */; };
+		3D46D43B2D1231F5007D08DB /* Channel+AsyncAwait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46D4392D1231F1007D08DB /* Channel+AsyncAwait.swift */; };
+		3D46D43E2D123370007D08DB /* Chat+AsyncAwait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46D43C2D12335D007D08DB /* Chat+AsyncAwait.swift */; };
+		3D46D4402D130526007D08DB /* Message+AsyncAwait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46D43F2D130526007D08DB /* Message+AsyncAwait.swift */; };
+		3D46D4422D131BBC007D08DB /* ThreadMessage+AsyncAwait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46D4412D131BBC007D08DB /* ThreadMessage+AsyncAwait.swift */; };
 		3D5B58412D10B9A100CB74D1 /* PubNubChat in Frameworks */ = {isa = PBXBuildFile; productRef = 3D5B58402D10B9A100CB74D1 /* PubNubChat */; };
 		3D79EB862D0C40ED00F7AB56 /* PubNubChat.PubNubError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D79EB852D0C40ED00F7AB56 /* PubNubChat.PubNubError.swift */; };
 		3D7BBF6F2C8893D400FBA623 /* ChatAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7BBF6E2C8893D400FBA623 /* ChatAdapter.swift */; };
@@ -45,7 +55,7 @@
 		3DB551D12C7C652300634BDC /* PubNubSwiftChatSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DB73A072C4FE13C007FE249 /* PubNubSwiftChatSDK.framework */; };
 		3DB551DB2C7C983000634BDC /* ThreadMessageIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB551DA2C7C983000634BDC /* ThreadMessageIntegrationTests.swift */; };
 		3DB73A0C2C4FE13C007FE249 /* PubNubSwiftChatSDK.docc in Sources */ = {isa = PBXBuildFile; fileRef = 3DB73A0B2C4FE13C007FE249 /* PubNubSwiftChatSDK.docc */; };
-		3DB73A172C4FE13C007FE249 /* PubNubSwiftChatSDKIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB73A162C4FE13C007FE249 /* PubNubSwiftChatSDKIntegrationTests.swift */; };
+		3DB73A172C4FE13C007FE249 /* BaseClosureIntegrationTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB73A162C4FE13C007FE249 /* BaseClosureIntegrationTestCase.swift */; };
 		3DB73A182C4FE13C007FE249 /* PubNubSwiftChatSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 3DB73A0A2C4FE13C007FE249 /* PubNubSwiftChatSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3DB73A262C4FE1F6007FE249 /* ChatConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB73A242C4FE1F6007FE249 /* ChatConfiguration.swift */; };
 		3DB73A272C4FE1F6007FE249 /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB73A252C4FE1F6007FE249 /* Chat.swift */; };
@@ -122,6 +132,17 @@
 		3D2CA2472C621876008D2284 /* MessageActionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageActionType.swift; sourceTree = "<group>"; };
 		3D334BCF2C8EE9E500F8793C /* PubNub.PushService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PubNub.PushService.swift; sourceTree = "<group>"; };
 		3D334BD12C8EEAA800F8793C /* PubNub.PushEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PubNub.PushEnvironment.swift; sourceTree = "<group>"; };
+		3D46D4282D11D8D2007D08DB /* BaseIntegrationTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseIntegrationTestCase.swift; sourceTree = "<group>"; };
+		3D46D42A2D11DC8D007D08DB /* BaseAsyncIntegrationTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseAsyncIntegrationTestCase.swift; sourceTree = "<group>"; };
+		3D46D42C2D1213C0007D08DB /* MembershipAsyncIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MembershipAsyncIntegrationTests.swift; sourceTree = "<group>"; };
+		3D46D42F2D122C8F007D08DB /* IntegrationTestCaseConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationTestCaseConfiguration.swift; sourceTree = "<group>"; };
+		3D46D4312D122CD6007D08DB /* RandomStringGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomStringGenerator.swift; sourceTree = "<group>"; };
+		3D46D4352D12302E007D08DB /* Membership+AsyncAwait.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Membership+AsyncAwait.swift"; sourceTree = "<group>"; };
+		3D46D4392D1231F1007D08DB /* Channel+AsyncAwait.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+AsyncAwait.swift"; sourceTree = "<group>"; };
+		3D46D43C2D12335D007D08DB /* Chat+AsyncAwait.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Chat+AsyncAwait.swift"; sourceTree = "<group>"; };
+		3D46D43F2D130526007D08DB /* Message+AsyncAwait.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message+AsyncAwait.swift"; sourceTree = "<group>"; };
+		3D46D4412D131BBC007D08DB /* ThreadMessage+AsyncAwait.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ThreadMessage+AsyncAwait.swift"; sourceTree = "<group>"; };
+		3D46D4432D131D5A007D08DB /* PubNubSwiftChatSDKAsyncTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = PubNubSwiftChatSDKAsyncTests.xctestplan; sourceTree = "<group>"; };
 		3D79EB852D0C40ED00F7AB56 /* PubNubChat.PubNubError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PubNubChat.PubNubError.swift; sourceTree = "<group>"; };
 		3D7BBF6E2C8893D400FBA623 /* ChatAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAdapter.swift; sourceTree = "<group>"; };
 		3D8362192CC7B35200A21B9A /* MessageDraftChangeListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDraftChangeListener.swift; sourceTree = "<group>"; };
@@ -150,7 +171,7 @@
 		3DB73A0A2C4FE13C007FE249 /* PubNubSwiftChatSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PubNubSwiftChatSDK.h; sourceTree = "<group>"; };
 		3DB73A0B2C4FE13C007FE249 /* PubNubSwiftChatSDK.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = PubNubSwiftChatSDK.docc; sourceTree = "<group>"; };
 		3DB73A112C4FE13C007FE249 /* PubNubSwiftChatSDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PubNubSwiftChatSDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		3DB73A162C4FE13C007FE249 /* PubNubSwiftChatSDKIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PubNubSwiftChatSDKIntegrationTests.swift; sourceTree = "<group>"; };
+		3DB73A162C4FE13C007FE249 /* BaseClosureIntegrationTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseClosureIntegrationTestCase.swift; sourceTree = "<group>"; };
 		3DB73A242C4FE1F6007FE249 /* ChatConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatConfiguration.swift; sourceTree = "<group>"; };
 		3DB73A252C4FE1F6007FE249 /* Chat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
 		3DB73A342C502688007FE249 /* Int.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Int.swift; sourceTree = "<group>"; };
@@ -208,6 +229,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3D46D42E2D122C30007D08DB /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				3D46D42F2D122C8F007D08DB /* IntegrationTestCaseConfiguration.swift */,
+				3D46D4312D122CD6007D08DB /* RandomStringGenerator.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		3D46D4382D12310F007D08DB /* AsyncAwait */ = {
+			isa = PBXGroup;
+			children = (
+				3D46D42C2D1213C0007D08DB /* MembershipAsyncIntegrationTests.swift */,
+			);
+			path = AsyncAwait;
+			sourceTree = "<group>";
+		};
 		3D9A17922CC156F100F3F8AB /* MessageDraft */ = {
 			isa = PBXGroup;
 			children = (
@@ -260,7 +298,12 @@
 			children = (
 				3DB49E1A2C75F573006356ED /* PubNubSwiftChatSDKTests.plist */,
 				3D842D2B2C9DD7EB005C0B55 /* PubNubSwiftChatSDKTests.xctestplan */,
-				3DB73A162C4FE13C007FE249 /* PubNubSwiftChatSDKIntegrationTests.swift */,
+				3D46D4432D131D5A007D08DB /* PubNubSwiftChatSDKAsyncTests.xctestplan */,
+				3D46D4382D12310F007D08DB /* AsyncAwait */,
+				3D46D42E2D122C30007D08DB /* Helpers */,
+				3D46D4282D11D8D2007D08DB /* BaseIntegrationTestCase.swift */,
+				3DB73A162C4FE13C007FE249 /* BaseClosureIntegrationTestCase.swift */,
+				3D46D42A2D11DC8D007D08DB /* BaseAsyncIntegrationTestCase.swift */,
 				3DB49E1C2C75F70C006356ED /* UserIntegrationTests.swift */,
 				3DB49E272C777ECD006356ED /* MembershipIntegrationTests.swift */,
 				3DB49E292C788529006356ED /* MessageIntegrationTests.swift */,
@@ -278,6 +321,7 @@
 			children = (
 				3D1C44A52C918A2200E68446 /* PubNubSwiftChatSDK_Info.plist */,
 				3DB73A252C4FE1F6007FE249 /* Chat.swift */,
+				3D46D43C2D12335D007D08DB /* Chat+AsyncAwait.swift */,
 				3DB73A7A2C57EA29007FE249 /* ChatImpl.swift */,
 				3DB73A242C4FE1F6007FE249 /* ChatConfiguration.swift */,
 				3D9A17922CC156F100F3F8AB /* MessageDraft */,
@@ -330,14 +374,18 @@
 				3DB73A3B2C50F42B007FE249 /* User.swift */,
 				3DB2A8B22C807DDC00167058 /* UserImpl.swift */,
 				3DB73A3F2C51051C007FE249 /* Channel.swift */,
+				3D46D4392D1231F1007D08DB /* Channel+AsyncAwait.swift */,
 				3D043A792CA6AAA000F91C05 /* ThreadChannel.swift */,
 				3DB73A5A2C53CAB1007FE249 /* BaseChannel.swift */,
 				3DB73A6E2C57BB97007FE249 /* ChannelImpl.swift */,
 				3DB73A5C2C53CC0A007FE249 /* ThreadChannelImpl.swift */,
 				3DB73A3D2C50F5F3007FE249 /* Membership.swift */,
+				3D46D4352D12302E007D08DB /* Membership+AsyncAwait.swift */,
 				3DB2A8B42C807E2A00167058 /* MembershipImpl.swift */,
 				3DB73A412C511900007FE249 /* Message.swift */,
+				3D46D43F2D130526007D08DB /* Message+AsyncAwait.swift */,
 				3D043A7B2CAAABBD00F91C05 /* ThreadMessage.swift */,
+				3D46D4412D131BBC007D08DB /* ThreadMessage+AsyncAwait.swift */,
 				3DB73A6C2C57BB35007FE249 /* BaseMessage.swift */,
 				3DB73A522C53A20C007FE249 /* MessageImpl.swift */,
 				3DB73A542C53A22F007FE249 /* ThreadMessageImpl.swift */,
@@ -502,8 +550,10 @@
 				3DB73A372C5026B4007FE249 /* PubNubHashedPage.swift in Sources */,
 				3DB73A6F2C57BB97007FE249 /* ChannelImpl.swift in Sources */,
 				3DB73A402C51051C007FE249 /* Channel.swift in Sources */,
+				3D46D43B2D1231F5007D08DB /* Channel+AsyncAwait.swift in Sources */,
 				3D2CA23C2C5B9E51008D2284 /* Action.swift in Sources */,
 				3DB2A8B32C807DDC00167058 /* UserImpl.swift in Sources */,
+				3D46D43E2D123370007D08DB /* Chat+AsyncAwait.swift in Sources */,
 				3DB73A452C511D52007FE249 /* Restriction.swift in Sources */,
 				3DB73A552C53A22F007FE249 /* ThreadMessageImpl.swift in Sources */,
 				3D2CA2382C5B9ACA008D2284 /* File.swift in Sources */,
@@ -515,6 +565,7 @@
 				3DB73A732C57CE9E007FE249 /* PubNubChat.RestrictionType.swift in Sources */,
 				3DB73A262C4FE1F6007FE249 /* ChatConfiguration.swift in Sources */,
 				3D2CA2482C621876008D2284 /* MessageActionType.swift in Sources */,
+				3D46D4372D12306A007D08DB /* Membership+AsyncAwait.swift in Sources */,
 				3DB73A272C4FE1F6007FE249 /* Chat.swift in Sources */,
 				3DB73A472C51353B007FE249 /* MessageMentionedUser.swift in Sources */,
 				3DB73A7D2C57EA94007FE249 /* Timetoken.swift in Sources */,
@@ -533,6 +584,7 @@
 				3DB73A672C57A8C5007FE249 /* CreateGroupConversationResult.swift in Sources */,
 				3DB2A8B52C807E2A00167058 /* MembershipImpl.swift in Sources */,
 				3DB2A8B92C80993B00167058 /* ChannelType.swift in Sources */,
+				3D46D4402D130526007D08DB /* Message+AsyncAwait.swift in Sources */,
 				3DB73A592C53BF18007FE249 /* GetFileItem.swift in Sources */,
 				3D2CA23E2C5BBCDB008D2284 /* PubNubChat.PNPushType.swift in Sources */,
 				3DB2A8BF2C809B1F00167058 /* EmitEventMethod.swift in Sources */,
@@ -547,6 +599,7 @@
 				3D9A17962CC250A300F3F8AB /* MessageDraftImpl.swift in Sources */,
 				3DB73A4B2C5135C3007FE249 /* QuotedMessage.swift in Sources */,
 				3D043A7C2CAAABBD00F91C05 /* ThreadMessage.swift in Sources */,
+				3D46D4422D131BBC007D08DB /* ThreadMessage+AsyncAwait.swift in Sources */,
 				3DB2A8BB2C8099F300167058 /* EventContent.swift in Sources */,
 				3D334BD02C8EE9E500F8793C /* PubNub.PushService.swift in Sources */,
 				3DB73A512C539421007FE249 /* InputFile.swift in Sources */,
@@ -559,14 +612,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				3DB49E1D2C75F70C006356ED /* UserIntegrationTests.swift in Sources */,
+				3D46D4322D122CD6007D08DB /* RandomStringGenerator.swift in Sources */,
 				3DA530C62C87455200DDE763 /* ThreadChannelIntegrationTests.swift in Sources */,
 				3DB2A8AF2C7F54A400167058 /* ChannelIntegrationTests.swift in Sources */,
+				3D46D42B2D11DC8D007D08DB /* BaseAsyncIntegrationTestCase.swift in Sources */,
+				3D46D42D2D1213C0007D08DB /* MembershipAsyncIntegrationTests.swift in Sources */,
+				3D46D4302D122C8F007D08DB /* IntegrationTestCaseConfiguration.swift in Sources */,
 				3DB49E2A2C788529006356ED /* MessageIntegrationTests.swift in Sources */,
 				3DB49E282C777ECD006356ED /* MembershipIntegrationTests.swift in Sources */,
 				3DA530C82C882F2500DDE763 /* ChatIntegrationTests.swift in Sources */,
 				3DB551DB2C7C983000634BDC /* ThreadMessageIntegrationTests.swift in Sources */,
+				3D46D4292D11D8D2007D08DB /* BaseIntegrationTestCase.swift in Sources */,
 				3D9A179B2CC65A0700F3F8AB /* MessageDraftIntegrationTests.swift in Sources */,
-				3DB73A172C4FE13C007FE249 /* PubNubSwiftChatSDKIntegrationTests.swift in Sources */,
+				3DB73A172C4FE13C007FE249 /* BaseClosureIntegrationTestCase.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

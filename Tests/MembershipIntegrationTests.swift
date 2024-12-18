@@ -14,7 +14,7 @@ import XCTest
 
 @testable import PubNubSwiftChatSDK
 
-final class MembershipTests: PubNubSwiftChatSDKIntegrationTests {
+final class MembershipTests: BaseClosureIntegrationTestCase {
   var channel: ChannelImpl!
   var membership: MembershipImpl!
 
@@ -110,16 +110,22 @@ final class MembershipTests: PubNubSwiftChatSDKIntegrationTests {
     let expectation = expectation(description: "MembershipStreamUpdates")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
-
+    
+    let expectedCustom: [String: JSONCodableScalar] = [
+      "a": 1,
+      "b": "Text"
+    ]
+    
     let closeable = membership.streamUpdates { [unowned self] membership in
       XCTAssertEqual(membership?.channel.id, self.membership.channel.id)
       XCTAssertEqual(membership?.user.id, self.membership.user.id)
+      XCTAssertEqual(membership?.custom?.mapValues { $0.scalarValue }, expectedCustom.mapValues { $0.scalarValue })
       expectation.fulfill()
     }
 
     try awaitResultValue(delay: 3) {
       membership.update(
-        custom: ["a": 1, "b": "Text"],
+        custom: expectedCustom,
         completion: $0
       )
     }
@@ -138,16 +144,22 @@ final class MembershipTests: PubNubSwiftChatSDKIntegrationTests {
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
 
+    let expectedCustom: [String: JSONCodableScalar] = [
+      "a": 1,
+      "b": "Text"
+    ]
+    
     let closeable = MembershipImpl.streamUpdatesOn(memberships: [membership]) { [unowned self] in
       let receivedMembership = $0[0]
       XCTAssertEqual(receivedMembership.channel.id, membership.channel.id)
       XCTAssertEqual(receivedMembership.user.id, membership.user.id)
+      XCTAssertEqual(receivedMembership.custom?.mapValues { $0.scalarValue }, expectedCustom.mapValues { $0.scalarValue })
       expectation.fulfill()
     }
 
     try awaitResultValue(delay: 3) {
       membership.update(
-        custom: ["a": 1, "b": "Text"],
+        custom: expectedCustom,
         completion: $0
       )
     }

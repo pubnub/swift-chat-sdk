@@ -37,7 +37,10 @@ public final class ChatImpl {
   /// - Parameters:
   ///   - chatConfiguration: A configuration object of type ``ChatConfiguration`` that defines the chat settings
   ///   - pubNubConfiguration: A configuration object of type `PubNubConfiguration` that defines the `PubNub` settings
-  public init(chatConfiguration: ChatConfiguration, pubNubConfiguration: PubNubConfiguration) {
+  public init(
+    chatConfiguration: ChatConfiguration = ChatConfiguration(),
+    pubNubConfiguration: PubNubConfiguration
+  ) {
     pubNub = PubNub(configuration: pubNubConfiguration)
     config = chatConfiguration
     chat = ChatImpl.createKMPChat(from: pubNub, config: chatConfiguration)
@@ -100,6 +103,26 @@ extension ChatImpl {
         completion?(.success(ChannelImpl(channel: channel)))
       case let .failure(error):
         completion?(.failure(error))
+      }
+    }
+  }
+  
+  func createChannel(
+    id: String,
+    name: String? = nil,
+    description: String? = nil,
+    custom: [String: JSONCodableScalar]? = nil,
+    type: ChannelType? = nil,
+    status: String? = nil
+  ) async throws -> ChannelImpl {
+    try await withCheckedThrowingContinuation { continuation in
+      createChannel(id: id, name: name, description: description, custom: custom, type: type, status: status) {
+        switch $0 {
+        case let .success(channel):
+          continuation.resume(returning: channel)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
       }
     }
   }

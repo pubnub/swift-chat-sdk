@@ -14,7 +14,7 @@ import XCTest
 
 @testable import PubNubSwiftChatSDK
 
-class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
+class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
   var channel: ChannelImpl!
 
   override func customSetUpWitError() throws {
@@ -135,7 +135,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       try awaitResult { chat.deleteChannel(
         id: anotherChannel.id,
         completion: $0
-      )}
+      ) }
     }
   }
 

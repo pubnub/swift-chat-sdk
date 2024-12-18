@@ -14,7 +14,7 @@ import XCTest
 
 @testable import PubNubSwiftChatSDK
 
-final class UserIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
+final class UserIntegrationTests: BaseClosureIntegrationTestCase {
   func testableUser() -> PubNubSwiftChatSDK.UserImpl {
     UserImpl(
       chat: chat,

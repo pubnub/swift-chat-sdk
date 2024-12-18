@@ -254,7 +254,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     XCTAssertEqual(retrievedMessage?.meta?["a"]?.codableValue.rawValue as? Int, 123)
     XCTAssertEqual(retrievedMessage?.meta?["b"]?.codableValue.rawValue as? String, "someString")
   }
-  
+
   func testChannel_SendText() throws {
     let tt = try awaitResultValue {
       channel.sendText(

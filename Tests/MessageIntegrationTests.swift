@@ -1,5 +1,5 @@
 //
-//  MessageTests.swift
+//  MessageIntegrationTests.swift
 //
 //  Copyright (c) PubNub Inc.
 //  All rights reserved.
@@ -9,8 +9,8 @@
 //
 
 import Foundation
-import XCTest
 import PubNubSDK
+import XCTest
 
 @testable import PubNubSwiftChatSDK
 
@@ -20,14 +20,14 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
 
   override func customSetUpWitError() throws {
     channel = try XCTUnwrap(
-      try awaitResultValue {
+      awaitResultValue {
         chat.createChannel(
           id: randomString(),
           completion: $0
         )
       }
     )
-    
+
     let timetoken = try awaitResultValue {
       channel?.sendText(
         text: "text",
@@ -35,9 +35,9 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
         completion: $0
       )
     }
-    
+
     testMessage = try XCTUnwrap(
-      try awaitResultValue(delay: 3) {
+      awaitResultValue(delay: 3) {
         channel.getMessage(
           timetoken: timetoken,
           completion: $0
@@ -57,12 +57,12 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
   func testMessage_HasNoUserReaction() throws {
     let someMessage = MessageImpl(
       chat: chat,
-      timetoken: 17301310706849521,
+      timetoken: 17_301_310_706_849_521,
       content: .init(text: "Text text"),
       channelId: randomString(),
       userId: randomString()
     )
-    
+
     XCTAssertFalse(someMessage.hasUserReaction(reaction: "someReaction"))
   }
 
@@ -152,7 +152,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
 
   func testMessage_Forward() throws {
     let anotherChannel = try XCTUnwrap(
-      try awaitResultValue {
+      awaitResultValue {
         chat.createChannel(
           id: randomString(),
           completion: $0
@@ -242,7 +242,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
 
     let retrievedMessage = try XCTUnwrap(
-      try awaitResultValue(delay: 3) {
+      awaitResultValue(delay: 3) {
         channel.getMessage(
           timetoken: testMessage.timetoken,
           completion: $0
@@ -281,7 +281,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       )
     }
     let message = try XCTUnwrap(
-      try awaitResultValue(delay: 3) {
+      awaitResultValue(delay: 3) {
         channel.getMessage(
           timetoken: testMessage.timetoken,
           completion: $0
@@ -293,7 +293,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
 
     let retrievedMessage = try XCTUnwrap(
-      try awaitResultValue(delay: 3) {
+      awaitResultValue(delay: 3) {
         channel.getMessage(
           timetoken: testMessage.timetoken,
           completion: $0
@@ -345,7 +345,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       )
     }
     let message = try XCTUnwrap(
-      try awaitResultValue(delay: 3) {
+      awaitResultValue(delay: 3) {
         channel.getMessage(
           timetoken: timetoken,
           completion: $0
@@ -389,7 +389,7 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       )
     }
     let message = try XCTUnwrap(
-      try awaitResultValue(delay: 3) {
+      awaitResultValue(delay: 3) {
         channel.getMessage(
           timetoken: timetoken,
           completion: $0

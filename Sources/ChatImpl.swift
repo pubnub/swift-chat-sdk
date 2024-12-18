@@ -642,15 +642,17 @@ extension ChatImpl: Chat {
     ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.MarkAllMessageAsReadResponse>) in
       switch result.result {
       case let .success(response):
-        completion?(.success((
-          memberships: response.memberships.compactMap {
-            MembershipImpl(membership: $0)
-          },
-          page: PubNubHashedPageBase(
-            start: response.next?.pageHash,
-            end: response.prev?.pageHash,
-            totalCount: Int(response.total)
-          ))
+        completion?(.success(
+          (
+            memberships: response.memberships.compactMap {
+              MembershipImpl(membership: $0)
+            },
+            page: PubNubHashedPageBase(
+              start: response.next?.pageHash,
+              end: response.prev?.pageHash,
+              totalCount: Int(response.total)
+            )
+          )
         ))
       case let .failure(error):
         completion?(.failure(error))

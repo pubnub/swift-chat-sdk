@@ -10,7 +10,6 @@
 
 import Foundation
 import PubNubSDK
-import Combine
 
 /// A protocol that defines the basic structure and behavior for a chat.
 ///

@@ -1,5 +1,5 @@
 //
-//  MembershipTests.swift
+//  MembershipIntegrationTests.swift
 //
 //  Copyright (c) PubNub Inc.
 //  All rights reserved.
@@ -9,8 +9,8 @@
 //
 
 import Foundation
-import XCTest
 import PubNubSDK
+import XCTest
 
 @testable import PubNubSwiftChatSDK
 
@@ -47,7 +47,7 @@ final class MembershipTests: PubNubSwiftChatSDKIntegrationTests {
   func testMembership_SetLastReadMessage() throws {
     let message = MessageImpl(
       chat: chat,
-      timetoken: Timetoken(Int(Date().timeIntervalSince1970 * 10000000)),
+      timetoken: Timetoken(Int(Date().timeIntervalSince1970 * 10_000_000)),
       content: .init(text: "Lorem ipsum"),
       channelId: channel.id,
       userId: chat.currentUser.id
@@ -83,7 +83,7 @@ final class MembershipTests: PubNubSwiftChatSDKIntegrationTests {
   }
 
   func testMembership_SetLastReadMessageTimetoken() throws {
-    let timetoken = Timetoken(Int(Date().timeIntervalSince1970 * 10000000))
+    let timetoken = Timetoken(Int(Date().timeIntervalSince1970 * 10_000_000))
     let value = try awaitResultValue { membership.setLastReadMessageTimetoken(timetoken, completion: $0) }
 
     XCTAssertEqual(
@@ -93,7 +93,7 @@ final class MembershipTests: PubNubSwiftChatSDKIntegrationTests {
   }
 
   func testMembership_GetUnreadMessagesCount() throws {
-    for _ in (1...3) {
+    for _ in 1 ... 3 {
       try awaitResultValue {
         channel.sendText(
           text: "Some new text",

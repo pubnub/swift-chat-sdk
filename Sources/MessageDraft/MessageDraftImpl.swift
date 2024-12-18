@@ -9,8 +9,8 @@
 //
 
 import Foundation
-import PubNubSDK
 import PubNubChat
+import PubNubSDK
 
 /// A concrete implementation of the ``MessageDraft`` protocol.
 ///

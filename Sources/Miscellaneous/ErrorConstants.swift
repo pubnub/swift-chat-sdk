@@ -1,5 +1,5 @@
 //
-//  Constants.swift
+//  ErrorConstants.swift
 //
 //  Copyright (c) PubNub Inc.
 //  All rights reserved.

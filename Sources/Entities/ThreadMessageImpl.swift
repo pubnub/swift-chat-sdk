@@ -62,8 +62,8 @@ public final class ThreadMessageImpl {
   }
 }
 
-extension ThreadMessageImpl {
-  public func asMessage() -> MessageImpl {
+public extension ThreadMessageImpl {
+  func asMessage() -> MessageImpl {
     MessageImpl(message: target.message)
   }
 }

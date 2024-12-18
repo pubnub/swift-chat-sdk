@@ -9,8 +9,8 @@
 //
 
 import Foundation
-import PubNubSDK
 import PubNubChat
+import PubNubSDK
 
 /// Represents an object that refers to a single thread (channel) in a chat.
 ///

@@ -231,6 +231,30 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     XCTAssertEqual(history.messages[2].text, "Text 3")
   }
 
+  func testChannel_LegacySendText() throws {
+    let tt = try awaitResultValue {
+      channel.sendText(
+        text: "Some text to send",
+        meta: ["a": 123, "b": "someString"],
+        shouldStore: true,
+        mentionedUsers: nil,
+        referencedChannels: nil,
+        completion: $0
+      )
+    }
+
+    let retrievedMessage = try awaitResultValue(delay: 2) {
+      channel.getMessage(
+        timetoken: tt,
+        completion: $0
+      )
+    }
+
+    XCTAssertEqual(retrievedMessage?.text, "Some text to send")
+    XCTAssertEqual(retrievedMessage?.meta?["a"]?.codableValue.rawValue as? Int, 123)
+    XCTAssertEqual(retrievedMessage?.meta?["b"]?.codableValue.rawValue as? String, "someString")
+  }
+  
   func testChannel_SendText() throws {
     let tt = try awaitResultValue {
       channel.sendText(

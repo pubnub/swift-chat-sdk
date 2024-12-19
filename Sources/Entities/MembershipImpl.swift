@@ -69,7 +69,7 @@ extension MembershipImpl: Membership {
     callback: @escaping (([MembershipImpl]) -> Void)
   ) -> AutoCloseable {
     AutoCloseableImpl(
-      PubNubChat.MembershipImpl.Companion.shared.streamUpdatesOn(memberships: memberships.compactMap(\.membership)) {
+      PubNubChat.MembershipImpl.Companion.shared.streamUpdatesOn(memberships: memberships.compactMap { $0.membership }) {
         if let memberships = $0 as? [PubNubChat.Membership] {
           callback(memberships.map {
             MembershipImpl(membership: $0)

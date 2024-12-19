@@ -68,6 +68,7 @@ public extension Channel {
   ///
   /// - Parameter soft: Decide if you want to permanently remove channel metadata
   /// - Returns: For hard delete, the method returns `nil`. Otherwise, an updated ``Channel`` instance with the status field set to `"deleted"`
+  @discardableResult
   func delete(soft: Bool = false) async throws -> ChatType.ChatChannelType? {
     try await withCheckedThrowingContinuation { continuation in
       delete(soft: soft) {
@@ -86,6 +87,7 @@ public extension Channel {
   /// - Parameters:
   ///   - message: Message object that you want to forward to the channel
   /// - Returns: A timetoken value of the forwarded message
+  @discardableResult
   func forward(message: ChatType.ChatMessageType) async throws -> Timetoken {
     try await withCheckedThrowingContinuation { continuation in
       forward(message: message) {
@@ -106,6 +108,7 @@ public extension Channel {
   /// using the `typingTimeout` parameter
   ///
   /// - Returns: A `Timetoken` indicating the action timestamp
+  @discardableResult
   func startTyping() async throws -> Timetoken? {
     try await withCheckedThrowingContinuation { continuation in
       startTyping {
@@ -122,6 +125,7 @@ public extension Channel {
   /// Deactivates a typing indicator on a given channel.
   ///
   /// - Returns: A `Timetoken` indicating the action timestamp
+  @discardableResult
   func stopTyping() async throws -> Timetoken? {
     try await withCheckedThrowingContinuation { continuation in
       stopTyping {
@@ -330,6 +334,7 @@ public extension Channel {
   /// - Parameters:
   ///   - custom: Any custom properties or metadata associated with the channel-user membership in the form of key-value pairs
   /// - Returns: A `Tuple` containing the user's membership in the channel, and an asynchronous stream that produces a new value every time a new message is published on the current channel
+  @discardableResult
   func join(
     custom: [String: JSONCodableScalar]? = nil
   ) async throws -> (

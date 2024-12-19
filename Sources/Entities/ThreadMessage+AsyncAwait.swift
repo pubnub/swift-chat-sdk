@@ -23,6 +23,7 @@ public extension ThreadMessage {
   ///  * `pinnedMessageChannelID`: The ID of the channel where the message was pinned (either the parent channel or a thread channel)
   ///
   /// - Returns: The updated ``Channel`` with the pinned message metadata
+  @discardableResult
   func pinToParentChannel() async throws -> ChatType.ChatChannelType {
     try await withCheckedThrowingContinuation { continuation in
       pinToParentChannel {
@@ -44,6 +45,7 @@ public extension ThreadMessage {
   ///  * `pinnedMessageChannelID`: The ID of the channel where the message was pinned (either the parent channel or a thread channel)
   ///
   /// - Parameters: The updated Channel after the message is unpinned
+  @discardableResult
   func unpinFromParentChannel() async throws -> ChatType.ChatChannelType {
     try await withCheckedThrowingContinuation { continuation in
       unpinFromParentChannel {

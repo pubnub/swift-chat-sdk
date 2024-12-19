@@ -60,7 +60,7 @@ class MembershipAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     XCTAssertEqual(updatedMembership.lastReadMessageTimetoken, timetoken)
   }
 
-  func testMembership_GetUnreadMessagesCount() async throws {
+  func testMembershipAsync_GetUnreadMessagesCount() async throws {
     try await channel.sendText(text: "Some text 1")
     try await channel.sendText(text: "Some text 2")
     try await channel.sendText(text: "Some text 3")
@@ -70,7 +70,7 @@ class MembershipAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     XCTAssertEqual(unreadMessagesCount, 3)
   }
 
-  func testMembership_StreamUpdates() async throws {
+  func testMembershipAsync_StreamUpdates() async throws {
     let expectation = expectation(description: "MembershipStreamUpdates")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
@@ -97,7 +97,7 @@ class MembershipAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     }
   }
   
-  func testMembership_GlobalStreamUpdates() async throws {
+  func testMembershipAsync_GlobalStreamUpdates() async throws {
     let expectation = expectation(description: "MembershipStreamUpdates")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1

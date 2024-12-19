@@ -106,26 +106,6 @@ extension ChatImpl {
       }
     }
   }
-
-  func createChannel(
-    id: String,
-    name: String? = nil,
-    description: String? = nil,
-    custom: [String: JSONCodableScalar]? = nil,
-    type: ChannelType? = nil,
-    status: String? = nil
-  ) async throws -> ChannelImpl {
-    try await withCheckedThrowingContinuation { continuation in
-      createChannel(id: id, name: name, description: description, custom: custom, type: type, status: status) {
-        switch $0 {
-        case let .success(channel):
-          continuation.resume(returning: channel)
-        case let .failure(error):
-          continuation.resume(throwing: error)
-        }
-      }
-    }
-  }
 }
 
 extension ChatImpl: Chat {

@@ -69,4 +69,43 @@ public extension Chat {
       }
     }
   }
+  
+  /// Fetches details of a specific channel.
+  ///
+  /// - Parameter channelId: Unique channel identifier (up to 92 UTF-8 byte sequences)
+  /// - Returns: A value containing a channel object with its metadata
+  func getChannel(channelId: String) async throws -> ChatChannelType? {
+    try await withCheckedThrowingContinuation { continuation in
+      getChannel(channelId: channelId) {
+        switch $0 {
+        case let .success(channel):
+          continuation.resume(returning: channel)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+}
+
+extension ChatImpl {
+  func createChannel(
+    id: String,
+    name: String? = nil,
+    description: String? = nil,
+    custom: [String: JSONCodableScalar]? = nil,
+    type: ChannelType? = nil,
+    status: String? = nil
+  ) async throws -> ChannelImpl {
+    try await withCheckedThrowingContinuation { continuation in
+      createChannel(id: id, name: name, description: description, custom: custom, type: type, status: status) {
+        switch $0 {
+        case let .success(channel):
+          continuation.resume(returning: channel)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
 }

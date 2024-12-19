@@ -110,12 +110,12 @@ final class MembershipTests: BaseClosureIntegrationTestCase {
     let expectation = expectation(description: "MembershipStreamUpdates")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
-    
+
     let expectedCustom: [String: JSONCodableScalar] = [
       "a": 1,
       "b": "Text"
     ]
-    
+
     let closeable = membership.streamUpdates { [unowned self] membership in
       XCTAssertEqual(membership?.channel.id, self.membership.channel.id)
       XCTAssertEqual(membership?.user.id, self.membership.user.id)
@@ -148,7 +148,7 @@ final class MembershipTests: BaseClosureIntegrationTestCase {
       "a": 1,
       "b": "Text"
     ]
-    
+
     let closeable = MembershipImpl.streamUpdatesOn(memberships: [membership]) { [unowned self] in
       let receivedMembership = $0[0]
       XCTAssertEqual(receivedMembership.channel.id, membership.channel.id)

@@ -21,24 +21,24 @@ class ThreadMessageaAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
   override func customSetup() async throws {
     channel = try await chat.createChannel(id: randomString())
-    
+
     let timetoken = try await channel.sendText(text: "text")
-    try await Task.sleep(nanoseconds: 3000000000)
+    try await Task.sleep(nanoseconds: 3_000_000_000)
     let message = try await channel.getMessage(timetoken: timetoken)
-    
+
     threadChannel = try await message?.createThread()
 
     try await threadChannel.sendText(text: "Some text")
-    try await Task.sleep(nanoseconds: 3000000000)
-    
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+
     threadMessage = try await threadChannel.getHistory().messages.first
   }
-  
+
   override func customTearDown() async throws {
     _ = try? await threadMessage.delete()
     _ = try? await threadChannel.delete()
     _ = try? await chat.deleteChannel(id: channel.id)
-    
+
     channel = nil
     threadChannel = nil
     threadMessage = nil
@@ -70,22 +70,22 @@ class ThreadMessageaAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     let expectation = expectation(description: "ErrorExpectation")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
-    
+
     do {
       _ = try await threadMessage.getThread()
     } catch {
       XCTAssertEqual((error as? ChatError)?.message, "This message is not a thread.")
       expectation.fulfill()
     }
-    
+
     await fulfillment(of: [expectation], timeout: 10)
   }
 
   func testThreadMessageAsync_Forward() async throws {
     let anotherChannel = try await chat.createChannel(id: randomString())
     let forwardValue = try await threadMessage.forward(channelId: anotherChannel.id)
-    
-    try await Task.sleep(nanoseconds: 3000000000)
+
+    try await Task.sleep(nanoseconds: 3_000_000_000)
     let message = try await anotherChannel.getMessage(timetoken: forwardValue)
 
     XCTAssertNotNil(message)
@@ -96,10 +96,10 @@ class ThreadMessageaAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
       _ = try? await chat.deleteChannel(id: anotherChannel.id)
     }
   }
-  
+
   func testThreadMessageAsync_Pin() async throws {
     let resultingChannel = try await threadMessage.pin()
-    try await Task.sleep(nanoseconds: 3000000000)
+    try await Task.sleep(nanoseconds: 3_000_000_000)
     let message = try await resultingChannel.getPinnedMessage()
 
     XCTAssertNotNil(message)
@@ -114,7 +114,7 @@ class ThreadMessageaAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     let expectation = XCTestExpectation(description: "ErrorExpectation")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
-    
+
     do {
       _ = try await threadMessage.createThread()
     } catch {
@@ -128,7 +128,7 @@ class ThreadMessageaAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
 
-    try await Task.sleep(nanoseconds: 1000000000)
+    try await Task.sleep(nanoseconds: 1_000_000_000)
 
     do {
       _ = try await threadMessage.removeThread()
@@ -154,11 +154,11 @@ class ThreadMessageaAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
 
-    try await Task.sleep(nanoseconds: 3000000000)
+    try await Task.sleep(nanoseconds: 3_000_000_000)
 
     let message = try await threadChannel.getHistory().messages.first
     let unwrappedMessage = try XCTUnwrap(message)
-    
+
     let task = Task {
       for await receivedMessage in threadMessage.streamUpdates() {
         XCTAssertTrue(receivedMessage.hasUserReaction(reaction: "myReaction"))
@@ -168,24 +168,24 @@ class ThreadMessageaAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
       }
     }
 
-    try await Task.sleep(nanoseconds: 3000000000)
+    try await Task.sleep(nanoseconds: 3_000_000_000)
     try await unwrappedMessage.toggleReaction(reaction: "myReaction")
 
     await fulfillment(of: [expectation], timeout: 6)
-    
+
     addTeardownBlock {
       task.cancel()
       _ = try? await unwrappedMessage.delete()
     }
   }
-  
+
   func testThreadMessageAsync_GlobalStreamUpdates() async throws {
     let expectation = expectation(description: "StreamUpdates")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
 
-    try await Task.sleep(nanoseconds: 3000000000)
-    
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+
     let message = try await threadChannel.getHistory().messages.first
     let unwrappedMessage = try XCTUnwrap(message)
 
@@ -197,12 +197,12 @@ class ThreadMessageaAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
         expectation.fulfill()
       }
     }
-    
-    try await Task.sleep(nanoseconds: 3000000000)
+
+    try await Task.sleep(nanoseconds: 3_000_000_000)
     try await unwrappedMessage.toggleReaction(reaction: "myReaction")
 
     await fulfillment(of: [expectation], timeout: 6)
-    
+
     addTeardownBlock {
       task.cancel()
       _ = try? await unwrappedMessage.delete()
@@ -218,13 +218,13 @@ class ThreadMessageaAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
   func testThreadMessageAsync_UnpinMessageFromParentChannel() async throws {
     try await threadMessage.pinToParentChannel()
-    
-    try await Task.sleep(nanoseconds: 2000000000)
+
+    try await Task.sleep(nanoseconds: 2_000_000_000)
     let updatedChannel = try await threadMessage.unpinFromParentChannel()
-    
-    try await Task.sleep(nanoseconds: 2000000000)
+
+    try await Task.sleep(nanoseconds: 2_000_000_000)
     let pinnedMessage = try await updatedChannel.getPinnedMessage()
-    
+
     XCTAssertNil(pinnedMessage)
   }
 }

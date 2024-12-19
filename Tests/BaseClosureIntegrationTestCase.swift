@@ -1,5 +1,5 @@
 //
-//  PubNubSwiftChatSDKIntegrationTests.swift
+//  BaseClosureIntegrationTestCase.swift
 //
 //  Copyright (c) PubNub Inc.
 //  All rights reserved.
@@ -117,16 +117,16 @@ extension BaseClosureIntegrationTestCase {
     // If the result is a success, return the value
     return result
   }
-  
+
   private func wait(_ duration: TimeInterval) {
     // Define the expectation to fulfill
     let expectation = expectation(description: "Waiting for \(duration) seconds")
-    
+
     // Dispatch a delay
     DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
       expectation.fulfill()
     }
-    
+
     // Wait for the expectation to be fulfilled
     wait(for: [expectation], timeout: duration + 1)
   }

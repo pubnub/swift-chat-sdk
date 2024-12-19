@@ -8,9 +8,9 @@
 //  LICENSE file in the root directory of this source tree.
 //
 
-import XCTest
 import PubNubSDK
 import PubNubSwiftChatSDK
+import XCTest
 
 class BaseIntegrationTestCase: XCTestCase {
   var chat: ChatImpl! = IntegrationTestCaseConfiguration.createChatObject()

@@ -8,8 +8,8 @@
 //  LICENSE file in the root directory of this source tree.
 //
 
-import XCTest
 import PubNubSwiftChatSDK
+import XCTest
 
 class BaseAsyncIntegrationTestCase: BaseIntegrationTestCase {
   override func setUp() async throws {
@@ -17,13 +17,13 @@ class BaseAsyncIntegrationTestCase: BaseIntegrationTestCase {
     try await chat.initialize()
     try await customSetup()
   }
-  
+
   override func tearDown() async throws {
     try await customTearDown()
     try await chat.deleteUser(id: chat.currentUser.id)
-    
+
     chat = nil
-    
+
     try await super.tearDown()
   }
 }

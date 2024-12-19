@@ -85,13 +85,8 @@ public extension Channel {
   ///
   /// - Parameters:
   ///   - message: Message object that you want to forward to the channel
-  ///   - completion: The async `Result` of the method call
-  ///     - **Success**: A timetoken value of the forwarded message
-  ///     - **Failure**: An `Error` describing the failure
-  func forward(
-    message: ChatType.ChatMessageType,
-    completion: ((Swift.Result<Timetoken, Error>) -> Void)?
-  ) async throws -> Timetoken {
+  /// - Returns: A timetoken value of the forwarded message
+  func forward(message: ChatType.ChatMessageType) async throws -> Timetoken {
     try await withCheckedThrowingContinuation { continuation in
       forward(message: message) {
         switch $0 {
@@ -439,10 +434,7 @@ public extension Channel {
   ///
   /// - Parameters: message: Message that you want to pin to the selected channel
   /// - Returns: A channel with updated `custom` field
-  func pinMessage(
-    message: ChatType.ChatMessageType,
-    completion: ((Swift.Result<Self, Error>) -> Void)?
-  ) async throws -> Self {
+  func pinMessage(message: ChatType.ChatMessageType) async throws -> Self {
     try await withCheckedThrowingContinuation { continuation in
       pinMessage(message: message) {
         switch $0 {
@@ -486,7 +478,7 @@ public extension Channel {
   }
 
   /// Lets you get a read confirmation status for messages you published on a channel.
-  func streamReadReceipts() -> AsyncStream<([Timetoken: [String]])> {
+  func streamReadReceipts() -> AsyncStream<[Timetoken: [String]]> {
     AsyncStream { continuation in
       let autoCloseable = streamReadReceipts {
         continuation.yield($0)
@@ -560,8 +552,7 @@ public extension Channel {
   /// - Returns: An array of matching memberships
   func getUserSuggestions(
     text: String,
-    limit: Int = 10,
-    completion: ((Swift.Result<[ChatType.ChatMembershipType], Error>) -> Void)?
+    limit: Int = 10
   ) async throws -> [ChatType.ChatMembershipType] {
     try await withCheckedThrowingContinuation { continuation in
       getUserSuggestions(text: text, limit: limit) {

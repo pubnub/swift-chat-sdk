@@ -16,15 +16,15 @@ extension PubNub.ObjectSortField {
   func transform() -> PNSortKey<PNKey>? {
     switch property {
     case .id:
-      return ascending ? PNSortKeyPNAsc(key: .id) : PNSortKeyPNDesc(key: .id)
+      ascending ? PNSortKeyPNAsc(key: .id) : PNSortKeyPNDesc(key: .id)
     case .name:
-      return ascending ? PNSortKeyPNAsc(key: .name) : PNSortKeyPNDesc(key: .name)
+      ascending ? PNSortKeyPNAsc(key: .name) : PNSortKeyPNDesc(key: .name)
     case .type:
-      return ascending ? PNSortKeyPNAsc(key: .type) : PNSortKeyPNDesc(key: .type)
+      ascending ? PNSortKeyPNAsc(key: .type) : PNSortKeyPNDesc(key: .type)
     case .status:
-      return ascending ? PNSortKeyPNAsc(key: .status) : PNSortKeyPNDesc(key: .status)
+      ascending ? PNSortKeyPNAsc(key: .status) : PNSortKeyPNDesc(key: .status)
     case .updated:
-      return ascending ? PNSortKeyPNAsc(key: .updated) : PNSortKeyPNDesc(key: .updated)
+      ascending ? PNSortKeyPNAsc(key: .updated) : PNSortKeyPNDesc(key: .updated)
     }
   }
 }

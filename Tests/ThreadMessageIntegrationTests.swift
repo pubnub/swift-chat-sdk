@@ -248,7 +248,7 @@ class ThreadMessageIntegrationTests: BaseClosureIntegrationTestCase {
       }.messages.first
     )
 
-    let closeable = message.streamUpdates {
+    let closeable = message.streamUpdates {      
       XCTAssertTrue($0.hasUserReaction(reaction: "myReaction"))
       XCTAssertEqual($0.channelId, message.channelId)
       XCTAssertEqual($0.userId, message.userId)

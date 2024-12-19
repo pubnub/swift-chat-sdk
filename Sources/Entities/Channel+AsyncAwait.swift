@@ -110,4 +110,45 @@ public extension Channel {
       }
     }
   }
+
+  /// Allows to delete  an existing ``Channel`` with or without deleting its historical data from the App Context storage.
+  ///
+  /// - Parameter soft: Decide if you want to permanently remove channel metadata
+  /// - Returns: For hard delete, the method returns `nil`. Otherwise, an updated ``Channel`` instance with the status field set to `"deleted"`
+  func delete(soft: Bool = false) async throws -> ChatType.ChatChannelType? {
+    try await withCheckedThrowingContinuation { continuation in
+      delete(soft: soft) {
+        switch $0 {
+        case let .success(message):
+          continuation.resume(returning: message)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+
+  /// Returns historical messages for the ``Channel``.
+  ///
+  /// - Parameters:
+  ///   - startTimetoken: The start value for the set of remote data
+  ///   - endTimetoken: The bounded end value that will be eventually fetched to
+  ///   - count: The maximum number of messages to retrieve
+  /// - Returns: A `Tuple` containing an array of messages, and a boolean indicating whether there are more messages available beyond the current result set
+  func getHistory(
+    startTimetoken: Timetoken? = nil,
+    endTimetoken: Timetoken? = nil,
+    count: Int = 25
+  ) async throws -> (messages: [MessageType], isMore: Bool) {
+    try await withCheckedThrowingContinuation { continuation in
+      getHistory(startTimetoken: startTimetoken, endTimetoken: endTimetoken, count: count) {
+        switch $0 {
+        case let .success((messages, isMore)):
+          continuation.resume(returning: (messages: messages, isMore: isMore))
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
 }

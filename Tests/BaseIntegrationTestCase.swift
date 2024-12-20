@@ -13,7 +13,7 @@ import PubNubSwiftChatSDK
 import XCTest
 
 class BaseIntegrationTestCase: XCTestCase {
-  var chat: ChatImpl! = IntegrationTestCaseConfiguration.createChatObject()
+  lazy var chat: ChatImpl! = IntegrationTestCaseConfiguration.createChatObject()
 }
 
 extension BaseIntegrationTestCase {

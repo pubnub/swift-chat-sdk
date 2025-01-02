@@ -122,7 +122,7 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
       )
     }
 
-    let retrievedMssgsFromForwardedChannel = try awaitResultValue {
+    let retrievedMssgsFromForwardedChannel = try awaitResultValue(delay: 2) {
       channel.getHistory(
         completion: $0
       )

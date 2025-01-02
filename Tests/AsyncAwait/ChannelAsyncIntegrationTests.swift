@@ -69,7 +69,9 @@ class ChannelIntegrationTests: BaseAsyncIntegrationTestCase {
     let unwrappedMessage = try XCTUnwrap(message)
     try await channel.forward(message: unwrappedMessage)
 
+    try await Task.sleep(nanoseconds: 2_000_000_000)
     let retrievedMssgsFromForwardedChannel = try await channel.getHistory()
+    
     XCTAssertEqual(retrievedMssgsFromForwardedChannel.messages.count, 1)
     XCTAssertEqual(retrievedMssgsFromForwardedChannel.messages.first?.channelId, channel.id)
 

@@ -69,7 +69,7 @@ public extension Chat {
       }
     }
   }
-  
+
   /// Fetches details of a specific channel.
   ///
   /// - Parameter channelId: Unique channel identifier (up to 92 UTF-8 byte sequences)
@@ -80,6 +80,25 @@ public extension Chat {
         switch $0 {
         case let .success(channel):
           continuation.resume(returning: channel)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+
+  /// Creates a new user.
+  ///
+  /// - Parameters:
+  ///   - user: A `User` object containing the details of the user to be created.
+  ///  - Returns: The created `User` object
+  @discardableResult
+  func createUser(user: ChatUserType) async throws -> ChatUserType {
+    try await withCheckedThrowingContinuation { continuation in
+      createUser(user: user) {
+        switch $0 {
+        case let .success(user):
+          continuation.resume(returning: user)
         case let .failure(error):
           continuation.resume(throwing: error)
         }

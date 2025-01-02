@@ -102,7 +102,12 @@ class ChannelIntegrationTests: BaseAsyncIntegrationTestCase {
   }
 
   func testChannelAsync_WhoIsPresent() async throws {
-    try await channel.join()
+    // Keeping a strong reference to this object for test purposes to simulate that someone is already present on the given channel.
+    // If this object is not retained, it will be deallocated, resulting in no subscription to the channel, 
+    // which would cause the behavior being tested to fail.
+    let joinResult = try await channel.join()
+    debugPrint("Did join a \(joinResult.membership.channel.id) channel by \(joinResult.membership.user) user")
+    
     try await Task.sleep(nanoseconds: 4_000_000_000)
     let whoIsPresent = try await channel.whoIsPresent()
     
@@ -111,13 +116,18 @@ class ChannelIntegrationTests: BaseAsyncIntegrationTestCase {
   }
 
   func testChannelAsync_IsPresent() async throws {
-    try await channel.join()
+    // Keeping a strong reference to this object for test purposes to simulate that someone is already present on the given channel.
+    // If this object is not retained, it will be deallocated, resulting in no subscription to the channel,
+    // which would cause the behavior being tested to fail.
+    let joinResult = try await channel.join()
+    debugPrint("Did join a \(joinResult.membership.channel.id) channel by \(joinResult.membership.user) user")
+
     try await Task.sleep(nanoseconds: 4_000_000_000)
     let isPresent = try await channel.isPresent(userId: chat.currentUser.id)
     XCTAssertTrue(isPresent)
   }
     
-  func testChannel_GetHistory() async throws {
+  func testChannelAsync_GetHistory() async throws {
     for counter in 1 ... 3 {
       try await channel.sendText(text: "Text \(counter)")
     }
@@ -131,651 +141,408 @@ class ChannelIntegrationTests: BaseAsyncIntegrationTestCase {
     XCTAssertEqual(messages.messages[2].text, "Text 3")
   }
 
-//
-//  func testChannel_SendText() throws {
-//    let tt = try awaitResultValue {
-//      channel.sendText(
-//        text: "Some text to send",
-//        meta: ["a": 123, "b": "someString"],
-//        shouldStore: true,
-//        usersToMention: nil,
-//        completion: $0
-//      )
-//    }
-//
-//    let retrievedMessage = try awaitResultValue(delay: 2) {
-//      channel.getMessage(
-//        timetoken: tt,
-//        completion: $0
-//      )
-//    }
-//
-//    XCTAssertEqual(retrievedMessage?.text, "Some text to send")
-//    XCTAssertEqual(retrievedMessage?.meta?["a"]?.codableValue.rawValue as? Int, 123)
-//    XCTAssertEqual(retrievedMessage?.meta?["b"]?.codableValue.rawValue as? String, "someString")
-//  }
-//
-//  func testChannel_Invite() throws {
-//    try awaitResultValue {
-//      channel.invite(
-//        user: chat.currentUser,
-//        completion: $0
-//      )
-//    }
-//    let member = try XCTUnwrap(
-//      awaitResultValue {
-//        channel.getMembers(
-//          completion: $0
-//        )
-//      }.memberships.first
-//    )
-//
-//    XCTAssertEqual(member.user.id, chat.currentUser.id)
-//  }
-//
-//  func testChannel_InviteMultiple() throws {
-//    let someUser = UserImpl(
-//      chat: chat,
-//      id: randomString()
-//    )
-//
-//    try awaitResultValue {
-//      chat.createUser(
-//        user: someUser,
-//        completion: $0
-//      )
-//    }
-//
-//    let resultValue = try awaitResultValue {
-//      channel.inviteMultiple(
-//        users: [chat.currentUser, someUser],
-//        completion: $0
-//      )
-//    }
-//
-//    let firstMatch = try XCTUnwrap(
-//      resultValue.first {
-//        $0.user.id == chat.currentUser.id && $0.channel.id == channel.id
-//      }
-//    )
-//    let secondMatch = try XCTUnwrap(
-//      resultValue.first {
-//        $0.user.id == someUser.id && $0.channel.id == channel.id
-//      }
-//    )
-//
-//    XCTAssertEqual(resultValue.count, 2)
-//    XCTAssertNotNil(firstMatch)
-//    XCTAssertNotNil(secondMatch)
-//
-//    addTeardownBlock { [unowned self] in
-//      try awaitResult {
-//        chat.deleteUser(id: someUser.id, completion: $0)
-//      }
-//    }
-//  }
-//
-//  func testChannel_GetMembers() throws {
-//    let someUser = UserImpl(
-//      chat: chat,
-//      id: randomString()
-//    )
-//
-//    try awaitResultValue {
-//      chat.createUser(
-//        user: someUser,
-//        completion: $0
-//      )
-//    }
-//
-//    try awaitResultValue {
-//      channel.inviteMultiple(
-//        users: [chat.currentUser, someUser],
-//        completion: $0
-//      )
-//    }
-//
-//    let memberships = try XCTUnwrap(
-//      awaitResultValue {
-//        channel.getMembers(
-//          completion: $0
-//        )
-//      }.memberships
-//    )
-//
-//    let firstMatch = try XCTUnwrap(
-//      memberships.first {
-//        $0.user.id == chat.currentUser.id && $0.channel.id == channel.id
-//      }
-//    )
-//    let secondMatch = try XCTUnwrap(
-//      memberships.first {
-//        $0.user.id == someUser.id && $0.channel.id == channel.id
-//      }
-//    )
-//
-//    XCTAssertEqual(memberships.count, 2)
-//    XCTAssertNotNil(firstMatch)
-//    XCTAssertNotNil(secondMatch)
-//
-//    addTeardownBlock { [unowned self] in
-//      try awaitResult {
-//        chat.deleteUser(id: someUser.id, completion: $0)
-//      }
-//    }
-//  }
-//
-//  func testChannel_Connect() throws {
-//    let expectation = XCTestExpectation(description: "Connect")
-//    expectation.assertForOverFulfill = true
-//    expectation.expectedFulfillmentCount = 1
-//
-//    let closeable = channel.connect(
-//      callback: { [unowned self] in
-//        XCTAssertEqual($0.text, "This is a text")
-//        XCTAssertEqual($0.channelId, channel.id)
-//        expectation.fulfill()
-//      }
-//    )
-//
-//    try awaitResultValue(delay: 3) {
-//      channel.sendText(
-//        text: "This is a text",
-//        completion: $0
-//      )
-//    }
-//
-//    wait(
-//      for: [expectation],
-//      timeout: 6
-//    )
-//    addTeardownBlock {
-//      closeable.close()
-//    }
-//  }
-//
-//  func testChannel_Join() throws {
-//    let expectation = XCTestExpectation(description: "Connect")
-//    expectation.assertForOverFulfill = true
-//    expectation.expectedFulfillmentCount = 1
-//
-//    let joinValue = try awaitResultValue { [unowned self] in
-//      channel.join(
-//        callback: {
-//          XCTAssertEqual($0.text, "This is a text")
-//          XCTAssertEqual($0.channelId, self.channel.id)
-//          expectation.fulfill()
-//        },
-//        completion: $0
-//      )
-//    }
-//
-//    XCTAssertEqual(joinValue.membership.channel.id, channel.id)
-//    XCTAssertEqual(joinValue.membership.user.id, chat.currentUser.id)
-//
-//    try awaitResultValue(delay: 3) {
-//      channel.sendText(
-//        text: "This is a text",
-//        completion: $0
-//      )
-//    }
-//
-//    wait(
-//      for: [expectation],
-//      timeout: 7
-//    )
-//    addTeardownBlock {
-//      joinValue.disconnect?.close()
-//    }
-//  }
-//
-//  func testChannel_Leave() throws {
-//    let joinValue = try awaitResultValue {
-//      channel.join(
-//        completion: $0
-//      )
-//    }
-//    try awaitResultValue(delay: 3) {
-//      channel.leave(
-//        completion: $0
-//      )
-//    }
-//    XCTAssertTrue(
-//      try awaitResultValue(delay: 3) {
-//        channel.getMembers(
-//          completion: $0
-//        )
-//      }.memberships.isEmpty
-//    )
-//
-//    addTeardownBlock {
-//      joinValue.disconnect?.close()
-//    }
-//  }
-//
-//  func testChannel_PinMessageGetPinnedMessage() throws {
-//    let tt = try awaitResultValue {
-//      channel.sendText(
-//        text: "Pinned message",
-//        completion: $0
-//      )
-//    }
-//    let message = try XCTUnwrap(
-//      awaitResultValue(delay: 2) {
-//        channel.getMessage(
-//          timetoken: tt,
-//          completion: $0
-//        )
-//      }
-//    )
-//    let updatedChannel = try awaitResultValue {
-//      channel.pinMessage(
-//        message: message,
-//        completion: $0
-//      )
-//    }
-//    let getPinnedMessage = try XCTUnwrap(
-//      awaitResultValue(delay: 2) {
-//        updatedChannel.getPinnedMessage(
-//          completion: $0
-//        )
-//      }
-//    )
-//
-//    XCTAssertEqual(
-//      getPinnedMessage.channelId,
-//      channel.id
-//    )
-//  }
-//
-//  func testChannel_GetMessage() throws {
-//    let tt = try awaitResultValue {
-//      channel.sendText(
-//        text: "Message text",
-//        completion: $0
-//      )
-//    }
-//    let message = try XCTUnwrap(
-//      awaitResultValue(delay: 2) {
-//        channel.getMessage(
-//          timetoken: tt,
-//          completion: $0
-//        )
-//      }
-//    )
-//
-//    XCTAssertEqual(message.channelId, channel.id)
-//    XCTAssertEqual(message.userId, chat.currentUser.id)
-//  }
-//
-//  func testChannel_RegisterUnregisterFromPush() throws {
-//    let pushNotificationsConfig = PushNotificationsConfig(
-//      sendPushes: false,
-//      deviceToken: "4d3f92b6d7a9348e5f2b8c6d1e4f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f",
-//      deviceGateway: .fcm,
-//      apnsEnvironment: .development
-//    )
-//    let anotherChat = ChatImpl(
-//      chatConfiguration: ChatConfiguration(pushNotificationsConfig: pushNotificationsConfig),
-//      pubNubConfiguration: chat.pubNub.configuration
-//    )
-//    let anotherChannel = try awaitResultValue {
-//      anotherChat.createChannel(
-//        id: randomString(),
-//        completion: $0
-//      )
-//    }
-//    try awaitResultValue {
-//      anotherChannel.registerForPush(
-//        completion: $0
-//      )
-//    }
-//    try awaitResultValue {
-//      anotherChannel.unregisterFromPush(
-//        completion: $0
-//      )
-//    }
-//
-//    addTeardownBlock { [unowned self] in
-//      try awaitResult {
-//        anotherChat.deleteChannel(
-//          id: anotherChannel.id,
-//          completion: $0
-//        )
-//      }
-//    }
-//  }
-//
-//  func testChannel_StreamUpdates() throws {
-//    let expectation = expectation(description: "StreamUpdates")
-//    expectation.assertForOverFulfill = true
-//    expectation.expectedFulfillmentCount = 1
-//
-//    let closeable = channel.streamUpdates {
-//      XCTAssertEqual($0?.name, "NewName")
-//      XCTAssertEqual($0?.status, "NewStatus")
-//      expectation.fulfill()
-//    }
-//
-//    try awaitResultValue(delay: 3) {
-//      channel.update(
-//        name: "NewName",
-//        status: "NewStatus",
-//        completion: $0
-//      )
-//    }
-//
-//    wait(
-//      for: [expectation],
-//      timeout: 6
-//    )
-//    addTeardownBlock {
-//      closeable.close()
-//    }
-//  }
-//
-//  func testChannel_StreamReadReceipts() throws {
-//    let expectation = expectation(description: "StreamReadReceipts")
-//    expectation.assertForOverFulfill = true
-//    expectation.expectedFulfillmentCount = 1
-//
-//    let anotherUser = try awaitResultValue {
-//      chat.createUser(
-//        user: UserImpl(chat: chat, id: randomString()),
-//        completion: $0
-//      )
-//    }
-//    let membership = try awaitResultValue(delay: 3) {
-//      channel.invite(
-//        user: chat.currentUser,
-//        completion: $0
-//      )
-//    }
-//    let anotherMembership = try awaitResultValue(delay: 1) {
-//      channel.invite(
-//        user: anotherUser,
-//        completion: $0
-//      )
-//    }
-//
-//    let timetoken = try XCTUnwrap(membership.lastReadMessageTimetoken)
-//    let secondTimetoken = try XCTUnwrap(anotherMembership.lastReadMessageTimetoken)
-//    let currentUserId = chat.currentUser.id
-//    let anotherUserId = anotherUser.id
-//
-//    let closeable = channel.streamReadReceipts {
-//      XCTAssertEqual($0[timetoken]?.count, 1)
-//      XCTAssertEqual($0[timetoken]?.first, currentUserId)
-//      XCTAssertEqual($0[secondTimetoken]?.count, 1)
-//      XCTAssertEqual($0[secondTimetoken]?.first, anotherUserId)
-//      expectation.fulfill()
-//    }
-//
-//    wait(
-//      for: [expectation],
-//      timeout: 6
-//    )
-//    addTeardownBlock { [unowned self] in
-//      closeable.close()
-//      try awaitResult {
-//        chat.deleteUser(
-//          id: anotherUserId,
-//          completion: $0
-//        )
-//      }
-//    }
-//  }
-//
-////
-////  TODO: Investigate
-////
-//
-////  func testChannel_GetFiles() throws {
-////    let fileUrlSession = URLSession(
-////      configuration: URLSessionConfiguration.default,
-////      delegate: FileSessionManager(),
-////      delegateQueue: .main
-////    )
-////    let newPubNub = PubNub(
-////      configuration: chat.pubNub.configuration,
-////      fileSession: fileUrlSession
-////    )
-////    let newChat = ChatImpl(
-////      pubNub: newPubNub,
-////      configuration: chat.config
-////    )
-////    let newChannel = try awaitResultValue {
-////      newChat.createChannel(
-////        id: randomString(),
-////        completion: $0
-////      )
-////    }
-////    let inputFile = InputFile(
-////      name: "TxtFile",
-////      type: "text/plain",
-////      source: .data(try XCTUnwrap("Lorem ipsum".data(using: .utf8)), contentType: "text/plain")
-////    )
-////
-////    try awaitResultValue(timeout: 10) {
-////      newChannel.sendText(
-////        text: "Text",
-////        files: [inputFile],
-////        completion: $0
-////      )
-////    }
-////
-////    let file = try XCTUnwrap(
-////      try awaitResultValue {
-////        newChannel.getFiles(completion: $0)
-////      }.files.first
-////    )
-////
-////    XCTAssertEqual(
-////      file.name,
-////      "TxtFile"
-////    )
-////
-////    addTeardownBlock { [unowned self] in
-////      try awaitResultValue {
-////        newPubNub.remove(
-////          fileId: file.id,
-////          filename: file.name,
-////          channel: newChannel.id,
-////          completion: $0
-////        )
-////      }
-////      try awaitResult {
-////        newChat.deleteChannel(
-////          id: newChannel.id,
-////          completion: $0
-////        )
-////      }
-////    }
-////  }
-//
-////  func testChannel_DeleteFile() throws {
-////    let fileUrlSession = URLSession(
-////      configuration: URLSessionConfiguration.default,
-////      delegate: FileSessionManager(),
-////      delegateQueue: .main
-////    )
-////    let newPubNub = PubNub(
-////      configuration: chat.pubNub.configuration,
-////      fileSession: fileUrlSession
-////    )
-////    let newChat = ChatImpl(
-////      pubNub: newPubNub,
-////      configuration: chat.config
-////    )
-////    let newChannel = try awaitResultValue {
-////      newChat.createChannel(
-////        id: randomString(),
-////        completion: $0
-////      )
-////    }
-////    let inputFile = InputFile(
-////      name: "TxtFile",
-////      type: "text/plain",
-////      source: .data(try XCTUnwrap("Lorem ipsum".data(using: .utf8)), contentType: "text/plain")
-////    )
-////
-////    try awaitResultValue(timeout: 30) {
-////      newChannel.sendText(
-////        text: "Text",
-////        files: [inputFile],
-////        completion: $0
-////      )
-////    }
-////
-////    let file = try XCTUnwrap(
-////      try awaitResultValue {
-////        newChannel.getFiles(
-////          limit: 10,
-////          completion: $0
-////        )
-////      }.files.first
-////    )
-////
-////    try awaitResultValue {
-////      channel.deleteFile(
-////        id: file.id,
-////        name: file.name,
-////        completion: $0
-////      )
-////    }
-////
-////    XCTAssertTrue(
-////      try awaitResultValue {
-////        channel.getFiles(
-////          limit: 10,
-////          completion: $0
-////        )
-////      }.files.isEmpty
-////    )
-////
-////    addTeardownBlock { [unowned self] in
-////      try awaitResult {
-////        newChat.deleteChannel(
-////          id: newChannel.id,
-////          completion: $0
-////        )
-////      }
-////    }
-////  }
-//
-//  func testChannel_StreamPresence() throws {
-//    let expectation = expectation(description: "StreamPresence")
-//    expectation.assertForOverFulfill = true
-//    expectation.expectedFulfillmentCount = 1
-//
-//    let connectCloseable = channel.connect(callback: {
-//      debugPrint("Did receive message: \($0)")
-//    })
-//
-//    let presenceCloseable = channel.streamPresence { [unowned self] in
-//      if !$0.isEmpty {
-//        XCTAssertEqual($0.count, 1)
-//        XCTAssertEqual($0.first, chat.currentUser.id)
-//        expectation.fulfill()
-//      }
-//    }
-//
-//    wait(
-//      for: [expectation],
-//      timeout: 5
-//    )
-//    addTeardownBlock {
-//      presenceCloseable.close()
-//      connectCloseable.close()
-//    }
-//  }
-//
-//  func testChannel_GetUserSuggestions() throws {
-//    let usersToCreate = [
-//      UserImpl(chat: chat, id: randomString(), name: "user_\(randomString())"),
-//      UserImpl(chat: chat, id: randomString(), name: "user_\(randomString())"),
-//      UserImpl(chat: chat, id: randomString(), name: "user_\(randomString())")
-//    ]
-//
-//    for user in usersToCreate {
-//      try awaitResultValue {
-//        chat.createUser(
-//          user: user,
-//          completion: $0
-//        )
-//      }
-//    }
-//
-//    try awaitResultValue {
-//      channel.inviteMultiple(
-//        users: usersToCreate,
-//        completion: $0
-//      )
-//    }
-//
-//    let users = try awaitResultValue {
-//      channel.getUserSuggestions(
-//        text: "user_",
-//        completion: $0
-//      )
-//    }
-//
-//    XCTAssertEqual(
-//      users.compactMap(\.user.name).sorted(by: <),
-//      usersToCreate.compactMap(\.name).sorted(by: <)
-//    )
-//
-//    addTeardownBlock { [unowned self] in
-//      for user in usersToCreate {
-//        try awaitResult {
-//          chat.deleteUser(
-//            id: user.id,
-//            completion: $0
-//          )
-//        }
-//      }
-//    }
-//  }
-//
-//  func testChannel_StreamMessageReports() throws {
-//    let expectation = expectation(description: "StreamMessageReports")
-//    expectation.assertForOverFulfill = true
-//    expectation.expectedFulfillmentCount = 1
-//
-//    let tt = try awaitResultValue {
-//      channel.sendText(
-//        text: "Some text",
-//        completion: $0
-//      )
-//    }
-//    let message = try awaitResultValue(delay: 2) {
-//      channel.getMessage(
-//        timetoken: tt,
-//        completion: $0
-//      )
-//    }
-//
-//    let closeable = channel.streamMessageReports { [unowned self] report in
-//      XCTAssertEqual(report.payload.reason, "reportReason")
-//      XCTAssertEqual(report.payload.text, "Some text")
-//      XCTAssertEqual(report.payload.reportedUserId, chat.currentUser.id)
-//      expectation.fulfill()
-//    }
-//
-//    try awaitResultValue(delay: 4) {
-//      message?.report(
-//        reason: "reportReason",
-//        completion: $0
-//      )
-//    }
-//
-//    wait(
-//      for: [expectation],
-//      timeout: 10
-//    )
-//    addTeardownBlock { [unowned self] in
-//      closeable.close()
-//      try awaitResult { message?.delete(completion: $0) }
-//    }
-//  }
+  func testChannelAsync_SendText() async throws {
+    let tt = try await channel.sendText(
+      text: "Some text to send",
+      meta: ["a": 123, "b": "someString"],
+      shouldStore: true,
+      usersToMention: nil
+    )
+    
+    try await Task.sleep(nanoseconds: 2_000_000_000)
+    let retrievedMessage = try await channel.getMessage(timetoken: tt)
+
+    XCTAssertEqual(retrievedMessage?.text, "Some text to send")
+    XCTAssertEqual(retrievedMessage?.meta?["a"]?.codableValue.rawValue as? Int, 123)
+    XCTAssertEqual(retrievedMessage?.meta?["b"]?.codableValue.rawValue as? String, "someString")
+  }
+
+  func testChannelAsync_Invite() async throws {
+    try await channel.invite(user: chat.currentUser)
+    let member = try await channel.getMembers().memberships.first
+    XCTAssertEqual(member?.user.id, chat.currentUser.id)
+  }
+
+  func testChannelAsync_InviteMultiple() async throws {
+    let someUser = UserImpl(chat: chat, id: randomString())
+    try await chat.createUser(user: someUser)
+    let invitationResult = try await channel.inviteMultiple(users: [chat.currentUser, someUser])
+
+    let firstMatch = try XCTUnwrap(
+      invitationResult.first {
+        $0.user.id == chat.currentUser.id && $0.channel.id == channel.id
+      }
+    )
+    let secondMatch = try XCTUnwrap(
+      invitationResult.first {
+        $0.user.id == someUser.id && $0.channel.id == channel.id
+      }
+    )
+
+    XCTAssertEqual(invitationResult.count, 2)
+    XCTAssertNotNil(firstMatch)
+    XCTAssertNotNil(secondMatch)
+
+    addTeardownBlock { [unowned self] in
+      _ = try? await chat.deleteUser(id: someUser.id)
+    }
+  }
+  
+  func testChannelAsync_GetMembers() async throws {
+    let someUser = UserImpl(chat: chat, id: randomString())
+    try await chat.createUser(user: someUser)
+    try await channel.inviteMultiple(users: [chat.currentUser, someUser])
+    
+    let memberships = try await channel.getMembers().memberships
+
+    let firstMatch = try XCTUnwrap(
+      memberships.first {
+        $0.user.id == chat.currentUser.id && $0.channel.id == channel.id
+      }
+    )
+    let secondMatch = try XCTUnwrap(
+      memberships.first {
+        $0.user.id == someUser.id && $0.channel.id == channel.id
+      }
+    )
+
+    XCTAssertEqual(memberships.count, 2)
+    XCTAssertNotNil(firstMatch)
+    XCTAssertNotNil(secondMatch)
+
+    addTeardownBlock { [unowned self] in
+      _ = try? await chat.deleteUser(id: someUser.id)
+    }
+  }
+  
+  func testChannelAsync_Connect() async throws {
+    let expectation = XCTestExpectation(description: "Connect")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let task = Task {
+      for await message in channel.connect() {
+        XCTAssertEqual(message.text, "This is a text")
+        XCTAssertEqual(message.channelId, channel.id)
+        expectation.fulfill()
+      }
+    }
+    
+    try await Task.sleep(nanoseconds: 2_000_000_000)
+    try await channel.sendText(text: "This is a text")
+
+    await fulfillment(of: [expectation], timeout: 6)
+    addTeardownBlock { task.cancel() }
+  }
+
+  func testChannelAsync_Join() async throws {
+    let expectation = XCTestExpectation(description: "Connect")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let joinResult = try await channel.join()
+
+    XCTAssertEqual(joinResult.membership.channel.id, channel.id)
+    XCTAssertEqual(joinResult.membership.user.id, chat.currentUser.id)
+
+    let task = Task {
+      for await message in joinResult.messageStream {
+        XCTAssertEqual(message.text, "This is a text")
+        XCTAssertEqual(message.channelId, channel.id)
+        expectation.fulfill()
+      }
+    }
+    
+    try await Task.sleep(nanoseconds: 2_000_000_000)
+    try await channel.sendText(text: "This is a text")
+
+    await fulfillment(of: [expectation], timeout: 7)
+    addTeardownBlock { task.cancel() }
+  }
+
+  func testChannelAsync_Leave() async throws {
+    try await channel.join()
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+    try await channel.leave()
+    
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+    let membershipsResult = try await channel.getMembers()
+    
+    XCTAssertTrue(membershipsResult.memberships.isEmpty)
+  }
+  
+  func testChannelAsync_PinMessageGetPinnedMessage() async throws {
+    let tt = try await channel.sendText(text: "Pinned message")
+    try await Task.sleep(nanoseconds: 2_000_000_000)
+
+    let message = try await channel.getMessage(timetoken: tt)
+    let unwrappedMessage = try XCTUnwrap(message)
+    
+    let updatedChannel = try await channel.pinMessage(message: unwrappedMessage)
+    try await Task.sleep(nanoseconds: 2_000_000_000)
+    let pinnedMessage = try await updatedChannel.getPinnedMessage()
+
+    XCTAssertNotNil(pinnedMessage)
+    XCTAssertEqual(pinnedMessage?.channelId, channel.id)
+  }
+
+  func testChannelAsync_GetMessage() async throws {
+    let tt = try await channel.sendText(text: "Message text")
+    try await Task.sleep(nanoseconds: 2_000_000_000)
+
+    let message = try await channel.getMessage(timetoken: tt)
+
+    XCTAssertEqual(message?.channelId, channel.id)
+    XCTAssertEqual(message?.userId, chat.currentUser.id)
+  }
+  
+  func testChannelAsync_RegisterUnregisterFromPush() async throws {
+    let pushNotificationsConfig = PushNotificationsConfig(
+      sendPushes: false,
+      deviceToken: "4d3f92b6d7a9348e5f2b8c6d1e4f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f",
+      deviceGateway: .fcm,
+      apnsEnvironment: .development
+    )
+    let anotherChat = ChatImpl(
+      chatConfiguration: ChatConfiguration(pushNotificationsConfig: pushNotificationsConfig),
+      pubNubConfiguration: chat.pubNub.configuration
+    )
+    
+    let anotherChannel = try await anotherChat.createChannel(id: randomString())
+    try await anotherChannel.registerForPush()
+    try await anotherChannel.unregisterFromPush()
+    
+    addTeardownBlock {
+      _ = try? await anotherChat.deleteChannel(id: anotherChannel.id)
+    }
+  }
+  
+
+  func testChannelAsync_StreamUpdates() async throws {
+    let expectation = expectation(description: "StreamUpdates")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let task = Task {
+      for await receivedChannel in channel.streamUpdates() {
+        XCTAssertEqual(receivedChannel?.name, "NewName")
+        XCTAssertEqual(receivedChannel?.status, "NewStatus")
+        expectation.fulfill()
+      }
+    }
+    
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+    try await channel.update(name: "NewName", status: "NewStatus")
+
+    await fulfillment(of: [expectation], timeout: 6)
+    addTeardownBlock { task.cancel() }
+  }
+
+  func testChannelAsync_StreamReadReceipts() async throws {
+    let expectation = expectation(description: "StreamReadReceipts")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    try await chat.createUser(user: UserImpl(chat: chat, id: randomString()))
+    let anotherUser = try await chat.createUser(user: UserImpl(chat: chat, id: randomString()))
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+    
+    let membership = try await channel.invite(user: chat.currentUser)
+    try await Task.sleep(nanoseconds: 1_000_000_000)
+    let anotherMembership = try await channel.invite(user: anotherUser)
+    
+    let timetoken = try XCTUnwrap(membership.lastReadMessageTimetoken)
+    let secondTimetoken = try XCTUnwrap(anotherMembership.lastReadMessageTimetoken)
+    let currentUserId = chat.currentUser.id
+    let anotherUserId = anotherUser.id
+
+    let task = Task {
+      for await readReceipt in channel.streamReadReceipts() {
+        XCTAssertEqual(readReceipt[timetoken]?.count, 1)
+        XCTAssertEqual(readReceipt[timetoken]?.first, currentUserId)
+        XCTAssertEqual(readReceipt[secondTimetoken]?.count, 1)
+        XCTAssertEqual(readReceipt[secondTimetoken]?.first, anotherUserId)
+        expectation.fulfill()
+      }
+    }
+    
+    await fulfillment(of: [expectation], timeout: 6)
+    addTeardownBlock { [unowned self] in
+      task.cancel()
+      _ = try? await chat.deleteUser(id: anotherUserId)
+    }
+  }
+
+  func testChannelAsync_GetFiles() async throws {
+    let fileUrlSession = URLSession(
+      configuration: URLSessionConfiguration.default,
+      delegate: FileSessionManager(),
+      delegateQueue: .main
+    )
+    let newPubNub = PubNub(
+      configuration: chat.pubNub.configuration,
+      fileSession: fileUrlSession
+    )
+    let newChat = ChatImpl(
+      pubNub: newPubNub,
+      configuration: chat.config
+    )
+    let newChannel = try await newChat.createChannel(
+      id: randomString()
+    )
+    let inputFile = InputFile(
+      name: "TxtFile",
+      type: "text/plain",
+      source: .data(try XCTUnwrap("Lorem ipsum".data(using: .utf8)), contentType: "text/plain")
+    )
+
+    try await newChannel.sendText(text: "Text", files: [inputFile])
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+
+    let getFilesResult = try await newChannel.getFiles()
+    let file = try XCTUnwrap(getFilesResult.files.first)
+    
+    XCTAssertEqual(
+      file.name,
+      "TxtFile"
+    )
+
+    addTeardownBlock {
+      newPubNub.remove(
+        fileId: file.id,
+        filename: file.name,
+        channel: newChannel.id,
+        completion: nil
+      )
+      newChat.deleteChannel(
+        id: newChannel.id,
+        completion: nil
+      )
+    }
+  }
+
+  func testChannelAsync_DeleteFile() async throws {
+    let fileUrlSession = URLSession(
+      configuration: URLSessionConfiguration.default,
+      delegate: FileSessionManager(),
+      delegateQueue: .main
+    )
+    let newPubNub = PubNub(
+      configuration: chat.pubNub.configuration,
+      fileSession: fileUrlSession
+    )
+    let newChat = ChatImpl(
+      pubNub: newPubNub,
+      configuration: chat.config
+    )
+    let newChannel = try await newChat.createChannel(
+      id: randomString()
+    )
+    let inputFile = InputFile(
+      name: "TxtFile",
+      type: "text/plain",
+      source: .data(try XCTUnwrap("Lorem ipsum".data(using: .utf8)), contentType: "text/plain")
+    )
+
+    try await newChannel.sendText(text: "Text", files: [inputFile])
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+
+    let getFilesResult = try await newChannel.getFiles()
+    let file = try XCTUnwrap(getFilesResult.files.first)
+    
+    try await channel.deleteFile(id: file.id, name: file.name)
+    let getFilesResultAfterRemoval = try await channel.getFiles()
+    
+    XCTAssertTrue(getFilesResultAfterRemoval.files.isEmpty)
+
+    addTeardownBlock {
+      _ = try? await newChat.deleteChannel(id: newChannel.id)
+    }
+  }
+
+  func testChannelAsync_StreamPresence() async throws {
+    let expectation = expectation(description: "StreamPresence")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+    
+    let task = Task {
+      for await message in channel.connect() {
+        debugPrint("Did receive message: \(message)")
+      }
+    }
+    
+    let presenceStreamTask = Task {
+      for await userIdentifiers in channel.streamPresence() {
+        if !userIdentifiers.isEmpty {
+          XCTAssertEqual(userIdentifiers.count, 1)
+          XCTAssertEqual(userIdentifiers.first, chat.currentUser.id)
+          expectation.fulfill()
+        }
+      }
+    }
+
+    await fulfillment(of: [expectation], timeout: 5)
+    
+    addTeardownBlock {
+      presenceStreamTask.cancel()
+      task.cancel()
+    }
+  }
+  
+
+  func testChannelAsync_GetUserSuggestions() async throws {
+    let usersToCreate = [
+      UserImpl(chat: chat, id: randomString(), name: "user_\(randomString())"),
+      UserImpl(chat: chat, id: randomString(), name: "user_\(randomString())"),
+      UserImpl(chat: chat, id: randomString(), name: "user_\(randomString())")
+    ]
+    
+    for user in usersToCreate {
+      try await chat.createUser(user: user)
+    }
+
+    try await channel.inviteMultiple(users: usersToCreate)
+    let users = try await channel.getUserSuggestions(text: "user_")
+
+    XCTAssertEqual(
+      users.compactMap(\.user.name).sorted(by: <),
+      usersToCreate.compactMap(\.name).sorted(by: <)
+    )
+
+    addTeardownBlock { [unowned self] in
+      for user in usersToCreate {
+        _ = try? await chat.deleteUser(id: user.id)
+      }
+    }
+  }
+  
+
+  func testChannelAsync_StreamMessageReports() async throws {
+    let expectation = expectation(description: "StreamMessageReports")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let tt = try await channel.sendText(text: "Some text")
+    try await Task.sleep(nanoseconds: 2_000_000_000)
+    let message = try await channel.getMessage(timetoken: tt)
+    
+    let task = Task {
+      for await report in channel.streamMessageReports() {
+        XCTAssertEqual(report.event.payload.reason, "reportReason")
+        XCTAssertEqual(report.event.payload.text, "Some text")
+        XCTAssertEqual(report.event.payload.reportedUserId, chat.currentUser.id)
+        expectation.fulfill()
+      }
+    }
+    
+    try await Task.sleep(nanoseconds: 4_000_000_000)
+    try await message?.report(reason: "reportReason")
+    
+    await fulfillment(of: [expectation], timeout: 10)
+    
+    addTeardownBlock {
+      task.cancel()
+      _ = try? await message?.delete()
+    }
+  }
 }

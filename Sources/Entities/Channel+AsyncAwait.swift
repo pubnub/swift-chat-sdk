@@ -39,6 +39,7 @@ public extension Channel {
   ///   - status: Current status of the channel, like online, offline, or archived
   ///   - type: Represents the type of channel
   /// - Returns: The updated channel object with its metadata
+  @discardableResult
   func update(
     name: String? = nil,
     custom: [String: JSONCodableScalar]? = nil,
@@ -257,6 +258,7 @@ public extension Channel {
   ///
   /// - Parameter user: A user that you want to invite to a channel
   /// - Returns: List of ``Membership`` of invited users
+  @discardableResult
   func invite(user: ChatType.ChatUserType) async throws -> ChatType.ChatMembershipType {
     try await withCheckedThrowingContinuation { continuation in
       invite(user: user) {
@@ -275,6 +277,7 @@ public extension Channel {
   /// - Parameters:
   ///   - users: List of users you want to invite to the ``Channel``. You can invite up to 100 users in one call
   ///   - completion: List of ``Membership`` of invited users
+  @discardableResult
   func inviteMultiple(users: [ChatType.ChatUserType]) async throws -> [ChatType.ChatMembershipType] {
     try await withCheckedThrowingContinuation { continuation in
       inviteMultiple(users: users) {
@@ -329,7 +332,10 @@ public extension Channel {
     }
   }
 
-  /// Connects a user to the ``Channel`` and sets membership - this way, the chat user can both watch the channel's ontent and be its full-fledged member.
+  /// Connects a user to the ``Channel`` and sets membership - this way, the chat user can both watch the channel's content and be its full-fledged member.
+  ///
+  /// - Warning: Keep a strong reference to the returned `AsyncStream` to ensure your subscription to the current channel remains active and you continue to receive messages.
+  ///  You can skip this strong reference if you are only interested in being a full-fledged member of the current channel and not in receiving real-time updates.
   ///
   /// - Parameters:
   ///   - custom: Any custom properties or metadata associated with the channel-user membership in the form of key-value pairs

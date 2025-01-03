@@ -91,7 +91,7 @@ class MembershipAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
     try await Task.sleep(nanoseconds: 3_000_000_000)
     try await membership.update(custom: expectedCustom)
-    
+
     await fulfillment(of: [expectation], timeout: 6)
 
     addTeardownBlock {
@@ -120,7 +120,7 @@ class MembershipAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
     try await Task.sleep(nanoseconds: 3_000_000_000)
     try await membership.update(custom: expectedCustom)
-    
+
     await fulfillment(of: [expectation], timeout: 6)
 
     addTeardownBlock {

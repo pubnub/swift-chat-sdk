@@ -378,11 +378,11 @@ public extension Chat {
   ///   - payload: The payload of the emitted event. Use one of ``EventContent`` subclasses. For example: `EventContent.TextMessageContent`, `EventContent.Mention`
   ///   - otherPayload: Metadata in the form of key-value pairs you want to pass as events from your chat app. Can contain anything in case of custom events, but has a predefined structure for other types of events
   /// - Returns: A `Timetoken` value that holds the timestamp of the emitted event
-  func emitEvent<T: EventContent>(
+  func emitEvent(
     channelId: String,
-    payload: T,
+    payload: some EventContent,
     mergePayloadWith otherPayload: [String: JSONCodable]? = nil,
-    completion: ((Swift.Result<Timetoken, Error>) -> Void)?
+    completion _: ((Swift.Result<Timetoken, Error>) -> Void)?
   ) async throws -> Timetoken {
     try await withCheckedThrowingContinuation { continuation in
       emitEvent(channelId: channelId, payload: payload, mergePayloadWith: otherPayload) {
@@ -543,7 +543,7 @@ public extension Chat {
       registerPushChannels(channels: channels) {
         switch $0 {
         case .success:
-          continuation.resume(returning: Void())
+          continuation.resume(returning: ())
         case let .failure(error):
           continuation.resume(throwing: error)
         }
@@ -559,7 +559,7 @@ public extension Chat {
       unregisterPushChannels(channels: channels) {
         switch $0 {
         case .success:
-          continuation.resume(returning: Void())
+          continuation.resume(returning: ())
         case let .failure(error):
           continuation.resume(throwing: error)
         }
@@ -573,7 +573,7 @@ public extension Chat {
       unregisterAllPushChannels {
         switch $0 {
         case .success:
-          continuation.resume(returning: Void())
+          continuation.resume(returning: ())
         case let .failure(error):
           continuation.resume(throwing: error)
         }
@@ -625,7 +625,7 @@ public extension Chat {
     page: PubNubHashedPage? = nil,
     filter: String? = nil,
     sort: [PubNub.MembershipSortField] = [],
-    completion: ((Swift.Result<(memberships: [ChatMembershipType], page: PubNubHashedPage?), Error>) -> Void)?
+    completion _: ((Swift.Result<(memberships: [ChatMembershipType], page: PubNubHashedPage?), Error>) -> Void)?
   ) async throws -> (memberships: [ChatMembershipType], page: PubNubHashedPage?) {
     try await withCheckedThrowingContinuation { continuation in
       markAllMessagesAsRead(
@@ -673,7 +673,7 @@ public extension Chat {
     startTimetoken: Timetoken?,
     endTimetoken: Timetoken?,
     count: Int,
-    completion: ((Swift.Result<(events: [EventWrapper<EventContent>], isMore: Bool), Error>) -> Void)?
+    completion _: ((Swift.Result<(events: [EventWrapper<EventContent>], isMore: Bool), Error>) -> Void)?
   ) async throws -> (events: [EventWrapper<EventContent>], isMore: Bool) {
     try await withCheckedThrowingContinuation { continuation in
       getEventsHistory(
@@ -703,7 +703,7 @@ public extension Chat {
     startTimetoken: Timetoken?,
     endTimetoken: Timetoken?,
     count: Int,
-    completion: ((Swift.Result<(mentions: [UserMentionDataWrapper<ChatMessageType>], isMore: Bool), Error>) -> Void)?
+    completion _: ((Swift.Result<(mentions: [UserMentionDataWrapper<ChatMessageType>], isMore: Bool), Error>) -> Void)?
   ) async throws -> (mentions: [UserMentionDataWrapper<ChatMessageType>], isMore: Bool) {
     try await withCheckedThrowingContinuation { continuation in
       getCurrentUserMentions(

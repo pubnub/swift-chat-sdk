@@ -135,7 +135,7 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
       try awaitResult { chat.deleteChannel(
         id: anotherChannel.id,
         completion: $0
-      )}
+      ) }
     }
   }
 
@@ -669,12 +669,12 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
         completion: $0
       )
     }
-    let inputFile = InputFile(
+    let inputFile = try InputFile(
       name: "TxtFile",
       type: "text/plain",
-      source: .data(try XCTUnwrap("Lorem ipsum".data(using: .utf8)), contentType: "text/plain")
+      source: .data(XCTUnwrap("Lorem ipsum".data(using: .utf8)), contentType: "text/plain")
     )
-    
+
     try awaitResultValue(timeout: 10) {
       newChannel.sendText(
         text: "Text",
@@ -682,18 +682,18 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
         completion: $0
       )
     }
-    
+
     let file = try XCTUnwrap(
-      try awaitResultValue {
+      awaitResultValue {
         newChannel.getFiles(completion: $0)
       }.files.first
     )
-    
+
     XCTAssertEqual(
       file.name,
       "TxtFile"
     )
-    
+
     addTeardownBlock { [unowned self] in
       try awaitResultValue {
         newPubNub.remove(
@@ -732,12 +732,12 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
         completion: $0
       )
     }
-    let inputFile = InputFile(
+    let inputFile = try InputFile(
       name: "TxtFile",
       type: "text/plain",
-      source: .data(try XCTUnwrap("Lorem ipsum".data(using: .utf8)), contentType: "text/plain")
+      source: .data(XCTUnwrap("Lorem ipsum".data(using: .utf8)), contentType: "text/plain")
     )
-    
+
     try awaitResultValue(timeout: 30) {
       newChannel.sendText(
         text: "Text",
@@ -745,13 +745,13 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
         completion: $0
       )
     }
-    
+
     let file = try XCTUnwrap(
-      try awaitResultValue {
+      awaitResultValue {
         newChannel.getFiles(completion: $0)
       }.files.first
     )
-    
+
     try awaitResultValue {
       channel.deleteFile(
         id: file.id,
@@ -759,13 +759,13 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
         completion: $0
       )
     }
-    
+
     XCTAssertTrue(
       try awaitResultValue {
         channel.getFiles(completion: $0)
       }.files.isEmpty
     )
-    
+
     addTeardownBlock { [unowned self] in
       try awaitResult {
         newChat.deleteChannel(

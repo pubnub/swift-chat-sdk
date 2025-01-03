@@ -58,18 +58,17 @@ class ChannelIntegrationTests: BaseAsyncIntegrationTestCase {
     XCTAssertNotNil(retrievedChannel)
     XCTAssertEqual(retrievedChannel?.id, channel.id)
   }
-  
 
   func testChannelAsync_Forward() async throws {
     let anotherChannel = try await chat.createChannel(id: randomString())
     let tt = try await anotherChannel.sendText(text: "Some text to send")
     
-    try await Task.sleep(nanoseconds: 2_000_000_000)
-    let message = try await channel.getMessage(timetoken: tt)
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+    let message = try await anotherChannel.getMessage(timetoken: tt)
     let unwrappedMessage = try XCTUnwrap(message)
     try await channel.forward(message: unwrappedMessage)
 
-    try await Task.sleep(nanoseconds: 2_000_000_000)
+    try await Task.sleep(nanoseconds: 3_000_000_000)
     let retrievedMssgsFromForwardedChannel = try await channel.getHistory()
     
     XCTAssertEqual(retrievedMssgsFromForwardedChannel.messages.count, 1)

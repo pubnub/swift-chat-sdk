@@ -108,7 +108,7 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
       )
     }
     let message = try XCTUnwrap(
-      awaitResultValue(delay: 2) {
+      awaitResultValue(delay: 3) {
         anotherChannel.getMessage(
           timetoken: tt,
           completion: $0
@@ -122,7 +122,7 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
       )
     }
 
-    let retrievedMssgsFromForwardedChannel = try awaitResultValue(delay: 2) {
+    let retrievedMssgsFromForwardedChannel = try awaitResultValue(delay: 3) {
       channel.getHistory(
         completion: $0
       )
@@ -135,7 +135,7 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
       try awaitResult { chat.deleteChannel(
         id: anotherChannel.id,
         completion: $0
-      ) }
+      )}
     }
   }
 

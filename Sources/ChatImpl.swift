@@ -201,7 +201,7 @@ extension ChatImpl: Chat {
   public func getUsers(
     filter: String? = nil,
     sort: [PubNub.ObjectSortField] = [],
-    limit: Int?,
+    limit: Int? = nil,
     page: PubNubHashedPage? = nil,
     completion: ((Swift.Result<(users: [UserImpl], page: PubNubHashedPage?), Error>) -> Void)? = nil
   ) {

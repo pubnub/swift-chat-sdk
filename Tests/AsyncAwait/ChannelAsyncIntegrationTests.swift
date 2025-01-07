@@ -106,7 +106,7 @@ class ChannelIntegrationTests: BaseAsyncIntegrationTestCase {
     // If this object is not retained, it will be deallocated, resulting in no subscription to the channel,
     // which would cause the behavior being tested to fail.
     let joinResult = try await channel.join()
-    debugPrint("Did join a \(joinResult.membership.channel.id) channel by \(joinResult.membership.user) user")
+    debugPrint(joinResult)
 
     try await Task.sleep(nanoseconds: 4_000_000_000)
     let whoIsPresent = try await channel.whoIsPresent()
@@ -120,7 +120,7 @@ class ChannelIntegrationTests: BaseAsyncIntegrationTestCase {
     // If this object is not retained, it will be deallocated, resulting in no subscription to the channel,
     // which would cause the behavior being tested to fail.
     let joinResult = try await channel.join()
-    debugPrint("Did join a \(joinResult.membership.channel.id) channel by \(joinResult.membership.user) user")
+    debugPrint(joinResult)
 
     try await Task.sleep(nanoseconds: 4_000_000_000)
     let isPresent = try await channel.isPresent(userId: chat.currentUser.id)

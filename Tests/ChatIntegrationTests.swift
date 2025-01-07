@@ -78,14 +78,25 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
       }
     }
   }
-
+  
   func testChat_UpdateUser() throws {
     let newCustom: [String: JSONCodableScalar] = [
       "someValue": 17_253_575_019_298_112,
       "someStr": "str"
     ]
+    
+    let userId = randomString()
+    
+    try awaitResultValue {
+      chat.createUser(
+        id: userId,
+        completion: $0
+      )
+    }
+    
     let updatedUser = try awaitResultValue {
-      chat.currentUser.update(
+      chat.updateUser(
+        id: userId,
         name: "NewName",
         externalId: "NewExternalId",
         profileUrl: "https://picsum.photos/200/400",
@@ -97,7 +108,7 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
       )
     }
 
-    XCTAssertEqual(updatedUser.id, chat.currentUser.id)
+    XCTAssertEqual(updatedUser.id, userId)
     XCTAssertEqual(updatedUser.name, "NewName")
     XCTAssertEqual(updatedUser.externalId, "NewExternalId")
     XCTAssertEqual(updatedUser.profileUrl, "https://picsum.photos/200/400")
@@ -105,6 +116,15 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
     XCTAssertEqual(updatedUser.custom?.mapValues { $0.scalarValue }, newCustom.mapValues { $0.scalarValue })
     XCTAssertEqual(updatedUser.status, "offline")
     XCTAssertEqual(updatedUser.type, "regular")
+    
+    addTeardownBlock { [unowned self] in
+      try awaitResult {
+        chat.deleteUser(
+          id: userId,
+          completion: $0
+        )
+      }
+    }
   }
 
   func testChat_Delete() throws {

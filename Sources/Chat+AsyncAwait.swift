@@ -378,11 +378,11 @@ public extension Chat {
   ///   - payload: The payload of the emitted event. Use one of ``EventContent`` subclasses. For example: `EventContent.TextMessageContent`, `EventContent.Mention`
   ///   - otherPayload: Metadata in the form of key-value pairs you want to pass as events from your chat app. Can contain anything in case of custom events, but has a predefined structure for other types of events
   /// - Returns: A `Timetoken` value that holds the timestamp of the emitted event
+  @discardableResult
   func emitEvent(
     channelId: String,
     payload: some EventContent,
-    mergePayloadWith otherPayload: [String: JSONCodable]? = nil,
-    completion _: ((Swift.Result<Timetoken, Error>) -> Void)?
+    mergePayloadWith otherPayload: [String: JSONCodable]? = nil
   ) async throws -> Timetoken {
     try await withCheckedThrowingContinuation { continuation in
       emitEvent(channelId: channelId, payload: payload, mergePayloadWith: otherPayload) {
@@ -523,7 +523,7 @@ public extension Chat {
   func eventStream<T: EventContent>(
     type: T.Type,
     channelId: String,
-    customMethod: EmitEventMethod
+    customMethod: EmitEventMethod = .publish
   ) -> AsyncStream<EventWrapper<T>> {
     AsyncStream<EventWrapper<T>> { continuation in
       let autoCloseable = listenForEvents(type: type, channelId: channelId, customMethod: customMethod) {
@@ -620,12 +620,12 @@ public extension Chat {
   ///   - filter: Expression used to filter the results. Returns only these channels whose properties satisfy the given expression are returned
   ///   - sort: A collection to specify the sort order
   /// - Returns: A `Tuple` containing an `Array` of memberships, and the next pagination `PubNubHashedPage` (if one exists)
+  @discardableResult
   func markAllMessagesAsRead(
     limit: Int? = nil,
     page: PubNubHashedPage? = nil,
     filter: String? = nil,
-    sort: [PubNub.MembershipSortField] = [],
-    completion _: ((Swift.Result<(memberships: [ChatMembershipType], page: PubNubHashedPage?), Error>) -> Void)?
+    sort: [PubNub.MembershipSortField] = []
   ) async throws -> (memberships: [ChatMembershipType], page: PubNubHashedPage?) {
     try await withCheckedThrowingContinuation { continuation in
       markAllMessagesAsRead(
@@ -670,10 +670,9 @@ public extension Chat {
   /// - Returns: A `Tuple` containing an `Array` of events, and boolean indicating whether there are more events available beyond the current result set
   func getEventsHistory(
     channelId: String,
-    startTimetoken: Timetoken?,
-    endTimetoken: Timetoken?,
-    count: Int,
-    completion _: ((Swift.Result<(events: [EventWrapper<EventContent>], isMore: Bool), Error>) -> Void)?
+    startTimetoken: Timetoken? = nil,
+    endTimetoken: Timetoken? = nil,
+    count: Int = 100
   ) async throws -> (events: [EventWrapper<EventContent>], isMore: Bool) {
     try await withCheckedThrowingContinuation { continuation in
       getEventsHistory(
@@ -700,10 +699,9 @@ public extension Chat {
   ///   - count: Number of users to return in a single call. You can pull a maximum number of 100 users in a single call
   /// - Returns: A `Tuple` containing an `Array` of ``UserMentionDataWrapper``, and boolean indicating whether there are more events available beyond the current result set
   func getCurrentUserMentions(
-    startTimetoken: Timetoken?,
-    endTimetoken: Timetoken?,
-    count: Int,
-    completion _: ((Swift.Result<(mentions: [UserMentionDataWrapper<ChatMessageType>], isMore: Bool), Error>) -> Void)?
+    startTimetoken: Timetoken? = nil,
+    endTimetoken: Timetoken? = nil,
+    count: Int = 100
   ) async throws -> (mentions: [UserMentionDataWrapper<ChatMessageType>], isMore: Bool) {
     try await withCheckedThrowingContinuation { continuation in
       getCurrentUserMentions(

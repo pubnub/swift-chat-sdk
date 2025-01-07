@@ -46,7 +46,7 @@ final class UserIntegrationTests: BaseClosureIntegrationTestCase {
       try awaitResult { chat.deleteUser(
         id: user.id,
         completion: $0
-      ) }
+      )}
     }
   }
 
@@ -142,7 +142,10 @@ final class UserIntegrationTests: BaseClosureIntegrationTestCase {
         completion: $0
       )
     }
-
+    
+    XCTAssertFalse(
+      deletedUser?.active ?? true
+    )
     XCTAssertEqual(
       createdUser.id,
       deletedUser?.id
@@ -178,7 +181,7 @@ final class UserIntegrationTests: BaseClosureIntegrationTestCase {
     }
   }
 
-  func testUser_IsActive() throws {
+  func testUser_LegacyIsActive() throws {
     let channelId = randomString()
     let channel = try awaitResultValue { chat.createChannel(id: channelId, name: channelId, completion: $0) }
     let closeable = channel.connect(callback: { _ in })
@@ -217,10 +220,6 @@ final class UserIntegrationTests: BaseClosureIntegrationTestCase {
     }
     let resultValue = try awaitResultValue {
       chat.currentUser.getMemberships(
-        limit: nil,
-        page: nil,
-        filter: nil,
-        sort: [],
         completion: $0
       )
     }

@@ -142,6 +142,7 @@ public protocol User {
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: A boolean value indicating whether the user is active
   ///     - **Failure**: An `Error` describing the failure
+  @available(*, deprecated, renamed: "active", message: "Use non-async `active` property instead")
   func active(
     completion: ((Swift.Result<Bool, Error>) -> Void)?
   )

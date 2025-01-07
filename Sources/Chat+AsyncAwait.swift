@@ -17,6 +17,9 @@ import PubNubSDK
 public extension Chat {
   /// Initializes the current instance and performs any necessary setup.
   ///
+  /// This method must be called before invoking any other operations
+  /// in order to ensure the SDK is properly initialized.
+  ///
   /// - Returns: The initialized object of ``Chat``
   @discardableResult
   func initialize() async throws -> Self {
@@ -25,25 +28,6 @@ public extension Chat {
         switch $0 {
         case let .success(instance):
           continuation.resume(returning: instance)
-        case let .failure(error):
-          continuation.resume(throwing: error)
-        }
-      }
-    }
-  }
-
-  /// Creates a new user.
-  ///
-  /// - Parameters:
-  ///   - user: A `User` object containing the details of the user to be created.
-  /// - Returns: The created ``User`` object
-  @discardableResult
-  func createUser(user: ChatUserType) async throws -> ChatUserType {
-    try await withCheckedThrowingContinuation { continuation in
-      createUser(user: user) {
-        switch $0 {
-        case let .success(user):
-          continuation.resume(returning: user)
         case let .failure(error):
           continuation.resume(throwing: error)
         }
@@ -520,7 +504,7 @@ public extension Chat {
   ///   - channelId: Channel to listen for new events
   ///   - customMethod: An optional custom method for emitting events
   /// - Returns: An asynchronous stream that produces a value each time a new event of the specified type is detected
-  func eventStream<T: EventContent>(
+  func listenForEvents<T: EventContent>(
     type: T.Type,
     channelId: String,
     customMethod: EmitEventMethod = .publish
@@ -734,6 +718,22 @@ extension ChatImpl {
         switch $0 {
         case let .success(channel):
           continuation.resume(returning: channel)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+}
+
+extension ChatImpl {
+  @discardableResult
+  func createUser(user: ChatUserType) async throws -> ChatUserType {
+    try await withCheckedThrowingContinuation { continuation in
+      createUser(user: user) {
+        switch $0 {
+        case let .success(user):
+          continuation.resume(returning: user)
         case let .failure(error):
           continuation.resume(throwing: error)
         }

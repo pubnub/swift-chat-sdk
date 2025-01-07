@@ -29,7 +29,7 @@ public final class ChatImpl {
 
   let chat: PubNubChat.ChatImpl
 
-  /// Initializes a new instance with the given chat and `PubNub` configurations.
+  /// Creates a new instance with the given chat and `PubNub` configurations.
   ///
   /// This initializer sets up the object using the provided chat configuration and `PubNub` configuration.
   /// After creating an instance, you must call the ``initialize(completion:)`` method before using the object.

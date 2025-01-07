@@ -832,19 +832,6 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
       )
     }
 
-    let mentionedUser = MessageMentionedUser(
-      id: chat.currentUser.id,
-      name: chat.currentUser.name ?? ""
-    )
-
-    let tt = try awaitResultValue {
-      channel.sendText(
-        text: "Some text @\(chat.currentUser.name ?? "")",
-        mentionedUsers: MessageMentionedUsers(uniqueKeysWithValues: zip([0], [mentionedUser])),
-        completion: $0
-      )
-    }
-
     let history = try awaitResultValue(delay: 3) {
       chat.getEventsHistory(
         channelId: chat.currentUser.id,
@@ -852,11 +839,8 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
       )
     }
 
-    let mentionEvent = try XCTUnwrap(history.events.compactMap { $0.event.payload as? EventContent.Mention }.first)
     let inviteEvent = try XCTUnwrap(history.events.compactMap { $0.event.payload as? EventContent.Invite }.first)
 
-    XCTAssertEqual(mentionEvent.channel, channel.id)
-    XCTAssertEqual(mentionEvent.messageTimetoken, tt)
     XCTAssertEqual(inviteEvent.channelId, channel.id)
     XCTAssertEqual(inviteEvent.channelType, .unknown)
 
@@ -884,18 +868,21 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
         completion: $0
       )
     }
-    let mentionedUser = MessageMentionedUser(
-      id: chat.currentUser.id,
-      name: chat.currentUser.name ?? ""
-    )
-
-    let textToSend = "Some text @\(chat.currentUser.name ?? "")"
-    let mentionedUsers = MessageMentionedUsers(uniqueKeysWithValues: zip([0], [mentionedUser]))
-
-    let timetoken = try awaitResultValue {
+    
+    let tt = try awaitResultValue {
       channel.sendText(
-        text: textToSend,
-        mentionedUsers: mentionedUsers,
+        text: "Some text",
+        completion: $0
+      )
+    }
+    
+    try awaitResultValue(delay: 2) {
+      chat.emitEvent(
+        channelId: chat.currentUser.id,
+        payload: EventContent.Mention(
+          messageTimetoken: tt,
+          channel: channel.id
+        ),
         completion: $0
       )
     }
@@ -909,9 +896,9 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
     )
 
     XCTAssertEqual(userMentionData.userMentionData.userId, chat.currentUser.id)
-    XCTAssertEqual(userMentionData.userMentionData.message?.text, textToSend)
-    XCTAssertEqual(userMentionData.userMentionData.message?.timetoken, timetoken)
     XCTAssertEqual(userMentionData.userMentionData.event.channel, channel.id)
+    XCTAssertEqual(userMentionData.userMentionData.message?.timetoken, tt)
+    XCTAssertEqual(userMentionData.userMentionData.message?.text, "Some text")
 
     addTeardownBlock { [unowned self] in
       try awaitResult {

@@ -513,6 +513,34 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     }
   }
   
+  func testChatAsync_GetCurrentUserMentions() async throws {
+    let channel = try await chat.createChannel(
+      id: randomString(),
+      name: "Channel name"
+    )
+    
+    try await channel.invite(user: chat.currentUser)
+    let tt = try await channel.sendText(text: "Some text")
+    try await Task.sleep(nanoseconds: 2_000_000_000)
+    
+    try await chat.emitEvent(
+      channelId: chat.currentUser.id,
+      payload: EventContent.Mention(messageTimetoken: tt, channel: channel.id)
+    )
+    
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+    let userMentionData = try await chat.getCurrentUserMentions().mentions.first
+    
+    XCTAssertEqual(userMentionData?.userMentionData.userId, chat.currentUser.id)
+    XCTAssertEqual(userMentionData?.userMentionData.event.channel, channel.id)
+    XCTAssertEqual(userMentionData?.userMentionData.message?.timetoken, tt)
+    XCTAssertEqual(userMentionData?.userMentionData.message?.text, "Some text")
+    
+    addTeardownBlock { [unowned self] in
+      _ = try? await chat.deleteChannel(id: channel.id)
+    }
+  }
+  
   func testChatAsync_CustomPayload() async throws {
     let getMessagePublishBody: GetMessagePublishBody? = { txtContent, _, _ in
       ["payload": txtContent.text]

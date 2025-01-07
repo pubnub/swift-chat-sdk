@@ -532,7 +532,7 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
     }
   }
 
-  func testChat_GroupConversation() throws {
+  func testChat_CreateGroupConversation() throws {
     let anotherUser = try awaitResultValue {
       chat.createUser(
         id: randomString(),

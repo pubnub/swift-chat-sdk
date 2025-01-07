@@ -10,6 +10,8 @@
 		3D043A7A2CA6AAA000F91C05 /* ThreadChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D043A792CA6AAA000F91C05 /* ThreadChannel.swift */; };
 		3D043A7C2CAAABBD00F91C05 /* ThreadMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D043A7B2CAAABBD00F91C05 /* ThreadMessage.swift */; };
 		3D043A7E2CAC190200F91C05 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D043A7D2CAC190200F91C05 /* Constants.swift */; };
+		3D27B8D02D2D9A61003AD459 /* ThreadChannelAsyncIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D27B8CF2D2D9A61003AD459 /* ThreadChannelAsyncIntegrationTests.swift */; };
+		3D27B8D22D2D9BBB003AD459 /* ThreadChannel+AsyncAwait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D27B8D12D2D9BBB003AD459 /* ThreadChannel+AsyncAwait.swift */; };
 		3D2CA2362C5B9320008D2284 /* PubNubChat+Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2CA2352C5B9320008D2284 /* PubNubChat+Transform.swift */; };
 		3D2CA2382C5B9ACA008D2284 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2CA2372C5B9ACA008D2284 /* File.swift */; };
 		3D2CA23A2C5B9CF6008D2284 /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2CA2392C5B9CF6008D2284 /* Dictionary.swift */; };
@@ -140,6 +142,8 @@
 		3D043A7B2CAAABBD00F91C05 /* ThreadMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadMessage.swift; sourceTree = "<group>"; };
 		3D043A7D2CAC190200F91C05 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		3D1C44A52C918A2200E68446 /* PubNubSwiftChatSDK_Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PubNubSwiftChatSDK_Info.plist; sourceTree = "<group>"; };
+		3D27B8CF2D2D9A61003AD459 /* ThreadChannelAsyncIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadChannelAsyncIntegrationTests.swift; sourceTree = "<group>"; };
+		3D27B8D12D2D9BBB003AD459 /* ThreadChannel+AsyncAwait.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ThreadChannel+AsyncAwait.swift"; sourceTree = "<group>"; };
 		3D2CA2352C5B9320008D2284 /* PubNubChat+Transform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PubNubChat+Transform.swift"; sourceTree = "<group>"; };
 		3D2CA2372C5B9ACA008D2284 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		3D2CA2392C5B9CF6008D2284 /* Dictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dictionary.swift; sourceTree = "<group>"; };
@@ -281,6 +285,7 @@
 				3D46D46B2D14BF2D007D08DB /* ChannelAsyncIntegrationTests.swift */,
 				3D7062C52D2D4A4F000729E1 /* ChatAsyncIntegrationTests.swift */,
 				3D7062C92D2D8BD9000729E1 /* UserAsyncIntegrationTests.swift */,
+				3D27B8CF2D2D9A61003AD459 /* ThreadChannelAsyncIntegrationTests.swift */,
 			);
 			path = AsyncAwait;
 			sourceTree = "<group>";
@@ -416,6 +421,7 @@
 				3DB73A3F2C51051C007FE249 /* Channel.swift */,
 				3D46D4392D1231F1007D08DB /* Channel+AsyncAwait.swift */,
 				3D043A792CA6AAA000F91C05 /* ThreadChannel.swift */,
+				3D27B8D12D2D9BBB003AD459 /* ThreadChannel+AsyncAwait.swift */,
 				3DB73A5A2C53CAB1007FE249 /* BaseChannel.swift */,
 				3DB73A6E2C57BB97007FE249 /* ChannelImpl.swift */,
 				3DB73A5C2C53CC0A007FE249 /* ThreadChannelImpl.swift */,
@@ -618,6 +624,7 @@
 				3D46D4622D131FB3007D08DB /* BaseAsyncIntegrationTestCase.swift in Sources */,
 				3D46D46C2D14BF2D007D08DB /* ChannelAsyncIntegrationTests.swift in Sources */,
 				3D7062C62D2D4A4F000729E1 /* ChatAsyncIntegrationTests.swift in Sources */,
+				3D27B8D02D2D9A61003AD459 /* ThreadChannelAsyncIntegrationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -686,6 +693,7 @@
 				3DB73A422C511900007FE249 /* Message.swift in Sources */,
 				3D9A17962CC250A300F3F8AB /* MessageDraftImpl.swift in Sources */,
 				3DB73A4B2C5135C3007FE249 /* QuotedMessage.swift in Sources */,
+				3D27B8D22D2D9BBB003AD459 /* ThreadChannel+AsyncAwait.swift in Sources */,
 				3D043A7C2CAAABBD00F91C05 /* ThreadMessage.swift in Sources */,
 				3D46D4422D131BBC007D08DB /* ThreadMessage+AsyncAwait.swift in Sources */,
 				3DB2A8BB2C8099F300167058 /* EventContent.swift in Sources */,

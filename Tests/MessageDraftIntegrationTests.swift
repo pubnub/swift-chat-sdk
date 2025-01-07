@@ -58,7 +58,7 @@ class MessageDraftIntegrationTests: BaseClosureIntegrationTestCase {
     }
   }
 
-  func test_MessageDraftWithUserMention() throws {
+  func testMessageDraft_WithUserMention() throws {
     let expectation = expectation(description: "MessageDraft")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
@@ -108,7 +108,7 @@ class MessageDraftIntegrationTests: BaseClosureIntegrationTestCase {
     )
   }
 
-  func test_MessageDraftWithChannelMention() throws {
+  func testMessageDraft_WithChannelMention() throws {
     let expectation = expectation(description: "MessageDraft")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1

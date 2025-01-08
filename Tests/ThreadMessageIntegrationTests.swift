@@ -79,7 +79,7 @@ class ThreadMessageIntegrationTests: BaseClosureIntegrationTestCase {
     threadMessageTimetoken = nil
   }
 
-  func testThreadMessage_HasUserReactions() throws {
+  func testThreadMessage_HasNoUserReactions() throws {
     XCTAssertFalse(threadMessage.hasUserReaction(reaction: "someReaction"))
   }
 

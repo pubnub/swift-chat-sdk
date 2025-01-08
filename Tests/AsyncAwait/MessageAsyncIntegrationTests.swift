@@ -32,6 +32,18 @@ class MessageAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     testMessage = nil
     channel = nil
   }
+  
+  func testMessageAsync_HasNoUserReaction() async throws {
+    let someMessage = MessageImpl(
+      chat: chat,
+      timetoken: 17_301_310_706_849_521,
+      content: .init(text: "Text text"),
+      channelId: randomString(),
+      userId: randomString()
+    )
+
+    XCTAssertFalse(someMessage.hasUserReaction(reaction: "someReaction"))
+  }
 
   func testAsyncMessage_EditText() async throws {
     let currentMessageText = testMessage.text

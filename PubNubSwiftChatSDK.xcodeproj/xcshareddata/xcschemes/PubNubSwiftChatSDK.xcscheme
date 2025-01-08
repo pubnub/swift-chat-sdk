@@ -30,7 +30,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:Tests/PubNubSwiftChatSDKTests.xctestplan"
+            reference = "container:Tests/PubNubSwiftChatSDKAsyncTests.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>

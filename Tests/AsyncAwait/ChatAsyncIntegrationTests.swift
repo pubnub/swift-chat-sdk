@@ -390,7 +390,7 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     let channel = try await chat.createChannel(id: randomString())
     
     let task = Task {
-      for await event in chat.eventStream(type: EventContent.Typing.self, channelId: channel.id) {
+      for await event in chat.listenForEvents(type: EventContent.Typing.self, channelId: channel.id) {
         XCTAssertTrue(event.event.payload.value)
         XCTAssertEqual(event.event.channelId, channel.id)
         XCTAssertEqual(event.event.userId, chat.currentUser.id)

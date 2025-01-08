@@ -1,9 +1,14 @@
 ---
 name: swift-chat-sdk
 scm: github.com/pubnub/swift-chat-sdk
-version: "0.9.3"
+version: "0.10.0"
 schema: 1
 changelog:
+  - date: 2025-01-08
+    version: 0.10.0
+    changes:
+      - type: feature
+        text: "Add `status` and `type` to Membership."
   - date: 2024-12-18
     version: 0.9.3
     changes:
@@ -77,7 +82,7 @@ sdks:
           - distribution-type: source
             distribution-repository: GitHub release
             package-name: PubNubSwiftChatSDK
-            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.9.3-dev.zip
+            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.10.0-dev.zip
             supported-platforms:
               supported-operating-systems:
                 iOS:

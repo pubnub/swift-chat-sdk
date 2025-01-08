@@ -2,6 +2,10 @@
 
 ## Topics
 
+### Initializing a Chat instance
+
+- ``initialize(completion:)``
+
 ### Working with Conversations
 
 - ``CreateDirectConversationResult``
@@ -25,7 +29,7 @@
 ### Working with Users
 
 - ``getUser(userId:completion:)``
-- ``createUser(user:completion:)``
+- ``createUser(id:name:externalId:profileUrl:email:custom:status:type:completion:)``
 - ``getUsers(filter:sort:limit:page:completion:)``
 - ``updateUser(id:name:externalId:profileUrl:email:custom:status:type:completion:)``
 - ``deleteUser(id:soft:completion:)``
@@ -47,11 +51,6 @@
 - ``GetUnreadMessagesCount``
 - ``getUnreadMessagesCount(limit:page:filter:sort:completion:)``
 - ``markAllMessagesAsRead(limit:page:filter:sort:completion:)``
-
-### Working with Channels and Users Suggestions
-
-- ``getUserSuggestions(text:limit:completion:)``
-- ``getChannelSuggestions(text:limit:completion:)``
 
 ### Retrieving Current User Mentions
 

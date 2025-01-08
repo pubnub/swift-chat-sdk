@@ -62,8 +62,8 @@ public protocol MessageDraft {
   /// Insert mention into the ``MessageDraft`` according to ``SuggestedMention/offset``, ``SuggestedMention/replaceFrom`` and ``SuggestedMention/target``.
   ///
   /// - Parameters:
-  ///   - mention: A ``SuggestedMention`` that can be obtained from ``MessageDraftStateListener``
-  ///   - text: The text to replace ``SuggestedMention/replaceFrom`` with. ``SuggestedMention/replaceTo`` can be used for example
+  ///   - mention: A ``SuggestedMention`` that can be obtained from ``MessageDraftChangeListener``
+  ///   - text: The text to replace ``SuggestedMention/replaceFrom`` with. ``SuggestedMention/replaceWith`` can be used for example
   func insertSuggestedMention(mention: SuggestedMention, text: String)
 
   /// Add a mention to a user, channel or link specified by `target` at the given offset.
@@ -219,7 +219,7 @@ public enum MentionTarget: Equatable {
   }
 }
 
-/// A potential mention suggestion received from ``MessageDraftStateListener``.
+/// A potential mention suggestion received from ``MessageDraftChangeListener``.
 ///
 /// It can be used with ``MessageDraft/insertSuggestedMention(mention:text:)`` to accept the suggestion and attach a mention to a message draft.
 public struct SuggestedMention {

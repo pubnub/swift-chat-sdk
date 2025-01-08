@@ -23,6 +23,10 @@ public protocol Membership {
   var user: ChatType.ChatUserType { get }
   /// Any custom properties or metadata associated with the user-channel relationship in the form of a map of key-value pairs
   var custom: [String: JSONCodableScalar]? { get }
+  /// Status of a Membership
+  var status: String? { get }
+  /// Type of a Membership
+  var type: String? { get }
   /// Caching value that changes whenever the Membership object changes
   var eTag: String? { get }
   /// Last time the Membership object was changed

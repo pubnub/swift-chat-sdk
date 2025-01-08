@@ -29,7 +29,9 @@ public final class MembershipImpl {
     user: UserImpl,
     custom: [String: JSONCodableScalar]? = nil,
     updated: String? = nil,
-    eTag: String? = nil
+    eTag: String? = nil,
+    status: String? = nil,
+    type: String? = nil
   ) {
     let underlyingMembership = PubNubChat.MembershipImpl(
       chat: chat.chat,
@@ -37,7 +39,9 @@ public final class MembershipImpl {
       user: user.user,
       custom: custom?.compactMapValues { $0.rawValue },
       updated: updated,
-      eTag: eTag
+      eTag: eTag,
+      status: status,
+      type: type
     )
     self.init(
       membership: underlyingMembership
@@ -54,6 +58,8 @@ extension MembershipImpl: Membership {
   public var channel: ChannelImpl { ChannelImpl(channel: membership.channel) }
   public var user: UserImpl { UserImpl(user: membership.user) }
   public var custom: [String: JSONCodableScalar]? { membership.custom?.mapToScalars() }
+  public var status: String? { membership.status }
+  public var type: String? { membership.type }
   public var eTag: String? { membership.eTag }
   public var updated: String? { membership.updated }
   public var lastReadMessageTimetoken: Timetoken? { membership.lastReadMessageTimetoken?.uint64Value }

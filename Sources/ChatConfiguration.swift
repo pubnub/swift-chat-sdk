@@ -39,11 +39,11 @@ public class CustomPayloads {
   /// If you wish to bypass the custom mapping (e.g. for certain channels), you can fall back to the default by calling the third parameter - `DefaultGetMessageResponseBody` and returning its result
   /// Define `getMessagePublishBody` whenever you use `getMessageResponseBody`
   var getMessageResponseBody: GetMessageResponseBody?
-  /// A name of action to add to your Message object whenever a published message is edited
+  /// A type of action to add to your Message object whenever a published message is edited
   var editMessageActionName: String?
-  /// A name of action to add to your Message object whenever a published message is edited
+  /// A type of action to add to your Message object whenever a published message is edited
   var deleteMessageActionName: String?
-  /// A name of action to add to your Message object whenever a reaction is added
+  /// A type of action to add to your Message object whenever a reaction is added
   var reactionsActionName: String?
 
   /// Creates a new ``CustomPayloads`` object.
@@ -51,9 +51,9 @@ public class CustomPayloads {
   /// - Parameters:
   ///   - getMessagePublishBody: Function that lets Chat SDK send your custom payload structure
   ///   - getMessageResponseBody: Function that lets Chat SDK receive your custom payload structure
-  ///   - editMessageActionName: A name of action to add to your Message object whenever a published message is edited, like "changed" or "modified. The default value is `"edited"`
-  ///   - deleteMessageActionName: A name of action to add to your Message object whenever a published message is deleted, like "removed". The default value is `"deleted"`
-  ///   - reactionsActionName: A name of action to add to your Message object whenever a reaction is added. The default value is `"reactions"`
+  ///   - editMessageActionName: If present, overrides the default action type to be added to your Message object whenever a published message is edited
+  ///   - deleteMessageActionName: If present, overrides the default action type to be added to your Message object whenever a published message is deleted
+  ///   - reactionsActionName: If present, overrides the default action type to be added to your Message object whenever a reaction is added
   public init(
     getMessagePublishBody: GetMessagePublishBody? = nil,
     getMessageResponseBody: GetMessageResponseBody? = nil,
@@ -158,7 +158,7 @@ public struct ChatConfiguration {
   /// Specifies how often the user global presence in the app should be updated. Requires `storeUserActivityTimestamps`
   /// to be set to true. The minimum possible value is 60 seconds. If you try to set it to a lower value, you'll get the storeUserActivityInterval must be at least 60000ms error
   public var storeUserActivityInterval: Int
-  /// Specifies if you want to track the user's global presence in your chat app. The user's activity is tracked through `user.lastActiveTimestamp`
+  /// Specifies if you want to track the user's global presence in your chat app. The user's activity is tracked through ``User/lastActiveTimestamp``
   public var storeUserActivityTimestamps: Bool
   /// List of parameters you must set if you want to enable sending/receiving mobile push notifications for phone devices, either through Apple Push Notification service (APNS) or Firebase Cloud Messaging (FCM)
   public var pushNotificationsConfig: PushNotificationsConfig
@@ -229,7 +229,11 @@ public struct ChatConfiguration {
 /// Defines the list of parameters you must set if you want to enable sending/receiving mobile push notifications for phone devices,
 /// either through Apple Push Notification service (APNS) or Firebase Cloud Messaging (FCM).
 public struct PushNotificationsConfig {
-  /// The main option for enabling sending notifications
+  /// The main option for enabling sending notifications. It must be set to `true` if you want a particular client (whether a mobile device, web browser, or server) to send
+  /// push notifications to mobile devices.
+  ///
+  /// These push notifications are messages with a provider-specific payload that the Chat SDK automatically attaches  to every message.
+  /// Chat SDK includes a default payload setup for ``deviceGateway`` in every message sent to the registered channels.
   public var sendPushes: Bool
   /// Refers to the unique identifier assigned to a specific mobile device by a platform's push notification service
   public var deviceToken: String?

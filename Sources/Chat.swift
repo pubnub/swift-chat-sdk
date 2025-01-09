@@ -35,12 +35,17 @@ public protocol Chat: AnyObject {
   var pubNub: PubNub { get }
   /// Object representing current user
   var currentUser: ChatUserType { get }
-  /// The name of the action that represents editing a message
+  /// A type of action added to your Message object whenever a published message is edited, like "changed" or "modified". The default value is "edited"
   var editMessageActionName: String { get }
-  /// The name of the action that represents deleting a message
+  /// A type of action added to your Message object whenever a published message is deleted, like "removed". The default value is "deleted"
   var deleteMessageActionName: String { get }
+  /// A type of action you added to your Message object whenever a reaction is added to a published message, like "reacted". The default value is "reactions"
+  var reactionsActionName: String { get }
 
   /// Initializes the current instance and performs any necessary setup.
+  ///
+  /// This method must be called before invoking any other operations
+  /// in order to ensure the SDK is properly initialized.
   ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call
@@ -48,18 +53,6 @@ public protocol Chat: AnyObject {
   ///     - **Failure**: The initialization failed and returns an error.
   func initialize(
     completion: ((Swift.Result<Self, Error>) -> Void)?
-  )
-
-  /// Creates a new user.
-  ///
-  /// - Parameters:
-  ///   - user: A `User` object containing the details of the user to be created.
-  ///   - completion: The async `Result` of the method call
-  ///     - **Success**: The user was successfully created and returns the created user
-  ///     - **Failure**: An `Error` describing the failure
-  func createUser(
-    user: ChatUserType,
-    completion: ((Swift.Result<ChatUserType, Error>) -> Void)?
   )
 
   /// Creates a new user with a unique User ID.

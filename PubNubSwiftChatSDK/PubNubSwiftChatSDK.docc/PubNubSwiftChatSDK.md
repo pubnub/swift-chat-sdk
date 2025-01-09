@@ -58,7 +58,7 @@ Our Chat SDK provides a number of out-of-the-box chat features like read receipt
 - ``MessageDraftChangeListener``
 - ``ClosureMessageDraftChangeListener``
 - ``SuggestedMention``
-- ``SuggestedMentionsFuture``
+- ``FutureObject``
 - ``MentionTarget``
 - ``MessageElement``
 - ``UserSuggestionSource``

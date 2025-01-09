@@ -103,6 +103,22 @@ extension ChatImpl {
       }
     }
   }
+
+  func createUser(
+    user: UserImpl,
+    completion: ((Swift.Result<UserImpl, Error>) -> Void)?
+  ) {
+    chat.createUser(
+      user: user.user
+    ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.User>) in
+      switch result.result {
+      case let .success(createdUser):
+        completion?(.success(UserImpl(user: createdUser)))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
 }
 
 extension ChatImpl: Chat {
@@ -116,6 +132,7 @@ extension ChatImpl: Chat {
   public var currentUser: UserImpl { UserImpl(user: chat.currentUser) }
   public var editMessageActionName: String { chat.editMessageActionName }
   public var deleteMessageActionName: String { chat.deleteMessageActionName }
+  public var reactionsActionName: String { chat.reactionsActionName }
 
   public func initialize(completion: ((Swift.Result<ChatImpl, Error>) -> Void)? = nil) {
     chat.initialize().weakAsync(caller: self) { (result: WeakFutureResult<ChatImpl, PubNubChat.Chat>) in
@@ -126,22 +143,6 @@ extension ChatImpl: Chat {
         } else {
           completion?(.failure(ChatError(message: objectNoLongerExists)))
         }
-      case let .failure(error):
-        completion?(.failure(error))
-      }
-    }
-  }
-
-  public func createUser(
-    user: UserImpl,
-    completion: ((Swift.Result<UserImpl, Error>) -> Void)?
-  ) {
-    chat.createUser(
-      user: user.user
-    ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.User>) in
-      switch result.result {
-      case let .success(createdUser):
-        completion?(.success(UserImpl(user: createdUser)))
       case let .failure(error):
         completion?(.failure(error))
       }

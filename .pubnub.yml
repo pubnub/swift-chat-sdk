@@ -1,9 +1,18 @@
 ---
 name: swift-chat-sdk
 scm: github.com/pubnub/swift-chat-sdk
-version: "0.10.0"
+version: "0.10.1"
 schema: 1
 changelog:
+  - date: 2025-01-09
+    version: 0.10.1
+    changes:
+      - type: bug
+        text: "Remove `createUser(user:completion:)` method from the public interface."
+      - type: bug
+        text: "Add missing `reactionsActionName` computed property."
+      - type: improvement
+        text: "Documentation enhancements."
   - date: 2025-01-08
     version: 0.10.0
     changes:
@@ -82,7 +91,7 @@ sdks:
           - distribution-type: source
             distribution-repository: GitHub release
             package-name: PubNubSwiftChatSDK
-            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.10.0-dev.zip
+            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.10.1-dev.zip
             supported-platforms:
               supported-operating-systems:
                 iOS:

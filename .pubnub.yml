@@ -1,7 +1,6 @@
----
 name: swift-chat-sdk
 scm: github.com/pubnub/swift-chat-sdk
-version: "0.10.1"
+version: 0.10.1
 schema: 1
 changelog:
   - date: 2025-01-09

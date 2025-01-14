@@ -1,8 +1,13 @@
 name: swift-chat-sdk
 scm: github.com/pubnub/swift-chat-sdk
-version: 0.10.1
+version: 0.10.2
 schema: 1
 changelog:
+  - date: 2025-01-14
+    version: 0.10.2
+    changes:
+      - type: bug
+        text: "Fix the bug with messages being deleted from Message Persistence."
   - date: 2025-01-09
     version: 0.10.1
     changes:
@@ -90,7 +95,7 @@ sdks:
           - distribution-type: source
             distribution-repository: GitHub release
             package-name: PubNubSwiftChatSDK
-            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.10.1-dev.zip
+            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.10.2-dev.zip
             supported-platforms:
               supported-operating-systems:
                 iOS:

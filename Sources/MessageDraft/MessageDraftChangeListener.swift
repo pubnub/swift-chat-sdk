@@ -51,6 +51,24 @@ public protocol FutureObject<T> {
   func async(completion: @escaping (Swift.Result<T, Error>) -> Void)
 }
 
+///
+/// Extension providing `async-await` support for ``FutureObject``.
+///
+public extension FutureObject {
+  func async() async throws -> T {
+    try await withCheckedThrowingContinuation { continuation in
+      async {
+        switch $0 {
+        case let .success(result):
+          continuation.resume(returning: result)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+}
+
 class SuggestedMentionsFuture: FutureObject {
   let future: PubNubChat.PNFuture
 

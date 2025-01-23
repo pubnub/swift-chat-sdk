@@ -28,7 +28,7 @@ jobs:
       SDK_PAM_PUB_KEY: ${{ secrets.SDK_PAM_PUB_KEY }}
       SDK_PAM_SEC_KEY: ${{ secrets.SDK_PAM_SEC_KEY }}
     runs-on:
-      group: macos-arm-gh
+      group: macos-gh
     strategy:
       matrix:
         environment: [iOS]

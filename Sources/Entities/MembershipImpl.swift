@@ -124,8 +124,8 @@ extension MembershipImpl: Membership {
     }
   }
 
-  public func getUnreadMessagesCount(completion: ((Swift.Result<UInt64, Error>) -> Void)? = nil) {
-    membership.getUnreadMessagesCount().async(caller: self) { (result: FutureResult<MembershipImpl, UInt64>) in
+  public func getUnreadMessagesCount(completion: ((Swift.Result<UInt64?, Error>) -> Void)? = nil) {
+    membership.getUnreadMessagesCount().async(caller: self) { (result: FutureResult<MembershipImpl, UInt64?>) in
       switch result.result {
       case let .success(messagesCount):
         completion?(.success(messagesCount))

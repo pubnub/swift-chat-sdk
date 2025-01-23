@@ -1,8 +1,13 @@
 name: swift-chat-sdk
 scm: github.com/pubnub/swift-chat-sdk
-version: 0.10.2
+version: 0.10.3
 schema: 1
 changelog:
+  - date: 2025-01-23
+    version: 0.10.3
+    changes:
+      - type: bug
+        text: "Fix the error when retrieving the unread messages count on the Membership instance."
   - date: 2025-01-14
     version: 0.10.2
     changes:
@@ -95,7 +100,7 @@ sdks:
           - distribution-type: source
             distribution-repository: GitHub release
             package-name: PubNubSwiftChatSDK
-            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.10.2-dev.zip
+            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.10.3-dev.zip
             supported-platforms:
               supported-operating-systems:
                 iOS:

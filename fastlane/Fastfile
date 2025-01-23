@@ -41,14 +41,24 @@ lane :test do
     key: "subscribeKey",
     value: sub_key
   )
-  run_tests(
-    workspace: ENV['WORKSPACE'],
-    scheme: ENV['SCHEME_SDK'],
-    destination: ENV['DESTINATION'],
-    disable_concurrent_testing: true,
-    output_types: "html" 
-  )
 
+  if ENV['PLATFORM'] == 'macOS' 
+    run_tests(
+      workspace: ENV['WORKSPACE'],
+      scheme: ENV['SCHEME_SDK'],
+      destination: ENV['DESTINATION'],
+      disable_concurrent_testing: true,
+      output_types: "html" 
+    )
+  else
+    run_tests(
+      workspace: ENV['WORKSPACE'],
+      scheme: ENV['SCHEME_SDK'],
+      devices: ENV['DEVICES'],
+      disable_concurrent_testing: true,
+      output_types: "html" 
+    )
+  end
 end
 
 desc "Lints a release using Swift Package Manager"

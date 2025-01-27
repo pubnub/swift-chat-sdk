@@ -41,3 +41,10 @@ public struct QuotedMessage {
     )
   }
 }
+
+public extension QuotedMessage {
+  /// Returns an array of `MessageElement`representing plain text or additional information such as user mentions, channel references and links
+  func getMessageElements() -> [MessageElement] {
+    transform().getMessageElements().compactMap { MessageElement.from(element: $0) }
+  }
+}

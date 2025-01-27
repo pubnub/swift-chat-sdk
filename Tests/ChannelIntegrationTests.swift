@@ -135,7 +135,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       try awaitResult { chat.deleteChannel(
         id: anotherChannel.id,
         completion: $0
-      )}
+      ) }
     }
   }
 

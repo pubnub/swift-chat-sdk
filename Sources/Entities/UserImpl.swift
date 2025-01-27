@@ -34,6 +34,7 @@ public final class UserImpl {
     status: String? = nil,
     type: String? = nil,
     updated: String? = nil,
+    eTag: String? = nil,
     lastActiveTimestamp: Timetoken? = nil
   ) {
     let underlyingUser = PubNubChat.UserImpl(
@@ -47,6 +48,7 @@ public final class UserImpl {
       status: status,
       type: type,
       updated: updated,
+      eTag: eTag,
       lastActiveTimestamp: lastActiveTimestamp?.asKotlinLong()
     )
     self.init(
@@ -78,6 +80,7 @@ extension UserImpl: User {
   public var status: String? { user.status }
   public var type: String? { user.type }
   public var updated: String? { user.updated }
+  public var eTag: String? { user.eTag }
   public var lastActiveTimestamp: TimeInterval? { user.lastActiveTimestamp?.doubleValue }
   public var active: Bool { user.active }
 
@@ -112,6 +115,47 @@ extension UserImpl: User {
       status: status,
       type: type
     ).async(caller: self) { (result: FutureResult<UserImpl, PubNubChat.User>) in
+      switch result.result {
+      case let .success(user):
+        completion?(.success(UserImpl(user: user)))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
+
+  // swiftlint:disable:next cyclomatic_complexity
+  public func update(
+    updateAction: @escaping (UserImpl) -> [PubNubMetadataChange<PubNubUserMetadata>],
+    completion: ((Swift.Result<UserImpl, Error>) -> Void)? = nil
+  ) {
+    user.update(updateAction: { values, user in
+      for change in updateAction(UserImpl(user: user)) {
+        switch change {
+        case let .stringOptional(keyPath, value):
+          switch keyPath {
+          case \.name:
+            values.name = value
+          case \.type:
+            values.type = value
+          case \.status:
+            values.status = value
+          case \.externalId:
+            values.externalId = value
+          case \.profileURL:
+            values.profileUrl = value
+          case \.email:
+            values.email = value
+          default:
+            break
+          }
+        case let .customOptional(key, value):
+          if key == \.custom {
+            values.custom = value
+          }
+        }
+      }
+    }).async(caller: self) { (result: FutureResult<UserImpl, PubNubChat.User>) in
       switch result.result {
       case let .success(user):
         completion?(.success(UserImpl(user: user)))

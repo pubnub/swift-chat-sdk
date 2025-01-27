@@ -172,7 +172,7 @@ public struct ChatConfiguration {
   /// Property that lets you define your custom message payload to be sent and/or received by Chat SDK on one or all channels, whenever it differs from the default `message.text` Chat SDK payload.
   /// It also lets you configure your own message actions whenever a message is edited or deleted
   public var customPayloads: CustomPayloads?
-  /// Enable automatic syncing of the ``MutedUsersManager`` data with App Context, using the current `userId` as the key.
+  /// Enable automatic syncing of the ``MutedUsersManagerInterface`` data with App Context, using the current `userId` as the key.
   ///
   ///  Specifically, the data is saved in the `custom` object of the following User in App Context:
   ///

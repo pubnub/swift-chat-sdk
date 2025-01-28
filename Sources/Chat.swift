@@ -42,6 +42,14 @@ public protocol Chat: AnyObject {
   /// A type of action you added to your Message object whenever a reaction is added to a published message, like "reacted". The default value is "reactions"
   var reactionsActionName: String { get }
 
+  /// An object for manipulating the list of muted users.
+  ///
+  /// The list is local to this instance of Chat (it is not persisted anywhere) unless ``ChatConfiguration/syncMutedUsers`` is enabled, in which case it will be synced
+  /// using App Context for the current user.
+  ///
+  /// Please note that this is not a server-side moderation mechanism, but rather a way to ignore messages from certain users on the client.
+  var mutedUsersManager: MutedUsersManagerInterface { get }
+
   /// Initializes the current instance and performs any necessary setup.
   ///
   /// This method must be called before invoking any other operations

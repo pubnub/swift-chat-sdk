@@ -77,6 +77,34 @@ final class UserIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     XCTAssertEqual(updatedUser.type, "regular")
   }
 
+  func testUser_UpdateUserCallback() throws {
+    try awaitResultValue {
+      chat.currentUser.update(
+        name: "Markus Koller",
+        externalId: "11111111",
+        profileUrl: "https://picsum.photos/200/300",
+        email: "markus.koller@pubnub.com",
+        status: "inactive",
+        type: "regular",
+        completion: $0
+      )
+    }
+
+    // Simulates updating an outdated version of the User object.
+    // We expect the fresh object from the server to be returned first, and then subsequent updates to be applied on top of it
+    let updateResult = try awaitResultValue {
+      chat.currentUser.update(updateAction: {
+        [
+          .stringOptional(\.name, $0.name?.uppercased()),
+          .stringOptional(\.status, $0.status?.uppercased())
+        ]
+      }, completion: $0)
+    }
+
+    XCTAssertEqual(updateResult.name, "MARKUS KOLLER")
+    XCTAssertEqual(updateResult.status, "INACTIVE")
+  }
+
   func testUser_UpdateNotExistingUser() throws {
     let someUser = testableUser()
     let error = try awaitResultError {

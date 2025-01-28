@@ -20,12 +20,9 @@ import PubNubSDK
 /// This class inherits all the documentation for methods defined in the ``Chat`` protocol.
 /// Refer to the ``Chat`` protocol for details on how individual methods work.
 public final class ChatImpl {
-  /// Allows you to access any Swift SDK method. For example, if you want to call a method available in the
-  /// App Context API, you'd use `pubNub.allUUIDMetadata(include:filter:sort:limit:page:custom:completion)`
   public let pubNub: PubNub
-  /// Contains chat app configuration settings, such as ``LogLevel`` or typing timeout
-  /// that you can provide when initializing your chat app with the init method
   public let config: ChatConfiguration
+  public let mutedUsersManager: any MutedUsersManagerInterface
 
   let chat: PubNubChat.ChatImpl
 
@@ -41,6 +38,7 @@ public final class ChatImpl {
     pubNub = PubNub(configuration: pubNubConfiguration)
     config = chatConfiguration
     chat = ChatImpl.createKMPChat(from: pubNub, config: chatConfiguration)
+    mutedUsersManager = MutedUsersManagerImpl(underlying: chat.mutedUsersManager)
 
     pubNub.setConsumer(identifier: "chat-sdk", value: "CA-SWIFT/\(pubNubSwiftChatSDKVersion)")
     // Creates an association between KMP chat and the current instance
@@ -51,6 +49,7 @@ public final class ChatImpl {
     self.pubNub = pubNub
     config = configuration
     chat = ChatImpl.createKMPChat(from: pubNub, config: configuration)
+    mutedUsersManager = MutedUsersManagerImpl(underlying: chat.mutedUsersManager)
 
     pubNub.setConsumer(identifier: "chat-sdk", value: "CA-SWIFT/\(pubNubSwiftChatSDKVersion)")
     // Creates an association between KMP chat and the current instance

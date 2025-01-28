@@ -20,18 +20,18 @@ class ThreadChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
   override func customSetup() async throws {
     parentChannel = try await chat.createChannel(id: randomString())
-    
+
     let timetoken = try await parentChannel.sendText(text: "Message")
     try await Task.sleep(nanoseconds: 3_000_000_000)
-    
+
     let testMessage = try await parentChannel.getMessage(timetoken: timetoken)
     let unwrappedTestMessage = try XCTUnwrap(testMessage)
-    
+
     threadChannel = try await unwrappedTestMessage.createThread()
-    
+
     try await threadChannel.sendText(text: "Reply in a thread")
   }
-  
+
   override func customTearDown() async throws {
     _ = try? await parentChannel.delete()
     _ = try? await threadChannel.delete()
@@ -42,10 +42,10 @@ class ThreadChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
     let message = try await threadChannel.getHistory().messages.first
     let unwrappedMessage = try XCTUnwrap(message)
-    
+
     let updatedChannel = try await threadChannel.pinMessageToParentChannel(message: unwrappedMessage)
     let pinnedMessage = try await updatedChannel.getPinnedMessage()
-    
+
     XCTAssertNotNil(pinnedMessage)
   }
 }

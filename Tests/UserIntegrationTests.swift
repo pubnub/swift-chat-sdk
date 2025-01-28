@@ -46,7 +46,7 @@ final class UserIntegrationTests: BaseClosureIntegrationTestCase {
       try awaitResult { chat.deleteUser(
         id: user.id,
         completion: $0
-      )}
+      ) }
     }
   }
 
@@ -170,7 +170,7 @@ final class UserIntegrationTests: BaseClosureIntegrationTestCase {
         completion: $0
       )
     }
-    
+
     XCTAssertFalse(
       deletedUser?.active ?? true
     )

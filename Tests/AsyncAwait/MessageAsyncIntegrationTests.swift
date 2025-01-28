@@ -32,7 +32,7 @@ class MessageAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     testMessage = nil
     channel = nil
   }
-  
+
   func testMessageAsync_HasNoUserReaction() async throws {
     let someMessage = MessageImpl(
       chat: chat,

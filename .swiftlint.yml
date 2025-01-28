@@ -8,6 +8,8 @@ disabled_rules:
   - function_parameter_count
 included:
   - Sources/
+excluded:
+  - Tests/
 opt_in_rules:
   - force_unwrapping
   - overridden_super_call

@@ -69,14 +69,14 @@ class MembershipAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     let unreadMessagesCount = try await membership.getUnreadMessagesCount()
     XCTAssertEqual(unreadMessagesCount, 3)
   }
-  
+
   func testMembershipAsync_GetUnreadMessagesCountForEmptyChannel() async throws {
     let someMembership = MembershipImpl(
       chat: chat,
       channel: channel,
       user: UserImpl(chat: chat, id: randomString())
     )
-    
+
     let unreadMessagesCount = try await someMembership.getUnreadMessagesCount()
     XCTAssertNil(unreadMessagesCount)
   }

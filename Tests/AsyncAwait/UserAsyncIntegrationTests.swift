@@ -28,7 +28,7 @@ class UserAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
       type: "admin"
     )
   }
-  
+
   func testUserAsync_CreateUser() async throws {
     let user = testableUser()
     let createdUser = try await chat.createUser(user: user)
@@ -70,7 +70,7 @@ class UserAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     XCTAssertEqual(updatedUser.status, "inactive")
     XCTAssertEqual(updatedUser.type, "regular")
   }
-  
+
   func testUserAsync_UpdateUserCallback() async throws {
     try await chat.currentUser.update(
       name: "Markus Koller",
@@ -83,7 +83,7 @@ class UserAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
     // Simulates updating an outdated version of the User object.
     // We expect the fresh object from the server to be returned first, and then subsequent updates to be applied on top of it
-    let updateResult = try await chat.currentUser.update() {
+    let updateResult = try await chat.currentUser.update {
       [
         .stringOptional(\.name, $0.name?.uppercased()),
         .stringOptional(\.status, $0.status?.uppercased())
@@ -98,23 +98,23 @@ class UserAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     let errorExpectation = XCTestExpectation(description: "ErrorExpectation")
     errorExpectation.assertForOverFulfill = true
     errorExpectation.expectedFulfillmentCount = 1
-    
+
     let someUser = testableUser()
-    
+
     do {
       try await someUser.update(name: "NewName", externalId: "NewExternalId")
     } catch {
       XCTAssertEqual((error as? ChatError)?.message, "User does not exist")
       errorExpectation.fulfill()
     }
-    
+
     await fulfillment(of: [errorExpectation], timeout: 4)
   }
 
   func testUserAsync_IsPresentOn() async throws {
     let channelId = randomString()
     let createdChannel = try await chat.createChannel(id: channelId, name: channelId)
-    
+
     // Keeping a strong reference to this object for test purposes to simulate that someone is already present on the given channel.
     // If this object is not retained, it will be deallocated, resulting in no subscription to the channel,
     // which would cause the behavior being tested to fail.
@@ -124,7 +124,7 @@ class UserAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     try await Task.sleep(nanoseconds: 4_000_000_000)
     let isPresent = try await chat.currentUser.isPresentOn(channelId: createdChannel.id)
     XCTAssertTrue(isPresent)
-    
+
     addTeardownBlock { [unowned self] in
       _ = try? await chat.deleteChannel(id: channelId)
     }
@@ -140,7 +140,7 @@ class UserAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
   func testUserAsync_SoftDelete() async throws {
     let createdUser = try await chat.createUser(user: testableUser())
     let deletedUser = try await createdUser.delete(soft: true)
-    
+
     XCTAssertFalse(
       deletedUser?.active ?? true
     )
@@ -154,14 +154,14 @@ class UserAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
   func testUserAsync_DeleteNotExistingUser() async throws {
     let someUser = testableUser()
     let resultValue = try await someUser.delete(soft: false)
-    
+
     XCTAssertNil(resultValue)
   }
 
   func testUserAsync_WherePresent() async throws {
     let channelId = randomString()
     let channel = try await chat.createChannel(id: channelId, name: channelId)
-    
+
     // Keeping a strong reference to this object for test purposes to simulate that someone is already present on the given channel.
     // If this object is not retained, it will be deallocated, resulting in no subscription to the channel,
     // which would cause the behavior being tested to fail.
@@ -169,15 +169,15 @@ class UserAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     debugPrint(connectResult)
 
     try await Task.sleep(nanoseconds: 5_000_000_000)
-    
+
     let channelIdentifiers = try await chat.currentUser.wherePresent()
     let expectedChannelIdentifiers = [channelId]
-    
+
     XCTAssertEqual(
       expectedChannelIdentifiers,
       channelIdentifiers
     )
-    
+
     addTeardownBlock { [unowned self] in
       _ = try? await chat.deleteChannel(id: channel.id)
     }
@@ -185,10 +185,10 @@ class UserAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
   func testUserAsync_GetMemberships() async throws {
     let channel = try await chat.createChannel(id: randomString())
-    
+
     try await channel.invite(user: chat.currentUser)
     let getMembershipsValue = try await chat.currentUser.getMemberships()
-    
+
     XCTAssertEqual(try (XCTUnwrap(getMembershipsValue.memberships.first)).user.id, chat.currentUser.id)
     XCTAssertEqual(try (XCTUnwrap(getMembershipsValue.memberships.first)).channel.id, channel.id)
 
@@ -201,9 +201,9 @@ class UserAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     let expectation = expectation(description: "StreamUpdates")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
-    
+
     let createdUser = try await chat.createUser(user: testableUser())
-    
+
     let task = Task {
       for await updatedUser in createdUser.streamUpdates() {
         XCTAssertEqual(updatedUser?.name, "NewName")
@@ -216,7 +216,7 @@ class UserAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
         expectation.fulfill()
       }
     }
-    
+
     try await Task.sleep(nanoseconds: 3_000_000_000)
     try await createdUser.update(
       name: "NewName",
@@ -227,9 +227,9 @@ class UserAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
       status: "NewStatus",
       type: "NewType"
     )
-    
+
     await fulfillment(of: [expectation], timeout: 6)
-    
+
     addTeardownBlock { [unowned self] in
       task.cancel()
       _ = try? await chat.deleteUser(id: createdUser.id)
@@ -255,7 +255,7 @@ class UserAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
         }
       }
     }
-    
+
     for user in [firstUser, secondUser] {
       try await Task.sleep(nanoseconds: 3_000_000_000)
       try await user.update(
@@ -273,7 +273,7 @@ class UserAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
       of: [expectation],
       timeout: 6
     )
-    
+
     addTeardownBlock { [unowned self] in
       task.cancel()
       _ = try? await chat.deleteUser(id: firstUser.id)

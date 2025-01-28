@@ -44,7 +44,7 @@ extension BaseClosureIntegrationTestCase {
 // This extension uses `XCTestExpectation` to flatten the structure of closure-based tests,
 // reducing the need for nested closures. It allows tests to appear sequential and easier
 // to follow without changing the underlying closure-based behavior.
-///
+//
 // This is not a replacement for Swift's native `async-await` but rather a way to improve
 // the readability of tests that involve multiple asynchronous calls with completion handlers.
 extension BaseClosureIntegrationTestCase {

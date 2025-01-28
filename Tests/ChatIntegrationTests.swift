@@ -78,22 +78,22 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
       }
     }
   }
-  
+
   func testChat_UpdateUser() throws {
     let newCustom: [String: JSONCodableScalar] = [
       "someValue": 17_253_575_019_298_112,
       "someStr": "str"
     ]
-    
+
     let userId = randomString()
-    
+
     try awaitResultValue {
       chat.createUser(
         id: userId,
         completion: $0
       )
     }
-    
+
     let updatedUser = try awaitResultValue {
       chat.updateUser(
         id: userId,
@@ -116,7 +116,7 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
     XCTAssertEqual(updatedUser.custom?.mapValues { $0.scalarValue }, newCustom.mapValues { $0.scalarValue })
     XCTAssertEqual(updatedUser.status, "offline")
     XCTAssertEqual(updatedUser.type, "regular")
-    
+
     addTeardownBlock { [unowned self] in
       try awaitResult {
         chat.deleteUser(
@@ -868,14 +868,14 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
         completion: $0
       )
     }
-    
+
     let tt = try awaitResultValue {
       channel.sendText(
         text: "Some text",
         completion: $0
       )
     }
-    
+
     try awaitResultValue(delay: 2) {
       chat.emitEvent(
         channelId: chat.currentUser.id,

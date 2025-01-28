@@ -20,13 +20,13 @@ class MessageDraftIntegrationTests: BaseAsyncIntegrationTestCase {
   override func customSetup() async throws {
     let channelId = "cchnl\(randomString())"
     let userId = "uuser\(randomString())"
-    
+
     channel = try await chat.createChannel(id: channelId, name: channelId)
     user = try await chat.createUser(user: UserImpl(chat: chat, id: userId, name: userId))
-    
+
     try await channel.invite(user: user)
   }
-  
+
   override func customTearDown() async throws {
     _ = try? await chat.deleteUser(id: user.id)
     _ = try? await chat.deleteChannel(id: channel.id)
@@ -60,7 +60,7 @@ class MessageDraftIntegrationTests: BaseAsyncIntegrationTestCase {
     messageDraft.update(text: "This is a @uuser")
 
     await fulfillment(of: [expectation], timeout: 6)
-    
+
     let timetoken = try await messageDraft.send()
     try await Task.sleep(nanoseconds: 3_000_000_000)
     let message = try await channel.getMessage(timetoken: timetoken)
@@ -104,7 +104,7 @@ class MessageDraftIntegrationTests: BaseAsyncIntegrationTestCase {
     messageDraft.update(text: "This is a #cchnl")
 
     await fulfillment(of: [expectation], timeout: 6)
-    
+
     let timetoken = try await messageDraft.send()
     try await Task.sleep(nanoseconds: 3_000_000_000)
     let message = try await channel.getMessage(timetoken: timetoken)

@@ -47,7 +47,7 @@ class ThreadMessageaAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
   func testThreadMessageAsync_HasNoUserReactions() throws {
     XCTAssertFalse(threadMessage.hasUserReaction(reaction: "someReaction"))
   }
-  
+
   func testThreadMessageAsync_EditText() async throws {
     let currentMessageText = threadMessage.text
     let newText = "NewTextValue"

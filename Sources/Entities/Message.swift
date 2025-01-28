@@ -29,8 +29,8 @@ public protocol Message {
   var actions: [String: [String: [Action]]]? { get }
   /// Extra information added to the message giving additional context
   var meta: [String: JSONCodable]? { get }
-  /// List of mentioned users with IDs and names
 
+  /// List of mentioned users with IDs and names
   @available(*, deprecated, message: "Use `Message.getMessageElements()` instead")
   var mentionedUsers: MessageMentionedUsers? { get }
   /// List of referenced channels with IDs and names

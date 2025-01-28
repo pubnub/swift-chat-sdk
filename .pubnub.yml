@@ -1,9 +1,31 @@
----
 name: swift-chat-sdk
 scm: github.com/pubnub/swift-chat-sdk
-version: "0.10.1"
+version: 0.11.0
 schema: 1
 changelog:
+  - date: 2025-01-28
+    version: 0.11.0
+    changes:
+      - type: feature
+        text: "Add the new `update(updateAction:completion:)`method on User entity. This method can be used to update data on the server without losing intermediate updates that might have happened in the time between when the object was last received and updated."
+      - type: feature
+        text: "Add the ability to mute and unmute users on the Chat instance. There are `chat.mutedUsersManager.mute(userId:completion:)` and `chat.mutedUsersManager.unmuteUser(userId:completion:)` to mute and unmute a user, respectively."
+      - type: feature
+        text: "Add the option to automatically sync the mute list by enabling `ChatConfiguration.syncMutedUsers`."
+      - type: feature
+        text: "Add missing function to parse quoted message text into `[MessageElement]`."
+      - type: bug
+        text: "Fix the problem of overwriting custom data at regular intervals when `storeUserActivityInterval` is enabled."
+  - date: 2025-01-23
+    version: 0.10.3
+    changes:
+      - type: bug
+        text: "Fix the error when retrieving the unread messages count on the Membership instance."
+  - date: 2025-01-14
+    version: 0.10.2
+    changes:
+      - type: bug
+        text: "Fix the bug with messages being deleted from Message Persistence."
   - date: 2025-01-09
     version: 0.10.1
     changes:
@@ -91,7 +113,7 @@ sdks:
           - distribution-type: source
             distribution-repository: GitHub release
             package-name: PubNubSwiftChatSDK
-            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.10.1-dev.zip
+            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.11.0-dev.zip
             supported-platforms:
               supported-operating-systems:
                 iOS:

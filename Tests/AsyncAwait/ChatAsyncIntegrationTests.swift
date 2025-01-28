@@ -340,7 +340,7 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     }
   }
   
-  func testChatAsync_GroupConversation() async throws {
+  func testChatAsync_CreateGroupConversation() async throws {
     let anotherUser = try await chat.createUser(
       id: randomString(),
       name: "AnotherUser"
@@ -575,5 +575,15 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     addTeardownBlock { [unowned self] in
       _ = try? await chat.deleteChannel(id: channel.id)
     }
+  }
+  
+  func testChat_MutedUsers() async throws {
+    let userToMute = randomString()
+
+    try await chat.mutedUsersManager.muteUser(userId: userToMute)
+    XCTAssertEqual(chat.mutedUsersManager.mutedUsers, [userToMute])
+    
+    try await chat.mutedUsersManager.unmuteUser(userId: userToMute)
+    XCTAssertTrue(chat.mutedUsersManager.mutedUsers.isEmpty)
   }
 }

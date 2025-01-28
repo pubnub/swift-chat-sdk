@@ -965,4 +965,30 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
       }
     }
   }
+
+  func testChat_MutedUsers() throws {
+    let userToMute = randomString()
+
+    try awaitResultValue {
+      chat.mutedUsersManager.muteUser(
+        userId: userToMute,
+        completion: $0
+      )
+    }
+
+    XCTAssertEqual(
+      chat.mutedUsersManager.mutedUsers, [userToMute]
+    )
+
+    try awaitResultValue {
+      chat.mutedUsersManager.unmuteUser(
+        userId: userToMute,
+        completion: $0
+      )
+    }
+
+    XCTAssertTrue(
+      chat.mutedUsersManager.mutedUsers.isEmpty
+    )
+  }
 }

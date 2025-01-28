@@ -72,6 +72,31 @@ public extension User {
     }
   }
 
+  /// Updates the metadata of the user with information provided in `updateAction`
+  ///
+  /// Please note that `updateAction` will be called **at least** once with the current data from the `User` object in
+  /// the argument. Inside `updateAction`, new values for `User` fields should be computed and returned as a closure result.
+  ///
+  /// In case the user's information has changed on the server since the original User object was retrieved, the `updateAction` will be called again
+  /// with new User data that represents the current server state. This might happen multiple times until either new data is saved successfully, or the request fails.
+  ///
+  /// - Parameter updateAction: A function for computing new values for the `User` fields based on the provided `User` argument and returning changes to apply
+  /// - Returns: The updated user object with its metadata
+  func update(
+    updateAction: @escaping (ChatType.ChatUserType) -> [PubNubMetadataChange<PubNubUserMetadata>]
+  ) async throws -> ChatType.ChatUserType {
+    try await withCheckedThrowingContinuation { continuation in
+      update(updateAction: updateAction) {
+        switch $0 {
+        case let .success(user):
+          continuation.resume(returning: user)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+
   /// Deletes the user. If soft deletion is enabled, the user's data is retained but marked as inactive.
   ///
   /// - Parameter soft: If true, the user is soft deleted, retaining their data but making them inactive

@@ -10,4 +10,4 @@
 
 import Foundation
 
-let pubNubSwiftChatSDKVersion: String = "0.10.1"
+let pubNubSwiftChatSDKVersion: String = "0.11.0"

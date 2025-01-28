@@ -85,10 +85,10 @@ public protocol Membership {
   ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: The number of unread messages on the membership's channel
+  ///     - **Success**: The number of unread messages on the membership's channel or `nil` when ``lastReadMessageTimetoken`` is also `nil`
   ///     - **Failure**: An `Error` describing the failure
   func getUnreadMessagesCount(
-    completion: ((Swift.Result<UInt64, Error>) -> Void)?
+    completion: ((Swift.Result<UInt64?, Error>) -> Void)?
   )
 
   /// You can receive updates when specific user-channel Membership object(s) are added, edited, or removed.

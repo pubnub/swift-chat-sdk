@@ -70,6 +70,29 @@ class UserAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     XCTAssertEqual(updatedUser.status, "inactive")
     XCTAssertEqual(updatedUser.type, "regular")
   }
+  
+  func testUserAsync_UpdateUserCallback() async throws {
+    try await chat.currentUser.update(
+      name: "Markus Koller",
+      externalId: "11111111",
+      profileUrl: "https://picsum.photos/200/300",
+      email: "markus.koller@pubnub.com",
+      status: "inactive",
+      type: "regular"
+    )
+
+    // Simulates updating an outdated version of the User object.
+    // We expect the fresh object from the server to be returned first, and then subsequent updates to be applied on top of it
+    let updateResult = try await chat.currentUser.update() {
+      [
+        .stringOptional(\.name, $0.name?.uppercased()),
+        .stringOptional(\.status, $0.status?.uppercased())
+      ]
+    }
+
+    XCTAssertEqual(updateResult.name, "MARKUS KOLLER")
+    XCTAssertEqual(updateResult.status, "INACTIVE")
+  }
 
   func testUserAsync_UpdateNotExistingUser() async throws {
     let errorExpectation = XCTestExpectation(description: "ErrorExpectation")

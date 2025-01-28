@@ -172,6 +172,23 @@ public struct ChatConfiguration {
   /// Property that lets you define your custom message payload to be sent and/or received by Chat SDK on one or all channels, whenever it differs from the default `message.text` Chat SDK payload.
   /// It also lets you configure your own message actions whenever a message is edited or deleted
   public var customPayloads: CustomPayloads?
+  /// Enable automatic syncing of the ``MutedUsersManagerInterface`` data with App Context, using the current `userId` as the key.
+  ///
+  ///  Specifically, the data is saved in the `custom` object of the following User in App Context:
+  ///
+  /// ```
+  /// PN_PRIV.{userId}.mute.1
+  /// ```
+  ///
+  /// where `{userId}` is the current PubNubConfiguration's `userId`
+  ///
+  /// If using Access Manager, the access token must be configured with the appropriate rights to subscribe to that
+  /// channel, and get, update, and delete the App Context User with that id.
+  ///
+  /// Due to App Context size limits, the number of muted users is limited to around 200 and will result in sync errors
+  /// when the limit is exceeded. The list will not sync until its size is reduced.
+  ///
+  public var syncMutedUsers: Bool
 
   /// Creates a new ``ChatConfiguration`` object
   ///
@@ -184,6 +201,7 @@ public struct ChatConfiguration {
   ///   - rateLimitFactor: The so-called "exponential backoff" which multiplicatively decreases the rate at which messages are published on channels
   ///   - rateLimitPerChannel: Client-side limit that states the rate at which messages can be published on a given channel type
   ///   - customPayloads: Custom message payload to be sent and/or received by Chat SDK
+  ///   - syncMutedUsers: A boolean value that controls syncing of muted users
   public init(
     logLevel: LogLevel = .off,
     typingTimeout: Int = 5,
@@ -192,7 +210,8 @@ public struct ChatConfiguration {
     pushNotificationsConfig: PushNotificationsConfig = .init(),
     rateLimitFactor: Int = 2,
     rateLimitPerChannel: [ChannelType: Int64] = ChannelType.allCases.reduce(into: [ChannelType: Int64]()) { res, type in res[type] = 0 },
-    customPayloads: CustomPayloads? = nil
+    customPayloads: CustomPayloads? = nil,
+    syncMutedUsers: Bool = false
   ) {
     self.logLevel = logLevel
     self.typingTimeout = typingTimeout
@@ -202,6 +221,7 @@ public struct ChatConfiguration {
     self.rateLimitFactor = rateLimitFactor
     self.rateLimitPerChannel = rateLimitPerChannel
     self.customPayloads = customPayloads
+    self.syncMutedUsers = syncMutedUsers
   }
 
   func transform() -> any PubNubChat.ChatConfiguration {
@@ -219,7 +239,8 @@ public struct ChatConfiguration {
       ),
       rateLimitFactor: Int32(rateLimitFactor),
       rateLimitPerChannel: rateLimitPerChannel.transform(),
-      customPayloads: customPayloads?.transform()
+      customPayloads: customPayloads?.transform(),
+      syncMutedUsers: syncMutedUsers
     )
   }
 }

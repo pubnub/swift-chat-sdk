@@ -42,7 +42,7 @@ jobs:
   package-managers-validation:
     name: Validate package managers
     runs-on:
-      group: macos-arm-gh
+      group: macos-gh
     strategy:
       matrix:
         managers: [Swift Package Manager]

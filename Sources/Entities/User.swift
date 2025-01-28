@@ -35,6 +35,8 @@ public protocol User {
   var type: String? { get }
   /// The last updated timestamp for the object
   var updated: String? { get }
+  /// The entity tag (`ETag`) that was returned by the server with this User object. It is a random string that changes with each data update.
+  var eTag: String? { get }
   /// Timestamp for the last time the user information was updated or modified
   var lastActiveTimestamp: TimeInterval? { get }
   /// Indicates whether the user is currently (at the time of obtaining this ``User`` object) active
@@ -72,6 +74,24 @@ public protocol User {
     custom: [String: JSONCodableScalar]?,
     status: String?,
     type: String?,
+    completion: ((Swift.Result<ChatType.ChatUserType, Error>) -> Void)?
+  )
+
+  /// Updates the metadata of the user with information provided in `updateAction`
+  ///
+  /// Please note that `updateAction` will be called **at least** once with the current data from the `User` object in
+  /// the argument. Inside `updateAction`, new values for `User` fields should be computed and returned as a closure result.
+  ///
+  /// In case the user's information has changed on the server since the original User object was retrieved, the `updateAction` will be called again
+  /// with new User data that represents the current server state. This might happen multiple times until either new data is saved successfully, or the request fails.
+  ///
+  /// - Parameters:
+  ///   - updateAction: A function for computing new values for the `User` fields based on the provided `User` argument and returning changes to apply
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: The updated user object with its metadata
+  ///     - **Failure**: An `Error` describing the failure
+  func update(
+    updateAction: @escaping (ChatType.ChatUserType) -> [PubNubMetadataChange<PubNubUserMetadata>],
     completion: ((Swift.Result<ChatType.ChatUserType, Error>) -> Void)?
   )
 

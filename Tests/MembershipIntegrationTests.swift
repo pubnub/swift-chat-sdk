@@ -106,6 +106,19 @@ final class MembershipTests: BaseClosureIntegrationTestCase {
     )
   }
 
+  func testMembership_GetUnreadMessagesCountForEmptyChannel() throws {
+    let someMembership = MembershipImpl(
+      chat: chat,
+      channel: channel,
+      user: UserImpl(chat: chat, id: randomString())
+    )
+    XCTAssertNil(
+      try awaitResultValue {
+        someMembership.getUnreadMessagesCount(completion: $0)
+      }
+    )
+  }
+
   func testMembership_StreamUpdates() throws {
     let expectation = expectation(description: "MembershipStreamUpdates")
     expectation.assertForOverFulfill = true

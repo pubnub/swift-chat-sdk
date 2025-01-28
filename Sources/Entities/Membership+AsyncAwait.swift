@@ -85,7 +85,7 @@ public extension Membership {
   /// Returns the number of messages you didn't read on a given channel. You can display this number on UI in the channel list of your chat app.
   ///
   /// - Returns: A number of unread messages
-  func getUnreadMessagesCount() async throws -> UInt64 {
+  func getUnreadMessagesCount() async throws -> UInt64? {
     try await withCheckedThrowingContinuation { continuation in
       getUnreadMessagesCount {
         switch $0 {

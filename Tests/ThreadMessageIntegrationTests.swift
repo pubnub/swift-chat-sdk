@@ -14,7 +14,7 @@ import XCTest
 
 @testable import PubNubSwiftChatSDK
 
-class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
+class ThreadMessageIntegrationTests: BaseClosureIntegrationTestCase {
   var channel: ChannelImpl!
   var threadChannel: ThreadChannelImpl!
   var threadMessage: ThreadMessageImpl!
@@ -79,7 +79,7 @@ class ThreadMessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     threadMessageTimetoken = nil
   }
 
-  func testThreadMessage_HasUserReactions() throws {
+  func testThreadMessage_HasNoUserReactions() throws {
     XCTAssertFalse(threadMessage.hasUserReaction(reaction: "someReaction"))
   }
 

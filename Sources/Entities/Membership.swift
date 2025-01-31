@@ -58,7 +58,7 @@ public protocol Membership {
   )
 
   /// Updates the channel membership information for a given user.
-
+  ///
   /// - Parameters:
   ///   - custom: Any custom properties or metadata associated with the channel-user membership in a form of key-value pairs
   ///   - completion: The async `Result` of the method call
@@ -69,7 +69,7 @@ public protocol Membership {
     completion: ((Swift.Result<ChatType.ChatMembershipType, Error>) -> Void)?
   )
 
-  /// Setting the last read message for users lets you implement the Read Receipts feature and monitor which channel member read which message.
+  /// Setting the last read message timetoken for users lets you implement the Read Receipts feature and monitor which channel member read which message.
   ///
   /// - Parameters:
   ///   - timetoken: Timetoken of the last read message on a given channel that gets added to the user-channel membership as the `lastReadMessageTimetoken` property

@@ -92,7 +92,7 @@ public protocol User {
   ///     - **Failure**: An `Error` describing the failure
   func update(
     updateAction: @escaping (ChatType.ChatUserType) -> [PubNubMetadataChange<PubNubUserMetadata>],
-    completion: ((Swift.Result<UserImpl, Error>) -> Void)?
+    completion: ((Swift.Result<ChatType.ChatUserType, Error>) -> Void)?
   )
 
   /// Deletes the user. If soft deletion is enabled, the user's data is retained but marked as inactive.
@@ -162,6 +162,7 @@ public protocol User {
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: A boolean value indicating whether the user is active
   ///     - **Failure**: An `Error` describing the failure
+  @available(*, deprecated, renamed: "active", message: "Use non-async `active` property instead")
   func active(
     completion: ((Swift.Result<Bool, Error>) -> Void)?
   )

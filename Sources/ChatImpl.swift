@@ -26,7 +26,7 @@ public final class ChatImpl {
 
   let chat: PubNubChat.ChatImpl
 
-  /// Initializes a new instance with the given chat and `PubNub` configurations.
+  /// Creates a new instance with the given chat and `PubNub` configurations.
   ///
   /// This initializer sets up the object using the provided chat configuration and `PubNub` configuration.
   /// After creating an instance, you must call the ``initialize(completion:)`` method before using the object.
@@ -34,7 +34,10 @@ public final class ChatImpl {
   /// - Parameters:
   ///   - chatConfiguration: A configuration object of type ``ChatConfiguration`` that defines the chat settings
   ///   - pubNubConfiguration: A configuration object of type `PubNubConfiguration` that defines the `PubNub` settings
-  public init(chatConfiguration: ChatConfiguration, pubNubConfiguration: PubNubConfiguration) {
+  public init(
+    chatConfiguration: ChatConfiguration = ChatConfiguration(),
+    pubNubConfiguration: PubNubConfiguration
+  ) {
     pubNub = PubNub(configuration: pubNubConfiguration)
     config = chatConfiguration
     chat = ChatImpl.createKMPChat(from: pubNub, config: chatConfiguration)
@@ -197,7 +200,7 @@ extension ChatImpl: Chat {
   public func getUsers(
     filter: String? = nil,
     sort: [PubNub.ObjectSortField] = [],
-    limit: Int?,
+    limit: Int? = nil,
     page: PubNubHashedPage? = nil,
     completion: ((Swift.Result<(users: [UserImpl], page: PubNubHashedPage?), Error>) -> Void)? = nil
   ) {

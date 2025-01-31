@@ -6,9 +6,9 @@ disabled_rules:
   - type_name
   - function_body_length
   - function_parameter_count
+  - type_body_length
 included:
   - Sources/
-excluded:
   - Tests/
 opt_in_rules:
   - force_unwrapping

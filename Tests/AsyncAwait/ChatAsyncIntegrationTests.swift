@@ -586,4 +586,6 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     try await chat.mutedUsersManager.unmuteUser(userId: userToMute)
     XCTAssertTrue(chat.mutedUsersManager.mutedUsers.isEmpty)
   }
+
+  // swiftlint:disable:next file_length
 }

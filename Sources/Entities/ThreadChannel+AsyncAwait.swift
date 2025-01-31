@@ -18,7 +18,7 @@ public extension ThreadChannel {
   /// Pins a selected thread message to the thread channel.
   ///
   /// - Parameter message: A message you want to pin to the selected thread channel
-  /// - Returns: An updated `TheadChannel`
+  /// - Returns: An updated `ThreadChannel`
   func pinMessageToParentChannel(message: ChatType.ChatThreadMessageType) async throws -> ChatType.ChatChannelType {
     try await withCheckedThrowingContinuation { continuation in
       pinMessageToParentChannel(message: message) {
@@ -34,7 +34,7 @@ public extension ThreadChannel {
 
   /// Unpins the previously pinned thread message from the thread channel.
   ///
-  /// - Returns: An updated `TheadChannel`
+  /// - Returns: An updated `ThreadChannel`
   func unpinMessageFromParentChannel() async throws -> ChatType.ChatChannelType {
     try await withCheckedThrowingContinuation { continuation in
       unpinMessageFromParentChannel {

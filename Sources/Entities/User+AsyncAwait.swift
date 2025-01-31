@@ -100,7 +100,7 @@ public extension User {
   /// Deletes the user. If soft deletion is enabled, the user's data is retained but marked as inactive.
   ///
   /// - Parameter soft: If true, the user is soft deleted, retaining their data but making them inactive
-  /// - Returns: For hard delete, the method returns `nil`. Otherwise, an updated ``User`` instance with the status field set to `"deleted"`
+  /// - Returns: Returns `nil` if the user was hard-deleted. Otherwise, an updated ``User`` instance with the status field set to `"deleted"`
   func delete(soft: Bool = false) async throws -> ChatType.ChatUserType? {
     try await withCheckedThrowingContinuation { continuation in
       delete(soft: soft) {

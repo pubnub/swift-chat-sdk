@@ -445,4 +445,6 @@ final class MessageIntegrationTests: BaseClosureIntegrationTestCase {
 
     XCTAssertTrue(restoredMessage.actions?.isEmpty ?? false)
   }
+
+  // swiftlint:disable:next file_length
 }

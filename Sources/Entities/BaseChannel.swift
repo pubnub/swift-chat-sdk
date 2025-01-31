@@ -12,7 +12,6 @@ import Foundation
 import PubNubChat
 import PubNubSDK
 
-// swiftlint:disable:next type_body_length
 final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel {
   var chat: ChatImpl { ChatAdapter.map(chat: channel.chat).chat }
   var id: String { channel.id }

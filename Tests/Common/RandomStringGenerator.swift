@@ -13,7 +13,11 @@ import Foundation
 final class RandomStringGenerator {
   func randomString(length: Int = 6) -> String {
     String((0 ..< max(1, min(length, 6))).map { _ in
-      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".randomElement()!
+      if let character = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".randomElement() {
+        return character
+      } else {
+        preconditionFailure("Empty collection. Aborting")
+      }
     })
   }
 }

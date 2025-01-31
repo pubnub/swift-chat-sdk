@@ -195,9 +195,10 @@ class ThreadMessageaAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
     let task = Task {
       for await receivedMessages in ThreadMessageImpl.streamUpdatesOn(messages: [unwrappedMessage]) {
-        XCTAssertTrue(receivedMessages.first!.hasUserReaction(reaction: "myReaction"))
-        XCTAssertEqual(receivedMessages.first!.channelId, unwrappedMessage.channelId)
-        XCTAssertEqual(receivedMessages.first!.userId, unwrappedMessage.userId)
+        let message = try XCTUnwrap(receivedMessages.first)
+        XCTAssertTrue(message.hasUserReaction(reaction: "myReaction"))
+        XCTAssertEqual(message.channelId, unwrappedMessage.channelId)
+        XCTAssertEqual(message.userId, unwrappedMessage.userId)
         expectation.fulfill()
       }
     }

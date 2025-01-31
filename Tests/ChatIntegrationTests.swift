@@ -991,4 +991,6 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
       chat.mutedUsersManager.mutedUsers.isEmpty
     )
   }
+
+  // swiftlint:disable:next file_length
 }

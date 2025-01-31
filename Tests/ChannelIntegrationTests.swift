@@ -669,10 +669,10 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
         completion: $0
       )
     }
-    let inputFile = try InputFile(
+    let inputFile = InputFile(
       name: "TxtFile",
       type: "text/plain",
-      source: .data(XCTUnwrap("Lorem ipsum".data(using: .utf8)), contentType: "text/plain")
+      source: .data(Data("Lorem ipsum".utf8), contentType: "text/plain")
     )
 
     try awaitResultValue(timeout: 10) {
@@ -732,10 +732,10 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
         completion: $0
       )
     }
-    let inputFile = try InputFile(
+    let inputFile = InputFile(
       name: "TxtFile",
       type: "text/plain",
-      source: .data(XCTUnwrap("Lorem ipsum".data(using: .utf8)), contentType: "text/plain")
+      source: .data(Data("Lorem ipsum".utf8), contentType: "text/plain")
     )
 
     try awaitResultValue(timeout: 30) {
@@ -891,4 +891,6 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
       try awaitResult { message?.delete(completion: $0) }
     }
   }
+
+  // swiftlint:disable:next file_length
 }

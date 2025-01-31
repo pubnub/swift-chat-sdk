@@ -59,8 +59,8 @@ enum IntegrationTestCaseConfiguration {
     }
 
     return PubNubConfiguration(
-      publishKey: dictionary["publishKey"]!,
-      subscribeKey: dictionary["subscribeKey"]!,
+      publishKey: dictionary["publishKey"] ?? "",
+      subscribeKey: dictionary["subscribeKey"] ?? "",
       userId: RandomStringGenerator().randomString()
     )
   }

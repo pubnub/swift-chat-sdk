@@ -389,10 +389,10 @@ class ChannelIntegrationTests: BaseAsyncIntegrationTestCase {
     let newChannel = try await newChat.createChannel(
       id: randomString()
     )
-    let inputFile = try InputFile(
+    let inputFile = InputFile(
       name: "TxtFile",
       type: "text/plain",
-      source: .data(XCTUnwrap("Lorem ipsum".data(using: .utf8)), contentType: "text/plain")
+      source: .data(Data("Lorem ipsum".utf8), contentType: "text/plain")
     )
 
     try await newChannel.sendText(text: "Text", files: [inputFile])
@@ -437,10 +437,10 @@ class ChannelIntegrationTests: BaseAsyncIntegrationTestCase {
     let newChannel = try await newChat.createChannel(
       id: randomString()
     )
-    let inputFile = try InputFile(
+    let inputFile = InputFile(
       name: "TxtFile",
       type: "text/plain",
-      source: .data(XCTUnwrap("Lorem ipsum".data(using: .utf8)), contentType: "text/plain")
+      source: .data(Data("Lorem ipsum".utf8), contentType: "text/plain")
     )
 
     try await newChannel.sendText(text: "Text", files: [inputFile])
@@ -471,12 +471,10 @@ class ChannelIntegrationTests: BaseAsyncIntegrationTestCase {
     }
 
     let presenceStreamTask = Task {
-      for await userIdentifiers in channel.streamPresence() {
-        if !userIdentifiers.isEmpty {
-          XCTAssertEqual(userIdentifiers.count, 1)
-          XCTAssertEqual(userIdentifiers.first, chat.currentUser.id)
-          expectation.fulfill()
-        }
+      for await userIdentifiers in channel.streamPresence() where !userIdentifiers.isEmpty {
+        XCTAssertEqual(userIdentifiers.count, 1)
+        XCTAssertEqual(userIdentifiers.first, chat.currentUser.id)
+        expectation.fulfill()
       }
     }
 
@@ -542,4 +540,6 @@ class ChannelIntegrationTests: BaseAsyncIntegrationTestCase {
       _ = try? await message?.delete()
     }
   }
+
+  // swiftlint:disable:next file_length
 }

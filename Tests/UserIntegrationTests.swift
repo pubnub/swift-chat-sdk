@@ -14,7 +14,7 @@ import XCTest
 
 @testable import PubNubSwiftChatSDK
 
-final class UserIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
+final class UserIntegrationTests: BaseClosureIntegrationTestCase {
   func testableUser() -> PubNubSwiftChatSDK.UserImpl {
     UserImpl(
       chat: chat,
@@ -171,6 +171,9 @@ final class UserIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       )
     }
 
+    XCTAssertFalse(
+      deletedUser?.active ?? true
+    )
     XCTAssertEqual(
       createdUser.id,
       deletedUser?.id
@@ -206,7 +209,7 @@ final class UserIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testUser_IsActive() throws {
+  func testUser_LegacyIsActive() throws {
     let channelId = randomString()
     let channel = try awaitResultValue { chat.createChannel(id: channelId, name: channelId, completion: $0) }
     let closeable = channel.connect(callback: { _ in })
@@ -245,10 +248,6 @@ final class UserIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
     let resultValue = try awaitResultValue {
       chat.currentUser.getMemberships(
-        limit: nil,
-        page: nil,
-        filter: nil,
-        sort: [],
         completion: $0
       )
     }

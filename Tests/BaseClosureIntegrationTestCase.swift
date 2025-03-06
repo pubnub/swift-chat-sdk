@@ -1,5 +1,5 @@
 //
-//  PubNubSwiftChatSDKIntegrationTests.swift
+//  BaseClosureIntegrationTestCase.swift
 //
 //  Copyright (c) PubNub Inc.
 //  All rights reserved.
@@ -13,23 +13,9 @@ import PubNubSDK
 import PubNubSwiftChatSDK
 import XCTest
 
-class PubNubSwiftChatSDKIntegrationTests: XCTestCase {
-  var chat: PubNubSwiftChatSDK.ChatImpl!
-
-  private lazy var configuration: [String: String] = readPropertyList()
-
+class BaseClosureIntegrationTestCase: BaseIntegrationTestCase {
   override func setUpWithError() throws {
     try super.setUpWithError()
-
-    let pubNubConfiguration = PubNubConfiguration(
-      publishKey: configuration["publishKey"]!,
-      subscribeKey: configuration["subscribeKey"]!,
-      userId: randomString()
-    )
-    chat = ChatImpl(
-      chatConfiguration: ChatConfiguration(storeUserActivityTimestamps: true),
-      pubNubConfiguration: pubNubConfiguration
-    )
 
     try awaitResultValue { chat.initialize(completion: $0) }
     try customSetUpWitError()
@@ -45,55 +31,23 @@ class PubNubSwiftChatSDKIntegrationTests: XCTestCase {
   }
 }
 
-extension PubNubSwiftChatSDKIntegrationTests {
+// An extension to provide custom setup and teardown logic in test cases. This extension introduces helper methods
+// that are called after the basic setup or before the teardown logic. These methods allow test cases to perform
+// additional, custom configuration or cleanup without duplicating common setup and teardown code.
+extension BaseClosureIntegrationTestCase {
   func customSetUpWitError() throws {}
   func customTearDownWithError() throws {}
 }
 
-// MARK: - Helpers
-
-extension PubNubSwiftChatSDKIntegrationTests {
-  private func readPropertyList() -> [String: String] {
-    let resourceName = "PubNubSwiftChatSDKTests"
-    let resourceExtension = "plist"
-
-    guard let infoPlistPath = Bundle(
-      for: PubNubSwiftChatSDKIntegrationTests.self
-    ).url(
-      forResource: resourceName,
-      withExtension: resourceExtension
-    ) else {
-      fatalError("Cannot read \(resourceName).\(resourceExtension) file")
-    }
-
-    guard let infoPlistData = try? Data(contentsOf: infoPlistPath) else {
-      fatalError("Cannot read content of \(resourceName).\(resourceExtension) file")
-    }
-
-    guard let dictionary = try? PropertyListSerialization.propertyList(
-      from: infoPlistData,
-      options: [],
-      format: nil
-    ) as? [String: String] else {
-      fatalError("Cannot serialize \(resourceName).\(resourceExtension) into Dictionary")
-    }
-
-    return dictionary
-  }
-}
-
-extension PubNubSwiftChatSDKIntegrationTests {
-  func randomString(length: Int = 6) -> String {
-    // Define the characters set (alphanumeric)
-    let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-    // Ensure length is within the desired range
-    let length = max(1, min(length, 6))
-    // Generate the random string
-    return String((0 ..< length).map { _ in letters.randomElement()! })
-  }
-}
-
-extension PubNubSwiftChatSDKIntegrationTests {
+// An extension to simplify testing of closure-based methods by providing a cleaner, linear syntax.
+//
+// This extension uses `XCTestExpectation` to flatten the structure of closure-based tests,
+// reducing the need for nested closures. It allows tests to appear sequential and easier
+// to follow without changing the underlying closure-based behavior.
+//
+// This is not a replacement for Swift's native `async-await` but rather a way to improve
+// the readability of tests that involve multiple asynchronous calls with completion handlers.
+extension BaseClosureIntegrationTestCase {
   // Synchronously waits for an asynchronous operation that returns a `Result`
   // and retrieves the successful value
   @discardableResult
@@ -163,17 +117,17 @@ extension PubNubSwiftChatSDKIntegrationTests {
     // If the result is a success, return the value
     return result
   }
-}
 
-extension PubNubSwiftChatSDKIntegrationTests {
   private func wait(_ duration: TimeInterval) {
     // Define the expectation to fulfill
     let expectation = expectation(description: "Waiting for \(duration) seconds")
-    // Dispatch a delay on a background queue
+
+    // Dispatch a delay
     DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
       expectation.fulfill()
     }
-    // Wait for the expectation to be fulfilled or timeout
+
+    // Wait for the expectation to be fulfilled
     wait(for: [expectation], timeout: duration + 1)
   }
 }

@@ -14,7 +14,7 @@ import XCTest
 
 @testable import PubNubSwiftChatSDK
 
-final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
+final class MessageIntegrationTests: BaseClosureIntegrationTestCase {
   var channel: ChannelImpl!
   var testMessage: MessageImpl!
 
@@ -445,4 +445,6 @@ final class MessageIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
 
     XCTAssertTrue(restoredMessage.actions?.isEmpty ?? false)
   }
+
+  // swiftlint:disable:next file_length
 }

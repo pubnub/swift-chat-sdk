@@ -25,6 +25,7 @@ class AutoCloseableImpl {
   init?(_ underlying: PubNubChat.KotlinAutoCloseable?, owner: AnyObject? = nil) {
     if let underlying {
       self.underlying = underlying
+      self.owner = owner
     } else {
       return nil
     }
@@ -32,6 +33,7 @@ class AutoCloseableImpl {
 
   init(_ underlying: PubNubChat.KotlinAutoCloseable, owner: AnyObject? = nil) {
     self.underlying = underlying
+    self.owner = owner
   }
 
   private var owner: AnyObject? {

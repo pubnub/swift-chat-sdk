@@ -184,6 +184,7 @@ extension ChannelImpl: Channel {
     textLinks: [TextLink]? = nil,
     quotedMessage: MessageImpl? = nil,
     files: [InputFile]? = nil,
+    customPushData: [String: String]? = nil,
     completion: ((Swift.Result<Timetoken, Error>) -> Void)? = nil
   ) {
     target.sendText(
@@ -210,6 +211,7 @@ extension ChannelImpl: Channel {
     quotedMessage: MessageImpl? = nil,
     files: [InputFile]? = nil,
     usersToMention: [String]? = nil,
+    customPushData: [String: String]? = nil,
     completion: ((Swift.Result<Timetoken, Error>) -> Void)? = nil
   ) {
     target.sendText(

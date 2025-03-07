@@ -216,6 +216,7 @@ extension ThreadChannelImpl: ThreadChannel {
     textLinks: [TextLink]? = nil,
     quotedMessage: MessageImpl? = nil,
     files: [InputFile]? = nil,
+    customPushData: [String: String]? = nil,
     completion: ((Swift.Result<Timetoken, Error>) -> Void)? = nil
   ) {
     target.sendText(
@@ -242,6 +243,7 @@ extension ThreadChannelImpl: ThreadChannel {
     quotedMessage: MessageImpl? = nil,
     files: [InputFile]?,
     usersToMention: [String]? = nil,
+    customPushData: [String: String]? = nil,
     completion: ((Swift.Result<Timetoken, Error>) -> Void)? = nil
   ) {
     target.sendText(

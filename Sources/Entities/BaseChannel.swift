@@ -186,6 +186,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     textLinks: [TextLink]?,
     quotedMessage: ChatType.ChatMessageType?,
     files: [InputFile]?,
+    customPushData: [String: String]? = nil,
     completion: ((Swift.Result<Timetoken, Error>) -> Void)?
   ) {
     channel.sendText(
@@ -198,7 +199,8 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
       referencedChannels: referencedChannels?.transform(),
       textLinks: textLinks?.compactMap { $0.transform() },
       quotedMessage: quotedMessage?.target.message,
-      files: files?.compactMap { $0.transform() }
+      files: files?.compactMap { $0.transform() },
+      customPushData: customPushData
     ).async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.PNPublishResult>) in
       switch result.result {
       case let .success(response):
@@ -218,6 +220,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     quotedMessage: MessageImpl?,
     files: [InputFile]?,
     usersToMention: [String]? = nil,
+    customPushData: [String: String]? = nil,
     completion: ((Swift.Result<Timetoken, any Error>) -> Void)?
   ) {
     channel.sendText(
@@ -228,7 +231,8 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
       ttl: ttl?.asKotlinInt,
       quotedMessage: quotedMessage?.target.message,
       files: files?.compactMap { $0.transform() },
-      usersToMention: usersToMention
+      usersToMention: usersToMention,
+      customPushData: customPushData
     ).async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.PNPublishResult>) in
       switch result.result {
       case let .success(response):

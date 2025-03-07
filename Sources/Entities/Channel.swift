@@ -192,6 +192,7 @@ public protocol Channel: CustomStringConvertible {
     textLinks: [TextLink]?,
     quotedMessage: ChatType.ChatMessageType?,
     files: [InputFile]?,
+    customPushData: [String: String]?,
     completion: ((Swift.Result<Timetoken, Error>) -> Void)?
   )
 
@@ -223,6 +224,7 @@ public protocol Channel: CustomStringConvertible {
     quotedMessage: ChatType.ChatMessageType?,
     files: [InputFile]?,
     usersToMention: [String]?,
+    customPushData: [String: String]?,
     completion: ((Swift.Result<Timetoken, Error>) -> Void)?
   )
 

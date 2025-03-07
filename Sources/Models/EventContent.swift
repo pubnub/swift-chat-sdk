@@ -15,7 +15,7 @@ import PubNubSDK
 /// Represents the content of various types of events emitted during chat operations.
 public class EventContent {
   /// Represents a report event, which is used to report a message or user to the admin.
-  public class Report: EventContent {
+  public class Report: EventContent, CustomStringConvertible {
     /// The text of the report, if provided
     public let text: String?
     /// The reason for reporting the message or user
@@ -48,10 +48,25 @@ public class EventContent {
       self.reportedMessageChannelId = reportedMessageChannelId
       self.reportedUserId = reportedUserId
     }
+
+    /// Extension to conform to `CustomStringConvertible` for custom string representation.
+    /// Provides a readable description of the object for debugging and logging purposes
+    public var description: String {
+      String.formattedDescription(
+        self,
+        arguments: [
+          ("text", text ?? "nil"),
+          ("reason", reason),
+          ("reportedMessageTimetoken", reportedMessageTimetoken ?? "nil"),
+          ("reportedMessageChannelId", reportedMessageChannelId ?? "nil"),
+          ("reportedUserId", reportedUserId ?? "nil")
+        ]
+      )
+    }
   }
 
   /// Represents a typing event that indicates whether a user is typing.
-  public class Typing: EventContent {
+  public class Typing: EventContent, CustomStringConvertible {
     /// A boolean value indicating whether the user is typing (true) or not (false)
     public let value: Bool
 
@@ -61,10 +76,16 @@ public class EventContent {
     public init(value: Bool) {
       self.value = value
     }
+
+    /// Extension to conform to `CustomStringConvertible` for custom string representation.
+    /// Provides a readable description of the object for debugging and logging purposes
+    public var description: String {
+      String.formattedDescription(self, arguments: [("value", value)])
+    }
   }
 
   /// Represents a receipt event, indicating that a message was read.
-  public class Receipt: EventContent {
+  public class Receipt: EventContent, CustomStringConvertible {
     /// The timetoken of the message for which the receipt is being acknowledged
     public let messageTimetoken: Timetoken
 
@@ -74,10 +95,16 @@ public class EventContent {
     public init(messageTimetoken: Timetoken) {
       self.messageTimetoken = messageTimetoken
     }
+
+    /// Extension to conform to `CustomStringConvertible` for custom string representation.
+    /// Provides a readable description of the object for debugging and logging purposes
+    public var description: String {
+      String.formattedDescription(self, arguments: [("messageTimetoken", messageTimetoken)])
+    }
   }
 
   /// Represents a mention event, which indicates that a user was mentioned in a message.
-  public class Mention: EventContent {
+  public class Mention: EventContent, CustomStringConvertible {
     /// The timetoken of the message in which the user was mentioned
     public let messageTimetoken: Timetoken
     /// The ID of the channel where the mention occurred
@@ -96,10 +123,23 @@ public class EventContent {
       self.channel = channel
       self.parentChannel = parentChannel
     }
+
+    /// Extension to conform to `CustomStringConvertible` for custom string representation.
+    /// Provides a readable description of the object for debugging and logging purposes
+    public var description: String {
+      String.formattedDescription(
+        self,
+        arguments: [
+          ("messageTimetoken", messageTimetoken),
+          ("channel", channel),
+          ("parentChannel", parentChannel ?? "nil")
+        ]
+      )
+    }
   }
 
   /// Represents an invite event, which is used when a user is invited to join a channel.
-  public class Invite: EventContent {
+  public class Invite: EventContent, CustomStringConvertible {
     /// The type of the channel
     public let channelType: ChannelType
     /// The ID of the channel to which the user is invited
@@ -114,10 +154,22 @@ public class EventContent {
       self.channelType = channelType
       self.channelId = channelId
     }
+
+    /// Extension to conform to `CustomStringConvertible` for custom string representation.
+    /// Provides a readable description of the object for debugging and logging purposes
+    public var description: String {
+      String.formattedDescription(
+        self,
+        arguments: [
+          ("channelType", channelType),
+          ("channelId", channelId)
+        ]
+      )
+    }
   }
 
   /// Represents a custom event with arbitrary data.
-  public class Custom: EventContent {
+  public class Custom: EventContent, CustomStringConvertible {
     /// A map containing key-value pairs of custom data associated with the event
     public let data: [String: Any]
     /// The method by which the event was emitted
@@ -132,10 +184,22 @@ public class EventContent {
       self.data = data
       self.method = method
     }
+
+    /// Extension to conform to `CustomStringConvertible` for custom string representation.
+    /// Provides a readable description of the object for debugging and logging purposes
+    public var description: String {
+      String.formattedDescription(
+        self,
+        arguments: [
+          ("data", data),
+          ("method", method)
+        ]
+      )
+    }
   }
 
   /// Represents a moderation event, which is triggered when a restriction is applied to a user.
-  public class Moderation: EventContent {
+  public class Moderation: EventContent, CustomStringConvertible {
     /// The ID of the channel where the moderation event occurred
     public let channelId: String
     /// The type of restriction applied (e.g., ban, mute)
@@ -154,10 +218,23 @@ public class EventContent {
       self.restriction = restriction
       self.reason = reason
     }
+
+    /// Extension to conform to `CustomStringConvertible` for custom string representation.
+    /// Provides a readable description of the object for debugging and logging purposes
+    public var description: String {
+      String.formattedDescription(
+        self,
+        arguments: [
+          ("channelId", channelId),
+          ("restriction", restriction),
+          ("reason", reason ?? "nil")
+        ]
+      )
+    }
   }
 
   /// Represents a text message event, containing the message text and any associated files.
-  public class TextMessageContent: EventContent {
+  public class TextMessageContent: EventContent, CustomStringConvertible {
     /// The text content of the message
     public let text: String
     /// A list of ``File`` objects attached to the given ``PubNubSwiftChatSDK/EventContent/TextMessageContent``, if any
@@ -171,6 +248,18 @@ public class EventContent {
     public init(text: String, files: [File]? = nil) {
       self.text = text
       self.files = files
+    }
+
+    /// Extension to conform to `CustomStringConvertible` for custom string representation.
+    /// Provides a readable description of the object for debugging and logging purposes
+    public var description: String {
+      String.formattedDescription(
+        self,
+        arguments: [
+          ("text", text),
+          ("files", files ?? "nil")
+        ]
+      )
     }
 
     func transform() -> PubNubChat.EventContent.TextMessageContent {
@@ -189,7 +278,7 @@ public class EventContent {
   }
 
   /// Represents a message with an unknown format, used to handle cases where the message format doesn't match known types.
-  public class UnknownMessageFormat: EventContent {
+  public class UnknownMessageFormat: EventContent, CustomStringConvertible {
     /// The raw JSON element representing the message with the unknown format
     public let element: Any?
 
@@ -197,6 +286,12 @@ public class EventContent {
     /// - Parameter element: The raw JSON element representing the message with the unknown format
     public init(element: Any? = nil) {
       self.element = element
+    }
+
+    /// Extension to conform to `CustomStringConvertible` for custom string representation.
+    /// Provides a readable description of the object for debugging and logging purposes
+    public var description: String {
+      String.formattedDescription(self, arguments: [("element", element ?? "nil")])
     }
   }
 }
@@ -343,4 +438,6 @@ extension EventContent {
       KClassConstants.Companion.shared.unknownMessageFormat
     }
   }
+
+  // swiftlint:disable:next file_length
 }

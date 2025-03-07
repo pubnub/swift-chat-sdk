@@ -215,7 +215,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
 
     XCTAssertEqual(channel.name, "ChannelName")
-    XCTAssertEqual(channel.description, "ChannelDescription")
+    XCTAssertEqual(channel.channelDescription, "ChannelDescription")
     XCTAssertEqual(channel.type, .unknown)
     XCTAssertEqual(channel.status, "status")
     XCTAssertEqual(channel.custom?.mapValues { $0.scalarValue }, customField.mapValues { $0.scalarValue })
@@ -301,7 +301,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     XCTAssertEqual(updatedChannel.id, channel.id)
     XCTAssertEqual(updatedChannel.name, "NewName")
     XCTAssertEqual(updatedChannel.custom?.mapValues { $0.scalarValue }, customField.mapValues { $0.scalarValue })
-    XCTAssertEqual(updatedChannel.description, "NewDescription")
+    XCTAssertEqual(updatedChannel.channelDescription, "NewDescription")
     XCTAssertEqual(updatedChannel.status, "status")
     XCTAssertEqual(updatedChannel.type, .unknown)
 
@@ -438,7 +438,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
 
     XCTAssertEqual(channel.name, "ChannelName")
-    XCTAssertEqual(channel.description, "ChannelDescription")
+    XCTAssertEqual(channel.channelDescription, "ChannelDescription")
     XCTAssertEqual(channel.custom?.mapValues { $0.scalarValue }, customField.mapValues { $0.scalarValue })
     XCTAssertEqual(channel.status, "status")
     XCTAssertEqual(channel.type, .public)
@@ -484,7 +484,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
 
     XCTAssertEqual(resultValue.channel.name, "ChannelName")
-    XCTAssertEqual(resultValue.channel.description, "ChannelDescription")
+    XCTAssertEqual(resultValue.channel.channelDescription, "ChannelDescription")
     XCTAssertEqual(resultValue.channel.custom?.mapValues { $0.scalarValue }, customField.mapValues { $0.scalarValue })
     XCTAssertEqual(resultValue.channel.status, "status")
     XCTAssertEqual(resultValue.channel.type, .direct)
@@ -543,7 +543,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
 
     XCTAssertEqual(resultValue.channel.name, "ChannelName")
-    XCTAssertEqual(resultValue.channel.description, "ChannelDescription")
+    XCTAssertEqual(resultValue.channel.channelDescription, "ChannelDescription")
     XCTAssertEqual(resultValue.channel.custom?.mapValues { $0.scalarValue }, customField.mapValues { $0.scalarValue })
     XCTAssertEqual(resultValue.channel.status, "status")
     XCTAssertEqual(resultValue.channel.type, .group)

@@ -19,26 +19,43 @@ public protocol AutoCloseable {
 
 class AutoCloseableImpl {
   private let underlying: PubNubChat.KotlinAutoCloseable
+  private let lock = NSLock()
+  private var ownerContainer: AnyObject?
 
-  init?(_ underlying: PubNubChat.KotlinAutoCloseable?) {
+  init?(_ underlying: PubNubChat.KotlinAutoCloseable?, owner: AnyObject? = nil) {
     if let underlying {
       self.underlying = underlying
+      self.owner = owner
     } else {
       return nil
     }
   }
 
-  init(_ underlying: PubNubChat.KotlinAutoCloseable) {
+  init(_ underlying: PubNubChat.KotlinAutoCloseable, owner: AnyObject? = nil) {
     self.underlying = underlying
+    self.owner = owner
+  }
+
+  private var owner: AnyObject? {
+    get {
+      lock.lock()
+      defer { lock.unlock() }
+      return ownerContainer
+    } set {
+      lock.lock()
+      defer { lock.unlock() }
+      ownerContainer = newValue
+    }
   }
 
   deinit {
-    underlying.close()
+    close()
   }
 }
 
 extension AutoCloseableImpl: AutoCloseable {
   func close() {
     underlying.close()
+    owner = nil
   }
 }

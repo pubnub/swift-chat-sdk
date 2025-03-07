@@ -249,7 +249,8 @@ extension UserImpl: User {
             callback(nil)
           }
         }
-      }
+      },
+      owner: self
     )
   }
 

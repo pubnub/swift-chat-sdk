@@ -256,7 +256,12 @@ public struct PushNotificationsConfig {
   /// These push notifications are messages with a provider-specific payload that the Chat SDK automatically attaches  to every message.
   /// Chat SDK includes a default payload setup for ``deviceGateway`` in every message sent to the registered channels.
   public var sendPushes: Bool
-  /// Refers to the unique identifier assigned to a specific mobile device by a platform's push notification service
+  /// Refers to the unique identifier assigned to a specific mobile device by a platform's push notification service.
+  ///
+  /// - If using **Firebase Cloud Messaging (FCM)**, assign the **raw FCM token**, which is already of `String` type.
+  /// - If using **Apple Push Notification Service (APNS)**, assign the **hex-encoded device token**.
+  ///
+  /// - Note: You can easily convert the `Data` token to hexadecimal String using the `hexEncodedString()` extension method provided in the `PubNubSDK` module.
   public var deviceToken: String?
   /// Option for receiving push notifications on Android (FCM) or iOS (APNS or APNS2) devices
   public var deviceGateway: PubNub.PushService

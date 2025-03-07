@@ -12,7 +12,7 @@ import Foundation
 import PubNubSDK
 
 /// Channel is an object that refers to a single chat room.
-public protocol Channel {
+public protocol Channel: CustomStringConvertible {
   associatedtype ChatType: Chat
   associatedtype MessageType: Message
   associatedtype MessageDraftType: MessageDraft
@@ -26,7 +26,7 @@ public protocol Channel {
   /// Any custom properties or metadata associated with the channel in the form of a map of key-value pairs
   var custom: [String: JSONCodableScalar]? { get }
   /// Brief description or summary of the channel's purpose or content
-  var description: String? { get }
+  var channelDescription: String? { get }
   /// The last updated timestamp for the object
   var updated: String? { get }
   /// Current status of the channel, like online, offline, or archived
@@ -192,6 +192,7 @@ public protocol Channel {
     textLinks: [TextLink]?,
     quotedMessage: ChatType.ChatMessageType?,
     files: [InputFile]?,
+    customPushData: [String: String]?,
     completion: ((Swift.Result<Timetoken, Error>) -> Void)?
   )
 
@@ -223,6 +224,7 @@ public protocol Channel {
     quotedMessage: ChatType.ChatMessageType?,
     files: [InputFile]?,
     usersToMention: [String]?,
+    customPushData: [String: String]?,
     completion: ((Swift.Result<Timetoken, Error>) -> Void)?
   )
 
@@ -471,6 +473,24 @@ public protocol Channel {
     userLimit: Int,
     channelLimit: Int
   ) -> MessageDraftType
+}
 
+/// Extension to conform to `CustomStringConvertible` for custom string representation.
+/// Provides a readable description of the object for debugging and logging purposes
+public extension Channel {
+  var description: String {
+    String.formattedDescription(
+      self,
+      arguments: [
+        ("id", id),
+        ("name", name ?? "nil"),
+        ("custom", custom ?? "nil"),
+        ("channelDescription", channelDescription ?? "nil"),
+        ("updated", updated ?? "nil"),
+        ("status", status ?? "nil"),
+        ("type", type ?? "nil")
+      ]
+    )
+  }
   // swiftlint:disable:next file_length
 }

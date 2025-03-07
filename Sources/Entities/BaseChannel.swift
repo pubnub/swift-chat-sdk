@@ -18,7 +18,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
   var id: String { channel.id }
   var name: String? { channel.name }
   var custom: [String: JSONCodableScalar]? { channel.custom?.mapToScalars() }
-  var description: String? { channel.description_ }
+  var channelDescription: String? { channel.description_ }
   var updated: String? { channel.updated }
   var status: String? { channel.status }
   var type: ChannelType? { channel.type?.transform() }
@@ -123,7 +123,8 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
         if let typingUserIdentifiers = $0 as? [String], self != nil {
           callback(typingUserIdentifiers)
         }
-      }
+      },
+      owner: self
     )
   }
 
@@ -185,6 +186,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     textLinks: [TextLink]?,
     quotedMessage: ChatType.ChatMessageType?,
     files: [InputFile]?,
+    customPushData: [String: String]? = nil,
     completion: ((Swift.Result<Timetoken, Error>) -> Void)?
   ) {
     channel.sendText(
@@ -197,7 +199,8 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
       referencedChannels: referencedChannels?.transform(),
       textLinks: textLinks?.compactMap { $0.transform() },
       quotedMessage: quotedMessage?.target.message,
-      files: files?.compactMap { $0.transform() }
+      files: files?.compactMap { $0.transform() },
+      customPushData: customPushData
     ).async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.PNPublishResult>) in
       switch result.result {
       case let .success(response):
@@ -217,6 +220,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     quotedMessage: MessageImpl?,
     files: [InputFile]?,
     usersToMention: [String]? = nil,
+    customPushData: [String: String]? = nil,
     completion: ((Swift.Result<Timetoken, any Error>) -> Void)?
   ) {
     channel.sendText(
@@ -227,7 +231,8 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
       ttl: ttl?.asKotlinInt,
       quotedMessage: quotedMessage?.target.message,
       files: files?.compactMap { $0.transform() },
-      usersToMention: usersToMention
+      usersToMention: usersToMention,
+      customPushData: customPushData
     ).async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.PNPublishResult>) in
       switch result.result {
       case let .success(response):
@@ -298,11 +303,14 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
   }
 
   func connect(callback: @escaping (ChatType.ChatMessageType) -> Void) -> AutoCloseable {
-    AutoCloseableImpl(channel.connect { [weak self] in
-      if self != nil, let message = $0 as? M {
-        callback(MessageImpl(message: message))
-      }
-    })
+    AutoCloseableImpl(
+      channel.connect { [weak self] in
+        if self != nil, let message = $0 as? M {
+          callback(MessageImpl(message: message))
+        }
+      },
+      owner: self
+    )
   }
 
   func join(
@@ -319,7 +327,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
       case let .success(joinRes):
         completion?(.success((
           membership: MembershipImpl(membership: joinRes.membership),
-          disconnect: AutoCloseableImpl(joinRes.disconnect)
+          disconnect: AutoCloseableImpl(joinRes.disconnect, owner: result.caller)
         )))
       case let .failure(error):
         completion?(.failure(error))
@@ -433,7 +441,8 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
             callback(nil)
           }
         }
-      }
+      },
+      owner: self
     )
   }
 
@@ -447,7 +456,8 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
             }
           )
         }
-      }
+      },
+      owner: self
     )
   }
 
@@ -504,7 +514,8 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
         if let userIds = $0 as? Set<String>, self != nil {
           callback(userIds)
         }
-      }
+      },
+      owner: self
     )
   }
 
@@ -575,7 +586,8 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
             )
           )
         }
-      }
+      },
+      owner: self
     )
   }
 

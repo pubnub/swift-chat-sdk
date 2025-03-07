@@ -18,7 +18,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
   var id: String { channel.id }
   var name: String? { channel.name }
   var custom: [String: JSONCodableScalar]? { channel.custom?.mapToScalars() }
-  var description: String? { channel.description_ }
+  var channelDescription: String? { channel.description_ }
   var updated: String? { channel.updated }
   var status: String? { channel.status }
   var type: ChannelType? { channel.type?.transform() }
@@ -123,7 +123,8 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
         if let typingUserIdentifiers = $0 as? [String], self != nil {
           callback(typingUserIdentifiers)
         }
-      }
+      },
+      owner: self
     )
   }
 
@@ -298,11 +299,14 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
   }
 
   func connect(callback: @escaping (ChatType.ChatMessageType) -> Void) -> AutoCloseable {
-    AutoCloseableImpl(channel.connect { [weak self] in
-      if self != nil, let message = $0 as? M {
-        callback(MessageImpl(message: message))
-      }
-    })
+    AutoCloseableImpl(
+      channel.connect { [weak self] in
+        if self != nil, let message = $0 as? M {
+          callback(MessageImpl(message: message))
+        }
+      },
+      owner: self
+    )
   }
 
   func join(
@@ -319,7 +323,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
       case let .success(joinRes):
         completion?(.success((
           membership: MembershipImpl(membership: joinRes.membership),
-          disconnect: AutoCloseableImpl(joinRes.disconnect)
+          disconnect: AutoCloseableImpl(joinRes.disconnect, owner: result.caller)
         )))
       case let .failure(error):
         completion?(.failure(error))
@@ -433,7 +437,8 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
             callback(nil)
           }
         }
-      }
+      },
+      owner: self
     )
   }
 
@@ -447,7 +452,8 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
             }
           )
         }
-      }
+      },
+      owner: self
     )
   }
 
@@ -504,7 +510,8 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
         if let userIds = $0 as? Set<String>, self != nil {
           callback(userIds)
         }
-      }
+      },
+      owner: self
     )
   }
 
@@ -575,7 +582,8 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
             )
           )
         }
-      }
+      },
+      owner: self
     )
   }
 

@@ -67,7 +67,7 @@ extension ChannelImpl: Channel {
   public var id: String { target.id }
   public var name: String? { target.name }
   public var custom: [String: JSONCodableScalar]? { target.custom }
-  public var description: String? { target.description }
+  public var channelDescription: String? { target.channelDescription }
   public var updated: String? { target.updated }
   public var status: String? { target.status }
   public var type: ChannelType? { target.type }

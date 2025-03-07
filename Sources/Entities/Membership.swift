@@ -12,7 +12,7 @@ import Foundation
 import PubNubSDK
 
 /// Membership is an object that refers to a single user-channel relationship in a chat.
-public protocol Membership {
+public protocol Membership: CustomStringConvertible {
   associatedtype ChatType: Chat
 
   /// Reference to the main Chat object
@@ -98,4 +98,24 @@ public protocol Membership {
   func streamUpdates(
     callback: @escaping ((ChatType.ChatMembershipType?) -> Void)
   ) -> AutoCloseable
+}
+
+/// Extension to conform to `CustomStringConvertible` for custom string representation.
+/// Provides a readable description of the object for debugging and logging purposes
+public extension Membership {
+  var description: String {
+    String.formattedDescription(
+      self,
+      arguments: [
+        ("channel", channel),
+        ("user", user),
+        ("custom", custom ?? "nil"),
+        ("status", status ?? "nil"),
+        ("type", type ?? "nil"),
+        ("eTag", eTag ?? "nil"),
+        ("updated", updated ?? "nil"),
+        ("lastReadMessageTimetoken", lastReadMessageTimetoken ?? "nil")
+      ]
+    )
+  }
 }

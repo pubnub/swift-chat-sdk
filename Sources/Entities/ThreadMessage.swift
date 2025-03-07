@@ -47,3 +47,22 @@ public protocol ThreadMessage: Message {
     completion: ((Swift.Result<ChatType.ChatChannelType, Error>) -> Void)?
   )
 }
+
+/// Extension to conform to `CustomStringConvertible` for custom string representation.
+/// Provides a readable description of the object for debugging and logging purposes
+public extension ThreadMessage {
+  var description: String {
+    String.formattedDescription(
+      self,
+      arguments: [
+        ("timetoken", timetoken),
+        ("content", content),
+        ("channelId", channelId),
+        ("userId", userId),
+        ("actions", actions ?? "nil"),
+        ("meta", meta ?? "nil"),
+        ("parentChannelId", parentChannelId)
+      ]
+    )
+  }
+}

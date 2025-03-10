@@ -44,3 +44,24 @@ public protocol ThreadChannel: Channel {
     completion: ((Swift.Result<ChatType.ChatChannelType, Error>) -> Void)?
   )
 }
+
+/// Extension to conform to `CustomStringConvertible` for custom string representation.
+/// Provides a readable description of the object for debugging and logging purposes
+public extension ThreadChannel {
+  var description: String {
+    String.formattedDescription(
+      self,
+      arguments: [
+        ("id", id),
+        ("name", name ?? "nil"),
+        ("custom", custom ?? "nil"),
+        ("channelDescription", channelDescription ?? "nil"),
+        ("updated", updated ?? "nil"),
+        ("status", status ?? "nil"),
+        ("type", type ?? "nil"),
+        ("parentChannelId", parentChannelId),
+        ("parentMessage", parentMessage)
+      ]
+    )
+  }
+}

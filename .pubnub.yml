@@ -3,6 +3,21 @@ scm: github.com/pubnub/swift-chat-sdk
 version: 0.11.0
 schema: 1
 changelog:
+  - date: 2025-03-10
+    version: 0.11.1
+    changes:
+      - type: feature
+        text: "Enhance entities descriptions with `CustomStringConvertible`."
+      - type: feature
+        text: "Add an optional `customPushData:` parameter to methods responsible for sending text."
+      - type: bug
+        text: "Fix the issue with incorrect handling of the APNS device token."
+      - type: bug
+        text: "The `description` property in `Channel` interface has been replaced with `channelDescription` to avoid conflicts with `CustomStringConvertible`."
+      - type: bug
+        text: "Retain the caller object by `AutoCloseable` for each entity's non-static methods."
+      - type: bug
+        text: "Add a more descriptive error message when a chat object is deallocated during initialization."
   - date: 2025-01-28
     version: 0.11.0
     changes:
@@ -113,7 +128,7 @@ sdks:
           - distribution-type: source
             distribution-repository: GitHub release
             package-name: PubNubSwiftChatSDK
-            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.11.0-dev.zip
+            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.11.1.zip
             supported-platforms:
               supported-operating-systems:
                 iOS:

@@ -29,6 +29,7 @@ public extension MessageDraft {
   ///   - usePost: Use HTTP POST
   ///   - ttl: Defines if/how long (in hours) the message should be stored in Message Persistence
   /// - Returns: The `Timetoken` of the sent message
+  @discardableResult
   func send(
     meta: [String: JSONCodable]? = nil,
     shouldStore: Bool = true,

@@ -398,9 +398,9 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     }
   }
 
-  func pinMessage(message: MessageImpl, completion: ((Swift.Result<BaseChannel<C, M>, Error>) -> Void)?) {
+  func pinMessage(message: BaseMessage<M>, completion: ((Swift.Result<BaseChannel<C, M>, Error>) -> Void)?) {
     channel.pinMessage(
-      message: message.target.message
+      message: message.message
     ).async(caller: self) { (result: FutureResult<BaseChannel, C>) in
       switch result.result {
       case let .success(channel):

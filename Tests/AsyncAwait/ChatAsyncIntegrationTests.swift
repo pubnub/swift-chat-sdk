@@ -86,7 +86,7 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
   func testChatAsync_Delete() async throws {
     let user = try await chat.createUser(id: randomString())
-    try await chat.deleteUser(id: user.id)
+    _ = try await chat.deleteUser(id: user.id)
     let retrievedUser = try await chat.getUser(userId: user.id)
 
     XCTAssertNil(
@@ -212,7 +212,7 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
   func testChatAsync_DeleteChannel() async throws {
     let channel = try await chat.createChannel(id: randomString())
-    try await chat.deleteChannel(id: channel.id)
+    _ = try await chat.deleteChannel(id: channel.id)
     let retrievedChannel = try await chat.getChannel(channelId: channel.id)
 
     XCTAssertNil(

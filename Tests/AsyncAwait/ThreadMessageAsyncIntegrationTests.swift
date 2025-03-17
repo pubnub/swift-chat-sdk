@@ -173,7 +173,7 @@ class ThreadMessageaAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     }
 
     try await Task.sleep(nanoseconds: 3_000_000_000)
-    try await unwrappedMessage.toggleReaction(reaction: "myReaction")
+    _ = try await unwrappedMessage.toggleReaction(reaction: "myReaction")
 
     await fulfillment(of: [expectation], timeout: 6)
 
@@ -204,7 +204,7 @@ class ThreadMessageaAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     }
 
     try await Task.sleep(nanoseconds: 3_000_000_000)
-    try await unwrappedMessage.toggleReaction(reaction: "myReaction")
+    _ = try await unwrappedMessage.toggleReaction(reaction: "myReaction")
 
     await fulfillment(of: [expectation], timeout: 6)
 

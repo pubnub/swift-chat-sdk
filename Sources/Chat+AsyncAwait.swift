@@ -134,11 +134,10 @@ public extension Chat {
   ///   - externalId: User's identifier in an external system. You can use it to match id with a similar identifier from an external database
   ///   - profileUrl: URL of the user's profile picture
   ///   - email: User's email address
-  ///   - custom: Any custom properties or metadata associated with the user in the form of a `[String: JSONCodableScalar]
+  ///   - custom: Any custom properties or metadata associated with the user in the form of a `[String: JSONCodableScalar]`
   ///   - status: Tag that lets you categorize your app users by their current state. The tag choice is entirely up to you and depends on your use case
   ///   - type: Tag that lets you categorize your app users by their functional roles. The tag choice is entirely up to you and depends on your use case
   /// - Returns: Updated user
-  @discardableResult
   func updateUser(
     id: String,
     name: String? = nil,
@@ -176,7 +175,6 @@ public extension Chat {
   ///   - id: Unique user identifier
   ///   - soft: Decide if you want to permanently remove user metadata
   /// - Returns: For hard delete, the method returns `nil`. Otherwise, an updated ``User`` instance with the status field set to `"deleted"`
-  @discardableResult
   func deleteUser(
     id: String,
     soft: Bool = false
@@ -290,7 +288,6 @@ public extension Chat {
   ///   - status: Tag that lets you categorize your app users by their current state. The tag choice is entirely up to you and depends on your use case
   ///   - type: Tag that lets you categorize your app users by their functional roles. The tag choice is entirely up to you and depends on your use case
   /// - Returns: A value containing an updated channel and its metadata
-  @discardableResult
   func updateChannel(
     id: String,
     name: String? = nil,
@@ -324,7 +321,6 @@ public extension Chat {
   ///   - id: Unique channel identifier (up to 92 UTF-8 byte sequences)
   ///   - soft: Decide if you want to permanently remove channel metadata. If you set this parameter to true, the ``Channel`` object gets the deleted status, and you can still restore/get its data
   /// - Returns: For hard delete, the method returns `nil`. Otherwise, an updated ``Channel`` instance with the status field set to `"deleted"`
-  @discardableResult
   func deleteChannel(id: String, soft: Bool = false) async throws -> ChatChannelType? {
     try await withCheckedThrowingContinuation { continuation in
       deleteChannel(id: id, soft: soft) {
@@ -603,7 +599,7 @@ public extension Chat {
   ///   - page: Object used for pagination to define which previous or next result page you want to fetch
   ///   - filter: Expression used to filter the results. Returns only these channels whose properties satisfy the given expression are returned
   ///   - sort: A collection to specify the sort order
-  /// - Returns: A `Tuple` containing an `Array` of memberships, and the next pagination `PubNubHashedPage` (if one exists)
+  /// - Returns: A `Tuple` containing an `Array` of updated memberships, and the next pagination `PubNubHashedPage` (if one exists)
   @discardableResult
   func markAllMessagesAsRead(
     limit: Int? = nil,
@@ -727,7 +723,6 @@ extension ChatImpl {
 }
 
 extension ChatImpl {
-  @discardableResult
   func createUser(user: ChatUserType) async throws -> ChatUserType {
     try await withCheckedThrowingContinuation { continuation in
       createUser(user: user) {

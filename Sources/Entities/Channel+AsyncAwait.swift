@@ -39,7 +39,6 @@ public extension Channel {
   ///   - status: Current status of the channel, like online, offline, or archived
   ///   - type: Represents the type of channel
   /// - Returns: The updated channel object with its metadata
-  @discardableResult
   func update(
     name: String? = nil,
     custom: [String: JSONCodableScalar]? = nil,
@@ -69,7 +68,6 @@ public extension Channel {
   ///
   /// - Parameter soft: Decide if you want to permanently remove channel metadata
   /// - Returns: For hard delete, the method returns `nil`. Otherwise, an updated ``Channel`` instance with the status field set to `"deleted"`
-  @discardableResult
   func delete(soft: Bool = false) async throws -> ChatType.ChatChannelType? {
     try await withCheckedThrowingContinuation { continuation in
       delete(soft: soft) {
@@ -445,7 +443,7 @@ public extension Channel {
   ///
   /// - Parameters: message: Message that you want to pin to the selected channel
   /// - Returns: A channel with updated `custom` field
-  func pinMessage(message: ChatType.ChatMessageType) async throws -> Self {
+  func pinMessage(message: MessageType) async throws -> Self {
     try await withCheckedThrowingContinuation { continuation in
       pinMessage(message: message) {
         switch $0 {

@@ -51,7 +51,6 @@ public extension Membership {
   ///
   /// - Parameter custom: Any custom properties or metadata associated with the channel-user membership in a form of key-value pairs
   /// - Returns: An updated ``Membership`` object
-  @discardableResult
   func update(custom: [String: JSONCodableScalar]) async throws -> ChatType.ChatMembershipType {
     try await withCheckedThrowingContinuation { continuation in
       update(custom: custom) {

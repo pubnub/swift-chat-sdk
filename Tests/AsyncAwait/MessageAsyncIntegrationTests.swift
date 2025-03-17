@@ -139,7 +139,7 @@ class MessageAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     XCTAssertNotNil(message)
 
     try await Task.sleep(nanoseconds: 1_000_000_000)
-    try await message?.removeThread()
+    _ = try await message?.removeThread()
 
     try await Task.sleep(nanoseconds: 3_000_000_000)
     let retrievedMessage = try await channel.getMessage(timetoken: testMessage.timetoken)
@@ -198,7 +198,7 @@ class MessageAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     }
 
     try await Task.sleep(nanoseconds: 3_000_000_000)
-    try await message?.toggleReaction(reaction: "myReaction")
+    _ = try await message?.toggleReaction(reaction: "myReaction")
 
     await fulfillment(
       of: [expectation],
@@ -233,7 +233,7 @@ class MessageAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     }
 
     try await Task.sleep(nanoseconds: 3_000_000_000)
-    try await message?.toggleReaction(reaction: "myReaction")
+    _ = try await message?.toggleReaction(reaction: "myReaction")
 
     await fulfillment(
       of: [expectation],

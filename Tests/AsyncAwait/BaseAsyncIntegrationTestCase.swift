@@ -20,7 +20,7 @@ class BaseAsyncIntegrationTestCase: BaseIntegrationTestCase {
 
   override func tearDown() async throws {
     try await customTearDown()
-    try await chat.deleteUser(id: chat.currentUser.id)
+    _ = try await chat.deleteUser(id: chat.currentUser.id)
 
     chat = nil
 

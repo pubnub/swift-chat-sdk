@@ -42,7 +42,6 @@ public extension User {
   ///   - status: The new status of the user (e.g., online, offline)
   ///   - type: The new type of the user (e.g., admin, member)
   /// - Returns: The updated user object with its metadata
-  @discardableResult
   func update(
     name: String? = nil,
     externalId: String? = nil,

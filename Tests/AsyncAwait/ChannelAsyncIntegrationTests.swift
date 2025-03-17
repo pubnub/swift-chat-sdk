@@ -46,13 +46,13 @@ class ChannelIntegrationTests: BaseAsyncIntegrationTestCase {
   }
 
   func testChannelAsync_Delete() async throws {
-    try await channel.delete(soft: false)
+    _ = try await channel.delete(soft: false)
     let retrievedChannel = try await chat.getChannel(channelId: channel.id)
     XCTAssertNil(retrievedChannel)
   }
 
   func testChannelAsync_SoftDelete() async throws {
-    try await channel.delete(soft: true)
+    _ = try await channel.delete(soft: true)
     let retrievedChannel = try await chat.getChannel(channelId: channel.id)
     XCTAssertNotNil(retrievedChannel)
     XCTAssertEqual(retrievedChannel?.id, channel.id)
@@ -74,7 +74,7 @@ class ChannelIntegrationTests: BaseAsyncIntegrationTestCase {
     XCTAssertEqual(retrievedMssgsFromForwardedChannel.messages.first?.channelId, channel.id)
 
     addTeardownBlock { [unowned self] in
-      try await chat.deleteChannel(id: anotherChannel.id)
+      _ = try await chat.deleteChannel(id: anotherChannel.id)
     }
   }
 
@@ -164,8 +164,7 @@ class ChannelIntegrationTests: BaseAsyncIntegrationTestCase {
   }
 
   func testChannelAsync_InviteMultiple() async throws {
-    let someUser = UserImpl(chat: chat, id: randomString())
-    try await chat.createUser(user: someUser)
+    let someUser = try await chat.createUser(user: UserImpl(chat: chat, id: randomString()))
     let invitationResult = try await channel.inviteMultiple(users: [chat.currentUser, someUser])
 
     let firstMatch = try XCTUnwrap(
@@ -189,8 +188,7 @@ class ChannelIntegrationTests: BaseAsyncIntegrationTestCase {
   }
 
   func testChannelAsync_GetMembers() async throws {
-    let someUser = UserImpl(chat: chat, id: randomString())
-    try await chat.createUser(user: someUser)
+    let someUser = try await chat.createUser(user: UserImpl(chat: chat, id: randomString()))
     try await channel.inviteMultiple(users: [chat.currentUser, someUser])
 
     let memberships = try await channel.getMembers().memberships
@@ -331,7 +329,7 @@ class ChannelIntegrationTests: BaseAsyncIntegrationTestCase {
     }
 
     try await Task.sleep(nanoseconds: 3_000_000_000)
-    try await channel.update(name: "NewName", status: "NewStatus")
+    _ = try await channel.update(name: "NewName", status: "NewStatus")
 
     await fulfillment(of: [expectation], timeout: 6)
     addTeardownBlock { task.cancel() }
@@ -342,7 +340,8 @@ class ChannelIntegrationTests: BaseAsyncIntegrationTestCase {
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
 
-    try await chat.createUser(user: UserImpl(chat: chat, id: randomString()))
+    _ = try await chat.createUser(user: UserImpl(chat: chat, id: randomString()))
+
     let anotherUser = try await chat.createUser(user: UserImpl(chat: chat, id: randomString()))
     try await Task.sleep(nanoseconds: 3_000_000_000)
 
@@ -494,7 +493,7 @@ class ChannelIntegrationTests: BaseAsyncIntegrationTestCase {
     ]
 
     for user in usersToCreate {
-      try await chat.createUser(user: user)
+      _ = try await chat.createUser(user: user)
     }
 
     try await channel.inviteMultiple(users: usersToCreate)

@@ -90,6 +90,7 @@ public extension Message {
   ///
   /// - Parameter channelId: Unique identifier of the channel to which you want to forward the message. You can forward a message to the same channel on which it was published or to any other
   /// - Returns: The timetoken of the forwarded message
+  @discardableResult
   func forward(channelId: String) async throws -> Timetoken {
     try await withCheckedThrowingContinuation { continuation in
       forward(channelId: channelId) {
@@ -106,6 +107,7 @@ public extension Message {
   /// Attach this message to its channel.
   ///
   /// - Returns: The updated Channel metadata
+  @discardableResult
   func pin() async throws -> ChatType.ChatChannelType {
     try await withCheckedThrowingContinuation { continuation in
       pin {
@@ -156,7 +158,6 @@ public extension Message {
   /// Removes a thread (channel) for a selected message.
   ///
   /// - Returns: The updated channel object after the removal of the thread
-  @discardableResult
   func removeThread() async throws -> ChatType.ChatChannelType? {
     try await withCheckedThrowingContinuation { continuation in
       removeThread {
@@ -177,7 +178,6 @@ public extension Message {
   ///
   /// - Parameter reaction: Emoji added to the message or removed from it by the current user
   /// - Returns: An updated message instance
-  @discardableResult
   func toggleReaction(reaction: String) async throws -> Self {
     try await withCheckedThrowingContinuation { continuation in
       toggleReaction(reaction: reaction) {

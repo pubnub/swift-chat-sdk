@@ -339,8 +339,8 @@ extension ThreadChannelImpl: ThreadChannel {
     )
   }
 
-  public func pinMessage(message: MessageImpl, completion: ((Swift.Result<ThreadChannelImpl, Error>) -> Void)? = nil) {
-    target.pinMessage(message: message) {
+  public func pinMessage(message: ThreadMessageImpl, completion: ((Swift.Result<ThreadChannelImpl, Error>) -> Void)? = nil) {
+    target.pinMessage(message: BaseMessage(message: message.target.message)) {
       switch $0 {
       case let .success(channel):
         completion?(.success(ThreadChannelImpl(channel: channel.channel)))

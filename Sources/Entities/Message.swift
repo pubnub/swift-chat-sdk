@@ -43,8 +43,7 @@ public protocol Message {
   /// Access the original quoted message in the given ``Message``
   ///
   /// Stores only values for the timetoken, text, and userId parameters. If you want to return the full quoted Message object,
-  /// use the ``PubNubSwiftChatSDK/Channel/getMessage(timetoken:completion:)`` method and the timetoken
-  /// from the quote that you can extract from the `quotedMessage` parameter added to the published message.
+  /// use the ``PubNubSwiftChatSDK/Channel/getMessage(timetoken:)`` method and pass the `timetoken` property from the `QuotedMessage` value.
   var quotedMessage: QuotedMessage? { get }
   /// Content of the message
   var text: String { get }

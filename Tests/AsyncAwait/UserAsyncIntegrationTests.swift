@@ -72,7 +72,7 @@ class UserAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
   }
 
   func testUserAsync_UpdateUserCallback() async throws {
-    try await chat.currentUser.update(
+    _ = try await chat.currentUser.update(
       name: "Markus Koller",
       externalId: "11111111",
       profileUrl: "https://picsum.photos/200/300",
@@ -102,7 +102,7 @@ class UserAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     let someUser = testableUser()
 
     do {
-      try await someUser.update(name: "NewName", externalId: "NewExternalId")
+      _ = try await someUser.update(name: "NewName", externalId: "NewExternalId")
     } catch {
       XCTAssertEqual((error as? ChatError)?.message, "User does not exist")
       errorExpectation.fulfill()
@@ -218,7 +218,8 @@ class UserAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     }
 
     try await Task.sleep(nanoseconds: 3_000_000_000)
-    try await createdUser.update(
+
+    _ = try await createdUser.update(
       name: "NewName",
       externalId: "NewExternalId",
       profileUrl: "NewProfileUrl",
@@ -258,7 +259,7 @@ class UserAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
     for user in [firstUser, secondUser] {
       try await Task.sleep(nanoseconds: 3_000_000_000)
-      try await user.update(
+      _ = try await user.update(
         name: randomString(),
         externalId: nil,
         profileUrl: nil,

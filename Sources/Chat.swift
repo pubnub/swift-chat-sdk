@@ -127,7 +127,7 @@ public protocol Chat: AnyObject {
   ///   - externalId: User's identifier in an external system. You can use it to match id with a similar identifier from an external database
   ///   - profileUrl: URL of the user's profile picture
   ///   - email: User's email address
-  ///   - custom: Any custom properties or metadata associated with the user in the form of a `[String: JSONCodableScalar]
+  ///   - custom: Any custom properties or metadata associated with the user in the form of a `[String: JSONCodableScalar]`
   ///   - status: Tag that lets you categorize your app users by their current state. The tag choice is entirely up to you and depends on your use case
   ///   - type: Tag that lets you categorize your app users by their functional roles. The tag choice is entirely up to you and depends on your use case
   ///   - completion: The async `Result` of the method call
@@ -425,7 +425,7 @@ public protocol Chat: AnyObject {
   ///   - filter: Expression used to filter the results. Returns only these channels whose properties satisfy the given expression are returned
   ///   - sort: A collection to specify the sort order
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: A `Tuple` containing an `Array` of memberships, and the next pagination `PubNubHashedPage` (if one exists)
+  ///     - **Success**: A `Tuple` containing an `Array` of updated memberships, and the next pagination `PubNubHashedPage` (if one exists)
   ///     - **Failure**: An `Error` describing the failure
   func markAllMessagesAsRead(
     limit: Int?,

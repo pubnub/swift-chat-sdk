@@ -354,7 +354,7 @@ public protocol Channel {
   ///     - **Success**: A channel with updated `custom` field
   ///     - **Failure**: An `Error` describing the failure
   func pinMessage(
-    message: ChatType.ChatMessageType,
+    message: MessageType,
     completion: ((Swift.Result<Self, Error>) -> Void)?
   )
 

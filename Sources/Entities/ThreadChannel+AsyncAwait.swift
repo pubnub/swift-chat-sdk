@@ -15,7 +15,7 @@ import PubNubSDK
 /// Extension providing `async-await` support for ``ThreadChannel``.
 ///
 public extension ThreadChannel {
-  /// Pins a selected thread message to the thread channel.
+  /// Pins a selected thread message to the parent channel.
   ///
   /// - Parameter message: A message you want to pin to the selected thread channel
   /// - Returns: An updated `ThreadChannel`
@@ -32,7 +32,7 @@ public extension ThreadChannel {
     }
   }
 
-  /// Unpins the previously pinned thread message from the thread channel.
+  /// Unpins the previously pinned thread message from the parent channel.
   ///
   /// - Returns: An updated `ThreadChannel`
   func unpinMessageFromParentChannel() async throws -> ChatType.ChatChannelType {

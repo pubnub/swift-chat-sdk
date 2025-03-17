@@ -24,7 +24,7 @@ class MembershipAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
   }
 
   override func customTearDown() async throws {
-    try await chat.deleteChannel(id: channel.id)
+    _ = try await chat.deleteChannel(id: channel.id)
 
     channel = nil
     membership = nil
@@ -101,7 +101,7 @@ class MembershipAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     }
 
     try await Task.sleep(nanoseconds: 3_000_000_000)
-    try await membership.update(custom: expectedCustom)
+    _ = try await membership.update(custom: expectedCustom)
 
     await fulfillment(of: [expectation], timeout: 6)
 
@@ -130,7 +130,7 @@ class MembershipAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     }
 
     try await Task.sleep(nanoseconds: 3_000_000_000)
-    try await membership.update(custom: expectedCustom)
+    _ = try await membership.update(custom: expectedCustom)
 
     await fulfillment(of: [expectation], timeout: 6)
 

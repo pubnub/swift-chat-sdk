@@ -102,7 +102,7 @@ public protocol MessageDraft {
   ///   - usePost: Use HTTP POST
   ///   - ttl: Defines if/how long (in hours) the message should be stored in Message Persistence
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: The timetoken of the sent message
+  ///     - **Success**: The `Timetoken` of the sent message
   ///     - **Failure**: An `Error` describing the failure
   func send(
     meta: [String: JSONCodable]?,

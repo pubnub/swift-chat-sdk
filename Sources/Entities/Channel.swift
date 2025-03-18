@@ -115,7 +115,7 @@ public protocol Channel: CustomStringConvertible {
 
   /// Enables continuous tracking of typing activity within the ``Channel``.
   ///
-  /// - Parameter callback: Callback function passed as a parameter. It defines the custom behavior to be executed whenever a user starts/stops typin
+  /// - Parameter callback: Callback function passed as a parameter. It defines the custom behavior to be executed whenever a user starts/stops typing
   /// - Returns: ``AutoCloseable`` you can call to disconnect (unsubscribe) from the channel and stop receiving signal events for someone typing by invoking the `close()` method
   func getTyping(
     callback: @escaping (([String]) -> Void)
@@ -212,6 +212,7 @@ public protocol Channel: CustomStringConvertible {
   ///   - quotedMessage: Object added to a message when you quote another message
   ///   - files: One or multiple files attached to the text message
   ///   - usersToMention: A collection of user ids to automatically notify with a mention after this message is sent
+  ///   - customPushData: Additional key-value pairs that will be added to the FCM and/or APNS push messages for the message itself and any user mentions
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: The timetoken of the sent message
   ///     - **Failure**: An `Error` describing the failure
@@ -284,7 +285,7 @@ public protocol Channel: CustomStringConvertible {
   ///   - custom: Any custom properties or metadata associated with the channel-user membership in the form of key-value pairs
   ///   - callback: Defines the custom behavior to be executed whenever a message is received on the [Channel]
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: A `Tuple` containing an array of the members of the channel, and ``AutoCloseable`` that  lets you stop listening to new channel messages while remaining a channel membership
+  ///     - **Success**: A `Tuple` containing the user's ``Membership`` in the channel, and ``AutoCloseable`` that  lets you stop listening to new channel messages while remaining a channel membership
   ///     - **Failure**: An `Error` describing the failure
   func join(
     custom: [String: JSONCodableScalar]?,
@@ -356,7 +357,7 @@ public protocol Channel: CustomStringConvertible {
   ///     - **Success**: A channel with updated `custom` field
   ///     - **Failure**: An `Error` describing the failure
   func pinMessage(
-    message: ChatType.ChatMessageType,
+    message: MessageType,
     completion: ((Swift.Result<Self, Error>) -> Void)?
   )
 

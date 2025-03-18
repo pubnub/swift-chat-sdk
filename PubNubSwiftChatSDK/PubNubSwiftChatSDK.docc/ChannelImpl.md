@@ -56,9 +56,9 @@
 ### Sending a text
 
 - ``InputFile``
-- ``sendText(text:meta:shouldStore:usePost:ttl:quotedMessage:files:usersToMention:)``
-- ``sendText(text:meta:shouldStore:usePost:ttl:quotedMessage:files:usersToMention:completion:)``
-- ``sendText(text:meta:shouldStore:usePost:ttl:mentionedUsers:referencedChannels:textLinks:quotedMessage:files:completion:)``
+- ``sendText(text:meta:shouldStore:usePost:ttl:quotedMessage:files:usersToMention:customPushData:)``
+- ``sendText(text:meta:shouldStore:usePost:ttl:quotedMessage:files:usersToMention:customPushData:completion:)``
+- ``sendText(text:meta:shouldStore:usePost:ttl:mentionedUsers:referencedChannels:textLinks:quotedMessage:files:customPushData:completion:)``
 
 ### Creating Message Draft
 

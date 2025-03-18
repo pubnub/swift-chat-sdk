@@ -346,16 +346,16 @@ public extension Channel {
     custom: [String: JSONCodableScalar]? = nil
   ) async throws -> (
     membership: ChatType.ChatMembershipType,
-    messageStream: AsyncStream<ChatType.ChatMessageType>
+    messagesStream: AsyncStream<ChatType.ChatMessageType>
   ) {
-    let messageStream = connect()
+    let messagesStream = connect()
 
     return try await withCheckedThrowingContinuation { continuation in
       join(custom: custom, callback: nil) {
         switch $0 {
         case let .success(joinResult):
           joinResult.disconnect?.close()
-          continuation.resume(returning: (membership: joinResult.membership, messageStream))
+          continuation.resume(returning: (membership: joinResult.membership, messagesStream: messagesStream))
         case let .failure(error):
           continuation.resume(throwing: error)
         }

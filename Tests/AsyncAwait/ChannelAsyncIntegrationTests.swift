@@ -244,7 +244,7 @@ class ChannelIntegrationTests: BaseAsyncIntegrationTestCase {
     XCTAssertEqual(joinResult.membership.user.id, chat.currentUser.id)
 
     let task = Task {
-      for await message in joinResult.messageStream {
+      for await message in joinResult.messagesStream {
         XCTAssertEqual(message.text, "This is a text")
         XCTAssertEqual(message.channelId, channel.id)
         expectation.fulfill()

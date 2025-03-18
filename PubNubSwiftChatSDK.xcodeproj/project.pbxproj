@@ -12,10 +12,12 @@
 		3D043A7E2CAC190200F91C05 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D043A7D2CAC190200F91C05 /* Constants.swift */; };
 		3D0F90D32D48DB4700986686 /* MutedUsersManagerInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0F90D12D48DB4700986686 /* MutedUsersManagerInterface.swift */; };
 		3D0F90D52D48DEC700986686 /* MutedUsersManagerInterface+AsyncAwait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0F90D42D48DEC700986686 /* MutedUsersManagerInterface+AsyncAwait.swift */; };
+		3D1CE5232D79DED800617200 /* String+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1CE5222D79DED800617200 /* String+Helpers.swift */; };
 		3D27B8D02D2D9A61003AD459 /* ThreadChannelAsyncIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D27B8CF2D2D9A61003AD459 /* ThreadChannelAsyncIntegrationTests.swift */; };
 		3D27B8D22D2D9BBB003AD459 /* ThreadChannel+AsyncAwait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D27B8D12D2D9BBB003AD459 /* ThreadChannel+AsyncAwait.swift */; };
 		3D27B8D42D2EAEA6003AD459 /* MessageDraftAsyncIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D27B8D32D2EAEA5003AD459 /* MessageDraftAsyncIntegrationTests.swift */; };
 		3D27B8D62D2EAF86003AD459 /* MessageDraft+AsyncAwait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D27B8D52D2EAF86003AD459 /* MessageDraft+AsyncAwait.swift */; };
+		3D2813212D7B4EF4004623A0 /* PubNubChat in Frameworks */ = {isa = PBXBuildFile; productRef = 3D2813202D7B4EF4004623A0 /* PubNubChat */; };
 		3D2CA2362C5B9320008D2284 /* PubNubChat+Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2CA2352C5B9320008D2284 /* PubNubChat+Transform.swift */; };
 		3D2CA2382C5B9ACA008D2284 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2CA2372C5B9ACA008D2284 /* File.swift */; };
 		3D2CA23A2C5B9CF6008D2284 /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2CA2392C5B9CF6008D2284 /* Dictionary.swift */; };
@@ -44,7 +46,6 @@
 		3D46D4682D13287A007D08DB /* IntegrationTestCaseConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46D42F2D122C8F007D08DB /* IntegrationTestCaseConfiguration.swift */; };
 		3D46D46A2D142035007D08DB /* ThreadMessageAsyncIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46D4692D142035007D08DB /* ThreadMessageAsyncIntegrationTests.swift */; };
 		3D46D46C2D14BF2D007D08DB /* ChannelAsyncIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46D46B2D14BF2D007D08DB /* ChannelAsyncIntegrationTests.swift */; };
-		3D5B58412D10B9A100CB74D1 /* PubNubChat in Frameworks */ = {isa = PBXBuildFile; productRef = 3D5B58402D10B9A100CB74D1 /* PubNubChat */; };
 		3D7062C62D2D4A4F000729E1 /* ChatAsyncIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7062C52D2D4A4F000729E1 /* ChatAsyncIntegrationTests.swift */; };
 		3D7062C82D2D82A5000729E1 /* User+AsyncAwait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7062C72D2D82A5000729E1 /* User+AsyncAwait.swift */; };
 		3D7062CB2D2D8C27000729E1 /* UserAsyncIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7062C92D2D8BD9000729E1 /* UserAsyncIntegrationTests.swift */; };
@@ -148,6 +149,7 @@
 		3D0F90D12D48DB4700986686 /* MutedUsersManagerInterface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MutedUsersManagerInterface.swift; sourceTree = "<group>"; };
 		3D0F90D42D48DEC700986686 /* MutedUsersManagerInterface+AsyncAwait.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MutedUsersManagerInterface+AsyncAwait.swift"; sourceTree = "<group>"; };
 		3D1C44A52C918A2200E68446 /* PubNubSwiftChatSDK_Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PubNubSwiftChatSDK_Info.plist; sourceTree = "<group>"; };
+		3D1CE5222D79DED800617200 /* String+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Helpers.swift"; sourceTree = "<group>"; };
 		3D27B8CF2D2D9A61003AD459 /* ThreadChannelAsyncIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadChannelAsyncIntegrationTests.swift; sourceTree = "<group>"; };
 		3D27B8D12D2D9BBB003AD459 /* ThreadChannel+AsyncAwait.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ThreadChannel+AsyncAwait.swift"; sourceTree = "<group>"; };
 		3D27B8D32D2EAEA5003AD459 /* MessageDraftAsyncIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDraftAsyncIntegrationTests.swift; sourceTree = "<group>"; };
@@ -258,7 +260,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D5B58412D10B9A100CB74D1 /* PubNubChat in Frameworks */,
+				3D2813212D7B4EF4004623A0 /* PubNubChat in Frameworks */,
 				3DCF7DFC2CD0FFCC00889326 /* PubNubSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -405,6 +407,7 @@
 				3D7BBF6E2C8893D400FBA623 /* ChatAdapter.swift */,
 				3D842D232C9DC0AA005C0B55 /* ErrorConstants.swift */,
 				3D043A7D2CAC190200F91C05 /* Constants.swift */,
+				3D1CE5222D79DED800617200 /* String+Helpers.swift */,
 			);
 			path = Miscellaneous;
 			sourceTree = "<group>";
@@ -533,7 +536,7 @@
 			name = PubNubSwiftChatSDK;
 			packageProductDependencies = (
 				3DCF7DFB2CD0FFCC00889326 /* PubNubSDK */,
-				3D5B58402D10B9A100CB74D1 /* PubNubChat */,
+				3D2813202D7B4EF4004623A0 /* PubNubChat */,
 			);
 			productName = PubNubChatSDK;
 			productReference = 3DB73A072C4FE13C007FE249 /* PubNubSwiftChatSDK.framework */;
@@ -590,7 +593,7 @@
 			mainGroup = 3DB739FD2C4FE13B007FE249;
 			packageReferences = (
 				3DCF7DFA2CD0FFCC00889326 /* XCRemoteSwiftPackageReference "swift" */,
-				3D5B583F2D10B9A100CB74D1 /* XCRemoteSwiftPackageReference "kmp-chat" */,
+				3D28131F2D7B4EF4004623A0 /* XCRemoteSwiftPackageReference "kmp-chat" */,
 			);
 			productRefGroup = 3DB73A082C4FE13C007FE249 /* Products */;
 			projectDirPath = "";
@@ -697,6 +700,7 @@
 				3DB73A6B2C57B9D8007FE249 /* GetUnreadMessagesCount.swift in Sources */,
 				3DB49E212C761BD1006356ED /* AutoCloseable.swift in Sources */,
 				3DB73A532C53A20C007FE249 /* MessageImpl.swift in Sources */,
+				3D1CE5232D79DED800617200 /* String+Helpers.swift in Sources */,
 				3DB73A672C57A8C5007FE249 /* CreateGroupConversationResult.swift in Sources */,
 				3DB2A8B52C807E2A00167058 /* MembershipImpl.swift in Sources */,
 				3D0F90D32D48DB4700986686 /* MutedUsersManagerInterface.swift in Sources */,
@@ -947,7 +951,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 0.11.0;
+				MARKETING_VERSION = 0.11.1;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";
@@ -996,7 +1000,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 0.11.0;
+				MARKETING_VERSION = 0.11.1;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";
@@ -1104,12 +1108,12 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		3D5B583F2D10B9A100CB74D1 /* XCRemoteSwiftPackageReference "kmp-chat" */ = {
+		3D28131F2D7B4EF4004623A0 /* XCRemoteSwiftPackageReference "kmp-chat" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/pubnub/kmp-chat/";
+			repositoryURL = "https://github.com/pubnub/kmp-chat";
 			requirement = {
 				kind = exactVersion;
-				version = "0.11.0-dev";
+				version = "0.11.2-dev";
 			};
 		};
 		3DCF7DFA2CD0FFCC00889326 /* XCRemoteSwiftPackageReference "swift" */ = {
@@ -1117,15 +1121,15 @@
 			repositoryURL = "https://github.com/pubnub/swift";
 			requirement = {
 				kind = exactVersion;
-				version = 8.3.0;
+				version = 9.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		3D5B58402D10B9A100CB74D1 /* PubNubChat */ = {
+		3D2813202D7B4EF4004623A0 /* PubNubChat */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3D5B583F2D10B9A100CB74D1 /* XCRemoteSwiftPackageReference "kmp-chat" */;
+			package = 3D28131F2D7B4EF4004623A0 /* XCRemoteSwiftPackageReference "kmp-chat" */;
 			productName = PubNubChat;
 		};
 		3DCF7DFB2CD0FFCC00889326 /* PubNubSDK */ = {

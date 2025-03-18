@@ -10,4 +10,5 @@
 
 import Foundation
 
-let objectNoLongerExists = "Object no longer exists"
+// swiftlint:disable:next line_length
+let chatNoLongerExists = "Chat instance was deallocated during its initialization. Ensure you retain a strong reference to the chat object to prevent it from being deallocated unexpectedly"

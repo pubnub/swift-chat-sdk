@@ -12,7 +12,7 @@ import Foundation
 import PubNubSDK
 
 /// Represents an object that refers to a single message in a chat.
-public protocol Message {
+public protocol Message: CustomStringConvertible {
   associatedtype ChatType: Chat
 
   /// Reference to the main Chat object
@@ -209,4 +209,22 @@ public protocol Message {
   /// Use this on the receiving end if a message was sent using ``MessageDraft`` to parse the `Message` text into parts
   /// representing plain text or additional information such as user mentions, channel references and links.
   func getMessageElements() -> [MessageElement]
+}
+
+/// Extension to conform to `CustomStringConvertible` for custom string representation.
+/// Provides a readable description of the object for debugging and logging purposes
+public extension Message {
+  var description: String {
+    String.formattedDescription(
+      self,
+      arguments: [
+        ("timetoken", timetoken),
+        ("content", content),
+        ("channelId", channelId),
+        ("userId", userId),
+        ("actions", actions ?? "nil"),
+        ("meta", meta ?? "nil")
+      ]
+    )
+  }
 }

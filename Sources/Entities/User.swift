@@ -12,7 +12,7 @@ import Foundation
 import PubNubSDK
 
 /// Represents an object that refers to a single user in a chat, including details about the user's identity, metadata, and actions they can perform.
-public protocol User {
+public protocol User: CustomStringConvertible {
   associatedtype ChatType: Chat
 
   /// Reference to the main chat object
@@ -166,4 +166,27 @@ public protocol User {
   func active(
     completion: ((Swift.Result<Bool, Error>) -> Void)?
   )
+}
+
+/// Extension to conform to `CustomStringConvertible` for custom string representation.
+/// Provides a readable description of the object for debugging and logging purposes
+public extension User {
+  var description: String {
+    String.formattedDescription(
+      self, arguments: [
+        ("id", id),
+        ("name", name ?? "nil"),
+        ("externalId", externalId ?? "nil"),
+        ("profileUrl", profileUrl ?? "nil"),
+        ("email", email ?? "nil"),
+        ("custom", custom ?? "nil"),
+        ("status", status ?? "nil"),
+        ("type", type ?? "nil"),
+        ("updated", updated ?? "nil"),
+        ("eTag", eTag ?? "nil"),
+        ("lastActiveTimestamp", lastActiveTimestamp ?? "nil"),
+        ("active", lastActiveTimestamp ?? "active")
+      ]
+    )
+  }
 }

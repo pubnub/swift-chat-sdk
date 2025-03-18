@@ -143,7 +143,7 @@ extension ChatImpl: Chat {
         if let caller = result.caller {
           completion?(.success(caller))
         } else {
-          completion?(.failure(ChatError(message: objectNoLongerExists)))
+          completion?(.failure(ChatError(message: chatNoLongerExists)))
         }
       case let .failure(error):
         completion?(.failure(error))
@@ -555,7 +555,8 @@ extension ChatImpl: Chat {
             )
           }
         }
-      )
+      ),
+      owner: self
     )
   }
 

@@ -70,7 +70,7 @@ extension ThreadChannelImpl: ThreadChannel {
   public var id: String { target.id }
   public var name: String? { target.name }
   public var custom: [String: JSONCodableScalar]? { target.custom }
-  public var description: String? { target.description }
+  public var channelDescription: String? { target.channelDescription }
   public var updated: String? { target.updated }
   public var status: String? { target.status }
   public var type: ChannelType? { target.type }
@@ -216,6 +216,7 @@ extension ThreadChannelImpl: ThreadChannel {
     textLinks: [TextLink]? = nil,
     quotedMessage: MessageImpl? = nil,
     files: [InputFile]? = nil,
+    customPushData: [String: String]? = nil,
     completion: ((Swift.Result<Timetoken, Error>) -> Void)? = nil
   ) {
     target.sendText(
@@ -242,6 +243,7 @@ extension ThreadChannelImpl: ThreadChannel {
     quotedMessage: MessageImpl? = nil,
     files: [InputFile]?,
     usersToMention: [String]? = nil,
+    customPushData: [String: String]? = nil,
     completion: ((Swift.Result<Timetoken, Error>) -> Void)? = nil
   ) {
     target.sendText(

@@ -145,7 +145,8 @@ extension MembershipImpl: Membership {
             callback(nil)
           }
         }
-      }
+      },
+      owner: self
     )
   }
 }

@@ -219,6 +219,7 @@ public extension Channel {
   ///   - quotedMessage: Object added to a message when you quote another message
   ///   - files: One or multiple files attached to the text message
   ///   - usersToMention: A collection of user ids to automatically notify with a mention after this message is sent
+  ///   - customPushData: Additional key-value pairs that will be added to the FCM and/or APNS push messages for the message itself and any user mentions
   /// - Returns: The timetoken of the sent message
   @discardableResult
   func sendText(
@@ -229,7 +230,8 @@ public extension Channel {
     ttl: Int? = nil,
     quotedMessage: ChatType.ChatMessageType? = nil,
     files: [InputFile]? = nil,
-    usersToMention: [String]? = nil
+    usersToMention: [String]? = nil,
+    customPushData: [String: String]? = nil
   ) async throws -> Timetoken {
     try await withCheckedThrowingContinuation { continuation in
       sendText(
@@ -240,7 +242,8 @@ public extension Channel {
         ttl: ttl,
         quotedMessage: quotedMessage,
         files: files,
-        usersToMention: usersToMention
+        usersToMention: usersToMention,
+        customPushData: customPushData
       ) {
         switch $0 {
         case let .success(timetoken):

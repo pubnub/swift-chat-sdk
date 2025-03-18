@@ -203,7 +203,8 @@ extension BaseMessage: Message {
         if let message = $0 as? M, self != nil {
           completion(BaseMessage(message: message))
         }
-      }
+      },
+      owner: self
     )
   }
 

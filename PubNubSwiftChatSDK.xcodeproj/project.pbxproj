@@ -902,7 +902,7 @@
 			repositoryURL = "https://github.com/pubnub/kmp-chat";
 			requirement = {
 				kind = exactVersion;
-				version = "0.11.2-dev";
+				version = "0.12.1-swift";
 			};
 		};
 		3DCF7DFA2CD0FFCC00889326 /* XCRemoteSwiftPackageReference "swift" */ = {
@@ -910,7 +910,7 @@
 			repositoryURL = "https://github.com/pubnub/swift";
 			requirement = {
 				kind = exactVersion;
-				version = 9.0.0;
+				version = 9.0.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

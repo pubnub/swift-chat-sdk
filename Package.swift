@@ -18,8 +18,8 @@ let package = Package(
     )
   ],
   dependencies: [
-    .package(url: "https://github.com/pubnub/kmp-chat", exact: "0.11.2-dev"),
-    .package(url: "https://github.com/pubnub/swift", exact: "9.0.0")
+    .package(url: "https://github.com/pubnub/kmp-chat", exact: "0.12.1-swift"),
+    .package(url: "https://github.com/pubnub/swift", exact: "9.0.1")
   ],
   targets: [
     // Targets are the basic building blocks of a package, defining a module or a test suite.

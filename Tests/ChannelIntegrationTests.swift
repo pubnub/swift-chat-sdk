@@ -337,21 +337,21 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       }
     }
   }
-  
+
   func testChannel_InviteToPublicChannel() throws {
     let publicConversation = try awaitResultValue {
       chat.createPublicConversation(
         completion: $0
       )
     }
-    
+
     let membership = try awaitResultValue {
       publicConversation.invite(
         user: chat.currentUser,
         completion: $0
       )
     }
-    
+
     XCTAssertEqual(membership.user.id, chat.currentUser.id)
     XCTAssertEqual(membership.channel.id, publicConversation.id)
   }

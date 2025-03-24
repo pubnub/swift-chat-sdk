@@ -1,8 +1,13 @@
 name: swift-chat-sdk
 scm: github.com/pubnub/swift-chat-sdk
-version: 0.11.0
+version: 0.12.0
 schema: 1
 changelog:
+  - date: 2025-03-21
+    version: 0.12.0
+    changes:
+      - type: feature
+        text: "Allow users to be invited to public conversations."
   - date: 2025-03-10
     version: 0.11.1
     changes:
@@ -128,7 +133,7 @@ sdks:
           - distribution-type: source
             distribution-repository: GitHub release
             package-name: PubNubSwiftChatSDK
-            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.11.1.zip
+            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.12.0.zip
             supported-platforms:
               supported-operating-systems:
                 iOS:

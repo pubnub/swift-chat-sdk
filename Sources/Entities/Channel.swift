@@ -36,6 +36,9 @@ public protocol Channel: CustomStringConvertible {
 
   /// Receive updates when specific channels are added, edited or removed.
   ///
+  /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
+  /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
+  ///
   /// - Parameters:
   ///   - channels: Collection containing the channels to watch for updates
   ///   - callback: Defines the custom behavior to be executed when detecting channels changes
@@ -114,6 +117,9 @@ public protocol Channel: CustomStringConvertible {
   )
 
   /// Enables continuous tracking of typing activity within the ``Channel``.
+  ///
+  /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
+  /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
   ///
   /// - Parameter callback: Callback function passed as a parameter. It defines the custom behavior to be executed whenever a user starts/stops typing
   /// - Returns: ``AutoCloseable`` you can call to disconnect (unsubscribe) from the channel and stop receiving signal events for someone typing by invoking the `close()` method
@@ -273,6 +279,9 @@ public protocol Channel: CustomStringConvertible {
 
   /// Watch the ``Channel`` content without a need to join the ``Channel``.
   ///
+  /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
+  /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
+  ///
   /// - Parameter callback: Defines the custom behavior to be executed whenever a message is received on the ``Channel``
   /// - Returns: ``AutoCloseable`` interface you can call to stop listening for new messages and clean up resources when they are no longer needed by invoking the `close()` method
   func connect(
@@ -373,6 +382,9 @@ public protocol Channel: CustomStringConvertible {
 
   /// Receives updates on a single ``Channel`` object.
   ///
+  /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
+  /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
+  ///
   /// - Parameter callback: Function that takes a single Channel object. It defines the custom behavior to be executed when detecting channel changes
   /// - Returns: ``AutoCloseable`` interface that lets you stop receiving channel-related updates (objects events) and clean up resources by invoking the `close()` method
   func streamUpdates(
@@ -380,6 +392,9 @@ public protocol Channel: CustomStringConvertible {
   ) -> AutoCloseable
 
   /// Lets you get a read confirmation status for messages you published on a channel.
+  ///
+  /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
+  /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
   ///
   /// - Parameter callback: Defines the custom behavior to be executed when receiving a read confirmation status on the joined channel.
   /// - Returns: AutoCloseable Interface you can call to stop listening for message read receipts and clean up resources by invoking the close() method
@@ -416,6 +431,9 @@ public protocol Channel: CustomStringConvertible {
   )
 
   /// Enables real-time tracking of users connecting to or disconnecting from a ``Channel``.
+  ///
+  /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
+  /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
   ///
   /// - Parameter callback: Defines the custom behavior to be executed when detecting user presence event
   /// - Returns: ``AutoCloseable`` interface that lets you stop receiving presence-related updates (presence events) by invoking the `close()` method
@@ -454,6 +472,9 @@ public protocol Channel: CustomStringConvertible {
   )
 
   /// As an admin of your chat app, monitor all events emitted when someone reports an offensive message.
+  ///
+  /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
+  /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
   ///
   /// - Parameter callback: Callback function passed as a parameter. It defines the custom behavior to be executed when detecting new message report events
   /// - Returns: ``AutoCloseable`` interface that lets you stop receiving report-related updates (report events) by invoking the close() method

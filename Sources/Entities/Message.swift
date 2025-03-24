@@ -62,6 +62,9 @@ public protocol Message: CustomStringConvertible {
 
   /// Receive updates when specific messages and related message reactions are added, edited, or removed.
   ///
+  /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
+  /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
+  ///
   /// - Parameters:
   ///   - messages: A collection of ``Message`` objects for which you want to get updates on changed messages
   ///   - callback: Function that takes a collection of ``Message`` objects. It defines the custom behavior to be executed when detecting message or message reaction changes
@@ -185,6 +188,9 @@ public protocol Message: CustomStringConvertible {
   )
 
   /// You can receive updates when this message and related message reactions are added, edited, or removed.
+  ///
+  /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
+  /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
   ///
   /// - Parameter completion: Function that takes a single Message object. It defines the custom behavior to be executed when detecting message or message reaction changes
   /// - Returns: Interface that lets you stop receiving message-related updates by invoking the `close()` method

@@ -36,6 +36,9 @@ public protocol Membership: CustomStringConvertible {
 
   /// Receive updates when specific memberships are added, edited or removed.
   ///
+  /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
+  /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
+  ///
   /// - Parameters:
   ///   - memberships: Collection containing the ``Membership`` to watch for updates
   ///   - callback: Defines the custom behavior to be executed when detecting membership changes
@@ -92,6 +95,9 @@ public protocol Membership: CustomStringConvertible {
   )
 
   /// You can receive updates when specific user-channel Membership object(s) are added, edited, or removed.
+  ///
+  /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
+  /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
   ///
   /// - Parameter callback: Defines the custom behavior to be executed when detecting membership changes
   /// - Returns: An ``AutoCloseable`` that you can use to stop receiving objects events by invoking its `close()` method

@@ -352,6 +352,9 @@ public protocol Chat: AnyObject {
 
   /// Lets you watch a selected channel for any new custom events emitted by your chat app.
   ///
+  /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
+  /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
+  ///
   /// - Parameters:
   ///   - type: The type of object that conforms to `EventContent` for which to listen
   ///   - channelId: Channel to listen for new events

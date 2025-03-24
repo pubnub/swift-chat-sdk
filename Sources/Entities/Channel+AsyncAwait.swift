@@ -335,9 +335,6 @@ public extension Channel {
 
   /// Connects a user to the ``Channel`` and sets membership - this way, the chat user can both watch the channel's content and be its full-fledged member.
   ///
-  /// - Warning: Keep a strong reference to the returned `AsyncStream` to ensure your subscription to the current channel remains active and you continue to receive messages.
-  ///  You can skip this strong reference if you are only interested in being a full-fledged member of the current channel and not in receiving real-time updates.
-  ///
   /// - Parameters:
   ///   - custom: Any custom properties or metadata associated with the channel-user membership in the form of key-value pairs
   /// - Returns: A `Tuple` containing the user's membership in the channel, and an asynchronous stream that produces a new value every time a new message is published on the current channel

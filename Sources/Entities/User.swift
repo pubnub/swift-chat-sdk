@@ -44,6 +44,9 @@ public protocol User: CustomStringConvertible {
 
   /// Receive updates when specific users are added, edited or removed.
   ///
+  /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
+  /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
+  ///
   /// - Parameters:
   ///   - users: Collection containing the users to watch for updates
   ///   - callback: Defines the custom behavior to be executed when detecting users changes
@@ -148,6 +151,9 @@ public protocol User: CustomStringConvertible {
   )
 
   /// Receives updates on a single User object.
+  ///
+  /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
+  /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
   ///
   /// - Parameters:
   ///   - callback: A function that is triggered whenever the user's information are changed (added, edited, or removed)

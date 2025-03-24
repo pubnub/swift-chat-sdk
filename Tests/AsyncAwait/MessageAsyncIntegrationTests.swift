@@ -137,7 +137,7 @@ class MessageAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
     let threadChannelHistory = try await threadChannel.getHistory()
     let retrievedThreadMessage = try XCTUnwrap(threadChannelHistory.messages.first)
-    
+
     XCTAssertEqual(threadChannelHistory.messages.count, 1)
     XCTAssertEqual(retrievedThreadMessage.text, "This is reply in a thread")
 

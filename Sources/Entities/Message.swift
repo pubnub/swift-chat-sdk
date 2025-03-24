@@ -14,6 +14,7 @@ import PubNubSDK
 /// Represents an object that refers to a single message in a chat.
 public protocol Message: CustomStringConvertible {
   associatedtype ChatType: Chat
+  associatedtype MessageDraftType: MessageDraft
 
   /// Reference to the main Chat object
   var chat: ChatType { get }
@@ -158,7 +159,37 @@ public protocol Message: CustomStringConvertible {
   ///   - completion: The async `Result` of the method call
   ///     - **Success**:  Returns a ``ThreadChannel`` object which can be used for sending and reading messages from the newly created message thread
   ///     - **Failure**: An `Error` describing the failure
+  @available(*, deprecated, message: "Use `createThread(text:meta:shouldStore:usePost:ttl:quotedMessage:files:usersToMention:customPushData:completion:)` instead")
+  // swiftlint:disable:previous line_length
   func createThread(
+    completion: ((Swift.Result<ChatType.ChatThreadChannelType, Error>) -> Void)?
+  )
+
+  /// Create a thread by sending the first reply to the current message.
+  ///
+  /// - Parameters:
+  ///   - text: Text that you want to send to the selected channel
+  ///   - meta: Publish additional details with the request
+  ///   - shouldStore: If true, the messages are stored in Message Persistence if enabled in Admin Portal
+  ///   - usePost: Use HTTP POST
+  ///   - ttl: Defines if/how long (in hours) the message should be stored in Message Persistence
+  ///   - quotedMessage: Object added to a message when you quote another message
+  ///   - files: One or multiple files attached to the text message
+  ///   - usersToMention: A collection of user ids to automatically notify with a mention after this message is sent
+  ///   - customPushData: Additional key-value pairs that will be added to the FCM and/or APNS push messages for the message itself and any user mentions
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**:  Returns a ``ThreadChannel`` object which can be used for sending and reading messages from the newly created message thread
+  ///     - **Failure**: An `Error` describing the failure
+  func createThread(
+    text: String,
+    meta: [String: JSONCodable]?,
+    shouldStore: Bool,
+    usePost: Bool,
+    ttl: Int?,
+    quotedMessage: ChatType.ChatMessageType?,
+    files: [InputFile]?,
+    usersToMention: [String]?,
+    customPushData: [String: String]?,
     completion: ((Swift.Result<ChatType.ChatThreadChannelType, Error>) -> Void)?
   )
 
@@ -215,6 +246,24 @@ public protocol Message: CustomStringConvertible {
   /// Use this on the receiving end if a message was sent using ``MessageDraft`` to parse the `Message` text into parts
   /// representing plain text or additional information such as user mentions, channel references and links.
   func getMessageElements() -> [MessageElement]
+
+  /// Creates a message draft for replying in a thread
+  ///
+  /// - Parameters:
+  ///   - userSuggestionSource: The scope for searching for suggested users
+  ///   - isTypingIndicatorTriggered: Whether modifying the message text triggers the typing indicator on channel
+  ///   - userLimit: The limit on the number of users returned when searching for users to mention
+  ///   - channelLimit: The limit on the number of channels returned when searching for channels to reference
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**:  A message draft object for composing a message, which you can send by calling ``MessageDraft/send(meta:shouldStore:usePost:ttl:completion:)`` when ready
+  ///     - **Failure**: An `Error` describing the failure
+  func createThreadMessageDraft(
+    userSuggestionSource: UserSuggestionSource,
+    isTypingIndicatorTriggered: Bool,
+    userLimit: Int,
+    channelLimit: Int,
+    completion: ((Swift.Result<MessageDraftType, Error>) -> Void)?
+  )
 }
 
 /// Extension to conform to `CustomStringConvertible` for custom string representation.

@@ -104,7 +104,7 @@ extension ThreadMessageImpl: ThreadMessage {
     )
   }
 
-  public func pinToParentChannel(completion: ((Swift.Result<ChannelImpl, Error>) -> Void)?) {
+  public func pinToParentChannel(completion: ((Swift.Result<ChannelImpl, Error>) -> Void)? = nil) {
     target.message.pinToParentChannel().async(
       caller: self
     ) { (result: FutureResult<ThreadMessageImpl, PubNubChat.Channel_>) in
@@ -117,7 +117,7 @@ extension ThreadMessageImpl: ThreadMessage {
     }
   }
 
-  public func unpinFromParentChannel(completion: ((Swift.Result<ChannelImpl, Error>) -> Void)?) {
+  public func unpinFromParentChannel(completion: ((Swift.Result<ChannelImpl, Error>) -> Void)? = nil) {
     target.message.unpinFromParentChannel().async(
       caller: self
     ) { (result: FutureResult<ThreadMessageImpl, PubNubChat.Channel_>) in
@@ -164,7 +164,7 @@ extension ThreadMessageImpl: ThreadMessage {
     )
   }
 
-  public func forward(channelId: String, completion: ((Swift.Result<Timetoken, Error>) -> Void)?) {
+  public func forward(channelId: String, completion: ((Swift.Result<Timetoken, Error>) -> Void)? = nil) {
     target.forward(
       channelId: channelId,
       completion: completion
@@ -189,6 +189,32 @@ extension ThreadMessageImpl: ThreadMessage {
 
   public func createThread(completion: ((Swift.Result<ThreadChannelImpl, Error>) -> Void)? = nil) {
     target.createThread(
+      completion: completion
+    )
+  }
+
+  public func createThread(
+    text: String,
+    meta: [String: JSONCodable]? = nil,
+    shouldStore: Bool = true,
+    usePost: Bool = false,
+    ttl: Int? = nil,
+    quotedMessage: MessageImpl? = nil,
+    files: [InputFile]? = nil,
+    usersToMention: [String]? = nil,
+    customPushData: [String: String]? = nil,
+    completion: ((Swift.Result<ThreadChannelImpl, Error>) -> Void)? = nil
+  ) {
+    target.createThread(
+      text: text,
+      meta: meta,
+      shouldStore: shouldStore,
+      usePost: usePost,
+      ttl: ttl,
+      quotedMessage: quotedMessage,
+      files: files,
+      usersToMention: usersToMention,
+      customPushData: customPushData,
       completion: completion
     )
   }
@@ -234,5 +260,21 @@ extension ThreadMessageImpl: ThreadMessage {
 
   public func getMessageElements() -> [MessageElement] {
     target.getMessageElements()
+  }
+
+  public func createThreadMessageDraft(
+    userSuggestionSource: UserSuggestionSource = .channel,
+    isTypingIndicatorTriggered: Bool = true,
+    userLimit: Int = 10,
+    channelLimit: Int = 10,
+    completion: ((Swift.Result<MessageDraftImpl, Error>) -> Void)? = nil
+  ) {
+    target.createThreadMessageDraft(
+      userSuggestionSource: userSuggestionSource,
+      isTypingIndicatorTriggered: isTypingIndicatorTriggered,
+      userLimit: userLimit,
+      channelLimit: channelLimit,
+      completion: completion
+    )
   }
 }

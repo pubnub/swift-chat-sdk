@@ -186,7 +186,8 @@ public protocol Channel: CustomStringConvertible {
   ///   - completion: The async `Result` of the method callnel
   ///     - **Success**: The timetoken of the sent message
   ///     - **Failure**: An `Error` describing the failure
-  @available(*, deprecated, message: "Will be removed from SDK in the future")
+  @available(*, deprecated, message: "Use `sendText(text:meta:shouldStore:usePost:ttl:quotedMessage:files:usersToMention:customPushData:completion:)` instead")
+  // swiftlint:disable:previous line_length
   func sendText(
     text: String,
     meta: [String: JSONCodable]?,
@@ -489,6 +490,7 @@ public protocol Channel: CustomStringConvertible {
   ///   - isTypingIndicatorTriggered: Whether modifying the message text triggers the typing indicator on channel
   ///   - userLimit: The limit on the number of users returned when searching for users to mention
   ///   - channelLimit: The limit on the number of channels returned when searching for channels to reference
+  ///  - Returns: A message draft object for composing a message, which you can send by calling ``MessageDraft/send(meta:shouldStore:usePost:ttl:)`` when ready
   func createMessageDraft(
     userSuggestionSource: UserSuggestionSource,
     isTypingIndicatorTriggered: Bool,

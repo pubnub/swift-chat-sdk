@@ -142,9 +142,57 @@ public extension Message {
   /// Create a thread (channel) for a selected message.
   ///
   /// - Returns: A ``ThreadChannel`` object which can be used for sending and reading messages from the newly created message thread
+  @available(*, deprecated, message: "Use `createThread(text:meta:shouldStore:usePost:ttl:quotedMessage:files:usersToMention:customPushData:)` instead")
+  // swiftlint:disable:previous line_length
   func createThread() async throws -> ChatType.ChatThreadChannelType {
     try await withCheckedThrowingContinuation { continuation in
       createThread {
+        switch $0 {
+        case let .success(thread):
+          continuation.resume(returning: thread)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+
+  /// Create a thread by sending the first reply to the current message.
+  ///
+  /// - Parameters:
+  ///   - text: Text that you want to send to the selected channel
+  ///   - meta: Publish additional details with the request
+  ///   - shouldStore: If true, the messages are stored in Message Persistence if enabled in Admin Portal
+  ///   - usePost: Use HTTP POST
+  ///   - ttl: Defines if/how long (in hours) the message should be stored in Message Persistence
+  ///   - quotedMessage: Object added to a message when you quote another message
+  ///   - files: One or multiple files attached to the text message
+  ///   - usersToMention: A collection of user ids to automatically notify with a mention after this message is sent
+  ///   - customPushData: Additional key-value pairs that will be added to the FCM and/or APNS push messages for the message itself and any user mentions
+  /// - Returns: A ``ThreadChannel`` object which can be used for sending and reading messages from the newly created message thread
+  func createThread(
+    text: String,
+    meta: [String: JSONCodable]? = nil,
+    shouldStore: Bool = true,
+    usePost: Bool = false,
+    ttl: Int? = nil,
+    quotedMessage: ChatType.ChatMessageType? = nil,
+    files: [InputFile]? = nil,
+    usersToMention: [String]? = nil,
+    customPushData: [String: String]? = nil
+  ) async throws -> ChatType.ChatThreadChannelType {
+    try await withCheckedThrowingContinuation { continuation in
+      createThread(
+        text: text,
+        meta: meta,
+        shouldStore: shouldStore,
+        usePost: usePost,
+        ttl: ttl,
+        quotedMessage: quotedMessage,
+        files: files,
+        usersToMention: usersToMention,
+        customPushData: customPushData
+      ) {
         switch $0 {
         case let .success(thread):
           continuation.resume(returning: thread)
@@ -219,6 +267,37 @@ public extension Message {
         switch $0 {
         case let .success(message):
           continuation.resume(returning: message)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+
+  /// Creates a message draft for replying in a thread
+  ///
+  /// - Parameters:
+  ///   - userSuggestionSource: The scope for searching for suggested users
+  ///   - isTypingIndicatorTriggered: Whether modifying the message text triggers the typing indicator on channel
+  ///   - userLimit: The limit on the number of users returned when searching for users to mention
+  ///   - channelLimit: The limit on the number of channels returned when searching for channels to reference
+  /// - Returns: A message draft object for composing a message, which you can send by calling ``MessageDraft/send(meta:shouldStore:usePost:ttl:)`` when ready
+  func createThreadMessageDraft(
+    userSuggestionSource: UserSuggestionSource = .channel,
+    isTypingIndicatorTriggered: Bool = true,
+    userLimit: Int = 10,
+    channelLimit: Int = 10
+  ) async throws -> MessageDraftType {
+    try await withCheckedThrowingContinuation { continuation in
+      createThreadMessageDraft(
+        userSuggestionSource: userSuggestionSource,
+        isTypingIndicatorTriggered: isTypingIndicatorTriggered,
+        userLimit: userLimit,
+        channelLimit: channelLimit
+      ) {
+        switch $0 {
+        case let .success(messageDraft):
+          continuation.resume(returning: messageDraft)
         case let .failure(error):
           continuation.resume(throwing: error)
         }

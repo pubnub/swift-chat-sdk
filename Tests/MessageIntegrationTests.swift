@@ -268,6 +268,38 @@ final class MessageIntegrationTests: BaseClosureIntegrationTestCase {
     }
   }
 
+  func testMessage_CreateThreadWithParameters() throws {
+    let threadChannel = try awaitResultValue {
+      testMessage.createThread(
+        text: "This is reply in a thread",
+        completion: $0
+      )
+    }
+
+    let threadChannelHistory = try awaitResultValue(delay: 4) {
+      threadChannel.getHistory(
+        completion: $0
+      )
+    }
+
+    let retrievedThreadMessage = try XCTUnwrap(threadChannelHistory.messages.first)
+    XCTAssertEqual(threadChannelHistory.messages.count, 1)
+    XCTAssertEqual(retrievedThreadMessage.text, "This is reply in a thread")
+
+    addTeardownBlock { [unowned self] in
+      try awaitResult {
+        retrievedThreadMessage.delete(
+          completion: $0
+        )
+      }
+      try awaitResult {
+        testMessage.removeThread(
+          completion: $0
+        )
+      }
+    }
+  }
+
   func testMessage_RemoveThread() throws {
     let threadChannel = try awaitResultValue {
       testMessage.createThread(

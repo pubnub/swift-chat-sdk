@@ -88,7 +88,7 @@ extension BaseMessage: Message {
   public func delete(
     soft: Bool = false,
     preserveFiles: Bool = false,
-    completion: ((Swift.Result<MessageImpl?, Error>) -> Void)? = nil
+    completion: ((Swift.Result<MessageImpl?, Error>) -> Void)?
   ) {
     message.delete(
       soft: soft,
@@ -103,7 +103,7 @@ extension BaseMessage: Message {
     }
   }
 
-  public func getThread(completion: ((Swift.Result<ThreadChannelImpl, Error>) -> Void)? = nil) {
+  public func getThread(completion: ((Swift.Result<ThreadChannelImpl, Error>) -> Void)?) {
     message.getThread().async(caller: self) { (result: FutureResult<BaseMessage, PubNubChat.ThreadChannel>) in
       switch result.result {
       case let .success(threadChannel):
@@ -130,7 +130,7 @@ extension BaseMessage: Message {
     }
   }
 
-  public func pin(completion: ((Swift.Result<ChannelImpl, Error>) -> Void)? = nil) {
+  public func pin(completion: ((Swift.Result<ChannelImpl, Error>) -> Void)?) {
     message.pin().async(caller: self) { (result: FutureResult<BaseMessage<M>, PubNubChat.Channel_>) in
       switch result.result {
       case let .success(channel):
@@ -143,7 +143,7 @@ extension BaseMessage: Message {
 
   public func report(
     reason: String,
-    completion: ((Swift.Result<Timetoken, Error>) -> Void)? = nil
+    completion: ((Swift.Result<Timetoken, Error>) -> Void)?
   ) {
     message.report(
       reason: reason
@@ -168,7 +168,39 @@ extension BaseMessage: Message {
     }
   }
 
-  public func removeThread(completion: ((Swift.Result<ChannelImpl?, Error>) -> Void)? = nil) {
+  func createThread(
+    text: String,
+    meta: [String: JSONCodable]?,
+    shouldStore: Bool,
+    usePost: Bool,
+    ttl: Int?,
+    quotedMessage: MessageImpl?,
+    files: [InputFile]?,
+    usersToMention: [String]?,
+    customPushData: [String: String]?,
+    completion: ((Swift.Result<ThreadChannelImpl, Error>) -> Void)?
+  ) {
+    message.createThread(
+      text: text,
+      meta: meta?.compactMapValues { $0.rawValue },
+      shouldStore: shouldStore,
+      usePost: usePost,
+      ttl: ttl?.asKotlinInt,
+      quotedMessage: quotedMessage?.target.message,
+      files: files?.compactMap { $0.transform() },
+      usersToMention: usersToMention,
+      customPushData: customPushData
+    ).async(caller: self) { (result: FutureResult<BaseMessage, PubNubChat.ThreadChannel>) in
+      switch result.result {
+      case let .success(threadChannel):
+        completion?(.success(ThreadChannelImpl(channel: threadChannel)))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
+
+  public func removeThread(completion: ((Swift.Result<ChannelImpl?, Error>) -> Void)?) {
     message.removeThread().async(
       caller: self
     ) { (result: FutureResult<BaseMessage, KotlinPair<PNRemoveMessageActionResult, PubNubChat.ThreadChannel>>) in
@@ -183,7 +215,7 @@ extension BaseMessage: Message {
 
   public func toggleReaction(
     reaction: String,
-    completion: ((Swift.Result<BaseMessage<M>, Error>) -> Void)? = nil
+    completion: ((Swift.Result<BaseMessage<M>, Error>) -> Void)?
   ) {
     message.toggleReaction(
       reaction: reaction
@@ -208,7 +240,7 @@ extension BaseMessage: Message {
     )
   }
 
-  func restore(completion: ((Swift.Result<BaseMessage<M>, Error>) -> Void)? = nil) {
+  func restore(completion: ((Swift.Result<BaseMessage<M>, Error>) -> Void)?) {
     message.restore().async(caller: self) { (result: FutureResult<BaseMessage, M>) in
       switch result.result {
       case let .success(message):
@@ -221,5 +253,28 @@ extension BaseMessage: Message {
 
   func getMessageElements() -> [MessageElement] {
     MediatorsKt.getMessageElements(message).compactMap { MessageElement.from(element: $0) }
+  }
+
+  func createThreadMessageDraft(
+    userSuggestionSource: UserSuggestionSource,
+    isTypingIndicatorTriggered: Bool,
+    userLimit: Int,
+    channelLimit: Int,
+    completion: ((Swift.Result<MessageDraftImpl, Error>) -> Void)?
+  ) {
+    MediatorsKt.createThreadMessageDraft(
+      message,
+      userSuggestionSource: userSuggestionSource.transform(),
+      isTypingIndicatorTriggered: isTypingIndicatorTriggered,
+      userLimit: Int32(userLimit),
+      channelLimit: Int32(channelLimit)
+    ).async(caller: self) { (result: FutureResult<BaseMessage, PubNubChat.MessageDraft>) in
+      switch result.result {
+      case let .success(messageDraft):
+        completion?(.success(MessageDraftImpl(messageDraft: messageDraft)))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
   }
 }

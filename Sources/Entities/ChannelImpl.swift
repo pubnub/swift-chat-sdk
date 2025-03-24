@@ -198,6 +198,7 @@ extension ChannelImpl: Channel {
       textLinks: textLinks,
       quotedMessage: quotedMessage,
       files: files,
+      customPushData: customPushData,
       completion: completion
     )
   }
@@ -223,6 +224,7 @@ extension ChannelImpl: Channel {
       quotedMessage: quotedMessage,
       files: files,
       usersToMention: usersToMention,
+      customPushData: customPushData,
       completion: completion
     )
   }

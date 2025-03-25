@@ -29,9 +29,8 @@ public protocol Event<C, T> {
   var userId: String { get }
 }
 
-/// A struct representing any ``Event`` and abstracting the concrete ``Event/payload`` type
+/// A struct representing any ``Event`` and abstracting the concrete ``Event/payload`` type.
 public struct AnyEvent<C: Chat> {
-
   /// Reference to the main Chat object
   public var chat: C
   /// Timetoken of the message that triggered an event
@@ -44,7 +43,7 @@ public struct AnyEvent<C: Chat> {
   public var userId: String
 }
 
-/// A concrete implementation of ``Event`` protocol
+/// A concrete implementation of ``Event`` protocol with strongly typed ``payload`` property.
 public struct EventImpl<C: Chat, T: EventContentProtocol>: Event {
   /// Reference to the main Chat object
   public var chat: C

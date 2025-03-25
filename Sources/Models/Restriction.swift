@@ -10,9 +10,10 @@
 
 import Foundation
 import PubNubChat
+import PubNubSDK
 
 /// Representing the type of restriction applied to a user.
-public enum RestrictionType: String {
+public enum RestrictionType: String, JSONCodable {
   /// Represents a ban restriction
   case ban
   /// Represents a mute restriction

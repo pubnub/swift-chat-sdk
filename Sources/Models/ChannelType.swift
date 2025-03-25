@@ -13,7 +13,7 @@ import PubNubChat
 import PubNubSDK
 
 /// Enum representing the different types of channels that can be created.
-public enum ChannelType: String, CaseIterable {
+public enum ChannelType: String, CaseIterable, JSONCodable {
   /// A direct channel, used for one-on-one communication
   case direct
   /// A group channel, used for communication between multiple users in a private group

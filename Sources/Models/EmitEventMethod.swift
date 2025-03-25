@@ -9,9 +9,10 @@
 //
 
 import Foundation
+import PubNubSDK
 
 /// Enum representing the method used to emit an event in the chat system.
-public enum EmitEventMethod {
+public enum EmitEventMethod: JSONCodable {
   /// Represents events emitted using the "signal" method, typically for lightweight real-time updates
   case signal
   /// Represents events emitted using the "publish" method, typically for broadcasting messages to a channel

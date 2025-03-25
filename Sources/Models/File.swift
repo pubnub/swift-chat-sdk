@@ -9,9 +9,10 @@
 //
 
 import Foundation
+import PubNubSDK
 
 /// Represents a file that is associated with a message in the chat system.
-public struct File {
+public struct File: JSONCodable {
   /// The name of the file
   public var name: String
   /// The unique identifier of the file

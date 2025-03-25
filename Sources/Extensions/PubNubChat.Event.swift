@@ -13,20 +13,19 @@ import PubNubChat
 import PubNubSDK
 
 extension PubNubChat.EventContent {
+  // swiftlint:disable:next cyclomatic_complexity
   func map() -> EventContentProtocol {
     switch self {
     case let content as PubNubChat.EventContent.Typing:
-      EventContent.Typing(
-        value: content.value
-      )
+      EventContent.Typing(value: content.value)
     case let content as PubNubChat.EventContent.Receipt:
-      EventContent.Receipt(
-        messageTimetoken: Timetoken(content.messageTimetoken)
-      )
+      EventContent.Receipt(messageTimetoken: Timetoken(content.messageTimetoken))
     case let content as PubNubChat.EventContent.UnknownMessageFormat:
-      EventContent.UnknownMessageFormat(
-        element: content.jsonElement.value
-      )
+      if let value = content.jsonElement.value {
+        EventContent.UnknownMessageFormat(element: AnyJSON(value))
+      } else {
+        EventContent.UnknownMessageFormat(element: nil)
+      }
     case let content as PubNubChat.EventContent.Invite:
       EventContent.Invite(
         channelType: content.channelType.transform(),
@@ -48,7 +47,7 @@ extension PubNubChat.EventContent {
       )
     case let content as PubNubChat.EventContent.Custom:
       EventContent.Custom(
-        data: content.data,
+        data: AnyJSON(content.data),
         method: content.method == .signal ? .signal : .publish
       )
     case let content as PubNubChat.EventContent.Moderation:
@@ -63,9 +62,7 @@ extension PubNubChat.EventContent {
         files: content.files?.map { File(name: $0.name, id: $0.id, url: $0.url, type: $0.type) }
       )
     default:
-      EventContent.UnknownMessageFormat(
-        element: self
-      )
+      EventContent.UnknownMessageFormat(element: nil)
     }
   }
 }

@@ -13,7 +13,7 @@ import PubNubChat
 import PubNubSDK
 
 /// A protocol for representing the content of various types of events emitted during chat operations
-public protocol EventContentProtocol {
+public protocol EventContentProtocol: JSONCodable {
 
 }
 
@@ -269,7 +269,7 @@ public extension EventContent {
   /// Represents a custom event with arbitrary data.
   struct Custom: EventContentProtocol, CustomStringConvertible {
     /// A map containing key-value pairs of custom data associated with the event
-    public let data: [String: Any]
+    public let data: AnyJSON
     /// The method by which the event was emitted
     public let method: EmitEventMethod
 
@@ -278,7 +278,7 @@ public extension EventContent {
     /// - Parameters:
     ///   - data: A map containing key-value pairs of custom data associated with the event
     ///   - method: The method by which the event was emitted
-    public init(data: [String: Any], method: EmitEventMethod) {
+    public init(data: AnyJSON, method: EmitEventMethod) {
       self.data = data
       self.method = method
     }
@@ -301,11 +301,11 @@ public extension EventContent {
   /// Represents a message with an unknown format, used to handle cases where the message format doesn't match known types.
   struct UnknownMessageFormat: EventContentProtocol, CustomStringConvertible {
     /// The raw JSON element representing the message with the unknown format
-    public let element: Any?
+    public let element: AnyJSON?
 
     /// Initializes a new instance of `EventContent.UnknownMessageFormat` with the provided details.
     /// - Parameter element: The raw JSON element representing the message with the unknown format
-    public init(element: Any? = nil) {
+    public init(element: AnyJSON? = nil) {
       self.element = element
     }
 
@@ -351,7 +351,7 @@ extension EventContent {
       )
     case let content as PubNubChat.EventContent.Custom:
       EventContent.Custom(
-        data: content.data,
+        data: AnyJSON(content.data),
         method: content.method == .signal ? .signal : .publish
       )
     case let content as PubNubChat.EventContent.TextMessageContent:
@@ -360,12 +360,14 @@ extension EventContent {
         files: content.files?.compactMap { $0.transform() }
       )
     case let content as PubNubChat.EventContent.UnknownMessageFormat:
-      EventContent.UnknownMessageFormat(
-        element: content.jsonElement.value
-      )
+      if let value = content.jsonElement.value {
+        EventContent.UnknownMessageFormat(element: AnyJSON(value))
+      } else {
+        EventContent.UnknownMessageFormat(element: nil)
+      }
     default:
       EventContent.UnknownMessageFormat(
-        element: rawValue
+        element: AnyJSON(rawValue)
       )
     }
   }
@@ -374,12 +376,13 @@ extension EventContent {
 // MARK: - EventContent Transformations
 
 extension EventContent {
+  // swiftlint:disable:next cyclomatic_complexity
   static func transform(content: EventContentProtocol) -> PubNubChat.EventContent {
     switch content {
     case let content as EventContent.Typing:
-      PubNubChat.EventContent.Typing(value: content.value)
+      return PubNubChat.EventContent.Typing(value: content.value)
     case let content as EventContent.Report:
-      PubNubChat.EventContent.Report(
+      return PubNubChat.EventContent.Report(
         text: content.text,
         reason: content.reason,
         reportedMessageTimetoken: content.reportedMessageTimetoken?.asKotlinLong(),
@@ -387,33 +390,33 @@ extension EventContent {
         reportedUserId: content.reportedUserId
       )
     case let content as EventContent.Receipt:
-      PubNubChat.EventContent.Receipt(
+      return PubNubChat.EventContent.Receipt(
         messageTimetoken: Int64(content.messageTimetoken)
       )
     case let content as EventContent.Mention:
-      PubNubChat.EventContent.Mention(
+      return PubNubChat.EventContent.Mention(
         messageTimetoken: Int64(content.messageTimetoken),
         channel: content.channel,
         parentChannel: content.parentChannel
       )
     case let content as EventContent.Invite:
-      PubNubChat.EventContent.Invite(
+      return PubNubChat.EventContent.Invite(
         channelType: content.channelType.transform(),
         channelId: content.channelId
       )
     case let content as EventContent.Custom:
-      PubNubChat.EventContent.Custom(
-        data: content.data,
+      return PubNubChat.EventContent.Custom(
+        data: content.data.dictionaryOptional ?? [:],
         method: content.method == .signal ? .signal : .publish
       )
     case let content as EventContent.Moderation:
-      PubNubChat.EventContent.Moderation(
+      return PubNubChat.EventContent.Moderation(
         channelId: content.channelId,
         restriction: content.restriction.transform(),
         reason: content.reason
       )
     case let content as EventContent.TextMessageContent:
-      PubNubChat.EventContent.TextMessageContent(
+      return PubNubChat.EventContent.TextMessageContent(
         text: content.text,
         files: content.files?.map {
           PubNubChat.File(
@@ -425,12 +428,22 @@ extension EventContent {
         }
       )
     case let content as EventContent.UnknownMessageFormat:
-      PubNubChat.EventContent.UnknownMessageFormat(
-        jsonElement: JsonElement(value: content.element)
+      return PubNubChat.EventContent.UnknownMessageFormat(
+        jsonElement: JsonElementImpl(value: content.element)
       )
     default:
-      PubNubChat.EventContent.UnknownMessageFormat(
-        jsonElement: JsonElement(value: nil)
+      if let data = try? Constant.jsonEncoder.encode(content) {
+        if let dictionary = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+          return PubNubChat.EventContent.Custom(
+            data: dictionary,
+            method: .signal
+          )
+        }
+      }
+      return PubNubChat.EventContent.UnknownMessageFormat(
+        jsonElement: JsonElementImpl(
+          value: content.rawValue
+        )
       )
     }
   }

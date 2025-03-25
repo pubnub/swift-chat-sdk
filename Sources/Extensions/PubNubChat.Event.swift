@@ -13,7 +13,7 @@ import PubNubChat
 import PubNubSDK
 
 extension PubNubChat.EventContent {
-  func map() -> EventContent {
+  func map() -> EventContentProtocol {
     switch self {
     case let content as PubNubChat.EventContent.Typing:
       EventContent.Typing(

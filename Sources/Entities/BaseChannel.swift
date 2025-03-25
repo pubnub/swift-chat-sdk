@@ -542,7 +542,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     startTimetoken: Timetoken?,
     endTimetoken: Timetoken?,
     count: Int,
-    completion: ((Swift.Result<(events: [AnyEvent<ChatType, EventContent>], isMore: Bool), Error>) -> Void)?
+    completion: ((Swift.Result<(events: [AnyEvent<ChatImpl>], isMore: Bool), Error>) -> Void)?
   ) {
     channel.getMessageReportsHistory(
       startTimetoken: startTimetoken?.asKotlinLong(),
@@ -552,7 +552,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
       switch result.result {
       case let .success(response):
         completion?(.success((
-          events: response.events.compactMap { (event: PubNubChat.Event) -> AnyEvent<ChatType, EventContent> in
+          events: response.events.compactMap { (event: PubNubChat.Event) -> AnyEvent<ChatType> in
             AnyEvent(
               chat: result.caller.chat,
               timetoken: Timetoken(event.timetoken_),
@@ -570,12 +570,12 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     }
   }
 
-  func streamMessageReports(callback: @escaping (AnyEvent<ChatType, EventContent.Report>) -> Void) -> AutoCloseable {
+  func streamMessageReports(callback: @escaping (EventImpl<ChatImpl, EventContent.Report>) -> Void) -> AutoCloseable {
     AutoCloseableImpl(
       channel.streamMessageReports { [weak self] in
         if let selfRef = self, let payload = $0.payload.map() as? EventContent.Report {
           callback(
-            AnyEvent(
+            EventImpl(
               chat: selfRef.chat,
               timetoken: Timetoken($0.timetoken_),
               payload: payload,

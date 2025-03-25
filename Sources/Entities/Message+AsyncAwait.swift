@@ -241,7 +241,6 @@ public extension Message {
 
   /// You can receive updates when this message and related message reactions are added, edited, or removed.
   ///
-  /// - Parameter completion: Function that takes a single Message object. It defines the custom behavior to be executed when detecting message or message reaction changes
   /// - Returns: An asynchronous stream that produces updates when the current Message is edited or removed.
   func streamUpdates() -> AsyncStream<Self> {
     AsyncStream { continuation in

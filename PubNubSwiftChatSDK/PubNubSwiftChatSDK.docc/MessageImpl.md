@@ -46,6 +46,8 @@
 - ``getThread(completion:)``
 - ``createThread()``
 - ``createThread(completion:)``
+- ``createThread(text:meta:shouldStore:usePost:ttl:quotedMessage:files:usersToMention:customPushData:)``
+- ``createThread(text:meta:shouldStore:usePost:ttl:quotedMessage:files:usersToMention:customPushData:completion:)``
 - ``removeThread()``
 - ``removeThread(completion:)``
 
@@ -63,3 +65,8 @@
 
 - ``report(reason:)``
 - ``report(reason:completion:)``
+
+### Mesage draft
+
+- ``createThreadMessageDraft(userSuggestionSource:isTypingIndicatorTriggered:userLimit:channelLimit:)``
+- ``createThreadMessageDraft(userSuggestionSource:isTypingIndicatorTriggered:userLimit:channelLimit:completion:)``

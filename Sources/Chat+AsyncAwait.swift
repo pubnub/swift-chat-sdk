@@ -355,13 +355,13 @@ public extension Chat {
   ///
   /// - Parameters:
   ///   - channelId: Channel where you want to send the events
-  ///   - payload: The payload of the emitted event. Use one of ``EventContent`` subclasses. For example: `EventContent.TextMessageContent`, `EventContent.Mention`
+  ///   - payload: The payload of the emitted event. Use one of ``EventContentProtocol`` implementations. For example: `EventContent.TextMessageContent`, `EventContent.Mention`
   ///   - otherPayload: Metadata in the form of key-value pairs you want to pass as events from your chat app. Can contain anything in case of custom events, but has a predefined structure for other types of events
   /// - Returns: A `Timetoken` value that holds the timestamp of the emitted event
   @discardableResult
   func emitEvent(
     channelId: String,
-    payload: some EventContent,
+    payload: some EventContentProtocol,
     mergePayloadWith otherPayload: [String: JSONCodable]? = nil
   ) async throws -> Timetoken {
     try await withCheckedThrowingContinuation { continuation in
@@ -496,16 +496,16 @@ public extension Chat {
   /// Lets you watch a selected channel for any new custom events emitted by your chat app.
   ///
   /// - Parameters:
-  ///   - type: The type of object that conforms to `EventContent` for which to listen
+  ///   - type: The type of object that conforms to `EventContentProtocol` for which to listen
   ///   - channelId: Channel to listen for new events
   ///   - customMethod: An optional custom method for emitting events
   /// - Returns: An asynchronous stream that produces a value each time a new event of the specified type is detected
-  func listenForEvents<T: EventContent>(
+  func listenForEvents<T: EventContentProtocol>(
     type: T.Type,
     channelId: String,
     customMethod: EmitEventMethod = .publish
-  ) -> AsyncStream<AnyEvent<Self, T>> {
-    AsyncStream<AnyEvent<Self, T>> { continuation in
+  ) -> AsyncStream<EventImpl<Self, T>> {
+    AsyncStream<EventImpl<Self, T>> { continuation in
       let autoCloseable = listenForEvents(type: type, channelId: channelId, customMethod: customMethod) {
         continuation.yield($0)
       }
@@ -653,7 +653,7 @@ public extension Chat {
     startTimetoken: Timetoken? = nil,
     endTimetoken: Timetoken? = nil,
     count: Int = 100
-  ) async throws -> (events: [AnyEvent<Self, EventContent>], isMore: Bool) {
+  ) async throws -> (events: [AnyEvent<Self>], isMore: Bool) {
     try await withCheckedThrowingContinuation { continuation in
       getEventsHistory(
         channelId: channelId,

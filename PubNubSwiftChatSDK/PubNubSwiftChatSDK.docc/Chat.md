@@ -59,8 +59,9 @@
 ### Working with Events
 
 - ``Event``
+- ``EventContentProtocol``
 - ``EventContent``
-- ``EventWrapper``
+- ``EventImpl``
 - ``EmitEventMethod``
 - ``emitEvent(channelId:payload:mergePayloadWith:)``
 - ``emitEvent(channelId:payload:mergePayloadWith:completion:)``

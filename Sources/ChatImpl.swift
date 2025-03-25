@@ -423,7 +423,7 @@ extension ChatImpl: Chat {
 
   public func emitEvent(
     channelId: String,
-    payload: some EventContent,
+    payload: some EventContentProtocol,
     mergePayloadWith otherPayload: [String: JSONCodable]? = nil,
     completion: ((Swift.Result<Timetoken, Error>) -> Void)? = nil
   ) {
@@ -529,11 +529,11 @@ extension ChatImpl: Chat {
     }
   }
 
-  public func listenForEvents<T: EventContent>(
+  public func listenForEvents<T: EventContentProtocol>(
     type: T.Type,
     channelId: String,
     customMethod: EmitEventMethod = .publish,
-    callback: @escaping ((AnyEvent<ChatImpl, T>) -> Void)
+    callback: @escaping ((EventImpl<ChatImpl, T>) -> Void)
   ) -> AutoCloseable {
     AutoCloseableImpl(
       chat.listenForEvents(
@@ -543,7 +543,7 @@ extension ChatImpl: Chat {
         callback: { [weak self] in
           if let selfRef = self, let payload = $0.payload.map() as? T {
             callback(
-              AnyEvent(
+              EventImpl(
                 chat: selfRef,
                 timetoken: Timetoken($0.timetoken_),
                 payload: payload,
@@ -678,7 +678,7 @@ extension ChatImpl: Chat {
     startTimetoken: Timetoken? = nil,
     endTimetoken: Timetoken? = nil,
     count: Int = 100,
-    completion: ((Swift.Result<(events: [AnyEvent<ChatImpl, EventContent>], isMore: Bool), Error>) -> Void)? = nil
+    completion: ((Swift.Result<(events: [AnyEvent<ChatImpl>], isMore: Bool), Error>) -> Void)? = nil
   ) {
     chat.getEventsHistory(
       channelId: channelId,

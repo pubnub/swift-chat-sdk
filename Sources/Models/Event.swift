@@ -15,13 +15,13 @@ import PubNubSDK
 /// Contrary to other Chat SDK entities, this object provides no methods. Its only purpose is to pass payloads of different types emitted when certain chat operations occur.
 public protocol Event<C, T> {
   associatedtype C: Chat
-  associatedtype T: EventContent
+  associatedtype T: EventContentProtocol
 
   /// Reference to the main Chat object
   var chat: C { get }
   /// Timetoken of the message that triggered an event
   var timetoken: Timetoken { get }
-  /// Data passed in an event (of ``EventContent`` subtype) that differs depending on the emitted event type
+  /// Data passed in an event (of ``EventContentProtocol`` subtype) that differs depending on the emitted event type
   var payload: T { get }
   /// Target channel where this event is delivered
   var channelId: String { get }
@@ -29,13 +29,28 @@ public protocol Event<C, T> {
   var userId: String { get }
 }
 
-/// Provides a concrete implementation for ``Event`` protocol
-public struct AnyEvent<C: Chat, T: EventContent>: Event {
+/// A struct representing any ``Event`` and abstracting the concrete ``Event/payload`` type
+public struct AnyEvent<C: Chat> {
+
   /// Reference to the main Chat object
   public var chat: C
   /// Timetoken of the message that triggered an event
   public var timetoken: Timetoken
-  /// Data passed in an event (of ``EventContent`` subtype) that differs depending on the emitted event type
+  /// Data passed in an event (of ``EventContentProtocol`` subtype) that differs depending on the emitted event type
+  public var payload: any EventContentProtocol
+  /// Target channel where this event is delivered
+  public var channelId: String
+  /// Unique ID of the user that triggered the event
+  public var userId: String
+}
+
+/// A concrete implementation of ``Event`` protocol
+public struct EventImpl<C: Chat, T: EventContentProtocol>: Event {
+  /// Reference to the main Chat object
+  public var chat: C
+  /// Timetoken of the message that triggered an event
+  public var timetoken: Timetoken
+  /// Data passed in an event (of ``EventContentProtocol`` subtype) that differs depending on the emitted event type
   public var payload: T
   /// Target channel where this event is delivered
   public var channelId: String

@@ -12,10 +12,15 @@ import Foundation
 import PubNubChat
 import PubNubSDK
 
-/// Represents the content of various types of events emitted during chat operations.
-public class EventContent {
+/// A protocol for representing the content of various types of events emitted during chat operations
+public protocol EventContentProtocol {
+
+}
+
+/// Provides default implementation for various content.
+public enum EventContent {
   /// Represents a report event, which is used to report a message or user to the admin.
-  public class Report: EventContent, CustomStringConvertible {
+  public struct Report: EventContentProtocol, CustomStringConvertible {
     /// The text of the report, if provided
     public let text: String?
     /// The reason for reporting the message or user
@@ -64,9 +69,11 @@ public class EventContent {
       )
     }
   }
+}
 
+public extension EventContent {
   /// Represents a typing event that indicates whether a user is typing.
-  public class Typing: EventContent, CustomStringConvertible {
+  struct Typing: EventContentProtocol, CustomStringConvertible {
     /// A boolean value indicating whether the user is typing (true) or not (false)
     public let value: Bool
 
@@ -83,9 +90,11 @@ public class EventContent {
       String.formattedDescription(self, arguments: [("value", value)])
     }
   }
+}
 
+public extension EventContent {
   /// Represents a receipt event, indicating that a message was read.
-  public class Receipt: EventContent, CustomStringConvertible {
+  struct Receipt: EventContentProtocol, CustomStringConvertible {
     /// The timetoken of the message for which the receipt is being acknowledged
     public let messageTimetoken: Timetoken
 
@@ -102,9 +111,11 @@ public class EventContent {
       String.formattedDescription(self, arguments: [("messageTimetoken", messageTimetoken)])
     }
   }
+}
 
+public extension EventContent {
   /// Represents a mention event, which indicates that a user was mentioned in a message.
-  public class Mention: EventContent, CustomStringConvertible {
+  struct Mention: EventContentProtocol, CustomStringConvertible {
     /// The timetoken of the message in which the user was mentioned
     public let messageTimetoken: Timetoken
     /// The ID of the channel where the mention occurred
@@ -137,9 +148,11 @@ public class EventContent {
       )
     }
   }
+}
 
+public extension EventContent {
   /// Represents an invite event, which is used when a user is invited to join a channel.
-  public class Invite: EventContent, CustomStringConvertible {
+  struct Invite: EventContentProtocol, CustomStringConvertible {
     /// The type of the channel
     public let channelType: ChannelType
     /// The ID of the channel to which the user is invited
@@ -167,39 +180,11 @@ public class EventContent {
       )
     }
   }
+}
 
-  /// Represents a custom event with arbitrary data.
-  public class Custom: EventContent, CustomStringConvertible {
-    /// A map containing key-value pairs of custom data associated with the event
-    public let data: [String: Any]
-    /// The method by which the event was emitted
-    public let method: EmitEventMethod
-
-    /// Initializes a new instance of `EventContent.Custom` with the provided details
-    ///
-    /// - Parameters:
-    ///   - data: A map containing key-value pairs of custom data associated with the event
-    ///   - method: The method by which the event was emitted
-    public init(data: [String: Any], method: EmitEventMethod) {
-      self.data = data
-      self.method = method
-    }
-
-    /// Extension to conform to `CustomStringConvertible` for custom string representation.
-    /// Provides a readable description of the object for debugging and logging purposes
-    public var description: String {
-      String.formattedDescription(
-        self,
-        arguments: [
-          ("data", data),
-          ("method", method)
-        ]
-      )
-    }
-  }
-
+public extension EventContent {
   /// Represents a moderation event, which is triggered when a restriction is applied to a user.
-  public class Moderation: EventContent, CustomStringConvertible {
+  struct Moderation: EventContentProtocol, CustomStringConvertible {
     /// The ID of the channel where the moderation event occurred
     public let channelId: String
     /// The type of restriction applied (e.g., ban, mute)
@@ -232,9 +217,11 @@ public class EventContent {
       )
     }
   }
+}
 
+public extension EventContent {
   /// Represents a text message event, containing the message text and any associated files.
-  public class TextMessageContent: EventContent, CustomStringConvertible {
+  struct TextMessageContent: EventContentProtocol, CustomStringConvertible {
     /// The text content of the message
     public let text: String
     /// A list of ``File`` objects attached to the given ``PubNubSwiftChatSDK/EventContent/TextMessageContent``, if any
@@ -276,9 +263,43 @@ public class EventContent {
       )
     }
   }
+}
 
+public extension EventContent {
+  /// Represents a custom event with arbitrary data.
+  struct Custom: EventContentProtocol, CustomStringConvertible {
+    /// A map containing key-value pairs of custom data associated with the event
+    public let data: [String: Any]
+    /// The method by which the event was emitted
+    public let method: EmitEventMethod
+
+    /// Initializes a new instance of `EventContent.Custom` with the provided details
+    ///
+    /// - Parameters:
+    ///   - data: A map containing key-value pairs of custom data associated with the event
+    ///   - method: The method by which the event was emitted
+    public init(data: [String: Any], method: EmitEventMethod) {
+      self.data = data
+      self.method = method
+    }
+
+    /// Extension to conform to `CustomStringConvertible` for custom string representation.
+    /// Provides a readable description of the object for debugging and logging purposes
+    public var description: String {
+      String.formattedDescription(
+        self,
+        arguments: [
+          ("data", data),
+          ("method", method)
+        ]
+      )
+    }
+  }
+}
+
+public extension EventContent {
   /// Represents a message with an unknown format, used to handle cases where the message format doesn't match known types.
-  public class UnknownMessageFormat: EventContent, CustomStringConvertible {
+  struct UnknownMessageFormat: EventContentProtocol, CustomStringConvertible {
     /// The raw JSON element representing the message with the unknown format
     public let element: Any?
 
@@ -299,7 +320,7 @@ public class EventContent {
 // MARK: - EventContent Transformations
 
 extension EventContent {
-  static func from(rawValue: PubNubChat.EventContent) -> EventContent {
+  static func from(rawValue: PubNubChat.EventContent) -> EventContentProtocol {
     switch rawValue {
     case let content as PubNubChat.EventContent.Typing:
       EventContent.Typing(
@@ -353,7 +374,7 @@ extension EventContent {
 // MARK: - EventContent Transformations
 
 extension EventContent {
-  static func transform(content: EventContent) -> PubNubChat.EventContent {
+  static func transform(content: EventContentProtocol) -> PubNubChat.EventContent {
     switch content {
     case let content as EventContent.Typing:
       PubNubChat.EventContent.Typing(value: content.value)
@@ -415,24 +436,24 @@ extension EventContent {
   }
 }
 
-extension EventContent {
-  static func classIdentifier(type: EventContent.Type) -> any KotlinKClass {
+extension EventContentProtocol {
+  static func classIdentifier(type: EventContentProtocol.Type) -> any KotlinKClass {
     switch type {
-    case is Report.Type:
+    case is EventContent.Report.Type:
       KClassConstants.Companion.shared.report
-    case is Typing.Type:
+    case is EventContent.Typing.Type:
       KClassConstants.Companion.shared.typing
-    case is Receipt.Type:
+    case is EventContent.Receipt.Type:
       KClassConstants.Companion.shared.receipt
-    case is Mention.Type:
+    case is EventContent.Mention.Type:
       KClassConstants.Companion.shared.mention
-    case is Invite.Type:
+    case is EventContent.Invite.Type:
       KClassConstants.Companion.shared.invite
-    case is Custom.Type:
+    case is EventContent.Custom.Type:
       KClassConstants.Companion.shared.custom
-    case is Moderation.Type:
+    case is EventContent.Moderation.Type:
       KClassConstants.Companion.shared.moderation
-    case is TextMessageContent.Type:
+    case is EventContent.TextMessageContent.Type:
       KClassConstants.Companion.shared.textMessageContent
     default:
       KClassConstants.Companion.shared.unknownMessageFormat

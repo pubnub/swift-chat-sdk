@@ -463,13 +463,13 @@ public protocol Channel: CustomStringConvertible {
   ///   - endTimetoken: The end time token for fetching the history of reported messages, which allows specifying the point in time where the history retrieval should end
   ///   - count: The number of reported message events to fetch from the history
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: A `Tuple` containing an array of `EventWrapper<EventContent>`, and a boolean indicating whether there are more messages available beyond the current result set
+  ///     - **Success**: A `Tuple` containing an array of `AnyEvent`, and a boolean indicating whether there are more messages available beyond the current result set
   ///     - **Failure**: An `Error` describing the failure
   func getMessageReportsHistory(
     startTimetoken: Timetoken?,
     endTimetoken: Timetoken?,
     count: Int,
-    completion: ((Swift.Result<(events: [AnyEvent<ChatType, EventContent>], isMore: Bool), Error>) -> Void)?
+    completion: ((Swift.Result<(events: [AnyEvent<ChatType>], isMore: Bool), Error>) -> Void)?
   )
 
   /// As an admin of your chat app, monitor all events emitted when someone reports an offensive message.
@@ -480,7 +480,7 @@ public protocol Channel: CustomStringConvertible {
   /// - Parameter callback: Callback function passed as a parameter. It defines the custom behavior to be executed when detecting new message report events
   /// - Returns: ``AutoCloseable`` interface that lets you stop receiving report-related updates (report events) by invoking the close() method
   func streamMessageReports(
-    callback: @escaping (AnyEvent<ChatType, EventContent.Report>) -> Void
+    callback: @escaping (EventImpl<ChatType, EventContent.Report>) -> Void
   ) -> AutoCloseable
 
   /// Creates a ``MessageDraft`` for composing a message that will be sent to this ``Channel``

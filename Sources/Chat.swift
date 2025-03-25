@@ -267,12 +267,12 @@ public protocol Chat: AnyObject {
   ///
   /// - Parameters:
   ///   - channelId: Channel where you want to send the events
-  ///   - payload: The payload of the emitted event. Use one of ``EventContent`` subclasses. For example: `EventContent.TextMessageContent`, `EventContent.Mention`
+  ///   - payload: The payload of the emitted event. Use one of ``EventContentProtocol`` subclasses. For example: `EventContent.TextMessageContent`, `EventContent.Mention`
   ///   - otherPayload: Metadata in the form of key-value pairs you want to pass as events from your chat app. Can contain anything in case of custom events, but has a predefined structure for other types of events
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: A `Timetoken` value that holds the timestamp of the emitted event
   ///     - **Failure**: An `Error` describing the failure
-  func emitEvent<T: EventContent>(
+  func emitEvent<T: EventContentProtocol>(
     channelId: String,
     payload: T,
     mergePayloadWith otherPayload: [String: JSONCodable]?,
@@ -356,16 +356,16 @@ public protocol Chat: AnyObject {
   /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
   ///
   /// - Parameters:
-  ///   - type: The type of object that conforms to `EventContent` for which to listen
+  ///   - type: The type of object that conforms to `EventContentProtocol` for which to listen
   ///   - channelId: Channel to listen for new events
   ///   - customMethod: An optional custom method for emitting events
-  ///   - callback: A function that is called with an ``EventWrapper`` as its parameter. It defines the custom behavior to be executed whenever an event is detected on the specified channel
+  ///   - callback: A function that is called with an ``EventImpl`` as its parameter. It defines the custom behavior to be executed whenever an event is detected on the specified channel
   /// - Returns: ``AutoCloseable`` interface you can call to stop listening for new events and clean up resources when they re no longer needed by invoking the `close()` method
-  func listenForEvents<T: EventContent>(
+  func listenForEvents<T: EventContentProtocol>(
     type: T.Type,
     channelId: String,
     customMethod: EmitEventMethod,
-    callback: @escaping ((AnyEvent<Self, T>) -> Void)
+    callback: @escaping ((EventImpl<Self, T>) -> Void)
   ) -> AutoCloseable
 
   /// Specifies the channel or channels on which a previously registered device will receive push notifications for new messages.
@@ -463,7 +463,7 @@ public protocol Chat: AnyObject {
     startTimetoken: Timetoken?,
     endTimetoken: Timetoken?,
     count: Int,
-    completion: ((Swift.Result<(events: [AnyEvent<Self, EventContent>], isMore: Bool), Error>) -> Void)?
+    completion: ((Swift.Result<(events: [AnyEvent<Self>], isMore: Bool), Error>) -> Void)?
   )
 
   /// Returns all instances when a specific user was mentioned by someone - either in channels or threads.

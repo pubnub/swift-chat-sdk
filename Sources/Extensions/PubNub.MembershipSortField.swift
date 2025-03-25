@@ -23,11 +23,15 @@ extension PubNub.MembershipSortField {
         return ascending ? PNSortKeyPNAsc(key: PNMembershipKey.channelName) : PNSortKeyPNDesc(key: .channelName)
       case .updated:
         return ascending ? PNSortKeyPNAsc(key: PNMembershipKey.channelUpdated) : PNSortKeyPNDesc(key: .channelUpdated)
-      case .type, .status:
-        return nil
+      case .type:
+        return ascending ? PNSortKeyPNAsc(key: PNMembershipKey.channelType) : PNSortKeyPNDesc(key: .channelType)
+      case .status:
+        return ascending ? PNSortKeyPNAsc(key: PNMembershipKey.channelStatus) : PNSortKeyPNDesc(key: .channelStatus)
       }
-    case .type, .status:
-      return nil
+    case .type:
+      return ascending ? PNSortKeyPNAsc(key: PNMembershipKey.type) : PNSortKeyPNDesc(key: .type)
+    case .status:
+      return ascending ? PNSortKeyPNAsc(key: PNMembershipKey.status) : PNSortKeyPNDesc(key: .status)
     case .updated:
       return ascending ? PNSortKeyPNAsc(key: PNMembershipKey.updated) : PNSortKeyPNDesc(key: .updated)
     }

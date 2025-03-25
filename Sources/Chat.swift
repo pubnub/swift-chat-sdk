@@ -127,7 +127,7 @@ public protocol Chat: AnyObject {
   ///   - externalId: User's identifier in an external system. You can use it to match id with a similar identifier from an external database
   ///   - profileUrl: URL of the user's profile picture
   ///   - email: User's email address
-  ///   - custom: Any custom properties or metadata associated with the user in the form of a `[String: JSONCodableScalar]
+  ///   - custom: Any custom properties or metadata associated with the user in the form of a `[String: JSONCodableScalar]`
   ///   - status: Tag that lets you categorize your app users by their current state. The tag choice is entirely up to you and depends on your use case
   ///   - type: Tag that lets you categorize your app users by their functional roles. The tag choice is entirely up to you and depends on your use case
   ///   - completion: The async `Result` of the method call
@@ -270,7 +270,7 @@ public protocol Chat: AnyObject {
   ///   - payload: The payload of the emitted event. Use one of ``EventContent`` subclasses. For example: `EventContent.TextMessageContent`, `EventContent.Mention`
   ///   - otherPayload: Metadata in the form of key-value pairs you want to pass as events from your chat app. Can contain anything in case of custom events, but has a predefined structure for other types of events
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: A `timetoken` value that holds the timestamp of the emitted event
+  ///     - **Success**: A `Timetoken` value that holds the timestamp of the emitted event
   ///     - **Failure**: An `Error` describing the failure
   func emitEvent<T: EventContent>(
     channelId: String,
@@ -313,7 +313,7 @@ public protocol Chat: AnyObject {
   ///   - channelStatus: Current status of the channel, like online, offline, or archived
   ///   - membershipCustom: Any custom properties or metadata associated with the user-channel membership in the form of a map of key-value pairs
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: A value containing ``CreateDirectConversationResult``
+  ///     - **Success**: A ``CreateDirectConversationResult`` value representing the result of creating a direct conversation (private channel) between two users.
   ///     - **Failure**: An `Error` describing the failure
   func createDirectConversation(
     invitedUser: UserImpl,
@@ -337,7 +337,7 @@ public protocol Chat: AnyObject {
   ///   - channelStatus: Current status of the channel, like online, offline, or archived
   ///   - membershipCustom: Any custom properties or metadata associated with the membership in the form of key-value pairs
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: A value containing ``CreateGroupConversationResult``
+  ///     - **Success**: A  ``CreateGroupConversationResult`` value representing the result of creating a group conversation (group channel) for collaborative communication
   ///     - **Failure**: An `Error` describing the failure
   func createGroupConversation(
     invitedUsers: [UserImpl],
@@ -352,12 +352,15 @@ public protocol Chat: AnyObject {
 
   /// Lets you watch a selected channel for any new custom events emitted by your chat app.
   ///
+  /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
+  /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
+  ///
   /// - Parameters:
   ///   - type: The type of object that conforms to `EventContent` for which to listen
   ///   - channelId: Channel to listen for new events
   ///   - customMethod: An optional custom method for emitting events
   ///   - callback: A function that is called with an ``EventWrapper`` as its parameter. It defines the custom behavior to be executed whenever an event is detected on the specified channel
-  /// - Returns: ``AutoCloseable`` interface you can call to stop listening for new messages and clean up resources when they re no longer needed by invoking the `close()` method
+  /// - Returns: ``AutoCloseable`` interface you can call to stop listening for new events and clean up resources when they re no longer needed by invoking the `close()` method
   func listenForEvents<T: EventContent>(
     type: T.Type,
     channelId: String,
@@ -407,7 +410,7 @@ public protocol Chat: AnyObject {
   ///   - filter: Expression used to filter the results. Returns only these channels whose properties satisfy the given expression are returned
   ///   - sort: A collection to specify the sort order
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: An array of ``GetUnreadMessagesCount``
+  ///     - **Success**: An array of ``GetUnreadMessagesCount`` representing unread messages for the current user in a given channel
   ///     - **Failure**: An `Error` describing the failure
   func getUnreadMessagesCount(
     limit: Int?,
@@ -425,7 +428,7 @@ public protocol Chat: AnyObject {
   ///   - filter: Expression used to filter the results. Returns only these channels whose properties satisfy the given expression are returned
   ///   - sort: A collection to specify the sort order
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: A `Tuple` containing an `Array` of memberships, and the next pagination `PubNubHashedPage` (if one exists)
+  ///     - **Success**: A `Tuple` containing an `Array` of updated memberships, and the next pagination `PubNubHashedPage` (if one exists)
   ///     - **Failure**: An `Error` describing the failure
   func markAllMessagesAsRead(
     limit: Int?,

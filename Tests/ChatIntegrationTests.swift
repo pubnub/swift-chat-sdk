@@ -14,7 +14,7 @@ import XCTest
 
 @testable import PubNubSwiftChatSDK
 
-class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
+class ChatIntegrationTests: BaseClosureIntegrationTestCase {
   func testChat_CreateUser() throws {
     let user = try awaitResultValue {
       chat.createUser(
@@ -84,8 +84,19 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       "someValue": 17_253_575_019_298_112,
       "someStr": "str"
     ]
+
+    let userId = randomString()
+
+    try awaitResultValue {
+      chat.createUser(
+        id: userId,
+        completion: $0
+      )
+    }
+
     let updatedUser = try awaitResultValue {
-      chat.currentUser.update(
+      chat.updateUser(
+        id: userId,
         name: "NewName",
         externalId: "NewExternalId",
         profileUrl: "https://picsum.photos/200/400",
@@ -97,7 +108,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       )
     }
 
-    XCTAssertEqual(updatedUser.id, chat.currentUser.id)
+    XCTAssertEqual(updatedUser.id, userId)
     XCTAssertEqual(updatedUser.name, "NewName")
     XCTAssertEqual(updatedUser.externalId, "NewExternalId")
     XCTAssertEqual(updatedUser.profileUrl, "https://picsum.photos/200/400")
@@ -105,6 +116,15 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     XCTAssertEqual(updatedUser.custom?.mapValues { $0.scalarValue }, newCustom.mapValues { $0.scalarValue })
     XCTAssertEqual(updatedUser.status, "offline")
     XCTAssertEqual(updatedUser.type, "regular")
+
+    addTeardownBlock { [unowned self] in
+      try awaitResult {
+        chat.deleteUser(
+          id: userId,
+          completion: $0
+        )
+      }
+    }
   }
 
   func testChat_Delete() throws {
@@ -512,7 +532,7 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-  func testChat_GroupConversation() throws {
+  func testChat_CreateGroupConversation() throws {
     let anotherUser = try awaitResultValue {
       chat.createUser(
         id: randomString(),
@@ -812,19 +832,6 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       )
     }
 
-    let mentionedUser = MessageMentionedUser(
-      id: chat.currentUser.id,
-      name: chat.currentUser.name ?? ""
-    )
-
-    let tt = try awaitResultValue {
-      channel.sendText(
-        text: "Some text @\(chat.currentUser.name ?? "")",
-        mentionedUsers: MessageMentionedUsers(uniqueKeysWithValues: zip([0], [mentionedUser])),
-        completion: $0
-      )
-    }
-
     let history = try awaitResultValue(delay: 3) {
       chat.getEventsHistory(
         channelId: chat.currentUser.id,
@@ -832,11 +839,8 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       )
     }
 
-    let mentionEvent = try XCTUnwrap(history.events.compactMap { $0.event.payload as? EventContent.Mention }.first)
     let inviteEvent = try XCTUnwrap(history.events.compactMap { $0.event.payload as? EventContent.Invite }.first)
 
-    XCTAssertEqual(mentionEvent.channel, channel.id)
-    XCTAssertEqual(mentionEvent.messageTimetoken, tt)
     XCTAssertEqual(inviteEvent.channelId, channel.id)
     XCTAssertEqual(inviteEvent.channelType, .unknown)
 
@@ -864,18 +868,21 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
         completion: $0
       )
     }
-    let mentionedUser = MessageMentionedUser(
-      id: chat.currentUser.id,
-      name: chat.currentUser.name ?? ""
-    )
 
-    let textToSend = "Some text @\(chat.currentUser.name ?? "")"
-    let mentionedUsers = MessageMentionedUsers(uniqueKeysWithValues: zip([0], [mentionedUser]))
-
-    let timetoken = try awaitResultValue {
+    let tt = try awaitResultValue {
       channel.sendText(
-        text: textToSend,
-        mentionedUsers: mentionedUsers,
+        text: "Some text",
+        completion: $0
+      )
+    }
+
+    try awaitResultValue(delay: 2) {
+      chat.emitEvent(
+        channelId: chat.currentUser.id,
+        payload: EventContent.Mention(
+          messageTimetoken: tt,
+          channel: channel.id
+        ),
         completion: $0
       )
     }
@@ -889,9 +896,9 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     )
 
     XCTAssertEqual(userMentionData.userMentionData.userId, chat.currentUser.id)
-    XCTAssertEqual(userMentionData.userMentionData.message?.text, textToSend)
-    XCTAssertEqual(userMentionData.userMentionData.message?.timetoken, timetoken)
     XCTAssertEqual(userMentionData.userMentionData.event.channel, channel.id)
+    XCTAssertEqual(userMentionData.userMentionData.message?.timetoken, tt)
+    XCTAssertEqual(userMentionData.userMentionData.message?.text, "Some text")
 
     addTeardownBlock { [unowned self] in
       try awaitResult {
@@ -984,4 +991,6 @@ class ChatIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       chat.mutedUsersManager.mutedUsers.isEmpty
     )
   }
+
+  // swiftlint:disable:next file_length
 }

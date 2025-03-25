@@ -14,7 +14,7 @@ import XCTest
 
 @testable import PubNubSwiftChatSDK
 
-class ThreadChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
+class ThreadChannelIntegrationTests: BaseClosureIntegrationTestCase {
   var parentChannel: ChannelImpl!
   var threadChannel: ThreadChannelImpl!
 

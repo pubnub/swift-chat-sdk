@@ -14,7 +14,7 @@ import XCTest
 
 @testable import PubNubSwiftChatSDK
 
-class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
+class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
   var channel: ChannelImpl!
 
   override func customSetUpWitError() throws {
@@ -108,7 +108,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       )
     }
     let message = try XCTUnwrap(
-      awaitResultValue(delay: 2) {
+      awaitResultValue(delay: 3) {
         anotherChannel.getMessage(
           timetoken: tt,
           completion: $0
@@ -122,7 +122,7 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       )
     }
 
-    let retrievedMssgsFromForwardedChannel = try awaitResultValue {
+    let retrievedMssgsFromForwardedChannel = try awaitResultValue(delay: 3) {
       channel.getHistory(
         completion: $0
       )
@@ -667,142 +667,132 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
     }
   }
 
-//
-//  TODO: Investigate
-//
+  func testChannel_GetFiles() throws {
+    let fileUrlSession = URLSession(
+      configuration: URLSessionConfiguration.default,
+      delegate: FileSessionManager(),
+      delegateQueue: .main
+    )
+    let newPubNub = PubNub(
+      configuration: chat.pubNub.configuration,
+      fileSession: fileUrlSession
+    )
+    let newChat = ChatImpl(
+      pubNub: newPubNub,
+      configuration: chat.config
+    )
+    let newChannel = try awaitResultValue {
+      newChat.createChannel(
+        id: randomString(),
+        completion: $0
+      )
+    }
+    let inputFile = InputFile(
+      name: "TxtFile",
+      type: "text/plain",
+      source: .data(Data("Lorem ipsum".utf8), contentType: "text/plain")
+    )
 
-//  func testChannel_GetFiles() throws {
-//    let fileUrlSession = URLSession(
-//      configuration: URLSessionConfiguration.default,
-//      delegate: FileSessionManager(),
-//      delegateQueue: .main
-//    )
-//    let newPubNub = PubNub(
-//      configuration: chat.pubNub.configuration,
-//      fileSession: fileUrlSession
-//    )
-//    let newChat = ChatImpl(
-//      pubNub: newPubNub,
-//      configuration: chat.config
-//    )
-//    let newChannel = try awaitResultValue {
-//      newChat.createChannel(
-//        id: randomString(),
-//        completion: $0
-//      )
-//    }
-//    let inputFile = InputFile(
-//      name: "TxtFile",
-//      type: "text/plain",
-//      source: .data(try XCTUnwrap("Lorem ipsum".data(using: .utf8)), contentType: "text/plain")
-//    )
-//
-//    try awaitResultValue(timeout: 10) {
-//      newChannel.sendText(
-//        text: "Text",
-//        files: [inputFile],
-//        completion: $0
-//      )
-//    }
-//
-//    let file = try XCTUnwrap(
-//      try awaitResultValue {
-//        newChannel.getFiles(completion: $0)
-//      }.files.first
-//    )
-//
-//    XCTAssertEqual(
-//      file.name,
-//      "TxtFile"
-//    )
-//
-//    addTeardownBlock { [unowned self] in
-//      try awaitResultValue {
-//        newPubNub.remove(
-//          fileId: file.id,
-//          filename: file.name,
-//          channel: newChannel.id,
-//          completion: $0
-//        )
-//      }
-//      try awaitResult {
-//        newChat.deleteChannel(
-//          id: newChannel.id,
-//          completion: $0
-//        )
-//      }
-//    }
-//  }
+    try awaitResultValue(timeout: 10) {
+      newChannel.sendText(
+        text: "Text",
+        files: [inputFile],
+        completion: $0
+      )
+    }
 
-//  func testChannel_DeleteFile() throws {
-//    let fileUrlSession = URLSession(
-//      configuration: URLSessionConfiguration.default,
-//      delegate: FileSessionManager(),
-//      delegateQueue: .main
-//    )
-//    let newPubNub = PubNub(
-//      configuration: chat.pubNub.configuration,
-//      fileSession: fileUrlSession
-//    )
-//    let newChat = ChatImpl(
-//      pubNub: newPubNub,
-//      configuration: chat.config
-//    )
-//    let newChannel = try awaitResultValue {
-//      newChat.createChannel(
-//        id: randomString(),
-//        completion: $0
-//      )
-//    }
-//    let inputFile = InputFile(
-//      name: "TxtFile",
-//      type: "text/plain",
-//      source: .data(try XCTUnwrap("Lorem ipsum".data(using: .utf8)), contentType: "text/plain")
-//    )
-//
-//    try awaitResultValue(timeout: 30) {
-//      newChannel.sendText(
-//        text: "Text",
-//        files: [inputFile],
-//        completion: $0
-//      )
-//    }
-//
-//    let file = try XCTUnwrap(
-//      try awaitResultValue {
-//        newChannel.getFiles(
-//          limit: 10,
-//          completion: $0
-//        )
-//      }.files.first
-//    )
-//
-//    try awaitResultValue {
-//      channel.deleteFile(
-//        id: file.id,
-//        name: file.name,
-//        completion: $0
-//      )
-//    }
-//
-//    XCTAssertTrue(
-//      try awaitResultValue {
-//        channel.getFiles(
-//          limit: 10,
-//          completion: $0
-//        )
-//      }.files.isEmpty
-//    )
-//
-//    addTeardownBlock { [unowned self] in
-//      try awaitResult {
-//        newChat.deleteChannel(
-//          id: newChannel.id,
-//          completion: $0
-//        )
-//      }
-//    }
-//  }
+    let file = try XCTUnwrap(
+      awaitResultValue {
+        newChannel.getFiles(completion: $0)
+      }.files.first
+    )
+
+    XCTAssertEqual(
+      file.name,
+      "TxtFile"
+    )
+
+    addTeardownBlock { [unowned self] in
+      try awaitResultValue {
+        newPubNub.remove(
+          fileId: file.id,
+          filename: file.name,
+          channel: newChannel.id,
+          completion: $0
+        )
+      }
+      try awaitResult {
+        newChat.deleteChannel(
+          id: newChannel.id,
+          completion: $0
+        )
+      }
+    }
+  }
+
+  func testChannel_DeleteFile() throws {
+    let fileUrlSession = URLSession(
+      configuration: URLSessionConfiguration.default,
+      delegate: FileSessionManager(),
+      delegateQueue: .main
+    )
+    let newPubNub = PubNub(
+      configuration: chat.pubNub.configuration,
+      fileSession: fileUrlSession
+    )
+    let newChat = ChatImpl(
+      pubNub: newPubNub,
+      configuration: chat.config
+    )
+    let newChannel = try awaitResultValue {
+      newChat.createChannel(
+        id: randomString(),
+        completion: $0
+      )
+    }
+    let inputFile = InputFile(
+      name: "TxtFile",
+      type: "text/plain",
+      source: .data(Data("Lorem ipsum".utf8), contentType: "text/plain")
+    )
+
+    try awaitResultValue(timeout: 30) {
+      newChannel.sendText(
+        text: "Text",
+        files: [inputFile],
+        completion: $0
+      )
+    }
+
+    let file = try XCTUnwrap(
+      awaitResultValue {
+        newChannel.getFiles(completion: $0)
+      }.files.first
+    )
+
+    try awaitResultValue {
+      channel.deleteFile(
+        id: file.id,
+        name: file.name,
+        completion: $0
+      )
+    }
+
+    XCTAssertTrue(
+      try awaitResultValue {
+        channel.getFiles(completion: $0)
+      }.files.isEmpty
+    )
+
+    addTeardownBlock { [unowned self] in
+      try awaitResult {
+        newChat.deleteChannel(
+          id: newChannel.id,
+          completion: $0
+        )
+      }
+    }
+  }
 
   func testChannel_StreamPresence() throws {
     let expectation = expectation(description: "StreamPresence")
@@ -919,4 +909,6 @@ class ChannelIntegrationTests: PubNubSwiftChatSDKIntegrationTests {
       try awaitResult { message?.delete(completion: $0) }
     }
   }
+
+  // swiftlint:disable:next file_length
 }

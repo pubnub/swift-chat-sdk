@@ -12,7 +12,6 @@ import Foundation
 import PubNubChat
 import PubNubSDK
 
-// swiftlint:disable:next type_body_length
 final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel {
   var chat: ChatImpl { ChatAdapter.map(chat: channel.chat).chat }
   var id: String { channel.id }
@@ -186,7 +185,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     textLinks: [TextLink]?,
     quotedMessage: ChatType.ChatMessageType?,
     files: [InputFile]?,
-    customPushData: [String: String]? = nil,
+    customPushData: [String: String]?,
     completion: ((Swift.Result<Timetoken, Error>) -> Void)?
   ) {
     channel.sendText(
@@ -219,8 +218,8 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     ttl: Int?,
     quotedMessage: MessageImpl?,
     files: [InputFile]?,
-    usersToMention: [String]? = nil,
-    customPushData: [String: String]? = nil,
+    usersToMention: [String]?,
+    customPushData: [String: String]?,
     completion: ((Swift.Result<Timetoken, any Error>) -> Void)?
   ) {
     channel.sendText(
@@ -315,7 +314,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
 
   func join(
     custom: [String: JSONCodableScalar]?,
-    callback: ((ChatType.ChatMessageType) -> Void)? = nil,
+    callback: ((ChatType.ChatMessageType) -> Void)?,
     completion: ((Swift.Result<(membership: MembershipImpl, disconnect: AutoCloseable?), Error>) -> Void)?
   ) {
     channel.join(custom: custom?.asCustomObject(), callback: { [weak self] in
@@ -363,7 +362,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
 
   func getMessage(
     timetoken: Timetoken,
-    completion: ((Swift.Result<ChatType.ChatMessageType?, Error>) -> Void)? = nil
+    completion: ((Swift.Result<ChatType.ChatMessageType?, Error>) -> Void)?
   ) {
     channel.getMessage(
       timetoken: Int64(timetoken)
@@ -407,9 +406,9 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     }
   }
 
-  func pinMessage(message: MessageImpl, completion: ((Swift.Result<BaseChannel<C, M>, Error>) -> Void)?) {
+  func pinMessage(message: BaseMessage<M>, completion: ((Swift.Result<BaseChannel<C, M>, Error>) -> Void)?) {
     channel.pinMessage(
-      message: message.target.message
+      message: message.message
     ).async(caller: self) { (result: FutureResult<BaseChannel, C>) in
       switch result.result {
       case let .success(channel):
@@ -540,9 +539,9 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
   }
 
   func getMessageReportsHistory(
-    startTimetoken: Timetoken? = nil,
-    endTimetoken: Timetoken? = nil,
-    count: Int = 25,
+    startTimetoken: Timetoken?,
+    endTimetoken: Timetoken?,
+    count: Int,
     completion: ((Swift.Result<(events: [EventWrapper<EventContent>], isMore: Bool), Error>) -> Void)?
   ) {
     channel.getMessageReportsHistory(
@@ -592,10 +591,10 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
   }
 
   func createMessageDraft(
-    userSuggestionSource: UserSuggestionSource = .channel,
-    isTypingIndicatorTriggered: Bool = true,
-    userLimit: Int = 10,
-    channelLimit: Int = 10
+    userSuggestionSource: UserSuggestionSource,
+    isTypingIndicatorTriggered: Bool,
+    userLimit: Int,
+    channelLimit: Int
   ) -> MessageDraftImpl {
     MessageDraftImpl(
       messageDraft: MediatorsKt.createMessageDraft(

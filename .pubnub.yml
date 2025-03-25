@@ -1,8 +1,25 @@
 name: swift-chat-sdk
 scm: github.com/pubnub/swift-chat-sdk
-version: 0.12.0
+version: 0.20.0
 schema: 1
 changelog:
+  - date: 2025-03-25
+    version: 0.20.0
+    changes:
+      - type: feature
+        text: "Add async/await counterparts to existing closure-based methods."
+      - type: feature
+        text: "Add `AsyncStream` counterparts for methods returning `AutoCloseable`."
+      - type: feature
+        text: "Add a new Test Plan testing async/await methods and streams."
+      - type: feature
+        text: "Add the new way to create a thread message."
+      - type: bug
+        text: "Provide a default `ChatConfiguration()` value in the `ChatImpl` constructor."
+      - type: bug
+        text: "Provide a default value for the `limit` parameter in the Chat's `getUsers(filter:sort:limit:page:completion:)`."
+      - type: bug
+        text: "Fix `PubNub.MembershipSortField` extension to handle all user sort options properly."
   - date: 2025-03-21
     version: 0.12.0
     changes:
@@ -133,7 +150,7 @@ sdks:
           - distribution-type: source
             distribution-repository: GitHub release
             package-name: PubNubSwiftChatSDK
-            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.12.0.zip
+            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.20.0.zip
             supported-platforms:
               supported-operating-systems:
                 iOS:

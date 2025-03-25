@@ -44,6 +44,9 @@ public protocol User: CustomStringConvertible {
 
   /// Receive updates when specific users are added, edited or removed.
   ///
+  /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
+  /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
+  ///
   /// - Parameters:
   ///   - users: Collection containing the users to watch for updates
   ///   - callback: Defines the custom behavior to be executed when detecting users changes
@@ -92,7 +95,7 @@ public protocol User: CustomStringConvertible {
   ///     - **Failure**: An `Error` describing the failure
   func update(
     updateAction: @escaping (ChatType.ChatUserType) -> [PubNubMetadataChange<PubNubUserMetadata>],
-    completion: ((Swift.Result<UserImpl, Error>) -> Void)?
+    completion: ((Swift.Result<ChatType.ChatUserType, Error>) -> Void)?
   )
 
   /// Deletes the user. If soft deletion is enabled, the user's data is retained but marked as inactive.
@@ -149,6 +152,9 @@ public protocol User: CustomStringConvertible {
 
   /// Receives updates on a single User object.
   ///
+  /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
+  /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
+  ///
   /// - Parameters:
   ///   - callback: A function that is triggered whenever the user's information are changed (added, edited, or removed)
   /// - Returns: An ``AutoCloseable`` that you can use to stop receiving objects events by invoking its `close()` method
@@ -162,6 +168,7 @@ public protocol User: CustomStringConvertible {
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: A boolean value indicating whether the user is active
   ///     - **Failure**: An `Error` describing the failure
+  @available(*, deprecated, renamed: "active", message: "Use non-async `active` property instead")
   func active(
     completion: ((Swift.Result<Bool, Error>) -> Void)?
   )

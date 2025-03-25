@@ -158,6 +158,32 @@ extension MessageImpl: Message {
     )
   }
 
+  public func createThread(
+    text: String,
+    meta: [String: JSONCodable]? = nil,
+    shouldStore: Bool = true,
+    usePost: Bool = false,
+    ttl: Int? = nil,
+    quotedMessage: MessageImpl? = nil,
+    files: [InputFile]? = nil,
+    usersToMention: [String]? = nil,
+    customPushData: [String: String]? = nil,
+    completion: ((Swift.Result<ThreadChannelImpl, Error>) -> Void)? = nil
+  ) {
+    target.createThread(
+      text: text,
+      meta: meta,
+      shouldStore: shouldStore,
+      usePost: usePost,
+      ttl: ttl,
+      quotedMessage: quotedMessage,
+      files: files,
+      usersToMention: usersToMention,
+      customPushData: customPushData,
+      completion: completion
+    )
+  }
+
   public func removeThread(completion: ((Swift.Result<ChannelImpl?, Error>) -> Void)? = nil) {
     target.removeThread(
       completion: completion
@@ -199,5 +225,21 @@ extension MessageImpl: Message {
 
   public func getMessageElements() -> [MessageElement] {
     target.getMessageElements()
+  }
+
+  public func createThreadMessageDraft(
+    userSuggestionSource: UserSuggestionSource = .channel,
+    isTypingIndicatorTriggered: Bool = true,
+    userLimit: Int = 10,
+    channelLimit: Int = 10,
+    completion: ((Swift.Result<MessageDraftImpl, Error>) -> Void)? = nil
+  ) {
+    target.createThreadMessageDraft(
+      userSuggestionSource: userSuggestionSource,
+      isTypingIndicatorTriggered: isTypingIndicatorTriggered,
+      userLimit: userLimit,
+      channelLimit: channelLimit,
+      completion: completion
+    )
   }
 }

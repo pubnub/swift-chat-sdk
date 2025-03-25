@@ -1,5 +1,5 @@
 //
-//  MessageDraftIntegrationTests.swift
+//  MessageDraftAsyncIntegrationTests.swift
 //
 //  Copyright (c) PubNub Inc.
 //  All rights reserved.
@@ -13,52 +13,26 @@ import XCTest
 
 @testable import PubNubSwiftChatSDK
 
-class MessageDraftIntegrationTests: BaseClosureIntegrationTestCase {
+class MessageDraftIntegrationTests: BaseAsyncIntegrationTestCase {
   private var user: UserImpl!
   private var channel: ChannelImpl!
 
-  override func customSetUpWitError() throws {
+  override func customSetup() async throws {
     let channelId = "cchnl\(randomString())"
     let userId = "uuser\(randomString())"
 
-    channel = try awaitResultValue {
-      chat.createChannel(
-        id: channelId,
-        name: channelId,
-        completion: $0
-      )
-    }
-    user = try awaitResultValue {
-      chat.createUser(
-        user: UserImpl(chat: chat, id: userId, name: userId),
-        completion: $0
-      )
-    }
+    channel = try await chat.createChannel(id: channelId, name: channelId)
+    user = try await chat.createUser(user: UserImpl(chat: chat, id: userId, name: userId))
 
-    try awaitResultValue {
-      channel.invite(
-        user: user,
-        completion: $0
-      )
-    }
+    try await channel.invite(user: user)
   }
 
-  override func customTearDownWithError() throws {
-    try awaitResult { [unowned self] in
-      chat.deleteUser(
-        id: user.id,
-        completion: $0
-      )
-    }
-    try awaitResult { [unowned self] in
-      chat.deleteChannel(
-        id: channel.id,
-        completion: $0
-      )
-    }
+  override func customTearDown() async throws {
+    _ = try? await chat.deleteUser(id: user.id)
+    _ = try? await chat.deleteChannel(id: channel.id)
   }
 
-  func testMessageDraft_WithUserMention() throws {
+  func testMessageDraft_WithUserMention() async throws {
     let expectation = expectation(description: "MessageDraft")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
@@ -85,18 +59,12 @@ class MessageDraftIntegrationTests: BaseClosureIntegrationTestCase {
     messageDraft.addChangeListener(listener)
     messageDraft.update(text: "This is a @uuser")
 
-    wait(for: [expectation], timeout: 6)
+    await fulfillment(of: [expectation], timeout: 6)
 
-    let timetoken = try awaitResultValue {
-      messageDraft.send(completion: $0)
-    }
+    let timetoken = try await messageDraft.send()
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+    let message = try await channel.getMessage(timetoken: timetoken)
 
-    let message = try awaitResultValue(delay: 3) {
-      channel.getMessage(
-        timetoken: timetoken,
-        completion: $0
-      )
-    }
     let expectedElements: [MessageElement] = [
       .plainText(text: "This is a "),
       .link(text: user.id, target: .user(userId: user.id))
@@ -108,7 +76,7 @@ class MessageDraftIntegrationTests: BaseClosureIntegrationTestCase {
     )
   }
 
-  func testMessageDraft_WithChannelMention() throws {
+  func testMessageDraft_WithChannelMention() async throws {
     let expectation = expectation(description: "MessageDraft")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
@@ -135,18 +103,12 @@ class MessageDraftIntegrationTests: BaseClosureIntegrationTestCase {
     messageDraft.addChangeListener(listener)
     messageDraft.update(text: "This is a #cchnl")
 
-    wait(for: [expectation], timeout: 6)
+    await fulfillment(of: [expectation], timeout: 6)
 
-    let timetoken = try awaitResultValue {
-      messageDraft.send(completion: $0)
-    }
+    let timetoken = try await messageDraft.send()
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+    let message = try await channel.getMessage(timetoken: timetoken)
 
-    let message = try awaitResultValue(delay: 3) {
-      channel.getMessage(
-        timetoken: timetoken,
-        completion: $0
-      )
-    }
     let expectedElements: [MessageElement] = [
       .plainText(text: "This is a "),
       .link(text: channel.id, target: .channel(channelId: channel.id))
@@ -158,7 +120,7 @@ class MessageDraftIntegrationTests: BaseClosureIntegrationTestCase {
     )
   }
 
-  func testMessageDraft_InsertText() {
+  func testMessageDraft_InsertText() async throws {
     let expectation = expectation(description: "MessageDraft")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
@@ -188,10 +150,10 @@ class MessageDraftIntegrationTests: BaseClosureIntegrationTestCase {
     messageDraft.addChangeListener(listener)
     messageDraft.insertText(offset: 0, text: "Some prefix. ")
 
-    wait(for: [expectation], timeout: 6)
+    await fulfillment(of: [expectation], timeout: 6)
   }
 
-  func testMessageDraft_RemoveText() {
+  func testMessageDraft_RemoveText() async throws {
     let expectation = expectation(description: "MessageDraft")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
@@ -220,10 +182,10 @@ class MessageDraftIntegrationTests: BaseClosureIntegrationTestCase {
     messageDraft.addChangeListener(listener)
     messageDraft.removeText(offset: 0, length: 10)
 
-    wait(for: [expectation], timeout: 6)
+    await fulfillment(of: [expectation], timeout: 6)
   }
 
-  func testMessageDraft_RemoveMention() {
+  func testMessageDraft_RemoveMention() async throws {
     let expectation = expectation(description: "MessageDraft")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
@@ -251,10 +213,10 @@ class MessageDraftIntegrationTests: BaseClosureIntegrationTestCase {
     messageDraft.addChangeListener(listener)
     messageDraft.removeMention(offset: suggestedMention.offset)
 
-    wait(for: [expectation], timeout: 6)
+    await fulfillment(of: [expectation], timeout: 6)
   }
 
-  func testMessageDraft_InsertingTextInCurrentMentionRange() {
+  func testMessageDraft_InsertingTextInCurrentMentionRange() async throws {
     let expectation = expectation(description: "MessageDraft")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
@@ -285,10 +247,10 @@ class MessageDraftIntegrationTests: BaseClosureIntegrationTestCase {
     messageDraft.addChangeListener(listener)
     messageDraft.insertText(offset: 12, text: "_!!!!!_")
 
-    wait(for: [expectation], timeout: 6)
+    await fulfillment(of: [expectation], timeout: 6)
   }
 
-  func testMessageDraft_RemovingTextInCurrentMentionRange() {
+  func testMessageDraft_RemovingTextInCurrentMentionRange() async throws {
     let expectation = expectation(description: "MessageDraft")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
@@ -319,10 +281,10 @@ class MessageDraftIntegrationTests: BaseClosureIntegrationTestCase {
     messageDraft.addChangeListener(listener)
     messageDraft.removeText(offset: 12, length: 5)
 
-    wait(for: [expectation], timeout: 6)
+    await fulfillment(of: [expectation], timeout: 6)
   }
 
-  func testMessageDraft_WithQuotedMessage() throws {
+  func testMessageDraft_WithQuotedMessage() async throws {
     let originalText = "This is some text"
     let messageDraft = channel.createMessageDraft()
 
@@ -337,18 +299,9 @@ class MessageDraftIntegrationTests: BaseClosureIntegrationTestCase {
     messageDraft.update(text: originalText)
     messageDraft.quotedMessage = quotedMessage
 
-    let timetoken = try awaitResultValue {
-      messageDraft.send(
-        completion: $0
-      )
-    }
-    let message = try awaitResultValue(delay: 2) {
-      channel.getMessage(
-        timetoken: timetoken,
-        completion: $0
-      )
-    }
-
+    let timetoken = try await messageDraft.send()
+    try await Task.sleep(nanoseconds: 2_000_000_000)
+    let message = try await channel.getMessage(timetoken: timetoken)
     let receivedQuotedMessage = try XCTUnwrap(message?.quotedMessage)
 
     XCTAssertEqual(receivedQuotedMessage.timetoken, 17_296_737_530_374_172)

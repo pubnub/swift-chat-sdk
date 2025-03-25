@@ -533,7 +533,7 @@ extension ChatImpl: Chat {
     type: T.Type,
     channelId: String,
     customMethod: EmitEventMethod = .publish,
-    callback: @escaping ((EventWrapper<T>) -> Void)
+    callback: @escaping ((AnyEvent<ChatImpl, T>) -> Void)
   ) -> AutoCloseable {
     AutoCloseableImpl(
       chat.listenForEvents(
@@ -543,14 +543,12 @@ extension ChatImpl: Chat {
         callback: { [weak self] in
           if let selfRef = self, let payload = $0.payload.map() as? T {
             callback(
-              EventWrapper(
-                event: EventImpl(
-                  chat: selfRef,
-                  timetoken: Timetoken($0.timetoken_),
-                  payload: payload,
-                  channelId: $0.channelId,
-                  userId: $0.userId
-                )
+              AnyEvent(
+                chat: selfRef,
+                timetoken: Timetoken($0.timetoken_),
+                payload: payload,
+                channelId: $0.channelId,
+                userId: $0.userId
               )
             )
           }
@@ -680,7 +678,7 @@ extension ChatImpl: Chat {
     startTimetoken: Timetoken? = nil,
     endTimetoken: Timetoken? = nil,
     count: Int = 100,
-    completion: ((Swift.Result<(events: [EventWrapper<EventContent>], isMore: Bool), Error>) -> Void)? = nil
+    completion: ((Swift.Result<(events: [AnyEvent<ChatImpl, EventContent>], isMore: Bool), Error>) -> Void)? = nil
   ) {
     chat.getEventsHistory(
       channelId: channelId,
@@ -691,13 +689,13 @@ extension ChatImpl: Chat {
       switch result.result {
       case let .success(response):
         let eventImplArray = response.events.compactMap {
-          EventWrapper(event: EventImpl(
+          AnyEvent(
             chat: result.caller,
             timetoken: Timetoken($0.timetoken_),
             payload: EventContent.from(rawValue: $0.payload),
             channelId: $0.channelId,
             userId: $0.userId
-          ))
+          )
         }
         completion?(.success((
           events: eventImplArray,

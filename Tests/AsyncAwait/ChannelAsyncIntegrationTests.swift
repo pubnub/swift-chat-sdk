@@ -522,9 +522,9 @@ class ChannelIntegrationTests: BaseAsyncIntegrationTestCase {
 
     let task = Task {
       for await report in channel.streamMessageReports() {
-        XCTAssertEqual(report.event.payload.reason, "reportReason")
-        XCTAssertEqual(report.event.payload.text, "Some text")
-        XCTAssertEqual(report.event.payload.reportedUserId, chat.currentUser.id)
+        XCTAssertEqual(report.payload.reason, "reportReason")
+        XCTAssertEqual(report.payload.text, "Some text")
+        XCTAssertEqual(report.payload.reportedUserId, chat.currentUser.id)
         expectation.fulfill()
       }
     }

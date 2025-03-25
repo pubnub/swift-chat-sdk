@@ -589,7 +589,7 @@ public extension Channel {
     endTimetoken: Timetoken? = nil,
     count: Int = 25
   ) async throws -> (
-    events: [EventWrapper<EventContent>],
+    events: [AnyEvent<ChatType, EventContent>],
     isMore: Bool
   ) {
     try await withCheckedThrowingContinuation { continuation in
@@ -605,10 +605,19 @@ public extension Channel {
   }
 
   /// As an admin of your chat app, monitor all events emitted when someone reports an offensive message.
-  func streamMessageReports() -> AsyncStream<EventWrapper<EventContent.Report>> {
+  func streamMessageReports() -> AsyncStream<AnyEvent<ChatType, EventContent.Report>> {
     AsyncStream { continuation in
       let autoCloseable = streamMessageReports {
-        continuation.yield(EventWrapper(event: $0))
+        continuation
+          .yield(
+            AnyEvent(
+              chat: $0.chat,
+              timetoken: $0.timetoken,
+              payload: $0.payload,
+              channelId: $0.channelId,
+              userId: $0.userId
+            )
+          )
       }
       continuation.onTermination = { _ in
         autoCloseable.close()

@@ -504,8 +504,8 @@ public extension Chat {
     type: T.Type,
     channelId: String,
     customMethod: EmitEventMethod = .publish
-  ) -> AsyncStream<EventWrapper<T>> {
-    AsyncStream<EventWrapper<T>> { continuation in
+  ) -> AsyncStream<AnyEvent<Self, T>> {
+    AsyncStream<AnyEvent<Self, T>> { continuation in
       let autoCloseable = listenForEvents(type: type, channelId: channelId, customMethod: customMethod) {
         continuation.yield($0)
       }
@@ -653,7 +653,7 @@ public extension Chat {
     startTimetoken: Timetoken? = nil,
     endTimetoken: Timetoken? = nil,
     count: Int = 100
-  ) async throws -> (events: [EventWrapper<EventContent>], isMore: Bool) {
+  ) async throws -> (events: [AnyEvent<Self, EventContent>], isMore: Bool) {
     try await withCheckedThrowingContinuation { continuation in
       getEventsHistory(
         channelId: channelId,

@@ -382,7 +382,7 @@ extension ChannelImpl: Channel {
     startTimetoken: Timetoken? = nil,
     endTimetoken: Timetoken? = nil,
     count: Int = 25,
-    completion: ((Swift.Result<(events: [EventWrapper<EventContent>], isMore: Bool), Error>) -> Void)?
+    completion: ((Swift.Result<(events: [AnyEvent<ChatType, EventContent>], isMore: Bool), Error>) -> Void)?
   ) {
     target.getMessageReportsHistory(
       startTimetoken: startTimetoken,
@@ -392,7 +392,7 @@ extension ChannelImpl: Channel {
     )
   }
 
-  public func streamMessageReports(callback: @escaping (any Event<EventContent.Report>) -> Void) -> AutoCloseable {
+  public func streamMessageReports(callback: @escaping (AnyEvent<ChatType, EventContent.Report>) -> Void) -> AutoCloseable {
     target.streamMessageReports(
       callback: callback
     )

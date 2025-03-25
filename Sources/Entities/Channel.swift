@@ -469,7 +469,7 @@ public protocol Channel: CustomStringConvertible {
     startTimetoken: Timetoken?,
     endTimetoken: Timetoken?,
     count: Int,
-    completion: ((Swift.Result<(events: [EventWrapper<EventContent>], isMore: Bool), Error>) -> Void)?
+    completion: ((Swift.Result<(events: [AnyEvent<ChatType, EventContent>], isMore: Bool), Error>) -> Void)?
   )
 
   /// As an admin of your chat app, monitor all events emitted when someone reports an offensive message.
@@ -480,7 +480,7 @@ public protocol Channel: CustomStringConvertible {
   /// - Parameter callback: Callback function passed as a parameter. It defines the custom behavior to be executed when detecting new message report events
   /// - Returns: ``AutoCloseable`` interface that lets you stop receiving report-related updates (report events) by invoking the close() method
   func streamMessageReports(
-    callback: @escaping (any Event<EventContent.Report>) -> Void
+    callback: @escaping (AnyEvent<ChatType, EventContent.Report>) -> Void
   ) -> AutoCloseable
 
   /// Creates a ``MessageDraft`` for composing a message that will be sent to this ``Channel``

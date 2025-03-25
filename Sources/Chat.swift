@@ -365,7 +365,7 @@ public protocol Chat: AnyObject {
     type: T.Type,
     channelId: String,
     customMethod: EmitEventMethod,
-    callback: @escaping ((EventWrapper<T>) -> Void)
+    callback: @escaping ((AnyEvent<Self, T>) -> Void)
   ) -> AutoCloseable
 
   /// Specifies the channel or channels on which a previously registered device will receive push notifications for new messages.
@@ -463,7 +463,7 @@ public protocol Chat: AnyObject {
     startTimetoken: Timetoken?,
     endTimetoken: Timetoken?,
     count: Int,
-    completion: ((Swift.Result<(events: [EventWrapper<EventContent>], isMore: Bool), Error>) -> Void)?
+    completion: ((Swift.Result<(events: [AnyEvent<Self, EventContent>], isMore: Bool), Error>) -> Void)?
   )
 
   /// Returns all instances when a specific user was mentioned by someone - either in channels or threads.

@@ -606,9 +606,9 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
       type: EventContent.Typing.self,
       channelId: channel.id
     ) { [unowned self] in
-      XCTAssertTrue($0.event.payload.value)
-      XCTAssertEqual($0.event.channelId, channel.id)
-      XCTAssertEqual($0.event.userId, chat.currentUser.id)
+      XCTAssertTrue($0.payload.value)
+      XCTAssertEqual($0.channelId, channel.id)
+      XCTAssertEqual($0.userId, chat.currentUser.id)
       expectation.fulfill()
     }
 
@@ -839,7 +839,7 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
       )
     }
 
-    let inviteEvent = try XCTUnwrap(history.events.compactMap { $0.event.payload as? EventContent.Invite }.first)
+    let inviteEvent = try XCTUnwrap(history.events.compactMap { $0.payload as? EventContent.Invite }.first)
 
     XCTAssertEqual(inviteEvent.channelId, channel.id)
     XCTAssertEqual(inviteEvent.channelType, .unknown)

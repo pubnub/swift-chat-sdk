@@ -542,7 +542,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     startTimetoken: Timetoken?,
     endTimetoken: Timetoken?,
     count: Int,
-    completion: ((Swift.Result<(events: [EventWrapper<EventContent>], isMore: Bool), Error>) -> Void)?
+    completion: ((Swift.Result<(events: [AnyEvent<ChatType, EventContent>], isMore: Bool), Error>) -> Void)?
   ) {
     channel.getMessageReportsHistory(
       startTimetoken: startTimetoken?.asKotlinLong(),
@@ -552,15 +552,14 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
       switch result.result {
       case let .success(response):
         completion?(.success((
-          events: response.events.compactMap { (event: PubNubChat.Event) -> EventWrapper? in
-            EventWrapper(
-              event: EventImpl(
-                chat: result.caller.chat,
-                timetoken: Timetoken(event.timetoken_),
-                payload: event.payload.map(),
-                channelId: event.channelId,
-                userId: event.userId
-              )
+          events: response.events.compactMap { (event: PubNubChat.Event) -> AnyEvent<ChatType, EventContent> in
+            AnyEvent(
+              chat: result.caller.chat,
+              timetoken: Timetoken(event.timetoken_),
+              payload: event.payload.map(),
+              channelId: event.channelId,
+              userId: event.userId
+
             )
           },
           isMore: response.isMore
@@ -571,12 +570,12 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     }
   }
 
-  func streamMessageReports(callback: @escaping (any Event<EventContent.Report>) -> Void) -> AutoCloseable {
+  func streamMessageReports(callback: @escaping (AnyEvent<ChatType, EventContent.Report>) -> Void) -> AutoCloseable {
     AutoCloseableImpl(
       channel.streamMessageReports { [weak self] in
         if let selfRef = self, let payload = $0.payload.map() as? EventContent.Report {
           callback(
-            EventImpl(
+            AnyEvent(
               chat: selfRef.chat,
               timetoken: Timetoken($0.timetoken_),
               payload: payload,

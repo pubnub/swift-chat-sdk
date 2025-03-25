@@ -391,9 +391,9 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
     let task = Task {
       for await event in chat.listenForEvents(type: EventContent.Typing.self, channelId: channel.id) {
-        XCTAssertTrue(event.event.payload.value)
-        XCTAssertEqual(event.event.channelId, channel.id)
-        XCTAssertEqual(event.event.userId, chat.currentUser.id)
+        XCTAssertTrue(event.payload.value)
+        XCTAssertEqual(event.channelId, channel.id)
+        XCTAssertEqual(event.userId, chat.currentUser.id)
         expectation.fulfill()
       }
     }
@@ -503,7 +503,7 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     try await Task.sleep(nanoseconds: 4_000_000_000)
 
     let history = try await chat.getEventsHistory(channelId: chat.currentUser.id)
-    let inviteEvent = try XCTUnwrap(history.events.compactMap { $0.event.payload as? EventContent.Invite }.first)
+    let inviteEvent = try XCTUnwrap(history.events.compactMap { $0.payload as? EventContent.Invite }.first)
 
     XCTAssertEqual(inviteEvent.channelId, channel.id)
     XCTAssertEqual(inviteEvent.channelType, .unknown)

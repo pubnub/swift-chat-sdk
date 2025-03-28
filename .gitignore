@@ -1,6 +1,3 @@
-## Custom .plist
-Tests/PubNubSwiftChatSDKTests.plist
-
 ## macOS
 .DS_Store
 
@@ -91,3 +88,8 @@ fastlane/test_output
 # GitHub Actions #
 ##################
 .github/.release
+
+# VS
+
+.vscode/
+buildServer.json

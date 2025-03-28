@@ -1,6 +1,3 @@
-## Custom .plist
-Tests/PubNubSwiftChatSDKTests.plist
-
 ## macOS
 .DS_Store
 
@@ -18,6 +15,7 @@ DerivedData/
 
 ## Tests
 Results/
+Tests/PubNubSwiftChatSDKTests.plist
 
 ## Config files containing secret keys
 *.debug.xcconfig
@@ -91,3 +89,8 @@ fastlane/test_output
 # GitHub Actions #
 ##################
 .github/.release
+
+# VS
+
+.vscode/
+buildServer.json

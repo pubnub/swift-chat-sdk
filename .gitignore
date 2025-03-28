@@ -15,6 +15,7 @@ DerivedData/
 
 ## Tests
 Results/
+Tests/PubNubSwiftChatSDKTests.plist
 
 ## Config files containing secret keys
 *.debug.xcconfig

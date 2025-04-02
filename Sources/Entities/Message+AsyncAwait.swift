@@ -106,7 +106,7 @@ public extension Message {
 
   /// Attach this message to its channel.
   ///
-  /// - Returns: The updated Channel metadata
+  /// - Returns: The updated ``Channel`` metadata
   @discardableResult
   func pin() async throws -> ChatType.ChatChannelType {
     try await withCheckedThrowingContinuation { continuation in
@@ -205,7 +205,7 @@ public extension Message {
 
   /// Removes a thread (channel) for a selected message.
   ///
-  /// - Returns: The updated channel object after the removal of the thread
+  /// - Returns: The updated ``Channel`` object after the removal of the thread
   func removeThread() async throws -> ChatType.ChatChannelType? {
     try await withCheckedThrowingContinuation { continuation in
       removeThread {
@@ -241,8 +241,7 @@ public extension Message {
 
   /// You can receive updates when this message and related message reactions are added, edited, or removed.
   ///
-  /// - Parameter completion: Function that takes a single Message object. It defines the custom behavior to be executed when detecting message or message reaction changes
-  /// - Returns: An asynchronous stream that produces updates when the current Message is edited or removed.
+  /// - Returns: An asynchronous stream that produces updates when the current ``Message`` is edited.
   func streamUpdates() -> AsyncStream<Self> {
     AsyncStream { continuation in
       let autoCloseable = streamUpdates {
@@ -254,7 +253,7 @@ public extension Message {
     }
   }
 
-  /// If you delete a message, you can restore its content together with the attached files using the `restore()` method.
+  /// If you delete a message, you can restore its content together with the attached files using the ``restore()`` method.
   ///
   /// This is possible, however, only if the message you want to restore was soft deleted (the soft parameter was set to true when deleting it). Hard deleted messages cannot be restored as their data
   /// is no longer available in Message Persistence. This method also requires Message Persistence configuration. To manage messages, you must enable Message Persistence for your app's keyset

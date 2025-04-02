@@ -44,7 +44,7 @@ public protocol Chat: AnyObject {
 
   /// An object for manipulating the list of muted users.
   ///
-  /// The list is local to this instance of Chat (it is not persisted anywhere) unless ``ChatConfiguration/syncMutedUsers`` is enabled, in which case it will be synced
+  /// The list is local to this instance of ``Chat`` (it is not persisted anywhere) unless ``ChatConfiguration/syncMutedUsers`` is enabled, in which case it will be synced
   /// using App Context for the current user.
   ///
   /// Please note that this is not a server-side moderation mechanism, but rather a way to ignore messages from certain users on the client.
@@ -75,7 +75,7 @@ public protocol Chat: AnyObject {
   ///   - status: Tag that lets you categorize your app users by their current state. The tag choice is entirely up to you and depends on your use case
   ///   - type: Tag that lets you categorize your app users by their functional roles. The tag choice is entirely up to you and depends on your use case
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: The user was successfully created and returns the created user
+  ///     - **Success**: The ``User`` was successfully created and returns the created user
   ///     - **Failure**: An `Error` describing the failure
   func createUser(
     id: String,
@@ -94,7 +94,7 @@ public protocol Chat: AnyObject {
   /// - Parameters:
   ///   - userId: Unique user identifier (up to 92 UTF-8 characters).
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: The user was successfully returned
+  ///     - **Success**: The ``User`` was successfully returned
   ///     - **Failure**: An `Error` describing the failure
   func getUser(
     userId: String,
@@ -190,7 +190,7 @@ public protocol Chat: AnyObject {
   /// - Parameters:
   ///   - channelId: Unique channel identifier (up to 92 UTF-8 byte sequences)
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: A value containing a channel object with its metadata
+  ///     - **Success**: A value containing a ``Channel`` object with its metadata
   ///     - **Failure**: An `Error` describing the failure
   func getChannel(
     channelId: String,
@@ -225,7 +225,7 @@ public protocol Chat: AnyObject {
   ///   - status: Tag that lets you categorize your app users by their current state. The tag choice is entirely up to you and depends on your use case
   ///   - type: Tag that lets you categorize your app users by their functional roles. The tag choice is entirely up to you and depends on your use case
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: A value containing an updated channel and its metadata
+  ///     - **Success**: A value containing an updated ``Channel`` and its metadata
   ///     - **Failure**: An `Error` describing the failure
   func updateChannel(
     id: String,
@@ -281,10 +281,12 @@ public protocol Chat: AnyObject {
 
   /// Creates a public channel that let users engage in open conversations with many people. Unlike group chats, anyone can join public channels.
   ///
+  /// If you don't provide the name, the channel will get the same name as id (value of `channelId`)
+  ///
   /// - Parameters:
   ///   - channelId: ID of the public channel. The channel ID is created automatically using the UUID generator. You can override it by providing your own ID
   ///   - channelName: Display name for the channel
-  ///   - channelDescription: If you don't provide the name, the channel will get the same name as id (value of `channelId`)
+  ///   - channelDescription: Additional details about the channel
   ///   - channelCustom: Any custom properties or metadata associated with the channel in the form of a map of key-value pairs
   ///   - channelStatus: Current status of the channel, like online, offline, or archived
   ///   - completion: The async `Result` of the method call
@@ -360,7 +362,7 @@ public protocol Chat: AnyObject {
   ///   - channelId: Channel to listen for new events
   ///   - customMethod: An optional custom method for emitting events
   ///   - callback: A function that is called with an ``EventWrapper`` as its parameter. It defines the custom behavior to be executed whenever an event is detected on the specified channel
-  /// - Returns: ``AutoCloseable`` interface you can call to stop listening for new events and clean up resources when they re no longer needed by invoking the `close()` method
+  /// - Returns: ``AutoCloseable`` interface you can call to stop listening for new events and clean up resources when they re no longer needed by invoking the ``AutoCloseable/close()`` method
   func listenForEvents<T: EventContent>(
     type: T.Type,
     channelId: String,

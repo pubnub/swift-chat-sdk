@@ -50,7 +50,7 @@ public protocol User: CustomStringConvertible {
   /// - Parameters:
   ///   - users: Collection containing the users to watch for updates
   ///   - callback: Defines the custom behavior to be executed when detecting users changes
-  /// - Returns: An ``AutoCloseable`` that you can use to stop receiving objects events by invoking its `close()` method
+  /// - Returns: An ``AutoCloseable`` that you can use to stop receiving objects events by invoking its ``AutoCloseable/close()`` method
   static func streamUpdatesOn(
     users: [ChatType.ChatUserType],
     callback: @escaping (([ChatType.ChatUserType]) -> Void)
@@ -67,7 +67,7 @@ public protocol User: CustomStringConvertible {
   ///   - status: The new status of the user (e.g., online, offline)
   ///   - type: The new type of the user (e.g., admin, member)
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: The updated user object with its metadata
+  ///     - **Success**: The updated ``User`` object with its metadata
   ///     - **Failure**: An `Error` describing the failure
   func update(
     name: String?,
@@ -91,7 +91,7 @@ public protocol User: CustomStringConvertible {
   /// - Parameters:
   ///   - updateAction: A function for computing new values for the `User` fields based on the provided `User` argument and returning changes to apply
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: The updated user object with its metadata
+  ///     - **Success**: The updated ``User`` object with its metadata
   ///     - **Failure**: An `Error` describing the failure
   func update(
     updateAction: @escaping (ChatType.ChatUserType) -> [PubNubMetadataChange<PubNubUserMetadata>],
@@ -157,7 +157,7 @@ public protocol User: CustomStringConvertible {
   ///
   /// - Parameters:
   ///   - callback: A function that is triggered whenever the user's information are changed (added, edited, or removed)
-  /// - Returns: An ``AutoCloseable`` that you can use to stop receiving objects events by invoking its `close()` method
+  /// - Returns: An ``AutoCloseable`` that you can use to stop receiving objects events by invoking its ``AutoCloseable/close()`` method
   func streamUpdates(
     callback: @escaping ((ChatType.ChatUserType?) -> Void)
   ) -> AutoCloseable
@@ -191,7 +191,7 @@ public extension User {
         ("updated", updated ?? "nil"),
         ("eTag", eTag ?? "nil"),
         ("lastActiveTimestamp", lastActiveTimestamp ?? "nil"),
-        ("active", lastActiveTimestamp ?? "active")
+        ("active", active)
       ]
     )
   }

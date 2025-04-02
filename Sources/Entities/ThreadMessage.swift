@@ -41,7 +41,7 @@ public protocol ThreadMessage: Message {
   ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**:  The updated Channel after the message is unpinned
+  ///     - **Success**:  The updated ``Channel`` after the message is unpinned
   ///     - **Failure**: An `Error` describing the failure
   func unpinFromParentChannel(
     completion: ((Swift.Result<ChatType.ChatChannelType, Error>) -> Void)?

@@ -38,7 +38,7 @@ public extension Channel {
   ///   - description: Additional details about the channel
   ///   - status: Current status of the channel, like online, offline, or archived
   ///   - type: Represents the type of channel
-  /// - Returns: The updated channel object with its metadata
+  /// - Returns: The updated ``Channel`` object with its metadata
   func update(
     name: String? = nil,
     custom: [String: JSONCodableScalar]? = nil,
@@ -103,7 +103,7 @@ public extension Channel {
   /// Activates a typing indicator on a given channel.
   ///
   /// The method sets a flag (typingSent) to indicate that a typing signal is in progress and adds a timer to reset
-  /// the flag after a specified timeout. You can change the default typing timeout and set your own value during the Chat SDK configuration (init() method)
+  /// the flag after a specified timeout. You can change the default typing timeout and set your own value during the Chat SDK configuration initialization
   /// using the `typingTimeout` parameter
   ///
   /// - Returns: A `Timetoken` indicating the action timestamp
@@ -277,7 +277,7 @@ public extension Channel {
   ///
   /// - Parameters:
   ///   - users: List of users you want to invite to the ``Channel``. You can invite up to 100 users in one call
-  ///   - completion: List of ``Membership`` of invited users
+  /// - Returns: List of ``Membership`` of invited users
   @discardableResult
   func inviteMultiple(users: [ChatType.ChatUserType]) async throws -> [ChatType.ChatMembershipType] {
     try await withCheckedThrowingContinuation { continuation in
@@ -299,7 +299,7 @@ public extension Channel {
   ///   - page: Object used for pagination to define which previous or next result page you want to fetch
   ///   - filter: Expression used to filter the results. Returns only these members whose properties satisfy the given expression
   ///   - sort: A collection to specify the sort order. Available options are id, name, and updated
-  ///   - completion: A `Tuple` containing an array of the members of the channel, and the next pagination `PubNubHashedPage` (if one exists)
+  /// - Returns: A `Tuple` containing an array of the members of the channel, and the next pagination `PubNubHashedPage` (if one exists)
   func getMembers(
     limit: Int? = nil,
     page: PubNubHashedPage? = nil,
@@ -320,7 +320,6 @@ public extension Channel {
 
   /// Watch the ``Channel`` content without a need to join the ``Channel``.
   ///
-  /// - Parameter callback: Defines the custom behavior to be executed whenever a message is received on the ``Channel``
   /// - Returns: An asynchronous stream that produces a new value every time a new message is published on the current channel
   func connect() -> AsyncStream<ChatType.ChatMessageType> {
     AsyncStream { continuation in
@@ -474,7 +473,7 @@ public extension Channel {
 
   /// Receives updates on a single ``Channel`` object.
   ///
-  /// - Returns: An asynchronous stream that produces updates when the current Channel is edited or removed.
+  /// - Returns: An asynchronous stream that produces updates when the current ``Channel`` is edited or removed.
   func streamUpdates() -> AsyncStream<ChatType.ChatChannelType?> {
     AsyncStream { continuation in
       let autoCloseable = streamUpdates {
@@ -581,9 +580,7 @@ public extension Channel {
   ///   - startTimetoken: The start timetoken for fetching the history of reported messages, which allows specifying the point in time where the history retrieval should begin
   ///   - endTimetoken: The end time token for fetching the history of reported messages, which allows specifying the point in time where the history retrieval should end
   ///   - count: The number of reported message events to fetch from the history
-  ///   - completion: The async `Result` of the method call
-  ///     - **Success**: A `Tuple` containing an array of `EventWrapper<EventContent>`, and a boolean indicating whether there are more messages available beyond the current result set
-  ///     - **Failure**: An `Error` describing the failure
+  /// - Returns: A `Tuple` containing an array of `EventWrapper<EventContent>`, and a boolean indicating whether there are more messages available beyond the current result set
   func getMessageReportsHistory(
     startTimetoken: Timetoken? = nil,
     endTimetoken: Timetoken? = nil,

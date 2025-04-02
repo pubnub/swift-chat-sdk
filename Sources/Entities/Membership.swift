@@ -42,7 +42,7 @@ public protocol Membership: CustomStringConvertible {
   /// - Parameters:
   ///   - memberships: Collection containing the ``Membership`` to watch for updates
   ///   - callback: Defines the custom behavior to be executed when detecting membership changes
-  /// - Returns: An ``AutoCloseable`` that you can use to stop receiving objects events by invoking its `close()` method
+  /// - Returns: An ``AutoCloseable`` that you can use to stop receiving objects events by invoking its ``AutoCloseable/close()`` method
   static func streamUpdatesOn(
     memberships: [Self],
     callback: @escaping (([Self]) -> Void)
@@ -100,7 +100,7 @@ public protocol Membership: CustomStringConvertible {
   /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
   ///
   /// - Parameter callback: Defines the custom behavior to be executed when detecting membership changes
-  /// - Returns: An ``AutoCloseable`` that you can use to stop receiving objects events by invoking its `close()` method
+  /// - Returns: An ``AutoCloseable`` that you can use to stop receiving objects events by invoking its ``AutoCloseable/close()`` method
   func streamUpdates(
     callback: @escaping ((ChatType.ChatMembershipType?) -> Void)
   ) -> AutoCloseable

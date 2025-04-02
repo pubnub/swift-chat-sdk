@@ -137,7 +137,7 @@ public extension Chat {
   ///   - custom: Any custom properties or metadata associated with the user in the form of a `[String: JSONCodableScalar]`
   ///   - status: Tag that lets you categorize your app users by their current state. The tag choice is entirely up to you and depends on your use case
   ///   - type: Tag that lets you categorize your app users by their functional roles. The tag choice is entirely up to you and depends on your use case
-  /// - Returns: Updated user
+  /// - Returns: The updated ``User`` instance
   func updateUser(
     id: String,
     name: String? = nil,
@@ -287,7 +287,7 @@ public extension Chat {
   ///   - description: Channel description
   ///   - status: Tag that lets you categorize your app users by their current state. The tag choice is entirely up to you and depends on your use case
   ///   - type: Tag that lets you categorize your app users by their functional roles. The tag choice is entirely up to you and depends on your use case
-  /// - Returns: A value containing an updated channel and its metadata
+  /// - Returns: A value containing an updated ``Channel`` and its metadata
   func updateChannel(
     id: String,
     name: String? = nil,
@@ -378,10 +378,12 @@ public extension Chat {
 
   /// Creates a public channel that let users engage in open conversations with many people. Unlike group chats, anyone can join public channels.
   ///
+  /// If you don't provide the name, the channel will get the same name as id (value of `channelId`)
+  ///
   /// - Parameters:
   ///   - channelId: ID of the public channel. The channel ID is created automatically using the UUID generator. You can override it by providing your own ID
   ///   - channelName: Display name for the channel
-  ///   - channelDescription: If you don't provide the name, the channel will get the same name as id (value of `channelId`)
+  ///   - channelDescription: Additional details about the channel
   ///   - channelCustom: Any custom properties or metadata associated with the channel in the form of a map of key-value pairs
   ///   - channelStatus: Current status of the channel, like online, offline, or archived
   /// - Returns: A value containing details about created ``Channel``

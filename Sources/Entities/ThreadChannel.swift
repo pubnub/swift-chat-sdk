@@ -27,7 +27,7 @@ public protocol ThreadChannel: Channel {
   /// - Parameters:
   ///   - message: A message you want to pin to the selected thread channel
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: An updated `ThreadChannel`
+  ///     - **Success**: An updated ``ThreadChannel``
   ///     - **Failure**: An `Error` describing the failure
   func pinMessageToParentChannel(
     message: ChatType.ChatThreadMessageType,
@@ -38,7 +38,7 @@ public protocol ThreadChannel: Channel {
   ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: An updated `ThreadChannel`
+  ///     - **Success**: An updated ``ThreadChannel``
   ///     - **Failure**: An `Error` describing the failure
   func unpinMessageFromParentChannel(
     completion: ((Swift.Result<ChatType.ChatChannelType, Error>) -> Void)?

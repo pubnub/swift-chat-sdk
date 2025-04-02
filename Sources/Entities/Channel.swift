@@ -42,7 +42,7 @@ public protocol Channel: CustomStringConvertible {
   /// - Parameters:
   ///   - channels: Collection containing the channels to watch for updates
   ///   - callback: Defines the custom behavior to be executed when detecting channels changes
-  /// - Returns: An ``AutoCloseable`` that you can use to stop receiving objects events by invoking its `close()` method
+  /// - Returns: An ``AutoCloseable`` that you can use to stop receiving objects events by invoking its ``AutoCloseable/close()`` method
   static func streamUpdatesOn(
     channels: [Self],
     callback: @escaping (([Self]) -> Void)
@@ -57,7 +57,7 @@ public protocol Channel: CustomStringConvertible {
   ///   - status: Current status of the channel, like online, offline, or archived
   ///   - type: Represents the type of channel
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: The updated channel object with its metadata
+  ///     - **Success**: The updated ``Channel`` object with its metadata
   ///     - **Failure**: An `Error` describing the failure
   func update(
     name: String?,
@@ -95,7 +95,7 @@ public protocol Channel: CustomStringConvertible {
   /// Activates a typing indicator on a given channel.
   ///
   /// The method sets a flag (typingSent) to indicate that a typing signal is in progress and adds a timer to reset
-  /// the flag after a specified timeout. You can change the default typing timeout and set your own value during the Chat SDK configuration (init() method)
+  /// the flag after a specified timeout. You can change the default typing timeout and set your own value during the Chat SDK configuration initialization
   /// using the `typingTimeout` parameter
   ///
   /// - Parameters:
@@ -183,6 +183,7 @@ public protocol Channel: CustomStringConvertible {
   ///   - textLinks: Returned list of text links that are shown as text in the message
   ///   - quotedMessage: Object added to a message when you quote another message
   ///   - files: One or multiple files attached to the text message
+  ///   - customPushData: Additional key-value pairs that will be added to the FCM and/or APNS push messages for the message itself and any user mentions
   ///   - completion: The async `Result` of the method callnel
   ///     - **Success**: The timetoken of the sent message
   ///     - **Failure**: An `Error` describing the failure
@@ -330,7 +331,7 @@ public protocol Channel: CustomStringConvertible {
   /// - Parameters:
   ///   - timetoken: Timetoken of the message you want to retrieve from Message Persistence
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: A message object (if any)
+  ///     - **Success**: A ``Message`` object (if any)
   ///     - **Failure**: An `Error` describing the failure
   func getMessage(
     timetoken: Timetoken,
@@ -375,7 +376,7 @@ public protocol Channel: CustomStringConvertible {
   ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: A channel with updated `custom` field
+  ///     - **Success**: A ``Channel`` with updated ``Channel/custom`` field
   ///     - **Failure**: An `Error` describing the failure
   func unpinMessage(
     completion: ((Swift.Result<Self, Error>) -> Void)?

@@ -44,7 +44,7 @@ public extension ThreadMessage {
   ///  * `pinnedMessageTimetoken`: The timetoken marking when the message was pinned
   ///  * `pinnedMessageChannelID`: The ID of the channel where the message was pinned (either the parent channel or a thread channel)
   ///
-  /// - Returns: The updated Channel after the message is unpinned
+  /// - Returns: The updated ``Channel`` after the message is unpinned
   @discardableResult
   func unpinFromParentChannel() async throws -> ChatType.ChatChannelType {
     try await withCheckedThrowingContinuation { continuation in

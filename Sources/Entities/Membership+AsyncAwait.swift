@@ -99,7 +99,7 @@ public extension Membership {
 
   /// You can receive updates when specific user-channel Membership object(s) are added, edited, or removed.
   ///
-  /// - Returns: An asynchronous stream that produces updates when the current Membership is edited or removed.
+  /// - Returns: An asynchronous stream that produces updates when the current ``Membership`` is edited or removed.
   func streamUpdates() -> AsyncStream<ChatType.ChatMembershipType?> {
     AsyncStream { continuation in
       let autoCloseable = streamUpdates {

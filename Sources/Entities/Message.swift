@@ -44,7 +44,7 @@ public protocol Message: CustomStringConvertible {
   /// Access the original quoted message in the given ``Message``
   ///
   /// Stores only values for the timetoken, text, and userId parameters. If you want to return the full quoted Message object,
-  /// use the ``PubNubSwiftChatSDK/Channel/getMessage(timetoken:)`` method and pass the `timetoken` property from the `QuotedMessage` value.
+  /// use the ``PubNubSwiftChatSDK/Channel/getMessage(timetoken:)`` method and pass the `timetoken` property from the ``QuotedMessage`` value.
   var quotedMessage: QuotedMessage? { get }
   /// Content of the message
   var text: String { get }
@@ -135,7 +135,7 @@ public protocol Message: CustomStringConvertible {
   ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: The updated Channel metadata
+  ///     - **Success**: The updated ``Channel`` metadata
   ///     - **Failure**: An `Error` describing the failure
   func pin(
     completion: ((Swift.Result<ChatType.ChatChannelType, Error>) -> Void)?
@@ -197,7 +197,7 @@ public protocol Message: CustomStringConvertible {
   ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**:  The updated channel object after the removal of the thread
+  ///     - **Success**:  The updated ``Channel`` object after the removal of the thread
   ///     - **Failure**: An `Error` describing the failure
   func removeThread(
     completion: ((Swift.Result<ChatType.ChatChannelType?, Error>) -> Void)?
@@ -211,7 +211,7 @@ public protocol Message: CustomStringConvertible {
   /// - Parameters:
   ///   - reaction: Emoji added to the message or removed from it by the current user
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**:  An updated message instance
+  ///     - **Success**:  An updated ``Message`` instance
   ///     - **Failure**: An `Error` describing the failure
   func toggleReaction(
     reaction: String,
@@ -224,12 +224,12 @@ public protocol Message: CustomStringConvertible {
   /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
   ///
   /// - Parameter completion: Function that takes a single Message object. It defines the custom behavior to be executed when detecting message or message reaction changes
-  /// - Returns: Interface that lets you stop receiving message-related updates by invoking the `close()` method
+  /// - Returns: Interface that lets you stop receiving message-related updates by invoking the ``AutoCloseable/close()`` method
   func streamUpdates(
     completion: @escaping ((Self) -> Void)
   ) -> AutoCloseable
 
-  /// If you delete a message, you can restore its content together with the attached files using the `restore()` method.
+  /// If you delete a message, you can restore its content together with the attached files using the ``restore(completion:)`` method.
   ///
   /// This is possible, however, only if the message you want to restore was soft deleted (the soft parameter was set to true when deleting it). Hard deleted messages cannot be restored as their data
   /// is no longer available in Message Persistence. This method also requires Message Persistence configuration. To manage messages, you must enable Message Persistence for your app's keyset
@@ -243,7 +243,7 @@ public protocol Message: CustomStringConvertible {
     completion: ((Swift.Result<Self, Error>) -> Void)?
   )
 
-  /// Use this on the receiving end if a message was sent using ``MessageDraft`` to parse the `Message` text into parts
+  /// Use this on the receiving end if a message was sent using ``MessageDraft`` to parse the ``Message`` text into parts
   /// representing plain text or additional information such as user mentions, channel references and links.
   func getMessageElements() -> [MessageElement]
 

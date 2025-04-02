@@ -41,7 +41,7 @@ public extension User {
   ///   - custom: A map of custom properties or metadata for the user
   ///   - status: The new status of the user (e.g., online, offline)
   ///   - type: The new type of the user (e.g., admin, member)
-  /// - Returns: The updated user object with its metadata
+  /// - Returns: The updated ``User`` object with its metadata
   func update(
     name: String? = nil,
     externalId: String? = nil,
@@ -80,7 +80,7 @@ public extension User {
   /// with new User data that represents the current server state. This might happen multiple times until either new data is saved successfully, or the request fails.
   ///
   /// - Parameter updateAction: A function for computing new values for the `User` fields based on the provided `User` argument and returning changes to apply
-  /// - Returns: The updated user object with its metadata
+  /// - Returns: The updated ``User`` object with its metadata
   func update(
     updateAction: @escaping (ChatType.ChatUserType) -> [PubNubMetadataChange<PubNubUserMetadata>]
   ) async throws -> ChatType.ChatUserType {
@@ -179,7 +179,7 @@ public extension User {
 
   /// Receives updates on a single User object.
   ///
-  /// - Returns: An asynchronous stream that produces updates when the current User is edited or removed.
+  /// - Returns: An asynchronous stream that produces updates when the current ``User`` is edited or removed.
   func streamUpdates() -> AsyncStream<ChatType.ChatUserType?> {
     AsyncStream { continuation in
       let autoCloseable = streamUpdates {

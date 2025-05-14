@@ -468,7 +468,50 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     XCTAssertEqual(getUnreadMessagesCount?.membership.user.id, chat.currentUser.id)
 
     addTeardownBlock { [unowned self] in
+      _ = try? await channel.leave()
       _ = try? await chat.deleteChannel(id: channel.id)
+    }
+  }
+
+  func testChatAsync_FetchUnreadMessagesCounts() async throws {
+    let channel = try await chat.createChannel(id: randomString())
+    let channel2 = try await chat.createChannel(id: randomString())
+    let channel3 = try await chat.createChannel(id: randomString())
+
+    try await channel.invite(user: chat.currentUser)
+    try await channel2.invite(user: chat.currentUser)
+    try await channel3.invite(user: chat.currentUser)
+
+    try await Task.sleep(nanoseconds: 2_000_000_000)
+
+    try await channel.sendText(text: "Some new text")
+    try await channel2.sendText(text: "Some new text")
+    try await channel3.sendText(text: "Some new text")
+
+    try await Task.sleep(nanoseconds: 2_000_000_000)
+
+    let firstFetchResponse = try await chat.fetchUnreadMessagesCounts(limit: 1)
+    let firstPage = try XCTUnwrap(firstFetchResponse.page)
+
+    XCTAssertEqual(firstFetchResponse.countsByChannel.count, 1)
+    XCTAssertTrue(firstFetchResponse.countsByChannel.allSatisfy { $0.count == 1 })
+
+    let secondFetchResponse = try await chat.fetchUnreadMessagesCounts(page: firstPage)
+    let secondPage = try XCTUnwrap(secondFetchResponse.page)
+
+    XCTAssertEqual(secondFetchResponse.countsByChannel.count, 2)
+    XCTAssertTrue(secondFetchResponse.countsByChannel.allSatisfy { $0.count == 1 })
+
+    let thirdFetchResponse = try await chat.fetchUnreadMessagesCounts(page: secondPage)
+    XCTAssertTrue(thirdFetchResponse.countsByChannel.isEmpty)
+
+    addTeardownBlock { [unowned self] in
+      _ = try? await channel.leave()
+      _ = try? await channel2.leave()
+      _ = try? await channel3.leave()
+      _ = try? await chat.deleteChannel(id: channel.id)
+      _ = try? await chat.deleteChannel(id: channel2.id)
+      _ = try? await chat.deleteChannel(id: channel3.id)
     }
   }
 

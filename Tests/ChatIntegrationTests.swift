@@ -759,6 +759,11 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
 
     addTeardownBlock { [unowned self] in
       try awaitResult {
+        channel.leave(
+          completion: $0
+        )
+      }
+      try awaitResult {
         chat.deleteChannel(
           id: channel.id,
           completion: $0

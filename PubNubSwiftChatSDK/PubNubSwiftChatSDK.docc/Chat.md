@@ -74,6 +74,8 @@
 - ``GetUnreadMessagesCount``
 - ``getUnreadMessagesCount(limit:page:filter:sort:)``
 - ``getUnreadMessagesCount(limit:page:filter:sort:completion:)``
+- ``fetchUnreadMessagesCounts(limit:page:filter:sort:)``
+- ``fetchUnreadMessagesCounts(limit:page:filter:sort:completion:)``
 - ``markAllMessagesAsRead(limit:page:filter:sort:)``
 - ``markAllMessagesAsRead(limit:page:filter:sort:completion:)``
 

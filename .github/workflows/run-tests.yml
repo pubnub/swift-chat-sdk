@@ -32,7 +32,7 @@ jobs:
     strategy:
       matrix:
         environment: [iOS]
-    timeout-minutes: 21
+    timeout-minutes: 22
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

@@ -571,6 +571,7 @@ public extension Chat {
   ///   - filter: Expression used to filter the results. Returns only these channels whose properties satisfy the given expression are returned
   ///   - sort: A collection to specify the sort order
   /// - Returns: An array of ``GetUnreadMessagesCount`` representing unread messages for the current user in a given channel
+  @available(*, deprecated, message: "Use `fetchUnreadMessagesCounts(limit:page:filter:sort:)` instead")
   func getUnreadMessagesCount(
     limit: Int? = nil,
     page: PubNubHashedPage? = nil,
@@ -579,6 +580,38 @@ public extension Chat {
   ) async throws -> [GetUnreadMessagesCount<ChannelImpl, MembershipImpl>] {
     try await withCheckedThrowingContinuation { continuation in
       getUnreadMessagesCount(
+        limit: limit,
+        page: page,
+        filter: filter,
+        sort: sort
+      ) {
+        switch $0 {
+        case let .success(unreadMessagesCount):
+          continuation.resume(returning: unreadMessagesCount)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+
+  /// Returns info on all messages you didn't read on all joined channels. You can display this number on UI in the channel list of your chat app.
+  ///
+  /// - Parameters:
+  ///   - limit: Number of objects to return in response. The maximum value is 100
+  ///   - page: Object used for pagination to define which previous or next result page you want to fetch
+  ///   - filter: Expression used to filter the results. Returns only these channels whose properties satisfy the given expression are returned
+  ///   - sort: A collection to specify the sort order
+  ///   - completion: The async `Result` of the method call
+  /// - Returns: A Tuple containing an `Array` of unread messages for the current user across all joined channels, and the next pagination `PubNubHashedPage` (if one exists)
+  func fetchUnreadMessagesCounts(
+    limit: Int? = nil,
+    page: PubNubHashedPage? = nil,
+    filter: String? = nil,
+    sort: [PubNub.MembershipSortField] = []
+  ) async throws -> (countsByChannel: [GetUnreadMessagesCount<ChannelImpl, MembershipImpl>], page: PubNubHashedPage?) {
+    try await withCheckedThrowingContinuation { continuation in
+      fetchUnreadMessagesCounts(
         limit: limit,
         page: page,
         filter: filter,

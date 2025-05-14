@@ -278,6 +278,99 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
     XCTAssertEqual(retrievedMessage?.meta?["b"]?.codableValue.rawValue as? String, "someString")
   }
 
+  func testChannel_SendTextWithFiles() throws {
+    let downloadExpect = expectation(description: "Download Channel Expect")
+    downloadExpect.expectedFulfillmentCount = 1
+    downloadExpect.assertForOverFulfill = true
+
+    let fileUrlSession = URLSession(
+      configuration: URLSessionConfiguration.default,
+      delegate: FileSessionManager(),
+      delegateQueue: .main
+    )
+    let newPubNub = PubNub(
+      configuration: chat.pubNub.configuration,
+      fileSession: fileUrlSession
+    )
+    let newChat = ChatImpl(
+      pubNub: newPubNub,
+      configuration: chat.config
+    )
+    let newChannel = try awaitResultValue {
+      newChat.createChannel(
+        id: randomString(),
+        completion: $0
+      )
+    }
+
+    let data = Data("Lorem ipsum".utf8)
+    let inputFile = InputFile(name: "TxtFile", type: "text/plain", source: .data(data, contentType: "text/plain"))
+
+    try awaitResultValue(timeout: 10) {
+      newChannel.sendText(
+        text: "Text",
+        files: [inputFile],
+        completion: $0
+      )
+    }
+
+    let files = try XCTUnwrap(
+      awaitResultValue {
+        newChannel.getFiles(completion: $0)
+      }.files
+    )
+
+    XCTAssertEqual(files.count, 1)
+    XCTAssertEqual(files.first?.name, "TxtFile")
+
+    let file = try XCTUnwrap(files.first)
+    let temporaryDirectory = URL(fileURLWithPath: NSTemporaryDirectory())
+    let outputPath = temporaryDirectory.appendingPathComponent(UUID().uuidString + ".txt")
+
+    let fileToDownload = PubNubFileBase(
+      channel: newChannel.id,
+      fileId: file.id,
+      filename: file.name,
+      size: Int64(data.count),
+      contentType: "text/plain"
+    )
+
+    newPubNub.download(file: fileToDownload, toFileURL: outputPath) { downloadResult in
+      switch downloadResult {
+      case let .success(downloadResponse):
+        XCTAssertEqual(try? Data(contentsOf: downloadResponse.file.fileURL), data)
+      case let .failure(error):
+        XCTFail("Unexpected error: \(error)")
+      }
+      downloadExpect.fulfill()
+    }
+
+    wait(
+      for: [downloadExpect],
+      timeout: 25
+    )
+
+    addTeardownBlock { [unowned self] in
+      try awaitResultValue {
+        newPubNub.remove(
+          fileId: file.id,
+          filename: file.name,
+          channel: newChannel.id,
+          completion: $0
+        )
+      }
+      try awaitResult {
+        newChat.deleteChannel(
+          id: newChannel.id,
+          completion: $0
+        )
+      }
+      try FileManager.default.removeItem(
+        at: outputPath
+      )
+    }
+  }
+
   func testChannel_Invite() throws {
     try awaitResultValue {
       channel.invite(
@@ -701,16 +794,16 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
       )
     }
 
-    let file = try XCTUnwrap(
+    let files = try XCTUnwrap(
       awaitResultValue {
         newChannel.getFiles(completion: $0)
-      }.files.first
+      }.files
     )
 
-    XCTAssertEqual(
-      file.name,
-      "TxtFile"
-    )
+    XCTAssertEqual(files.count, 1)
+    XCTAssertEqual(files.first?.name, "TxtFile")
+
+    let file = try XCTUnwrap(files.first)
 
     addTeardownBlock { [unowned self] in
       try awaitResultValue {

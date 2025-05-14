@@ -157,6 +157,78 @@ class ChannelIntegrationTests: BaseAsyncIntegrationTestCase {
     XCTAssertEqual(retrievedMessage?.meta?["b"]?.codableValue.rawValue as? String, "someString")
   }
 
+  func testChannelAsync_SendTextWithFiles() async throws {
+    let downloadExpect = expectation(description: "Download File Expect")
+    downloadExpect.expectedFulfillmentCount = 1
+    downloadExpect.assertForOverFulfill = true
+
+    let fileUrlSession = URLSession(
+      configuration: URLSessionConfiguration.default,
+      delegate: FileSessionManager(),
+      delegateQueue: .main
+    )
+    let newPubNub = PubNub(
+      configuration: chat.pubNub.configuration,
+      fileSession: fileUrlSession
+    )
+    let newChat = ChatImpl(
+      pubNub: newPubNub,
+      configuration: chat.config
+    )
+
+    let data = Data("Lorem ipsum".utf8)
+    let newChannel = try await newChat.createChannel(id: randomString())
+    let inputFile = InputFile(name: "TxtFile", type: "text/plain", source: .data(data, contentType: "text/plain"))
+
+    try await newChannel.sendText(text: "Text", files: [inputFile])
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+
+    let getFilesResult = try await newChannel.getFiles()
+    let file = try XCTUnwrap(getFilesResult.files.first)
+
+    let temporaryDirectory = URL(fileURLWithPath: NSTemporaryDirectory())
+    let outputPath = temporaryDirectory.appendingPathComponent(UUID().uuidString + ".txt")
+
+    let fileToDownload = PubNubFileBase(
+      channel: newChannel.id,
+      fileId: file.id,
+      filename: file.name,
+      size: Int64(data.count),
+      contentType: "text/plain"
+    )
+
+    newPubNub.download(file: fileToDownload, toFileURL: outputPath) { downloadResult in
+      switch downloadResult {
+      case let .success(downloadResponse):
+        XCTAssertEqual(try? Data(contentsOf: downloadResponse.file.fileURL), data)
+      case let .failure(error):
+        XCTFail("Unexpected error: \(error)")
+      }
+      downloadExpect.fulfill()
+    }
+
+    await fulfillment(
+      of: [downloadExpect],
+      timeout: 20
+    )
+
+    addTeardownBlock {
+      newPubNub.remove(
+        fileId: file.id,
+        filename: file.name,
+        channel: newChannel.id,
+        completion: nil
+      )
+      newChat.deleteChannel(
+        id: newChannel.id,
+        completion: nil
+      )
+      try FileManager.default.removeItem(
+        at: outputPath
+      )
+    }
+  }
+
   func testChannelAsync_Invite() async throws {
     try await channel.invite(user: chat.currentUser)
     let member = try await channel.getMembers().memberships.first
@@ -400,10 +472,8 @@ class ChannelIntegrationTests: BaseAsyncIntegrationTestCase {
     let getFilesResult = try await newChannel.getFiles()
     let file = try XCTUnwrap(getFilesResult.files.first)
 
-    XCTAssertEqual(
-      file.name,
-      "TxtFile"
-    )
+    XCTAssertEqual(getFilesResult.files.count, 1)
+    XCTAssertEqual(file.name, "TxtFile")
 
     addTeardownBlock {
       newPubNub.remove(

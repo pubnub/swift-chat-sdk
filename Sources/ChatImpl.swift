@@ -626,6 +626,7 @@ extension ChatImpl: Chat {
     page: PubNubHashedPage? = nil,
     filter: String? = nil,
     sort: [PubNub.MembershipSortField] = [],
+    // swiftlint:disable:next line_length
     completion: ((Swift.Result<(countsByChannel: [GetUnreadMessagesCount<ChannelImpl, MembershipImpl>], page: PubNubHashedPage?), Error>) -> Void)? = nil
   ) {
     chat.fetchUnreadMessagesCounts(

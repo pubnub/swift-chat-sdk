@@ -482,9 +482,13 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     try await channel2.invite(user: chat.currentUser)
     try await channel3.invite(user: chat.currentUser)
 
+    try await Task.sleep(nanoseconds: 2_000_000_000)
+
     try await channel.sendText(text: "Some new text")
     try await channel2.sendText(text: "Some new text")
     try await channel3.sendText(text: "Some new text")
+
+    try await Task.sleep(nanoseconds: 2_000_000_000)
 
     let firstFetchResponse = try await chat.fetchUnreadMessagesCounts(limit: 1)
     let firstPage = try XCTUnwrap(firstFetchResponse.page)

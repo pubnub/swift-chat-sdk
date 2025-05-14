@@ -1,8 +1,21 @@
 name: swift-chat-sdk
 scm: github.com/pubnub/swift-chat-sdk
-version: 0.20.0
+version: 0.30.0
 schema: 1
 changelog:
+  - date: 2025-05-14
+    version: 0.30.0
+    changes:
+      - type: feature
+        text: "Deprecate `getUnreadMessagesCount(limit:page:filter:sort:)` method in Chat interface."
+      - type: feature
+        text: "Introduce `fetchUnreadMessagesCounts(limit:page:filter:sort:)` method in Chat interface."
+      - type: bug
+        text: "Fix the issue with the invalid download URL for files."
+      - type: improvement
+        text: "Remove code duplication from the `ChatImpl` constructors."
+      - type: improvement
+        text: "Add thread safety to chat mapping logic."
   - date: 2025-03-25
     version: 0.20.0
     changes:
@@ -150,7 +163,7 @@ sdks:
           - distribution-type: source
             distribution-repository: GitHub release
             package-name: PubNubSwiftChatSDK
-            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.20.0.zip
+            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.30.0.zip
             supported-platforms:
               supported-operating-systems:
                 iOS:

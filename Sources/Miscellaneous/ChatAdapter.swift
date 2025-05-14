@@ -12,27 +12,33 @@ import Foundation
 import PubNubChat
 
 class ChatAdapter {
-  static var associations: [Association] = []
-
+  private static var associations: [Association] = []
+  private static let queue = DispatchQueue(label: "ChatAdapter.associations", attributes: .concurrent)
   private init() {}
 
   static func map(chat: PubNubChat.Chat) -> Association {
-    if let association = associations.first(where: { !$0.isEmpty() && $0.rawChat === chat }) {
-      association
-    } else {
-      preconditionFailure("Cannot find Chat object matching \(chat)")
+    queue.sync {
+      if let association = associations.first(where: { !$0.isEmpty() && $0.kotlinChat === chat }) {
+        return association
+      } else {
+        preconditionFailure("Cannot find Chat object matching \(chat)")
+      }
     }
   }
 
-  static func associate(chat: ChatImpl, rawChat: PubNubChat.ChatImpl) {
-    if !associations.contains(where: { !$0.isEmpty() && $0.chat !== chat && $0.rawChat !== rawChat }) {
-      associations.append(.init(chat: chat, rawChat: rawChat))
+  static func associate(chat: ChatImpl, with kotlinChat: PubNubChat.ChatImpl) {
+    queue.async(flags: .barrier) {
+      if !associations.contains(where: { !$0.isEmpty() && $0.chat !== chat && $0.kotlinChat !== kotlinChat }) {
+        associations.append(.init(chat: chat, kotlinChat: kotlinChat))
+      }
     }
   }
 
   static func clean() {
-    associations.removeAll {
-      $0.isEmpty()
+    queue.async(flags: .barrier) {
+      associations.removeAll {
+        $0.isEmpty()
+      }
     }
   }
 
@@ -40,18 +46,18 @@ class ChatAdapter {
     // swiftlint:disable:next force_unwrapping
     var chat: ChatImpl { _chat! }
     // swiftlint:disable:next force_unwrapping
-    var rawChat: PubNubChat.ChatImpl { _rawChat! }
+    var kotlinChat: PubNubChat.ChatImpl { _kotlinChat! }
 
     private weak var _chat: ChatImpl?
-    private weak var _rawChat: PubNubChat.ChatImpl?
+    private weak var _kotlinChat: PubNubChat.ChatImpl?
 
-    init(chat: ChatImpl, rawChat: PubNubChat.ChatImpl) {
+    init(chat: ChatImpl, kotlinChat: PubNubChat.ChatImpl) {
       _chat = chat
-      _rawChat = rawChat
+      _kotlinChat = kotlinChat
     }
 
     func isEmpty() -> Bool {
-      _chat == nil || _rawChat == nil
+      _chat == nil || _kotlinChat == nil
     }
   }
 }

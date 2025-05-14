@@ -34,18 +34,8 @@ public final class ChatImpl {
   /// - Parameters:
   ///   - chatConfiguration: A configuration object of type ``ChatConfiguration`` that defines the chat settings
   ///   - pubNubConfiguration: A configuration object of type `PubNubConfiguration` that defines the `PubNub` settings
-  public init(
-    chatConfiguration: ChatConfiguration = ChatConfiguration(),
-    pubNubConfiguration: PubNubConfiguration
-  ) {
-    pubNub = PubNub(configuration: pubNubConfiguration)
-    config = chatConfiguration
-    chat = ChatImpl.createKMPChat(from: pubNub, config: chatConfiguration)
-    mutedUsersManager = MutedUsersManagerImpl(underlying: chat.mutedUsersManager)
-
-    pubNub.setConsumer(identifier: "chat-sdk", value: "CA-SWIFT/\(pubNubSwiftChatSDKVersion)")
-    // Creates an association between KMP chat and the current instance
-    ChatAdapter.associate(chat: self, rawChat: chat)
+  convenience public init(chatConfiguration: ChatConfiguration = ChatConfiguration(), pubNubConfiguration: PubNubConfiguration) {
+    self.init(pubNub: PubNub(configuration: pubNubConfiguration), configuration: chatConfiguration)
   }
 
   init(pubNub: PubNub, configuration: ChatConfiguration) {
@@ -55,8 +45,8 @@ public final class ChatImpl {
     mutedUsersManager = MutedUsersManagerImpl(underlying: chat.mutedUsersManager)
 
     pubNub.setConsumer(identifier: "chat-sdk", value: "CA-SWIFT/\(pubNubSwiftChatSDKVersion)")
-    // Creates an association between KMP chat and the current instance
-    ChatAdapter.associate(chat: self, rawChat: chat)
+    // Creates an association between Kotlin Multiplatform chat and the current instance
+    ChatAdapter.associate(chat: self, with: chat)
   }
 
   deinit {
@@ -625,6 +615,44 @@ extension ChatImpl: Chat {
             count: UInt64($0.count)
           )
         }))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
+
+  public func fetchUnreadMessagesCounts(
+    limit: Int? = nil,
+    page: PubNubHashedPage? = nil,
+    filter: String? = nil,
+    sort: [PubNub.MembershipSortField] = [],
+    completion: ((Swift.Result<(countsByChannel: [GetUnreadMessagesCount<ChannelImpl, MembershipImpl>], page: PubNubHashedPage?), Error>) -> Void)? = nil
+  ) {
+    chat.fetchUnreadMessagesCounts(
+      limit: limit?.asKotlinInt,
+      page: page?.transform(),
+      filter: filter,
+      sort: sort.compactMap { $0.transform() }
+    ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.UnreadMessagesCounts>) in
+      switch result.result {
+      case let .success(response):
+        completion?(
+          .success(
+            (
+              countsByChannel: response.countsByChannel.map {
+                GetUnreadMessagesCount(
+                  channel: ChannelImpl(channel: $0.channel),
+                  membership: MembershipImpl(membership: $0.membership),
+                  count: UInt64($0.count)
+                )
+              },
+              page: PubNubHashedPageBase(
+                start: response.next?.pageHash,
+                end: response.prev?.pageHash
+              )
+            )
+          )
+        )
       case let .failure(error):
         completion?(.failure(error))
       }

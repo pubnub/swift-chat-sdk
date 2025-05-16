@@ -149,7 +149,7 @@ changelog:
         text: "Initial Swift Chat SDK release"
 sdks:
   - full-name: PubNub Swift Chat SDK
-    short-name: PubNub Swift Chat SDK
+    short-name: Swift Chat
     artifacts:
       - artifact-type: api-client
         language: Swift

@@ -177,7 +177,7 @@ sdks:
                   minimum-os-version:
                     - iOS 14.0
                   maximum-os-version:
-                    - iOS 18.0.1
+                    - iOS 18.5
                   target-architecture:
                     - arm64
                   target-devices:
@@ -189,7 +189,7 @@ sdks:
                   minimum-os-version:
                     - macOS 11.0
                   maximum-os-version:
-                    - macOS 15.0.1
+                    - macOS 15.5
                   target-architecture:
                     - arm64
                     - x86_64
@@ -199,7 +199,7 @@ sdks:
                   minimum-os-version:
                     - tvOS 14.0
                   maximum-os-version:
-                    - tvOS 18.0
+                    - tvOS 18.5
                   target-architecture:
                     - arm64
                   target-devices:

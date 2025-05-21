@@ -1,8 +1,13 @@
 name: swift-chat-sdk
 scm: github.com/pubnub/swift-chat-sdk
-version: 0.30.0
+version: 0.30.1
 schema: 1
 changelog:
+  - date: 2025-05-21
+    version: 0.30.1
+    changes:
+      - type: bug
+        text: "Update core PubNub Swift SDK dependency."
   - date: 2025-05-14
     version: 0.30.0
     changes:
@@ -149,7 +154,7 @@ changelog:
         text: "Initial Swift Chat SDK release"
 sdks:
   - full-name: PubNub Swift Chat SDK
-    short-name: PubNub Swift Chat SDK
+    short-name: Swift Chat
     artifacts:
       - artifact-type: api-client
         language: Swift
@@ -163,7 +168,7 @@ sdks:
           - distribution-type: source
             distribution-repository: GitHub release
             package-name: PubNubSwiftChatSDK
-            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.30.0.zip
+            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.30.1.zip
             supported-platforms:
               supported-operating-systems:
                 iOS:

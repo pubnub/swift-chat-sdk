@@ -1,6 +1,6 @@
 {
   ".pubnub.yml": [
-    { "pattern": "^version: \"(.+)\"$", "cleared": true },
+    { "pattern": "^version: (.+)$", "cleared": true },
     { "pattern": "\/refs\/tags\/((\\d+\\.?){2,}(-[a-zA-Z]+(.\\d+)?)?)\\.zip", "cleared": true }
   ],
   "PubNubSwiftChatSDK.xcodeproj/project.pbxproj": [

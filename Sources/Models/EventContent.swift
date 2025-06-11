@@ -26,6 +26,8 @@ public class EventContent {
     public let reportedMessageChannelId: String?
     /// The ID of the user being reported
     public let reportedUserId: String?
+    /// The ID of the auto moderation rule that triggered the report, if applicable
+    public let autoModerationId: String?
 
     /// Initializes a new instance of `EventContent.Report` with the provided details.
     ///
@@ -35,18 +37,21 @@ public class EventContent {
     ///   - reportedMessageTimetoken: The timetoken of the message being reported
     ///   - reportedMessageChannelId: The channel ID of the reported message, if applicable
     ///   - reportedUserId: The ID of the user being reported
+    ///   - autoModerationId: The ID of the auto moderation rule that triggered the report, if applicable
     public init(
       text: String? = nil,
       reason: String,
       reportedMessageTimetoken: Timetoken? = nil,
       reportedMessageChannelId: String? = nil,
-      reportedUserId: String? = nil
+      reportedUserId: String? = nil,
+      autoModerationId: String? = nil
     ) {
       self.text = text
       self.reason = reason
       self.reportedMessageTimetoken = reportedMessageTimetoken
       self.reportedMessageChannelId = reportedMessageChannelId
       self.reportedUserId = reportedUserId
+      self.autoModerationId = autoModerationId
     }
 
     /// Extension to conform to `CustomStringConvertible` for custom string representation.
@@ -311,7 +316,8 @@ extension EventContent {
         reason: content.reason,
         reportedMessageTimetoken: content.reportedMessageTimetoken?.uint64Value,
         reportedMessageChannelId: content.reportedMessageChannelId,
-        reportedUserId: content.reportedUserId
+        reportedUserId: content.reportedUserId,
+        autoModerationId: content.autoModerationId
       )
     case let conent as PubNubChat.EventContent.Receipt:
       EventContent.Receipt(
@@ -363,7 +369,8 @@ extension EventContent {
         reason: content.reason,
         reportedMessageTimetoken: content.reportedMessageTimetoken?.asKotlinLong(),
         reportedMessageChannelId: content.reportedMessageChannelId,
-        reportedUserId: content.reportedUserId
+        reportedUserId: content.reportedUserId,
+        autoModerationId: content.autoModerationId
       )
     case let content as EventContent.Receipt:
       PubNubChat.EventContent.Receipt(

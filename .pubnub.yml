@@ -1,8 +1,17 @@
 name: swift-chat-sdk
 scm: github.com/pubnub/swift-chat-sdk
-version: 0.30.1
+version: 0.30.2
 schema: 1
 changelog:
+  - date: 2025-06-12
+    version: 0.30.2
+    changes:
+      - type: feature
+        text: "Add `autoModerationId` property in EventContent.Report."
+      - type: improvement
+        text: "Add PrivacyInfo.xcprivacy."
+      - type: improvement
+        text: "Remove unused `PubNubSwiftChatSDK_Info.plist` file."
   - date: 2025-05-21
     version: 0.30.1
     changes:
@@ -168,7 +177,7 @@ sdks:
           - distribution-type: source
             distribution-repository: GitHub release
             package-name: PubNubSwiftChatSDK
-            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.30.1.zip
+            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.30.2.zip
             supported-platforms:
               supported-operating-systems:
                 iOS:

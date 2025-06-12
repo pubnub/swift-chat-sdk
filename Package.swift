@@ -18,7 +18,7 @@ let package = Package(
     )
   ],
   dependencies: [
-    .package(url: "https://github.com/pubnub/kmp-chat", exact: "0.13.2-swift"),
+    .package(url: "https://github.com/pubnub/kmp-chat", exact: "0.13.4-swift"),
     .package(url: "https://github.com/pubnub/swift", exact: "9.2.0")
   ],
   targets: [
@@ -29,6 +29,9 @@ let package = Package(
       dependencies: [
         .product(name: "PubNubSDK", package: "swift"),
         .product(name: "PubNubChat", package: "kmp-chat")
+      ],
+      resources: [
+        .copy("PrivacyInfo.xcprivacy")
       ]
     ),
     .testTarget(

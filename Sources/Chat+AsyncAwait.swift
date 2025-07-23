@@ -733,6 +733,22 @@ public extension Chat {
       }
     }
   }
+
+  /// Removes a channel group.
+  ///
+  /// - Parameter id: The unique identifier of the channel group to remove
+  func removeChannelGroup(id: String) async throws {
+    try await withCheckedThrowingContinuation { continuation in
+      removeChannelGroup(id: id) {
+        switch $0 {
+        case .success:
+          continuation.resume(returning: ())
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
 }
 
 extension ChatImpl {

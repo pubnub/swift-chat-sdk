@@ -630,5 +630,11 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     XCTAssertTrue(chat.mutedUsersManager.mutedUsers.isEmpty)
   }
 
+  func testChat_RemoveChannelGroup() async throws {
+    let channelGroup = chat.getChannelGroup(id: randomString())
+    try await channelGroup.addChannelIdentifiers([randomString()])
+    try await chat.removeChannelGroup(id: channelGroup.id)
+  }
+
   // swiftlint:disable:next file_length
 }

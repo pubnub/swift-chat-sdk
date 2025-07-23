@@ -18,7 +18,7 @@ let package = Package(
     )
   ],
   dependencies: [
-    .package(url: "https://github.com/pubnub/kmp-chat", exact: "0.13.4-swift"),
+    .package(url: "https://github.com/pubnub/kmp-chat", exact: "0.14.0-swift"),
     .package(url: "https://github.com/pubnub/swift", exact: "9.2.0")
   ],
   targets: [

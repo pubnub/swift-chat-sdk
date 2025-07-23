@@ -26,6 +26,7 @@ public protocol Chat: AnyObject {
   associatedtype ChatMembershipType: Membership
   associatedtype ChatMessageType: Message
   associatedtype ChatThreadMessageType: ThreadMessage
+  associatedtype ChatChannelGroupType: ChannelGroup
 
   /// Contains chat app configuration settings, such as ``LogLevel`` or typing timeout
   /// that you can provide when initializing your chat app with the init method
@@ -203,7 +204,7 @@ public protocol Chat: AnyObject {
   ///   - filter: Expression used to filter the results. Returns only these channels whose properties satisfy the given expression are returned
   ///   - sort: A collection to specify the sort order
   ///   - limit: Number of objects to return in response. The maximum value is 100
-  ///   - page: Object used for pagination to define which previous or next result page you want to fetch.
+  ///   - page: Object used for pagination to define which previous or next result page you want to fetch
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: A `Tuple` containing an `Array` of channels, and the next pagination `PubNubHashedPage` (if one exists)
   ///     - **Failure**: An `Error` describing the failure
@@ -505,6 +506,24 @@ public protocol Chat: AnyObject {
 
   /// Clears resources of chat instance and related PubNub SDK instance.
   func destroy()
+
+  /// Returns a reference to a ``ChannelGroup`` with the specified id.
+  ///
+  /// This does **not** create a group on the server. If the group exists, the reference points to it. If the group does not exist, it serves as a handle to create
+  /// and modify it via channel changes. For example, ``ChannelGroup/add(channels:completion:)``, ``ChannelGroup/addChannelIdentifiers(ids:completion:)``
+  ///
+  /// - Parameter id: The ID of the ``ChannelGroup`` to get
+  /// - Returns: A ``ChatChannelGroupType`` instance
+  func getChannelGroup(id: String) -> ChatChannelGroupType
+
+  /// Removes a channel group with the specified id.
+  ///
+  /// - Parameters:
+  ///   - id: The unique identifier of the channel group to remove
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: A `Void` indicating a success
+  ///     - **Failure**: An `Error` describing the failure
+  func removeChannelGroup(id: String, completion: ((Swift.Result<Void, Error>) -> Void)?)
 
   // swiftlint:disable:next file_length
 }

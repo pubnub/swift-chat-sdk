@@ -620,7 +620,7 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     }
   }
 
-  func testChat_MutedUsers() async throws {
+  func testChatAsync_MutedUsers() async throws {
     let userToMute = randomString()
 
     try await chat.mutedUsersManager.muteUser(userId: userToMute)
@@ -630,7 +630,7 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     XCTAssertTrue(chat.mutedUsersManager.mutedUsers.isEmpty)
   }
 
-  func testChat_RemoveChannelGroup() async throws {
+  func testChatAsync_RemoveChannelGroup() async throws {
     let channelGroup = chat.getChannelGroup(id: randomString())
     try await channelGroup.addChannelIdentifiers([randomString()])
     try await chat.removeChannelGroup(id: channelGroup.id)

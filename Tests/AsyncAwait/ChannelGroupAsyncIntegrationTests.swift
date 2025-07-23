@@ -104,13 +104,11 @@ class ChannelGroupAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
     let presenceStream = channelGroup.streamPresence()
     let presenceTask = Task { [unowned self] in
-      for await presenceData in presenceStream {
-        if presenceData.count == 2 {
-          XCTAssertEqual(presenceData[channel.id], [chat.currentUser.id])
-          XCTAssertEqual(presenceData[secondChannel.id], [chat.currentUser.id])
-          expectation.fulfill()
-          break
-        }
+      for await presenceData in presenceStream where presenceData.count == 2 {
+        XCTAssertEqual(presenceData[channel.id], [chat.currentUser.id])
+        XCTAssertEqual(presenceData[secondChannel.id], [chat.currentUser.id])
+        expectation.fulfill()
+        break
       }
     }
 

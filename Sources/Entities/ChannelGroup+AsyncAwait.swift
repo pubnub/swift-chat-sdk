@@ -37,10 +37,10 @@ public extension ChannelGroup {
         page: page
       ) {
         switch $0 {
-          case let .success(value):
-            continuation.resume(returning: value)
-          case let .failure(error):
-            continuation.resume(throwing: error)
+        case let .success(value):
+          continuation.resume(returning: value)
+        case let .failure(error):
+          continuation.resume(throwing: error)
         }
       }
     }

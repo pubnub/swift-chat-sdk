@@ -18,6 +18,11 @@ Our Chat SDK provides a number of out-of-the-box chat features like read receipt
 - ``Chat``
 - ``ChatImpl``
 
+### Working with Channel Groups
+
+- ``ChannelGroup``
+- ``ChannelGroupImpl``
+
 ### Working with Channels
 
 - ``Channel``

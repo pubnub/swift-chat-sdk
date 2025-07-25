@@ -201,7 +201,7 @@ public protocol Chat: AnyObject {
   /// Returns a paginated list of all existing channels.
   ///
   /// - Parameters:
-  ///   - filter: Expression used to filter the results. Returns only these channels whose properties satisfy the given expression are returned
+  ///   - filter: Expression used to filter the results. Returns only the channels whose properties satisfy the given expression
   ///   - sort: A collection to specify the sort order
   ///   - limit: Number of objects to return in response. The maximum value is 100
   ///   - page: Object used for pagination to define which previous or next result page you want to fetch
@@ -410,7 +410,7 @@ public protocol Chat: AnyObject {
   /// - Parameters:
   ///   - limit: Number of objects to return in response. The maximum value is 100
   ///   - page: Object used for pagination to define which previous or next result page you want to fetch
-  ///   - filter: Expression used to filter the results. Returns only these channels whose properties satisfy the given expression are returned
+  ///   - filter: Expression used to filter the results. Returns only the channels whose properties satisfy the given expression
   ///   - sort: A collection to specify the sort order
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: An array of ``GetUnreadMessagesCount`` representing unread messages for the current user in a given channel
@@ -429,7 +429,7 @@ public protocol Chat: AnyObject {
   /// - Parameters:
   ///   - limit: Number of objects to return in response. The maximum value is 100
   ///   - page: Object used for pagination to define which previous or next result page you want to fetch
-  ///   - filter: Expression used to filter the results. Returns only these channels whose properties satisfy the given expression are returned
+  ///   - filter: Expression used to filter the results. Returns only the channels whose properties satisfy the given expression
   ///   - sort: A collection to specify the sort order
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: A Tuple containing an `Array` of unread messages for the current user across all joined channels, and the next pagination `PubNubHashedPage` (if one exists)
@@ -447,7 +447,7 @@ public protocol Chat: AnyObject {
   /// - Parameters:
   ///   - limit: Number of objects to return in response. The maximum value is 100
   ///   - page: Object used for pagination to define which previous or next result page you want to fetch
-  ///   - filter: Expression used to filter the results. Returns only these channels whose properties satisfy the given expression are returned
+  ///   - filter: Expression used to filter the results. Returns only the channels whose properties satisfy the given expression
   ///   - sort: A collection to specify the sort order
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: A `Tuple` containing an `Array` of updated memberships, and the next pagination `PubNubHashedPage` (if one exists)

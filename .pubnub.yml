@@ -1,8 +1,13 @@
 name: swift-chat-sdk
 scm: github.com/pubnub/swift-chat-sdk
-version: 0.30.2
+version: 0.30.3
 schema: 1
 changelog:
+  - date: 2025-08-01
+    version: 0.30.3
+    changes:
+      - type: bug
+        text: "Update dependencies to resolve the issue with unstable hash computation."
   - date: 2025-06-12
     version: 0.30.2
     changes:
@@ -177,7 +182,7 @@ sdks:
           - distribution-type: source
             distribution-repository: GitHub release
             package-name: PubNubSwiftChatSDK
-            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.30.2.zip
+            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.30.3.zip
             supported-platforms:
               supported-operating-systems:
                 iOS:

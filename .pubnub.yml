@@ -1,8 +1,13 @@
 name: swift-chat-sdk
 scm: github.com/pubnub/swift-chat-sdk
-version: 0.30.3
+version: 0.31.0
 schema: 1
 changelog:
+  - date: 2025-08-01
+    version: 0.31.0
+    changes:
+      - type: feature
+        text: "Add support for channel groups."
   - date: 2025-08-01
     version: 0.30.3
     changes:
@@ -182,7 +187,7 @@ sdks:
           - distribution-type: source
             distribution-repository: GitHub release
             package-name: PubNubSwiftChatSDK
-            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.30.3.zip
+            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.31.0.zip
             supported-platforms:
               supported-operating-systems:
                 iOS:

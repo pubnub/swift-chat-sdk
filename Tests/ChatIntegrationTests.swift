@@ -997,5 +997,22 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
     )
   }
 
+  func testChat_RemoveChannelGroup() throws {
+    let channelGroup = chat.getChannelGroup(id: randomString())
+
+    try awaitResultValue {
+      channelGroup.addChannelIdentifiers(
+        [randomString()],
+        completion: $0
+      )
+    }
+    try awaitResultValue {
+      chat.removeChannelGroup(
+        id: channelGroup.id,
+        completion: $0
+      )
+    }
+  }
+
   // swiftlint:disable:next file_length
 }

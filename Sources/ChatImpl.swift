@@ -798,5 +798,20 @@ extension ChatImpl: Chat {
     chat.destroy()
   }
 
+  public func getChannelGroup(id: String) -> ChannelGroupImpl {
+    ChannelGroupImpl(channelGroup: chat.getChannelGroup(id: id))
+  }
+
+  public func removeChannelGroup(id: String, completion: ((Swift.Result<Void, Error>) -> Void)? = nil) {
+    chat.removeChannelGroup(id: id).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.KotlinUnit>) in
+      switch result.result {
+      case .success:
+        completion?(.success(()))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
+
   // swiftlint:disable:next file_length
 }

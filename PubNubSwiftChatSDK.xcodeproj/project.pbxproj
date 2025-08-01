@@ -968,7 +968,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 0.30.2;
+				MARKETING_VERSION = 0.30.3;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";
@@ -1016,7 +1016,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 0.30.2;
+				MARKETING_VERSION = 0.30.3;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";
@@ -1129,7 +1129,7 @@
 			repositoryURL = "https://github.com/pubnub/kmp-chat";
 			requirement = {
 				kind = exactVersion;
-				version = "0.14.0-swift";
+				version = "0.15.1-swift";
 			};
 		};
 		3DCF7DFA2CD0FFCC00889326 /* XCRemoteSwiftPackageReference "swift" */ = {
@@ -1137,7 +1137,7 @@
 			repositoryURL = "https://github.com/pubnub/swift";
 			requirement = {
 				kind = exactVersion;
-				version = 9.2.0;
+				version = 9.3.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

@@ -1,8 +1,13 @@
 name: swift-chat-sdk
 scm: github.com/pubnub/swift-chat-sdk
-version: 0.31.0
+version: 0.32.0
 schema: 1
 changelog:
+  - date: 2025-08-04
+    version: 0.32.0
+    changes:
+      - type: feature
+        text: "Add `ConnectionStatus` enumeration and its monitoring capabilities."
   - date: 2025-08-01
     version: 0.31.0
     changes:
@@ -187,7 +192,7 @@ sdks:
           - distribution-type: source
             distribution-repository: GitHub release
             package-name: PubNubSwiftChatSDK
-            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.31.0.zip
+            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.32.0.zip
             supported-platforms:
               supported-operating-systems:
                 iOS:

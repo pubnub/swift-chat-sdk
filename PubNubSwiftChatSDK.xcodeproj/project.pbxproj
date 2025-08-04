@@ -972,7 +972,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 0.31.0;
+				MARKETING_VERSION = 0.32.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";
@@ -1020,7 +1020,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 0.31.0;
+				MARKETING_VERSION = 0.32.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";

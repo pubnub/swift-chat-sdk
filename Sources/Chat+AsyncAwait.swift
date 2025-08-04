@@ -749,6 +749,20 @@ public extension Chat {
       }
     }
   }
+
+  /// Returns a stream of connection status changes.
+  ///
+  /// - Returns: An `AsyncStream` of ``ConnectionStatus``
+  func connectionStatusStream() -> AsyncStream<ConnectionStatus> {
+    AsyncStream { continuation in
+      let listener = addConnectionStatusListener { status in
+        continuation.yield(status)
+      }
+      continuation.onTermination = { _ in
+        listener.close()
+      }
+    }
+  }
 }
 
 extension ChatImpl {

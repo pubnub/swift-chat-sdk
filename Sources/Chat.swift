@@ -525,5 +525,25 @@ public protocol Chat: AnyObject {
   ///     - **Failure**: An `Error` describing the failure
   func removeChannelGroup(id: String, completion: ((Swift.Result<Void, Error>) -> Void)?)
 
+  /// Adds a listener for connection status changes.
+  ///
+  /// - Parameter listener: A closure that will be called when the connection status changes
+  /// - Returns: ``AutoCloseable`` interface you can call to stop listening for new statuses and clean up resources when they re no longer needed by invoking the ``AutoCloseable/close()`` method
+  func addConnectionStatusListener(_ listener: @escaping (ConnectionStatus) -> Void) -> AutoCloseable
+
+  /// Reconnects the client to the PubNub system.
+  ///
+  /// - Parameter completion: The async `Result` of the method call
+  ///     - **Success**: A `Void` indicating a success
+  ///     - **Failure**: An `Error` describing the failure
+  func reconnectSubscriptions()
+
+  /// Disconnects the client from the PubNub system.
+  ///
+  /// - Parameter completion: The async `Result` of the method call
+  ///     - **Success**: A `Void` indicating a success
+  ///     - **Failure**: An `Error` describing the failure
+  func disconnectSubscriptions()
+
   // swiftlint:disable:next file_length
 }

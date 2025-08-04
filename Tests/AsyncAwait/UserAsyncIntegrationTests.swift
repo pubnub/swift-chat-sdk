@@ -115,9 +115,8 @@ class UserAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     let channelId = randomString()
     let createdChannel = try await chat.createChannel(id: channelId, name: channelId)
 
-    // Keeping a strong reference to this object for test purposes to simulate that someone is already present on the given channel.
-    // If this object is not retained, it will be deallocated, resulting in no subscription to the channel,
-    // which would cause the behavior being tested to fail.
+    // Keeps a strong reference to the returned AsyncStream to prevent it from being deallocated. If this object is not retained,
+    // the AsyncStream will be deallocated, which would cause the behavior being tested to fail.
     let connectResult = createdChannel.connect()
     debugPrint(connectResult)
 
@@ -162,9 +161,8 @@ class UserAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     let channelId = randomString()
     let channel = try await chat.createChannel(id: channelId, name: channelId)
 
-    // Keeping a strong reference to this object for test purposes to simulate that someone is already present on the given channel.
-    // If this object is not retained, it will be deallocated, resulting in no subscription to the channel,
-    // which would cause the behavior being tested to fail.
+    // Keeps a strong reference to the returned AsyncStream to prevent it from being deallocated. If this object is not retained,
+    // the AsyncStream will be deallocated, which would cause the behavior being tested to fail.
     let connectResult = channel.connect()
     debugPrint(connectResult)
 

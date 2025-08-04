@@ -13,6 +13,7 @@
 		3D0F90D32D48DB4700986686 /* MutedUsersManagerInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0F90D12D48DB4700986686 /* MutedUsersManagerInterface.swift */; };
 		3D0F90D52D48DEC700986686 /* MutedUsersManagerInterface+AsyncAwait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0F90D42D48DEC700986686 /* MutedUsersManagerInterface+AsyncAwait.swift */; };
 		3D1CE5232D79DED800617200 /* String+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1CE5222D79DED800617200 /* String+Helpers.swift */; };
+		3D1E67D72E3CBC84001454C1 /* ConnectionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1E67D62E3CBC84001454C1 /* ConnectionStatus.swift */; };
 		3D27B8D02D2D9A61003AD459 /* ThreadChannelAsyncIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D27B8CF2D2D9A61003AD459 /* ThreadChannelAsyncIntegrationTests.swift */; };
 		3D27B8D22D2D9BBB003AD459 /* ThreadChannel+AsyncAwait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D27B8D12D2D9BBB003AD459 /* ThreadChannel+AsyncAwait.swift */; };
 		3D27B8D42D2EAEA6003AD459 /* MessageDraftAsyncIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D27B8D32D2EAEA5003AD459 /* MessageDraftAsyncIntegrationTests.swift */; };
@@ -154,6 +155,7 @@
 		3D0F90D12D48DB4700986686 /* MutedUsersManagerInterface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MutedUsersManagerInterface.swift; sourceTree = "<group>"; };
 		3D0F90D42D48DEC700986686 /* MutedUsersManagerInterface+AsyncAwait.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MutedUsersManagerInterface+AsyncAwait.swift"; sourceTree = "<group>"; };
 		3D1CE5222D79DED800617200 /* String+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Helpers.swift"; sourceTree = "<group>"; };
+		3D1E67D62E3CBC84001454C1 /* ConnectionStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionStatus.swift; sourceTree = "<group>"; };
 		3D27B8CF2D2D9A61003AD459 /* ThreadChannelAsyncIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadChannelAsyncIntegrationTests.swift; sourceTree = "<group>"; };
 		3D27B8D12D2D9BBB003AD459 /* ThreadChannel+AsyncAwait.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ThreadChannel+AsyncAwait.swift"; sourceTree = "<group>"; };
 		3D27B8D32D2EAEA5003AD459 /* MessageDraftAsyncIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDraftAsyncIntegrationTests.swift; sourceTree = "<group>"; };
@@ -497,6 +499,7 @@
 				3D2CA2472C621876008D2284 /* MessageActionType.swift */,
 				3DB2A8B82C80993B00167058 /* ChannelType.swift */,
 				3DB2A8BE2C809B1F00167058 /* EmitEventMethod.swift */,
+				3D1E67D62E3CBC84001454C1 /* ConnectionStatus.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -691,6 +694,7 @@
 				3DB5A3202E30D771001741C8 /* ChannelGroup+AsyncAwait.swift in Sources */,
 				3D2CA2382C5B9ACA008D2284 /* File.swift in Sources */,
 				3DB5A3192E2F900B001741C8 /* ChannelGroupImpl.swift in Sources */,
+				3D1E67D72E3CBC84001454C1 /* ConnectionStatus.swift in Sources */,
 				3DB73A752C57D073007FE249 /* PubNubChat.Event.swift in Sources */,
 				3D2CA2362C5B9320008D2284 /* PubNubChat+Transform.swift in Sources */,
 				3DB73A492C513578007FE249 /* MessageReferencedChannel.swift in Sources */,
@@ -968,7 +972,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 0.31.0;
+				MARKETING_VERSION = 0.32.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";
@@ -1016,7 +1020,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 0.31.0;
+				MARKETING_VERSION = 0.32.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";

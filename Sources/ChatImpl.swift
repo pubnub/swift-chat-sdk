@@ -813,5 +813,32 @@ extension ChatImpl: Chat {
     }
   }
 
+  public func addConnectionStatusListener(_ listener: @escaping (ConnectionStatus) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      chat.addConnectionStatusListener { kmpConnectionStatus in
+        switch kmpConnectionStatus.category {
+        case .pnConnectionOnline:
+          listener(.online)
+        case .pnConnectionOffline:
+          listener(.offline)
+        case .pnConnectionError:
+          if let exception = kmpConnectionStatus.exception {
+            listener(.connectionError(error: exception.asError()))
+          }
+        default:
+          break
+        }
+      }, owner: self
+    )
+  }
+
+  public func reconnectSubscriptions() {
+    chat.reconnectSubscriptions()
+  }
+
+  public func disconnectSubscriptions() {
+    chat.disconnectSubscriptions()
+  }
+
   // swiftlint:disable:next file_length
 }

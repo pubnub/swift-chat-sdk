@@ -1014,5 +1014,93 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
     }
   }
 
+  func testChat_ConnectionStatusListener() throws {
+    let expectation = expectation(description: "Status Listener")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 2
+
+    let channel = try awaitResultValue {
+      chat.createChannel(
+        id: randomString(),
+        completion: $0
+      )
+    }
+
+    let statusListenerCloseable = chat.addConnectionStatusListener { [unowned self] newStatus in
+      if newStatus == .online {
+        expectation.fulfill()
+        chat.disconnectSubscriptions()
+      } else if newStatus == .offline {
+        expectation.fulfill()
+      } else {
+        XCTFail("Unexpected condition")
+      }
+    }
+
+    let autoCloseable = channel.connect { _ in }
+
+    defer {
+      statusListenerCloseable.close()
+      autoCloseable.close()
+
+      addTeardownBlock { [unowned self] in
+        try awaitResult {
+          self.chat.deleteChannel(
+            id: channel.id,
+            completion: $0
+          )
+        }
+      }
+    }
+
+    wait(for: [expectation], timeout: 4)
+  }
+
+  func testChat_ReconnectSubscriptions() throws {
+    let expectation = expectation(description: "Status Listener")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 3
+
+    let channel = try awaitResultValue {
+      chat.createChannel(
+        id: randomString(),
+        completion: $0
+      )
+    }
+
+    var noOfCalls = 0
+
+    let statusListenerCloseable = chat.addConnectionStatusListener { [unowned self] newStatus in
+      if newStatus == .online {
+        expectation.fulfill()
+        chat.disconnectSubscriptions()
+      } else if newStatus == .offline {
+        expectation.fulfill()
+        chat.reconnectSubscriptions()
+      } else {
+        XCTFail("Unexpected condition")
+      }
+      noOfCalls += 1
+    }
+
+    let autoCloseable = channel.connect { _ in }
+
+    defer {
+      statusListenerCloseable.close()
+      autoCloseable.close()
+
+      addTeardownBlock { [unowned self] in
+        try awaitResult {
+          self.chat.deleteChannel(
+            id: channel.id,
+            completion: $0
+          )
+        }
+      }
+    }
+
+    wait(for: [expectation], timeout: 4)
+  }
+
   // swiftlint:disable:next file_length
 }

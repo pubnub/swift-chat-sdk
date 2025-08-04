@@ -101,9 +101,8 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     let channelId = randomString()
     let channel = try await chat.createChannel(id: channelId, name: channelId)
 
-    // Keeping a strong reference to this object for test purposes to simulate that someone is already present on the given channel.
-    // If this object is not retained, it will be deallocated, resulting in no subscription to the channel,
-    // which would cause the behavior being tested to fail.
+    // Keeps a strong reference to the returned AsyncStream to prevent it from being deallocated. If this object is not retained,
+    // the AsyncStream will be deallocated, which would cause the behavior being tested to fail.
     let connectResult = channel.connect()
     debugPrint(connectResult)
 
@@ -122,9 +121,8 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     let channelId = randomString()
     let channel = try await chat.createChannel(id: channelId, name: channelId)
 
-    // Keeping a strong reference to these objects for test purposes to simulate that someone is already present on the given channel.
-    // If this object is not retained, it will be deallocated, resulting in no subscription to the channel,
-    // which would cause the behavior being tested to fail.
+    // Keeps a strong reference to the returned AsyncStream to prevent it from being deallocated. If this object is not retained,
+    // the AsyncStream will be deallocated, which would cause the behavior being tested to fail.
     let connectResult = channel.connect()
     let joinResult = try await channel.join()
 
@@ -229,9 +227,8 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
       name: "ChannelName"
     )
 
-    // Keeping a strong reference to these objects for test purposes to simulate that someone is already present on the given channel.
-    // If this object is not retained, it will be deallocated, resulting in no subscription to the channel,
-    // which would cause the behavior being tested to fail.
+    // Keeps a strong reference to the returned AsyncStream to prevent it from being deallocated. If this object is not retained,
+    // the AsyncStream will be deallocated, which would cause the behavior being tested to fail.
     let joinValue = try await channel.join()
     debugPrint(joinValue)
 
@@ -634,6 +631,85 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     let channelGroup = chat.getChannelGroup(id: randomString())
     try await channelGroup.addChannelIdentifiers([randomString()])
     try await chat.removeChannelGroup(id: channelGroup.id)
+  }
+
+  func testChatAsync_ConnectionStatusListener() async throws {
+    let expectation = expectation(description: "Status Listener")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 2
+
+    let channel = try await chat.createChannel(id: randomString())
+
+    let statusStreamTask = Task { [weak chat] in
+      if let chat {
+        for await status in chat.connectionStatusStream().prefix(2) {
+          if status == .online {
+            expectation.fulfill()
+            chat.disconnectSubscriptions()
+          } else if status == .offline {
+            expectation.fulfill()
+          } else {
+            XCTFail("Unexpected condition")
+          }
+        }
+      } else {
+        XCTFail("Unexpected condition")
+      }
+    }
+
+    let connectTask = Task {
+      for await message in channel.connect() {
+        debugPrint(message)
+      }
+    }
+
+    addTeardownBlock { [unowned self] in
+      statusStreamTask.cancel()
+      connectTask.cancel()
+      _ = try? await chat.deleteChannel(id: channel.id)
+    }
+
+    await fulfillment(of: [expectation], timeout: 4)
+  }
+
+  func testChatAsync_ReconnectSubscriptions() async throws {
+    let expectation = expectation(description: "Status Listener")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 3
+
+    let channel = try await chat.createChannel(id: randomString())
+
+    let statusStreamTask = Task { [weak chat] in
+      if let chat {
+        for await status in chat.connectionStatusStream().prefix(3) {
+          if status == .online {
+            expectation.fulfill()
+            chat.disconnectSubscriptions()
+          } else if status == .offline {
+            expectation.fulfill()
+            chat.reconnectSubscriptions()
+          } else {
+            XCTFail("Unexpected condition")
+          }
+        }
+      } else {
+        XCTFail("Unexpected condition")
+      }
+    }
+
+    let connectTask = Task {
+      for await message in channel.connect() {
+        debugPrint(message)
+      }
+    }
+
+    addTeardownBlock { [unowned self] in
+      statusStreamTask.cancel()
+      connectTask.cancel()
+      _ = try? await chat.deleteChannel(id: channel.id)
+    }
+
+    await fulfillment(of: [expectation], timeout: 4)
   }
 
   // swiftlint:disable:next file_length

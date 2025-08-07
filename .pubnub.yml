@@ -1,8 +1,13 @@
 name: swift-chat-sdk
 scm: github.com/pubnub/swift-chat-sdk
-version: 0.32.0
+version: 0.32.1
 schema: 1
 changelog:
+  - date: 2025-08-07
+    version: 0.32.1
+    changes:
+      - type: bug
+        text: "Fix the isue with Membership's `setLastReadMessage` method when Access Manager is enabled."
   - date: 2025-08-04
     version: 0.32.0
     changes:
@@ -192,7 +197,7 @@ sdks:
           - distribution-type: source
             distribution-repository: GitHub release
             package-name: PubNubSwiftChatSDK
-            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.32.0.zip
+            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.32.1.zip
             supported-platforms:
               supported-operating-systems:
                 iOS:

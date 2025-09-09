@@ -14,7 +14,7 @@ import XCTest
 
 @testable import PubNubSwiftChatSDK
 
-class ChannelIntegrationTests: BaseAsyncIntegrationTestCase {
+class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
   var channel: ChannelImpl!
 
   override func customSetup() async throws {

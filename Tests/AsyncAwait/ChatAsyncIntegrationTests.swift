@@ -41,13 +41,17 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
   func testChatAsync_GetUsers() async throws {
     let user = try await chat.createUser(id: randomString())
-    let users = try await chat.getUsers(limit: 10)
+    let secondUser = try await chat.createUser(id: randomString())
+    let getUsersResponse = try await chat.getUsers(filter: "id LIKE 'swift-chat*'")
 
-    XCTAssertFalse(
-      users.users.isEmpty
+    XCTAssertEqual(
+      Set(getUsersResponse.users.map { $0.id }),
+      Set([user.id, secondUser.id])
     )
+
     addTeardownBlock { [unowned self] in
       _ = try? await chat.deleteUser(id: user.id)
+      _ = try? await chat.deleteUser(id: secondUser.id)
     }
   }
 
@@ -94,6 +98,30 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     )
     addTeardownBlock { [unowned self] in
       _ = try? await chat.deleteUser(id: user.id)
+    }
+  }
+
+  func testChatAsync_GetUsersWithPagination() async throws {
+    let user1 = try await chat.createUser(id: randomString(), name: "User1")
+    let user2 = try await chat.createUser(id: randomString(), name: "User2")
+    let user3 = try await chat.createUser(id: randomString(), name: "User3")
+
+    let firstPageResponse = try await chat.getUsers(filter: "id LIKE 'swift-chat*'", limit: 2)
+    let secondPageResponse = try await chat.getUsers(filter: "id LIKE 'swift-chat*'", page: firstPageResponse.page)
+
+    XCTAssertTrue(firstPageResponse.users.count == 2)
+    XCTAssertTrue(secondPageResponse.users.count == 1)
+
+    let idsFromFirstPage = Set(firstPageResponse.users.map { $0.id })
+    let idsFromSecondPage = Set(secondPageResponse.users.map { $0.id })
+
+    XCTAssertTrue(idsFromFirstPage.isDisjoint(with: idsFromSecondPage))
+    XCTAssertEqual(idsFromSecondPage.union(idsFromFirstPage), Set([user1.id, user2.id, user3.id]))
+
+    addTeardownBlock { [unowned self] in
+      _ = try? await chat.deleteUser(id: user1.id)
+      _ = try? await chat.deleteUser(id: user2.id)
+      _ = try? await chat.deleteUser(id: user3.id)
     }
   }
 
@@ -173,13 +201,17 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
   func testChatAsync_GetChannels() async throws {
     let channel = try await chat.createChannel(id: randomString())
-    let retrievedChannels = try await chat.getChannels()
+    let secondChannel = try await chat.createChannel(id: randomString())
+    let getChannelsResponse = try await chat.getChannels(filter: "id LIKE 'swift-chat*'")
 
-    XCTAssertFalse(
-      retrievedChannels.channels.isEmpty
+    XCTAssertEqual(
+      Set(getChannelsResponse.channels.map { $0.id }),
+      Set([channel.id, secondChannel.id])
     )
+
     addTeardownBlock { [unowned self] in
       _ = try? await chat.deleteChannel(id: channel.id)
+      _ = try? await chat.deleteChannel(id: secondChannel.id)
     }
   }
 
@@ -218,6 +250,30 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     )
     addTeardownBlock { [unowned self] in
       _ = try? await chat.deleteChannel(id: channel.id)
+    }
+  }
+
+  func testChatAsync_GetChannelsWithPagination() async throws {
+    let channel1 = try await chat.createChannel(id: randomString(), name: "Channel1")
+    let channel2 = try await chat.createChannel(id: randomString(), name: "Channel2")
+    let channel3 = try await chat.createChannel(id: randomString(), name: "Channel3")
+
+    let firstPageResponse = try await chat.getChannels(filter: "id LIKE 'swift-chat*'", limit: 2)
+    let secondPageResponse = try await chat.getChannels(filter: "id LIKE 'swift-chat*'", page: firstPageResponse.page)
+
+    XCTAssertTrue(firstPageResponse.channels.count == 2)
+    XCTAssertTrue(secondPageResponse.channels.count == 1)
+
+    let idsFromFirstPage = Set(firstPageResponse.channels.map { $0.id })
+    let idsFromSecondPage = Set(secondPageResponse.channels.map { $0.id })
+
+    XCTAssertTrue(idsFromFirstPage.isDisjoint(with: idsFromSecondPage))
+    XCTAssertEqual(idsFromSecondPage.union(idsFromFirstPage), Set([channel1.id, channel2.id, channel3.id]))
+
+    addTeardownBlock { [unowned self] in
+      _ = try? await chat.deleteChannel(id: channel1.id)
+      _ = try? await chat.deleteChannel(id: channel2.id)
+      _ = try? await chat.deleteChannel(id: channel3.id)
     }
   }
 

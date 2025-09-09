@@ -17,7 +17,8 @@ class BaseIntegrationTestCase: XCTestCase {
 }
 
 extension BaseIntegrationTestCase {
-  func randomString(length: Int = 6) -> String {
-    RandomStringGenerator().randomString(length: length)
+  func randomString(length: Int = 6, withPrefix: Bool = true) -> String {
+    let randomStr = RandomStringGenerator().randomString(length: length)
+    return withPrefix ? "swift-chat" + randomStr : randomStr
   }
 }

@@ -196,7 +196,14 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     let channel = try await chat.createChannel(id: randomString(), name: "ChannelName")
     let retrievedChannel = try await chat.getChannel(channelId: channel.id)
 
-    XCTAssertEqual(retrievedChannel?.id, channel.id)
+    XCTAssertEqual(
+      retrievedChannel?.id,
+      channel.id
+    )
+
+    addTeardownBlock { [unowned self] in
+      _ = try? await chat.deleteChannel(id: channel.id)
+    }
   }
 
   func testChatAsync_GetChannels() async throws {

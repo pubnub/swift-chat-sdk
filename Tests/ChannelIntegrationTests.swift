@@ -58,8 +58,14 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
   }
 
   func testChannel_Delete() throws {
+    let someChannel = try awaitResultValue {
+      chat.createChannel(
+        id: randomString(),
+        completion: $0
+      )
+    }
     try awaitResult {
-      channel.delete(
+      someChannel.delete(
         soft: false,
         completion: $0
       )
@@ -67,29 +73,54 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
     XCTAssertNil(
       try awaitResultValue {
         chat.getChannel(
-          channelId: channel.id,
+          channelId: someChannel.id,
           completion: $0
         )
       }
     )
+
+    addTeardownBlock { [unowned self] in
+      try awaitResult {
+        chat.deleteChannel(
+          id: someChannel.id,
+          completion: $0
+        )
+      }
+    }
   }
 
   func testChannel_SoftDelete() throws {
+    let someChannel = try awaitResultValue {
+      chat.createChannel(
+        id: randomString(),
+        completion: $0
+      )
+    }
+
     try awaitResult {
-      channel.delete(
+      someChannel.delete(
         soft: true,
         completion: $0
       )
     }
     let retrievedChannel = try awaitResultValue {
       chat.getChannel(
-        channelId: channel.id,
+        channelId: someChannel.id,
         completion: $0
       )
     }
 
-    XCTAssertNotNil(retrievedChannel)
-    XCTAssertEqual(retrievedChannel?.id, channel.id)
+    XCTAssertFalse(retrievedChannel?.active ?? true)
+    XCTAssertEqual(retrievedChannel?.id, someChannel.id)
+
+    addTeardownBlock { [unowned self] in
+      try awaitResult {
+        chat.deleteChannel(
+          id: someChannel.id,
+          completion: $0
+        )
+      }
+    }
   }
 
   func testChannel_Forward() throws {
@@ -749,6 +780,7 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
       for: [expectation],
       timeout: 6
     )
+
     addTeardownBlock { [unowned self] in
       closeable.close()
       try awaitResult {

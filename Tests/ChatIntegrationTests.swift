@@ -346,6 +346,15 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
       )
     }
 
+    addTeardownBlock { [unowned self] in
+      try awaitResultValue {
+        chat.deleteChannel(
+          id: channel.id,
+          completion: $0
+        )
+      }
+    }
+
     XCTAssertEqual(retrievedChannel?.id, channel.id)
   }
 

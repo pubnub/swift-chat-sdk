@@ -67,7 +67,7 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
     }
     let getUsersResponse = try awaitResultValue {
       chat.getUsers(
-        filter: "id LIKE 'swift-chat*'",
+        filter: "id LIKE '\(Constants.prefix)*'",
         completion: $0
       )
     }
@@ -374,7 +374,7 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
 
     let retrievedChannels = try awaitResultValue {
       chat.getChannels(
-        filter: "id LIKE 'swift-chat*'",
+        filter: "id LIKE '\(Constants.prefix)*'",
         completion: $0
       )
     }
@@ -425,7 +425,7 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
 
     let firstPageResponse = try awaitResultValue {
       chat.getChannels(
-        filter: "id LIKE 'swift-chat*'",
+        filter: "id LIKE '\(Constants.prefix)*'",
         limit: 2,
         completion: $0
       )
@@ -433,7 +433,7 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
 
     let secondPageResponse = try awaitResultValue {
       chat.getChannels(
-        filter: "id LIKE 'swift-chat*'",
+        filter: "id LIKE '\(Constants.prefix)*'",
         page: firstPageResponse.page,
         completion: $0
       )

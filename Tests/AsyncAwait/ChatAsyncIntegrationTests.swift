@@ -42,7 +42,7 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
   func testChatAsync_GetUsers() async throws {
     let user = try await chat.createUser(id: randomString())
     let secondUser = try await chat.createUser(id: randomString())
-    let getUsersResponse = try await chat.getUsers(filter: "id LIKE 'swift-chat*'")
+    let getUsersResponse = try await chat.getUsers(filter: "id LIKE '\(Constants.prefix)*'")
 
     XCTAssertEqual(
       Set(getUsersResponse.users.map { $0.id }),
@@ -106,11 +106,11 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     let user2 = try await chat.createUser(id: randomString(), name: "User2")
     let user3 = try await chat.createUser(id: randomString(), name: "User3")
 
-    let firstPageResponse = try await chat.getUsers(filter: "id LIKE 'swift-chat*'", limit: 2)
-    let secondPageResponse = try await chat.getUsers(filter: "id LIKE 'swift-chat*'", page: firstPageResponse.page)
+    let firstPageResponse = try await chat.getUsers(filter: "id LIKE '\(Constants.prefix)*'", limit: 2)
+    let secondPageResponse = try await chat.getUsers(filter: "id LIKE '\(Constants.prefix)*'", page: firstPageResponse.page)
 
-    XCTAssertTrue(firstPageResponse.users.count == 2)
-    XCTAssertTrue(secondPageResponse.users.count == 1)
+    XCTAssertEqual(firstPageResponse.users.count, 2)
+    XCTAssertEqual(secondPageResponse.users.count, 1)
 
     let idsFromFirstPage = Set(firstPageResponse.users.map { $0.id })
     let idsFromSecondPage = Set(secondPageResponse.users.map { $0.id })
@@ -209,7 +209,7 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
   func testChatAsync_GetChannels() async throws {
     let channel = try await chat.createChannel(id: randomString())
     let secondChannel = try await chat.createChannel(id: randomString())
-    let getChannelsResponse = try await chat.getChannels(filter: "id LIKE 'swift-chat*'")
+    let getChannelsResponse = try await chat.getChannels(filter: "id LIKE '\(Constants.prefix)*'")
 
     XCTAssertEqual(
       Set(getChannelsResponse.channels.map { $0.id }),
@@ -265,11 +265,11 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     let channel2 = try await chat.createChannel(id: randomString(), name: "Channel2")
     let channel3 = try await chat.createChannel(id: randomString(), name: "Channel3")
 
-    let firstPageResponse = try await chat.getChannels(filter: "id LIKE 'swift-chat*'", limit: 2)
-    let secondPageResponse = try await chat.getChannels(filter: "id LIKE 'swift-chat*'", page: firstPageResponse.page)
+    let firstPageResponse = try await chat.getChannels(filter: "id LIKE '\(Constants.prefix)*'", limit: 2)
+    let secondPageResponse = try await chat.getChannels(filter: "id LIKE '\(Constants.prefix)*'", page: firstPageResponse.page)
 
-    XCTAssertTrue(firstPageResponse.channels.count == 2)
-    XCTAssertTrue(secondPageResponse.channels.count == 1)
+    XCTAssertEqual(firstPageResponse.channels.count, 2)
+    XCTAssertEqual(secondPageResponse.channels.count, 1)
 
     let idsFromFirstPage = Set(firstPageResponse.channels.map { $0.id })
     let idsFromSecondPage = Set(secondPageResponse.channels.map { $0.id })

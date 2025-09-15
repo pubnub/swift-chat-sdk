@@ -59,21 +59,102 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
         completion: $0
       )
     }
-    let users = try awaitResultValue {
+    let secondUser = try awaitResultValue {
+      chat.createUser(
+        id: randomString(),
+        completion: $0
+      )
+    }
+    let getUsersResponse = try awaitResultValue {
       chat.getUsers(
-        limit: 10,
+        filter: "id LIKE '\(Constants.prefix)*'",
         completion: $0
       )
     }
 
-    XCTAssertFalse(
-      users.users.isEmpty
+    XCTAssertEqual(
+      Set(getUsersResponse.users.map { $0.id }),
+      Set([user.id, secondUser.id])
     )
+
     addTeardownBlock { [unowned self] in
       try awaitResult {
         chat.deleteUser(
           id: user.id,
           completion: $0
+        )
+      }
+      try awaitResult {
+        chat.deleteUser(
+          id: secondUser.id,
+          completion: $0
+        )
+      }
+    }
+  }
+
+  func testChat_GetUsersWithPagination() throws {
+    let user1 = try awaitResultValue {
+      chat.createUser(
+        id: randomString(),
+        name: "User1",
+        completion: $0
+      )
+    }
+    let user2 = try awaitResultValue {
+      chat.createUser(
+        id: randomString(),
+        name: "User2",
+        completion: $0
+      )
+    }
+    let user3 = try awaitResultValue {
+      chat.createUser(
+        id: randomString(),
+        name: "User3",
+        completion: $0
+      )
+    }
+
+    let firstPageResponse = try awaitResultValue {
+      chat.getUsers(
+        limit: 2,
+        completion: $0
+      )
+    }
+    let secondPageResponse = try awaitResultValue {
+      chat.getUsers(
+        page: firstPageResponse.page,
+        completion: $0
+      )
+    }
+
+    XCTAssertTrue(firstPageResponse.users.count == 2)
+    XCTAssertTrue(secondPageResponse.users.count == 1)
+
+    let idsFromFirstPage = Set(firstPageResponse.users.map { $0.id })
+    let idsFromSecondPage = Set(secondPageResponse.users.map { $0.id })
+
+    XCTAssertTrue(idsFromFirstPage.isDisjoint(with: idsFromSecondPage))
+    XCTAssertEqual(idsFromSecondPage.union(idsFromFirstPage), Set([user1.id, user2.id, user3.id]))
+
+    addTeardownBlock { [unowned self] in
+      try awaitResult {
+        chat.deleteUser(
+          id: user1.id,
+          completion: $0
+        )
+      }
+      try awaitResult {
+        chat.deleteUser(
+          id: user2.id,
+           completion: $0
+        )
+      }
+      try awaitResult {
+        chat.deleteUser(
+          id: user3.id,
+           completion: $0
         )
       }
     }
@@ -265,6 +346,15 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
       )
     }
 
+    addTeardownBlock { [unowned self] in
+      try awaitResultValue {
+        chat.deleteChannel(
+          id: channel.id,
+          completion: $0
+        )
+      }
+    }
+
     XCTAssertEqual(retrievedChannel?.id, channel.id)
   }
 
@@ -275,20 +365,105 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
         completion: $0
       )
     }
-    let retrievedChannels = try awaitResultValue {
-      chat.getChannels(
-        limit: 10,
+    let secondChannel = try awaitResultValue {
+      chat.createChannel(
+        id: randomString(),
         completion: $0
       )
     }
 
-    XCTAssertFalse(
-      retrievedChannels.channels.isEmpty
+    let retrievedChannels = try awaitResultValue {
+      chat.getChannels(
+        filter: "id LIKE '\(Constants.prefix)*'",
+        completion: $0
+      )
+    }
+
+    XCTAssertEqual(
+      Set(retrievedChannels.channels.map { $0.id }),
+      Set([channel.id, secondChannel.id])
     )
+
     addTeardownBlock { [unowned self] in
       try awaitResult {
         chat.deleteChannel(
           id: channel.id,
+          completion: $0
+        )
+      }
+      try awaitResult {
+        chat.deleteChannel(
+          id: secondChannel.id,
+          completion: $0
+        )
+      }
+    }
+  }
+
+  func testChat_GetChannelsWithPagination() throws {
+    let channel1 = try awaitResultValue {
+      chat.createChannel(
+        id: randomString(),
+        name: "Channel1",
+        completion: $0
+      )
+    }
+    let channel2 = try awaitResultValue {
+      chat.createChannel(
+        id: randomString(),
+        name: "Channel2",
+        completion: $0
+      )
+    }
+    let channel3 = try awaitResultValue {
+      chat.createChannel(
+        id: randomString(),
+        name: "Channel3",
+        completion: $0
+      )
+    }
+
+    let firstPageResponse = try awaitResultValue {
+      chat.getChannels(
+        filter: "id LIKE '\(Constants.prefix)*'",
+        limit: 2,
+        completion: $0
+      )
+    }
+
+    let secondPageResponse = try awaitResultValue {
+      chat.getChannels(
+        filter: "id LIKE '\(Constants.prefix)*'",
+        page: firstPageResponse.page,
+        completion: $0
+      )
+    }
+
+    XCTAssertTrue(firstPageResponse.channels.count == 2)
+    XCTAssertTrue(secondPageResponse.channels.count == 1)
+
+    let idsFromFirstPage = Set(firstPageResponse.channels.map { $0.id })
+    let idsFromSecondPage = Set(secondPageResponse.channels.map { $0.id })
+
+    XCTAssertTrue(idsFromFirstPage.isDisjoint(with: idsFromSecondPage))
+    XCTAssertEqual(idsFromSecondPage.union(idsFromFirstPage), Set([channel1.id, channel2.id, channel3.id]))
+
+    addTeardownBlock { [unowned self] in
+      try awaitResult {
+        chat.deleteChannel(
+          id: channel1.id,
+          completion: $0
+        )
+      }
+      try awaitResult {
+        chat.deleteChannel(
+          id: channel2.id,
+          completion: $0
+        )
+      }
+      try awaitResult {
+        chat.deleteChannel(
+          id: channel3.id,
           completion: $0
         )
       }
@@ -766,6 +941,135 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
       try awaitResult {
         chat.deleteChannel(
           id: channel.id,
+          completion: $0
+        )
+      }
+    }
+  }
+
+  func testChat_FetchUnreadMessagesCounts() throws {
+    let channel = try awaitResultValue {
+      chat.createChannel(
+        id: randomString(),
+        completion: $0
+      )
+    }
+    let channel2 = try awaitResultValue {
+      chat.createChannel(
+        id: randomString(),
+        completion: $0
+      )
+    }
+    let channel3 = try awaitResultValue {
+      chat.createChannel(
+        id: randomString(),
+        completion: $0
+      )
+    }
+
+    try awaitResultValue {
+      channel.invite(
+        user: chat.currentUser,
+        completion: $0
+      )
+    }
+    try awaitResultValue {
+      channel2.invite(
+        user: chat.currentUser,
+        completion: $0
+      )
+    }
+    try awaitResultValue {
+      channel3.invite(
+        user: chat.currentUser,
+        completion: $0
+      )
+    }
+
+    try awaitResultValue {
+      channel.sendText(
+        text: "Some new text",
+        completion: $0
+      )
+    }
+    try awaitResultValue {
+      channel2.sendText(
+        text: "Some new text",
+        completion: $0
+      )
+    }
+    try awaitResultValue {
+      channel3.sendText(
+        text: "Some new text",
+        completion: $0
+      )
+    }
+
+    let firstFetchResponse = try awaitResultValue(delay: 2) {
+      chat.fetchUnreadMessagesCounts(
+        limit: 1,
+        page: nil,
+        filter: nil,
+        sort: [],
+        completion: $0
+      )
+    }
+
+    let firstPage = try XCTUnwrap(firstFetchResponse.page)
+    XCTAssertEqual(firstFetchResponse.countsByChannel.count, 1)
+    XCTAssertTrue(firstFetchResponse.countsByChannel.allSatisfy { $0.count == 1 })
+
+    let secondFetchResponse = try awaitResultValue {
+      chat.fetchUnreadMessagesCounts(
+        page: firstPage,
+        completion: $0
+      )
+    }
+
+    let secondPage = try XCTUnwrap(secondFetchResponse.page)
+    XCTAssertEqual(secondFetchResponse.countsByChannel.count, 2)
+    XCTAssertTrue(secondFetchResponse.countsByChannel.allSatisfy { $0.count == 1 })
+
+    let thirdFetchResponse = try awaitResultValue {
+      chat.fetchUnreadMessagesCounts(
+        page: secondPage,
+        completion: $0
+      )
+    }
+
+    XCTAssertTrue(thirdFetchResponse.countsByChannel.isEmpty)
+
+    addTeardownBlock { [unowned self] in
+      try awaitResult {
+        channel.leave(
+          completion: $0
+        )
+      }
+      try awaitResult {
+        channel2.leave(
+          completion: $0
+        )
+      }
+      try awaitResult {
+        channel3.leave(
+          completion: $0
+        )
+      }
+      try awaitResult {
+        chat.deleteChannel(
+          id: channel.id,
+          completion: $0
+        )
+      }
+      try awaitResult {
+        chat.deleteChannel(
+          id: channel2.id,
+          completion: $0
+        )
+      }
+      try awaitResult {
+        chat.deleteChannel(
+          id: channel3.id,
           completion: $0
         )
       }

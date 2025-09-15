@@ -14,7 +14,7 @@ import XCTest
 
 @testable import PubNubSwiftChatSDK
 
-class ChannelIntegrationTests: BaseAsyncIntegrationTestCase {
+class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
   var channel: ChannelImpl!
 
   override func customSetup() async throws {
@@ -46,16 +46,29 @@ class ChannelIntegrationTests: BaseAsyncIntegrationTestCase {
   }
 
   func testChannelAsync_Delete() async throws {
-    _ = try await channel.delete(soft: false)
-    let retrievedChannel = try await chat.getChannel(channelId: channel.id)
+    let someChannel = try await chat.createChannel(id: randomString())
+    let removalResult = try await someChannel.delete(soft: false)
+    let retrievedChannel = try await chat.getChannel(channelId: someChannel.id)
+
+    XCTAssertNil(removalResult)
     XCTAssertNil(retrievedChannel)
+
+    addTeardownBlock { [unowned self] in
+      _ = try? await chat.deleteChannel(id: someChannel.id)
+    }
   }
 
   func testChannelAsync_SoftDelete() async throws {
-    _ = try await channel.delete(soft: true)
-    let retrievedChannel = try await chat.getChannel(channelId: channel.id)
-    XCTAssertNotNil(retrievedChannel)
-    XCTAssertEqual(retrievedChannel?.id, channel.id)
+    let someChannel = try await chat.createChannel(id: randomString())
+    let removalResult = try await someChannel.delete(soft: true)
+    let retrievedChannel = try await chat.getChannel(channelId: someChannel.id)
+
+    XCTAssertNotNil(removalResult)
+    XCTAssertEqual(retrievedChannel?.id, someChannel.id)
+
+    addTeardownBlock { [unowned self] in
+      _ = try? await chat.deleteChannel(id: someChannel.id)
+    }
   }
 
   func testChannelAsync_Forward() async throws {
@@ -410,8 +423,6 @@ class ChannelIntegrationTests: BaseAsyncIntegrationTestCase {
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
 
-    _ = try await chat.createUser(user: UserImpl(chat: chat, id: randomString()))
-
     let anotherUser = try await chat.createUser(user: UserImpl(chat: chat, id: randomString()))
     try await Task.sleep(nanoseconds: 3_000_000_000)
 
@@ -435,6 +446,7 @@ class ChannelIntegrationTests: BaseAsyncIntegrationTestCase {
     }
 
     await fulfillment(of: [expectation], timeout: 6)
+
     addTeardownBlock { [unowned self] in
       task.cancel()
       _ = try? await chat.deleteUser(id: anotherUserId)

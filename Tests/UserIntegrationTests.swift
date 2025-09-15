@@ -155,6 +155,15 @@ final class UserIntegrationTests: BaseClosureIntegrationTestCase {
     }
 
     XCTAssertNil(deletedUser)
+
+    addTeardownBlock { [unowned self] in
+      try awaitResult {
+        chat.deleteUser(
+          id: createdUser.id,
+          completion: $0
+        )
+      }
+    }
   }
 
   func testUser_SoftDelete() throws {
@@ -178,6 +187,15 @@ final class UserIntegrationTests: BaseClosureIntegrationTestCase {
       createdUser.id,
       deletedUser?.id
     )
+
+    addTeardownBlock { [unowned self] in
+      try awaitResult {
+        chat.deleteUser(
+          id: createdUser.id,
+          completion: $0
+        )
+      }
+    }
   }
 
   func testUser_DeleteNotExistingUser() throws {

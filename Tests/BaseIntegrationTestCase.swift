@@ -12,12 +12,17 @@ import PubNubSDK
 import PubNubSwiftChatSDK
 import XCTest
 
+enum Constants {
+  static let prefix = "swift-chat"
+}
+
 class BaseIntegrationTestCase: XCTestCase {
   lazy var chat: ChatImpl! = IntegrationTestCaseConfiguration.createChatObject()
 }
 
 extension BaseIntegrationTestCase {
-  func randomString(length: Int = 6) -> String {
-    RandomStringGenerator().randomString(length: length)
+  func randomString(length: Int = 6, withPrefix: Bool = true) -> String {
+    let randomStr = RandomStringGenerator().randomString(length: length)
+    return withPrefix ? Constants.prefix + randomStr : randomStr
   }
 }

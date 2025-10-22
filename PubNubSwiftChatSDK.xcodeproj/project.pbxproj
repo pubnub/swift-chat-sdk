@@ -296,6 +296,17 @@
 			path = MutedUsers;
 			sourceTree = "<group>";
 		};
+		3D3EBED82EA1592500AB4008 /* Chat */ = {
+			isa = PBXGroup;
+			children = (
+				3DB73A252C4FE1F6007FE249 /* Chat.swift */,
+				3D46D43C2D12335D007D08DB /* Chat+AsyncAwait.swift */,
+				3DB73A7A2C57EA29007FE249 /* ChatImpl.swift */,
+				3DB73A242C4FE1F6007FE249 /* ChatConfiguration.swift */,
+			);
+			path = Chat;
+			sourceTree = "<group>";
+		};
 		3D46D42E2D122C30007D08DB /* Common */ = {
 			isa = PBXGroup;
 			children = (
@@ -397,10 +408,7 @@
 		3DB73A232C4FE1E9007FE249 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				3DB73A252C4FE1F6007FE249 /* Chat.swift */,
-				3D46D43C2D12335D007D08DB /* Chat+AsyncAwait.swift */,
-				3DB73A7A2C57EA29007FE249 /* ChatImpl.swift */,
-				3DB73A242C4FE1F6007FE249 /* ChatConfiguration.swift */,
+				3D3EBED82EA1592500AB4008 /* Chat */,
 				3D0F90D22D48DB4700986686 /* MutedUsers */,
 				3D9A17922CC156F100F3F8AB /* MessageDraft */,
 				3DB73A432C511D36007FE249 /* Models */,

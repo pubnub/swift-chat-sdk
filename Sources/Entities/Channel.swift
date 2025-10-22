@@ -34,14 +34,16 @@ public protocol Channel: CustomStringConvertible {
   /// Represents the type of the given ``Channel``
   var type: ChannelType? { get }
 
-  /// Receive updates when specific channels are added, edited or removed.
+  /// Receive updates when specific channels are updated or removed.
+  ///
+  /// Emits the complete list of monitored channels whenever any one of them changes, excluding any that were removed.
   ///
   /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
   /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
   ///
   /// - Parameters:
   ///   - channels: Collection containing the channels to watch for updates
-  ///   - callback: Defines the custom behavior to be executed when detecting channels changes
+  ///   - callback: A closure to be executed when detecting channel changes
   /// - Returns: An ``AutoCloseable`` that you can use to stop receiving objects events by invoking its ``AutoCloseable/close()`` method
   static func streamUpdatesOn(
     channels: [Self],
@@ -387,7 +389,7 @@ public protocol Channel: CustomStringConvertible {
   /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
   /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
   ///
-  /// - Parameter callback: Function that takes a single Channel object. It defines the custom behavior to be executed when detecting channel changes
+  /// - Parameter callback: A closure to be executed when detecting channel changes. Takes a single Channel object or `nil` if the channel was removed
   /// - Returns: ``AutoCloseable`` interface that lets you stop receiving channel-related updates (objects events) and clean up resources by invoking the `close()` method
   func streamUpdates(
     callback: @escaping ((ChatType.ChatChannelType)?) -> Void

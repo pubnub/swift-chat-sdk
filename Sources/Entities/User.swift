@@ -42,14 +42,16 @@ public protocol User: CustomStringConvertible {
   /// Indicates whether the user is currently (at the time of obtaining this ``User`` object) active
   var active: Bool { get }
 
-  /// Receive updates when specific users are added, edited or removed.
+  /// Receive updates when specific users are updated or removed.
+  ///
+  /// Emits the complete list of monitored users whenever any one of them changes, excluding any that were removed.
   ///
   /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
   /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
   ///
   /// - Parameters:
   ///   - users: Collection containing the users to watch for updates
-  ///   - callback: Defines the custom behavior to be executed when detecting users changes
+  ///   - callback: A closure to be executed when detecting user changes
   /// - Returns: An ``AutoCloseable`` that you can use to stop receiving objects events by invoking its ``AutoCloseable/close()`` method
   static func streamUpdatesOn(
     users: [ChatType.ChatUserType],
@@ -156,7 +158,7 @@ public protocol User: CustomStringConvertible {
   /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
   ///
   /// - Parameters:
-  ///   - callback: A function that is triggered whenever the user's information are changed (added, edited, or removed)
+  ///   - callback: A closure to be executed when detecting user changes. Takes a User object or `nil` if the user was removed
   /// - Returns: An ``AutoCloseable`` that you can use to stop receiving objects events by invoking its ``AutoCloseable/close()`` method
   func streamUpdates(
     callback: @escaping ((ChatType.ChatUserType?) -> Void)

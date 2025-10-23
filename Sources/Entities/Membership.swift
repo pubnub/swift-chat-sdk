@@ -34,14 +34,16 @@ public protocol Membership: CustomStringConvertible {
   /// Timetoken of the last message a user read on a given channel
   var lastReadMessageTimetoken: Timetoken? { get }
 
-  /// Receive updates when specific memberships are added, edited or removed.
+  /// Receive updates when specific memberships are updated or removed.
+  ///
+  /// Emits the complete list of monitored memberships whenever any one of them changes, excluding any that were removed.
   ///
   /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
   /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
   ///
   /// - Parameters:
   ///   - memberships: Collection containing the ``Membership`` to watch for updates
-  ///   - callback: Defines the custom behavior to be executed when detecting membership changes
+  ///   - callback: A closure to be executed when detecting membership changes
   /// - Returns: An ``AutoCloseable`` that you can use to stop receiving objects events by invoking its ``AutoCloseable/close()`` method
   static func streamUpdatesOn(
     memberships: [Self],
@@ -94,12 +96,12 @@ public protocol Membership: CustomStringConvertible {
     completion: ((Swift.Result<UInt64?, Error>) -> Void)?
   )
 
-  /// You can receive updates when specific user-channel Membership object(s) are added, edited, or removed.
+  /// You can receive updates when this user-channel Membership object is updated or removed.
   ///
   /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
   /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
   ///
-  /// - Parameter callback: Defines the custom behavior to be executed when detecting membership changes
+  /// - Parameter callback: A closure to be executed when detecting membership changes. Takes a Membership object or `nil` if the membership was removed
   /// - Returns: An ``AutoCloseable`` that you can use to stop receiving objects events by invoking its ``AutoCloseable/close()`` method
   func streamUpdates(
     callback: @escaping ((ChatType.ChatMembershipType?) -> Void)

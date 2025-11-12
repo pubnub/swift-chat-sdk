@@ -15,7 +15,9 @@ import PubNubSDK
 /// Extension providing `async-await` support for ``Message``.
 ///
 public extension Message {
-  /// Receive updates when specific messages and related message reactions are added, edited, or removed.
+  /// Receive updates when specific messages and related message reactions are updated or removed.
+  ///
+  /// Emits the complete list of monitored messages whenever any one of them changes, excluding any that were removed.
   ///
   /// - Parameter messages: A collection of ``Message`` objects for which you want to get updates on changed messages
   /// - Returns: An asynchronous stream that produces updates when any item in the `messages` collection is updated

@@ -61,14 +61,16 @@ public protocol Message: CustomStringConvertible {
   /// Error associated with the message, if any
   var error: Error? { get }
 
-  /// Receive updates when specific messages and related message reactions are added, edited, or removed.
+  /// Receive updates when specific messages and related message reactions are updated or removed.
+  ///
+  /// Emits the complete list of monitored messages whenever any one of them changes, excluding any that were removed.
   ///
   /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
   /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
   ///
   /// - Parameters:
   ///   - messages: A collection of ``Message`` objects for which you want to get updates on changed messages
-  ///   - callback: Function that takes a collection of ``Message`` objects. It defines the custom behavior to be executed when detecting message or message reaction changes
+  ///   - callback: A closure to be executed when detecting message or message reaction changes
   /// - Returns: Interface that lets you stop receiving message-related updates by invoking the `close()` method
   static func streamUpdatesOn(
     messages: [Self],

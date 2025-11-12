@@ -15,7 +15,9 @@ import PubNubSDK
 /// Extension providing `async-await` support for ``Channel``.
 ///
 public extension Channel {
-  /// Receive updates when specific channels are added, edited or removed.
+  /// Receive updates when specific channels are updated or removed.
+  ///
+  /// Emits the complete list of monitored channels whenever any one of them changes, excluding any that were removed.
   ///
   /// - Parameter channels: Collection containing the channels to watch for updates
   /// - Returns: An asynchronous stream that produces updates when any item in the `channels` collection is updated
@@ -473,7 +475,7 @@ public extension Channel {
 
   /// Receives updates on a single ``Channel`` object.
   ///
-  /// - Returns: An asynchronous stream that produces updates when the current ``Channel`` is edited or removed.
+  /// - Returns: An asynchronous stream that produces updates when the current ``Channel`` is edited or `nil` if the channel was removed.
   func streamUpdates() -> AsyncStream<ChatType.ChatChannelType?> {
     AsyncStream { continuation in
       let autoCloseable = streamUpdates {

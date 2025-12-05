@@ -13,7 +13,7 @@ import PubNubChat
 
 class ChatAdapter {
   private static var associations: [Association] = []
-  private static let queue = DispatchQueue(label: "ChatAdapter.associations", attributes: .concurrent)
+  private static let queue = DispatchQueue(label: "ChatAdapter.associations")
   private init() {}
 
   static func map(chat: PubNubChat.Chat) -> Association {
@@ -27,15 +27,13 @@ class ChatAdapter {
   }
 
   static func associate(chat: ChatImpl, with kotlinChat: PubNubChat.ChatImpl) {
-    queue.async(flags: .barrier) {
-      if !associations.contains(where: { !$0.isEmpty() && $0.chat !== chat && $0.kotlinChat !== kotlinChat }) {
-        associations.append(.init(chat: chat, kotlinChat: kotlinChat))
-      }
+    queue.sync {
+      associations.append(.init(chat: chat, kotlinChat: kotlinChat))
     }
   }
 
   static func clean() {
-    queue.async(flags: .barrier) {
+    queue.sync {
       associations.removeAll {
         $0.isEmpty()
       }

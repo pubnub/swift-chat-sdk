@@ -26,21 +26,18 @@ class ChatAdapter {
     }
   }
 
-static func associate(chat: ChatImpl, with kotlinChat: PubNubChat.ChatImpl) {
-  queue.sync {
-    associations.removeAll {
-       $0.isEmpty()
-    }
-    if let existing = associations.first(where: {
-      !$0.isEmpty() && ($0.chat === chat || $0.kotlinChat === kotlinChat)
-    }) {
-      existing._chat = chat
-      existing._kotlinChat = kotlinChat
-    } else {
-      associations.append(.init(chat: chat, kotlinChat: kotlinChat))
+  static func associate(chat: ChatImpl, with kotlinChat: PubNubChat.ChatImpl) {
+    queue.sync {
+      associations.removeAll {
+        $0.isEmpty()
+      }
+      if !associations.contains(where: {
+        !$0.isEmpty() && $0.chat === chat && $0.kotlinChat === kotlinChat
+      }) {
+        associations.append(.init(chat: chat, kotlinChat: kotlinChat))
+      }
     }
   }
-}
 
   static func clean() {
     queue.sync {

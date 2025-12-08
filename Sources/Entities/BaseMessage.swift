@@ -14,14 +14,16 @@ import PubNubSDK
 
 final class BaseMessage<M: PubNubChat.Message> {
   let message: M
+  let chat: ChatImpl
 
-  init(message: M) {
+  init(message: M, chat: ChatImpl) {
     self.message = message
+    self.chat = chat
   }
 
-  convenience init?(message: M?) {
+  convenience init?(message: M?, chat: ChatImpl) {
     if let message {
-      self.init(message: message)
+      self.init(message: message, chat: chat)
     } else {
       return nil
     }
@@ -29,7 +31,6 @@ final class BaseMessage<M: PubNubChat.Message> {
 }
 
 extension BaseMessage: Message {
-  public var chat: ChatImpl { ChatAdapter.map(chat: message.chat).chat }
   public var timetoken: Timetoken { Timetoken(message.timetoken_) }
   public var content: EventContent.TextMessageContent { message.content.transform() }
   public var channelId: String { message.channelId }
@@ -52,11 +53,14 @@ extension BaseMessage: Message {
     messages: [BaseMessage],
     callback: @escaping (([BaseMessage]) -> Void)
   ) -> AutoCloseable {
-    AutoCloseableImpl(
-      PubNubChat.BaseMessageCompanion.shared.streamUpdatesOn(messages: messages.map(\.message)) {
+    guard let firstChat = messages.first?.chat else {
+      return AutoCloseableImpl.empty()
+    }
+    return AutoCloseableImpl(
+      PubNubChat.BaseMessageCompanion.shared.streamUpdatesOn(messages: messages.map(\.message)) { [chat = firstChat] in
         if let messages = $0 as? [M] {
           callback(messages.map {
-            BaseMessage(message: $0)
+            BaseMessage(message: $0, chat: chat)
           })
         }
       }
@@ -78,7 +82,7 @@ extension BaseMessage: Message {
     ).async(caller: self) { (result: FutureResult<BaseMessage, M>) in
       switch result.result {
       case let .success(message):
-        completion?(.success(MessageImpl(message: message)))
+        completion?(.success(MessageImpl(message: message, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -96,7 +100,7 @@ extension BaseMessage: Message {
     ).async(caller: self) { (result: FutureResult<BaseMessage, M?>) in
       switch result.result {
       case let .success(message):
-        completion?(.success(MessageImpl(message: message)))
+        completion?(.success(MessageImpl(message: message, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -107,7 +111,7 @@ extension BaseMessage: Message {
     message.getThread().async(caller: self) { (result: FutureResult<BaseMessage, PubNubChat.ThreadChannel>) in
       switch result.result {
       case let .success(threadChannel):
-        completion?(.success(ThreadChannelImpl(channel: threadChannel)))
+        completion?(.success(ThreadChannelImpl(channel: threadChannel, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -134,7 +138,7 @@ extension BaseMessage: Message {
     message.pin().async(caller: self) { (result: FutureResult<BaseMessage<M>, PubNubChat.Channel_>) in
       switch result.result {
       case let .success(channel):
-        completion?(.success(ChannelImpl(channel: channel)))
+        completion?(.success(ChannelImpl(channel: channel, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -161,7 +165,7 @@ extension BaseMessage: Message {
     message.createThread().async(caller: self) { (result: FutureResult<BaseMessage, PubNubChat.ThreadChannel>) in
       switch result.result {
       case let .success(threadChannel):
-        completion?(.success(ThreadChannelImpl(channel: threadChannel)))
+        completion?(.success(ThreadChannelImpl(channel: threadChannel, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -193,7 +197,7 @@ extension BaseMessage: Message {
     ).async(caller: self) { (result: FutureResult<BaseMessage, PubNubChat.ThreadChannel>) in
       switch result.result {
       case let .success(threadChannel):
-        completion?(.success(ThreadChannelImpl(channel: threadChannel)))
+        completion?(.success(ThreadChannelImpl(channel: threadChannel, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -206,7 +210,7 @@ extension BaseMessage: Message {
     ) { (result: FutureResult<BaseMessage, KotlinPair<PNRemoveMessageActionResult, PubNubChat.ThreadChannel>>) in
       switch result.result {
       case let .success(pair):
-        completion?(.success(ChannelImpl(channel: pair.second)))
+        completion?(.success(ChannelImpl(channel: pair.second, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -222,7 +226,7 @@ extension BaseMessage: Message {
     ).async(caller: self) { (result: FutureResult<BaseMessage, M>) in
       switch result.result {
       case let .success(message):
-        completion?(.success(BaseMessage(message: message)))
+        completion?(.success(BaseMessage(message: message, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -232,8 +236,8 @@ extension BaseMessage: Message {
   public func streamUpdates(completion: @escaping ((BaseMessage<M>) -> Void)) -> AutoCloseable {
     AutoCloseableImpl(
       message.streamUpdates { [weak self] in
-        if let message = $0 as? M, self != nil {
-          completion(BaseMessage(message: message))
+        if let message = $0 as? M, let self = self {
+          completion(BaseMessage(message: message, chat: self.chat))
         }
       },
       owner: self
@@ -244,7 +248,7 @@ extension BaseMessage: Message {
     message.restore().async(caller: self) { (result: FutureResult<BaseMessage, M>) in
       switch result.result {
       case let .success(message):
-        completion?(.success(BaseMessage(message: message)))
+        completion?(.success(BaseMessage(message: message, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -271,7 +275,7 @@ extension BaseMessage: Message {
     ).async(caller: self) { (result: FutureResult<BaseMessage, PubNubChat.MessageDraft>) in
       switch result.result {
       case let .success(messageDraft):
-        completion?(.success(MessageDraftImpl(messageDraft: messageDraft)))
+        completion?(.success(MessageDraftImpl(messageDraft: messageDraft, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }

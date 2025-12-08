@@ -21,6 +21,7 @@ import PubNubSDK
 /// It inherits all the documentation for methods defined in the ``Membership`` protocol.
 /// Refer to the ``Membership`` protocol for detailed information on how individual methods work.
 public final class MembershipImpl {
+  public let chat: ChatImpl
   let membership: PubNubChat.Membership
 
   convenience init(
@@ -44,19 +45,20 @@ public final class MembershipImpl {
       type: type
     )
     self.init(
-      membership: underlyingMembership
+      membership: underlyingMembership,
+      chat: chat
     )
   }
 
-  init(membership: PubNubChat.Membership) {
+  init(membership: PubNubChat.Membership, chat: ChatImpl) {
     self.membership = membership
+    self.chat = chat
   }
 }
 
 extension MembershipImpl: Membership {
-  public var chat: ChatImpl { ChatAdapter.map(chat: membership.chat).chat }
-  public var channel: ChannelImpl { ChannelImpl(channel: membership.channel) }
-  public var user: UserImpl { UserImpl(user: membership.user) }
+  public var channel: ChannelImpl { ChannelImpl(channel: membership.channel, chat: chat) }
+  public var user: UserImpl { UserImpl(user: membership.user, chat: chat) }
   public var custom: [String: JSONCodableScalar]? { membership.custom?.mapToScalars() }
   public var status: String? { membership.status }
   public var type: String? { membership.type }
@@ -68,11 +70,14 @@ extension MembershipImpl: Membership {
     memberships: [MembershipImpl],
     callback: @escaping (([MembershipImpl]) -> Void)
   ) -> AutoCloseable {
-    AutoCloseableImpl(
-      PubNubChat.MembershipImpl.Companion.shared.streamUpdatesOn(memberships: memberships.compactMap { $0.membership }) {
+    guard let firstChat = memberships.first?.chat else {
+      return AutoCloseableImpl.empty()
+    }
+    return AutoCloseableImpl(
+      PubNubChat.MembershipImpl.Companion.shared.streamUpdatesOn(memberships: memberships.compactMap { $0.membership }) { [chat = firstChat] in
         if let memberships = $0 as? [PubNubChat.Membership] {
           callback(memberships.map {
-            MembershipImpl(membership: $0)
+            MembershipImpl(membership: $0, chat: chat)
           })
         }
       }
@@ -88,7 +93,7 @@ extension MembershipImpl: Membership {
     ).async(caller: self) { (result: FutureResult<MembershipImpl, PubNubChat.Membership>) in
       switch result.result {
       case let .success(membership):
-        completion?(.success(MembershipImpl(membership: membership)))
+        completion?(.success(MembershipImpl(membership: membership, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -104,7 +109,7 @@ extension MembershipImpl: Membership {
     ).async(caller: self) { (result: FutureResult<MembershipImpl, PubNubChat.Membership>) in
       switch result.result {
       case let .success(membership):
-        completion?(.success(MembershipImpl(membership: membership)))
+        completion?(.success(MembershipImpl(membership: membership, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -117,7 +122,7 @@ extension MembershipImpl: Membership {
     ).async(caller: self) { (result: FutureResult<MembershipImpl, PubNubChat.Membership>) in
       switch result.result {
       case let .success(membership):
-        completion?(.success(MembershipImpl(membership: membership)))
+        completion?(.success(MembershipImpl(membership: membership, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -138,9 +143,9 @@ extension MembershipImpl: Membership {
   public func streamUpdates(callback: @escaping ((MembershipImpl?) -> Void)) -> AutoCloseable {
     AutoCloseableImpl(
       membership.streamUpdates { [weak self] in
-        if self != nil {
+        if let self = self {
           if let membership = $0 {
-            callback(MembershipImpl(membership: membership))
+            callback(MembershipImpl(membership: membership, chat: self.chat))
           } else {
             callback(nil)
           }

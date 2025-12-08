@@ -13,7 +13,6 @@ import PubNubChat
 import PubNubSDK
 
 final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel {
-  var chat: ChatImpl { ChatAdapter.map(chat: channel.chat).chat }
   var id: String { channel.id }
   var name: String? { channel.name }
   var custom: [String: JSONCodableScalar]? { channel.custom?.mapToScalars() }
@@ -24,20 +23,25 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
   var rawChannel: PubNubChat.Channel_ { channel }
 
   let channel: C
+  let chat: ChatImpl
 
-  init(channel: C) {
+  init(channel: C, chat: ChatImpl) {
     self.channel = channel
+    self.chat = chat
   }
 
   static func streamUpdatesOn(
     channels: [BaseChannel],
     callback: @escaping (([BaseChannel]) -> Void)
   ) -> AutoCloseable {
-    AutoCloseableImpl(
-      PubNubChat.BaseChannelCompanion.shared.streamUpdatesOn(channels: channels.map(\.channel)) {
+    guard let firstChat = channels.first?.chat else {
+      return AutoCloseableImpl.empty()
+    }
+    return AutoCloseableImpl(
+      PubNubChat.BaseChannelCompanion.shared.streamUpdatesOn(channels: channels.map(\.channel)) { [chat = firstChat] in
         if let channels = $0 as? [C] {
           callback(channels.map {
-            BaseChannel(channel: $0)
+            BaseChannel(channel: $0, chat: chat)
           })
         }
       }
@@ -61,7 +65,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     ).async(caller: self) { (result: FutureResult<BaseChannel, C>) in
       switch result.result {
       case let .success(channel):
-        completion?(.success(ChannelImpl(channel: channel)))
+        completion?(.success(ChannelImpl(channel: channel, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -74,7 +78,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     ).async(caller: self) { (result: FutureResult<BaseChannel, C?>) in
       switch result.result {
       case let .success(channel):
-        completion?(.success(ChannelImpl(channel: channel)))
+        completion?(.success(ChannelImpl(channel: channel, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -165,7 +169,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
       switch result.result {
       case let .success(response):
         completion?(.success((
-          messages: (response.messages.map { BaseMessage(message: $0) }),
+          messages: (response.messages.map { BaseMessage(message: $0, chat: result.caller.chat) }),
           isMore: response.isMore
         )))
       case let .failure(error):
@@ -248,7 +252,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     ).async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.Membership>) in
       switch result.result {
       case let .success(membership):
-        completion?(.success(MembershipImpl(membership: membership)))
+        completion?(.success(MembershipImpl(membership: membership, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -261,7 +265,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     ).async(caller: self) { (result: FutureResult<BaseChannel, [PubNubChat.Membership]>) in
       switch result.result {
       case let .success(memberships):
-        completion?(.success(memberships.compactMap { MembershipImpl(membership: $0) }))
+        completion?(.success(memberships.compactMap { MembershipImpl(membership: $0, chat: result.caller.chat) }))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -286,7 +290,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
         completion?(.success(
           (
             memberships: response.members.map {
-              MembershipImpl(membership: $0)
+              MembershipImpl(membership: $0, chat: result.caller.chat)
             },
             page: PubNubHashedPageBase(
               start: response.next?.pageHash,
@@ -304,8 +308,8 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
   func connect(callback: @escaping (ChatType.ChatMessageType) -> Void) -> AutoCloseable {
     AutoCloseableImpl(
       channel.connect { [weak self] in
-        if self != nil, let message = $0 as? M {
-          callback(MessageImpl(message: message))
+        if let self = self, let message = $0 as? M {
+          callback(MessageImpl(message: message, chat: self.chat))
         }
       },
       owner: self
@@ -318,14 +322,14 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     completion: ((Swift.Result<(membership: MembershipImpl, disconnect: AutoCloseable?), Error>) -> Void)?
   ) {
     channel.join(custom: custom?.asCustomObject(), callback: { [weak self] in
-      if self != nil {
-        callback?(MessageImpl(message: $0))
+      if let self = self {
+        callback?(MessageImpl(message: $0, chat: self.chat))
       }
     }).async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.JoinResult>) in
       switch result.result {
       case let .success(joinRes):
         completion?(.success((
-          membership: MembershipImpl(membership: joinRes.membership),
+          membership: MembershipImpl(membership: joinRes.membership, chat: result.caller.chat),
           disconnect: AutoCloseableImpl(joinRes.disconnect, owner: result.caller)
         )))
       case let .failure(error):
@@ -350,7 +354,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
       switch result.result {
       case let .success(message):
         if let message {
-          completion?(.success(MessageImpl(message: message)))
+          completion?(.success(MessageImpl(message: message, chat: result.caller.chat)))
         } else {
           completion?(.success(nil))
         }
@@ -370,7 +374,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
       switch result.result {
       case let .success(message):
         if let message {
-          completion?(.success(MessageImpl(message: message)))
+          completion?(.success(MessageImpl(message: message, chat: result.caller.chat)))
         } else {
           completion?(.success(nil))
         }
@@ -412,7 +416,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     ).async(caller: self) { (result: FutureResult<BaseChannel, C>) in
       switch result.result {
       case let .success(channel):
-        completion?(.success(BaseChannel<C, M>(channel: channel)))
+        completion?(.success(BaseChannel<C, M>(channel: channel, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -423,7 +427,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     channel.unpinMessage().async(caller: self) { (result: FutureResult<BaseChannel, C>) in
       switch result.result {
       case let .success(channel):
-        completion?(.success(BaseChannel<C, M>(channel: channel)))
+        completion?(.success(BaseChannel<C, M>(channel: channel, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -433,9 +437,9 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
   func streamUpdates(callback: @escaping ((ChatType.ChatChannelType)?) -> Void) -> AutoCloseable {
     AutoCloseableImpl(
       channel.streamUpdates { [weak self] in
-        if self != nil {
+        if let self = self {
           if let channel = $0 {
-            callback(ChannelImpl(channel: channel))
+            callback(ChannelImpl(channel: channel, chat: self.chat))
           } else {
             callback(nil)
           }
@@ -530,7 +534,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
       switch result.result {
       case let .success(userIds):
         completion?(.success(userIds.compactMap {
-          MembershipImpl(membership: $0)
+          MembershipImpl(membership: $0, chat: result.caller.chat)
         }))
       case let .failure(error):
         completion?(.failure(error))
@@ -603,7 +607,8 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
         isTypingIndicatorTriggered: isTypingIndicatorTriggered,
         userLimit: Int32(userLimit),
         channelLimit: Int32(channelLimit)
-      )
+      ),
+      chat: chat
     )
   }
 

@@ -45,26 +45,27 @@ public final class ThreadMessageImpl {
       error: nil
     )
     self.init(
-      message: underlyingThreadMessage
+      message: underlyingThreadMessage,
+      chat: chat
     )
   }
 
-  convenience init?(message: PubNubChat.ThreadMessage?) {
+  convenience init?(message: PubNubChat.ThreadMessage?, chat: ChatImpl) {
     if let message {
-      self.init(message: message)
+      self.init(message: message, chat: chat)
     } else {
       return nil
     }
   }
 
-  init(message: PubNubChat.ThreadMessage) {
-    target = BaseMessage(message: message)
+  init(message: PubNubChat.ThreadMessage, chat: ChatImpl) {
+    target = BaseMessage(message: message, chat: chat)
   }
 }
 
 public extension ThreadMessageImpl {
   func asMessage() -> MessageImpl {
-    MessageImpl(message: target.message)
+    MessageImpl(message: target.message, chat: target.chat)
   }
 }
 
@@ -93,11 +94,14 @@ extension ThreadMessageImpl: ThreadMessage {
     messages: [ThreadMessageImpl],
     callback: @escaping (([ThreadMessageImpl]) -> Void)
   ) -> AutoCloseable {
-    AutoCloseableImpl(
-      PubNubChat.ThreadMessageCompanion.shared.streamUpdatesOn(messages: messages.map(\.target.message)) {
+    guard let firstChat = messages.first?.chat else {
+      return AutoCloseableImpl.empty()
+    }
+    return AutoCloseableImpl(
+      PubNubChat.ThreadMessageCompanion.shared.streamUpdatesOn(messages: messages.map(\.target.message)) { [chat = firstChat] in
         if let messages = $0 as? [PubNubChat.ThreadMessage] {
           callback(messages.map {
-            ThreadMessageImpl(message: $0)
+            ThreadMessageImpl(message: $0, chat: chat)
           })
         }
       }
@@ -110,7 +114,7 @@ extension ThreadMessageImpl: ThreadMessage {
     ) { (result: FutureResult<ThreadMessageImpl, PubNubChat.Channel_>) in
       switch result.result {
       case let .success(channel):
-        completion?(.success(ChannelImpl(channel: channel)))
+        completion?(.success(ChannelImpl(channel: channel, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -123,7 +127,7 @@ extension ThreadMessageImpl: ThreadMessage {
     ) { (result: FutureResult<ThreadMessageImpl, PubNubChat.Channel_>) in
       switch result.result {
       case let .success(channel):
-        completion?(.success(ChannelImpl(channel: channel)))
+        completion?(.success(ChannelImpl(channel: channel, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -232,7 +236,7 @@ extension ThreadMessageImpl: ThreadMessage {
     target.toggleReaction(reaction: reaction) {
       switch $0 {
       case let .success(message):
-        completion?(.success(ThreadMessageImpl(message: message.message)))
+        completion?(.success(ThreadMessageImpl(message: message.message, chat: message.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -242,7 +246,7 @@ extension ThreadMessageImpl: ThreadMessage {
   public func streamUpdates(completion: @escaping ((ThreadMessageImpl) -> Void)) -> AutoCloseable {
     target.streamUpdates { [weak self] in
       if self != nil {
-        completion(ThreadMessageImpl(message: $0.message))
+        completion(ThreadMessageImpl(message: $0.message, chat: $0.chat))
       }
     }
   }
@@ -251,7 +255,7 @@ extension ThreadMessageImpl: ThreadMessage {
     target.restore {
       switch $0 {
       case let .success(message):
-        completion?(.success(ThreadMessageImpl(message: message.message)))
+        completion?(.success(ThreadMessageImpl(message: message.message, chat: message.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }

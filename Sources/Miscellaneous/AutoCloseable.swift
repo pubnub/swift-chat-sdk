@@ -31,6 +31,10 @@ class AutoCloseableImpl {
     }
   }
 
+  static func empty() -> AutoCloseableImpl {
+    AutoCloseableImpl(Empty())
+  }
+
   init(_ underlying: PubNubChat.KotlinAutoCloseable, owner: AnyObject? = nil) {
     self.underlying = underlying
     self.owner = owner
@@ -46,6 +50,10 @@ class AutoCloseableImpl {
       defer { lock.unlock() }
       ownerContainer = newValue
     }
+  }
+
+  private class Empty: KotlinAutoCloseable {
+    func close() {}
   }
 
   deinit {

@@ -45,20 +45,21 @@ public final class ChannelImpl {
       type: type?.transform()
     )
     self.init(
-      channel: underlyingChannel
+      channel: underlyingChannel,
+      chat: chat
     )
   }
 
-  convenience init?(channel: PubNubChat.Channel_?) {
+  convenience init?(channel: PubNubChat.Channel_?, chat: ChatImpl) {
     if let channel {
-      self.init(channel: channel)
+      self.init(channel: channel, chat: chat)
     } else {
       return nil
     }
   }
 
-  init(channel: PubNubChat.Channel_) {
-    target = BaseChannel(channel: channel)
+  init(channel: PubNubChat.Channel_, chat: ChatImpl) {
+    target = BaseChannel(channel: channel, chat: chat)
   }
 }
 
@@ -76,10 +77,13 @@ extension ChannelImpl: Channel {
     channels: [ChannelImpl],
     callback: @escaping (([ChannelImpl]) -> Void)
   ) -> AutoCloseable {
-    AutoCloseableImpl(
-      PubNubChat.ThreadChannelCompanion.shared.streamUpdatesOn(channels: channels.map(\.target.channel)) {
+    guard let firstChat = channels.first?.chat else {
+      return AutoCloseableImpl.empty()
+    }
+    return AutoCloseableImpl(
+      PubNubChat.ThreadChannelCompanion.shared.streamUpdatesOn(channels: channels.map(\.target.channel)) { [chat = firstChat] in
         callback(($0 as? [PubNubChat.Channel_] ?? []).map {
-          ChannelImpl(channel: $0)
+          ChannelImpl(channel: $0, chat: chat)
         })
       }
     )
@@ -164,7 +168,7 @@ extension ChannelImpl: Channel {
       switch $0 {
       case let .success(res):
         completion?(.success((
-          messages: res.messages.map { MessageImpl(message: $0.message) },
+          messages: res.messages.map { MessageImpl(message: $0.message, chat: $0.chat) },
           isMore: res.isMore
         )))
       case let .failure(error):
@@ -307,10 +311,10 @@ extension ChannelImpl: Channel {
   }
 
   public func pinMessage(message: MessageImpl, completion: ((Swift.Result<ChannelImpl, Error>) -> Void)? = nil) {
-    target.pinMessage(message: BaseMessage(message: message.target.message)) {
+    target.pinMessage(message: BaseMessage(message: message.target.message, chat: chat)) {
       switch $0 {
       case let .success(channel):
-        completion?(.success(ChannelImpl(channel: channel.channel)))
+        completion?(.success(ChannelImpl(channel: channel.channel, chat: channel.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -321,7 +325,7 @@ extension ChannelImpl: Channel {
     target.unpinMessage {
       switch $0 {
       case let .success(channel):
-        completion?(.success(ChannelImpl(channel: channel.channel)))
+        completion?(.success(ChannelImpl(channel: channel.channel, chat: channel.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }

@@ -22,10 +22,12 @@ import PubNubSDK
 /// Refer to the ``MessageDraft`` protocol for detailed information on how individual methods work.
 public class MessageDraftImpl {
   private let messageDraft: PubNubChat.MessageDraft
+  private let chat: ChatImpl
   private var listeners: [(KMPMessageDraftChangeListener, MessageDraftChangeListener)] = []
 
-  init(messageDraft: PubNubChat.MessageDraft) {
+  init(messageDraft: PubNubChat.MessageDraft, chat: ChatImpl) {
     self.messageDraft = messageDraft
+    self.chat = chat
   }
 }
 
@@ -34,7 +36,7 @@ extension MessageDraftImpl: MessageDraft {
   public typealias M = MessageImpl
 
   public var channel: C {
-    ChannelImpl(channel: messageDraft.channel)
+    ChannelImpl(channel: messageDraft.channel, chat: chat)
   }
 
   public var isTypingIndicatorTriggered: Bool {
@@ -55,7 +57,7 @@ extension MessageDraftImpl: MessageDraft {
 
   public var quotedMessage: M? {
     get {
-      MessageImpl(message: messageDraft.quotedMessage)
+      MessageImpl(message: messageDraft.quotedMessage, chat: chat)
     } set {
       messageDraft.quotedMessage = newValue?.target.message
     }

@@ -70,7 +70,7 @@ extension MembershipImpl: Membership {
     memberships: [MembershipImpl],
     callback: @escaping (([MembershipImpl]) -> Void)
   ) -> AutoCloseable {
-    guard let firstChat = memberships.first?.chat else {
+    guard let firstChat = memberships.first?.chat, memberships.allSatisfy({ $0.chat === firstChat }) else {
       return AutoCloseableImpl.empty()
     }
     return AutoCloseableImpl(

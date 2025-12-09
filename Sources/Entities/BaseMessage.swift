@@ -53,7 +53,7 @@ extension BaseMessage: Message {
     messages: [BaseMessage],
     callback: @escaping (([BaseMessage]) -> Void)
   ) -> AutoCloseable {
-    guard let firstChat = messages.first?.chat else {
+    guard let firstChat = messages.first?.chat, messages.allSatisfy({ $0.chat === firstChat }) else {
       return AutoCloseableImpl.empty()
     }
     return AutoCloseableImpl(

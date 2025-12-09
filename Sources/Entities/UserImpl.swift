@@ -87,7 +87,7 @@ extension UserImpl: User {
   public var active: Bool { user.active }
 
   public static func streamUpdatesOn(users: [UserImpl], callback: @escaping (([UserImpl]) -> Void)) -> AutoCloseable {
-    guard let firstChat = users.first?.chat else {
+    guard let firstChat = users.first?.chat, users.allSatisfy({ $0.chat === firstChat }) else {
       return AutoCloseableImpl.empty()
     }
     return AutoCloseableImpl(

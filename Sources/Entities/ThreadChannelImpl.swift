@@ -82,7 +82,7 @@ extension ThreadChannelImpl: ThreadChannel {
     channels: [ThreadChannelImpl],
     callback: @escaping (([ThreadChannelImpl]) -> Void)
   ) -> AutoCloseable {
-    guard let firstChat = channels.first?.chat else {
+    guard let firstChat = channels.first?.chat, channels.allSatisfy({ $0.chat === firstChat }) else {
       return AutoCloseableImpl.empty()
     }
     return AutoCloseableImpl(

@@ -34,7 +34,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     channels: [BaseChannel],
     callback: @escaping (([BaseChannel]) -> Void)
   ) -> AutoCloseable {
-    guard let firstChat = channels.first?.chat else {
+    guard let firstChat = channels.first?.chat, channels.allSatisfy({ $0.chat === firstChat }) else {
       return AutoCloseableImpl.empty()
     }
     return AutoCloseableImpl(

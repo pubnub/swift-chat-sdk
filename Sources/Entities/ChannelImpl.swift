@@ -77,7 +77,7 @@ extension ChannelImpl: Channel {
     channels: [ChannelImpl],
     callback: @escaping (([ChannelImpl]) -> Void)
   ) -> AutoCloseable {
-    guard let firstChat = channels.first?.chat else {
+    guard let firstChat = channels.first?.chat, channels.allSatisfy({ $0.chat === firstChat }) else {
       return AutoCloseableImpl.empty()
     }
     return AutoCloseableImpl(

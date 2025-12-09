@@ -94,7 +94,7 @@ extension ThreadMessageImpl: ThreadMessage {
     messages: [ThreadMessageImpl],
     callback: @escaping (([ThreadMessageImpl]) -> Void)
   ) -> AutoCloseable {
-    guard let firstChat = messages.first?.chat else {
+    guard let firstChat = messages.first?.chat, messages.allSatisfy({ $0.chat === firstChat }) else {
       return AutoCloseableImpl.empty()
     }
     return AutoCloseableImpl(

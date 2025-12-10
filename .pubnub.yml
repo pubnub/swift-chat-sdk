@@ -1,8 +1,13 @@
 name: swift-chat-sdk
 scm: github.com/pubnub/swift-chat-sdk
-version: 0.32.1
+version: 0.33.0
 schema: 1
 changelog:
+  - date: 2025-12-10
+    version: 0.33.0
+    changes:
+      - type: bug
+        text: "Modify the entities to hold a strong Chat reference."
   - date: 2025-08-07
     version: 0.32.1
     changes:
@@ -197,7 +202,7 @@ sdks:
           - distribution-type: source
             distribution-repository: GitHub release
             package-name: PubNubSwiftChatSDK
-            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.32.1.zip
+            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.33.0.zip
             supported-platforms:
               supported-operating-systems:
                 iOS:

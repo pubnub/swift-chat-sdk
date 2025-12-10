@@ -21,6 +21,7 @@ import PubNubSDK
 /// It inherits all the documentation for methods defined in the ``User`` protocol.
 /// Refer to the ``User`` protocol for detailed information on how individual methods work.
 public final class UserImpl {
+  public let chat: ChatImpl
   let user: PubNubChat.User
 
   convenience init(
@@ -52,25 +53,26 @@ public final class UserImpl {
       lastActiveTimestamp: lastActiveTimestamp?.asKotlinLong()
     )
     self.init(
-      user: underlyingUser
+      user: underlyingUser,
+      chat: chat
     )
   }
 
-  convenience init?(user: PubNubChat.User?) {
+  convenience init?(user: PubNubChat.User?, chat: ChatImpl) {
     if let user {
-      self.init(user: user)
+      self.init(user: user, chat: chat)
     } else {
       return nil
     }
   }
 
-  init(user: PubNubChat.User) {
+  init(user: PubNubChat.User, chat: ChatImpl) {
     self.user = user
+    self.chat = chat
   }
 }
 
 extension UserImpl: User {
-  public var chat: ChatImpl { ChatAdapter.map(chat: user.chat).chat }
   public var id: String { user.id }
   public var name: String? { user.name }
   public var externalId: String? { user.externalId }
@@ -85,11 +87,14 @@ extension UserImpl: User {
   public var active: Bool { user.active }
 
   public static func streamUpdatesOn(users: [UserImpl], callback: @escaping (([UserImpl]) -> Void)) -> AutoCloseable {
-    AutoCloseableImpl(
-      PubNubChat.UserImpl.Companion.shared.streamUpdatesOn(users: users.compactMap { $0.user }) {
+    guard let firstChat = users.first?.chat, users.allSatisfy({ $0.chat === firstChat }) else {
+      return AutoCloseableImpl.empty()
+    }
+    return AutoCloseableImpl(
+      PubNubChat.UserImpl.Companion.shared.streamUpdatesOn(users: users.compactMap { $0.user }) { [chat = firstChat] in
         if let users = $0 as? [PubNubChat.User] {
           callback(users.map {
-            UserImpl(user: $0)
+            UserImpl(user: $0, chat: chat)
           })
         }
       }
@@ -117,7 +122,7 @@ extension UserImpl: User {
     ).async(caller: self) { (result: FutureResult<UserImpl, PubNubChat.User>) in
       switch result.result {
       case let .success(user):
-        completion?(.success(UserImpl(user: user)))
+        completion?(.success(UserImpl(user: user, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -130,7 +135,7 @@ extension UserImpl: User {
     completion: ((Swift.Result<UserImpl, Error>) -> Void)? = nil
   ) {
     user.update(updateAction: { values, user in
-      for change in updateAction(UserImpl(user: user)) {
+      for change in updateAction(UserImpl(user: user, chat: self.chat)) {
         switch change {
         case let .stringOptional(keyPath, value):
           switch keyPath {
@@ -158,7 +163,7 @@ extension UserImpl: User {
     }).async(caller: self) { (result: FutureResult<UserImpl, PubNubChat.User>) in
       switch result.result {
       case let .success(user):
-        completion?(.success(UserImpl(user: user)))
+        completion?(.success(UserImpl(user: user, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -174,7 +179,7 @@ extension UserImpl: User {
     ).async(caller: self) { (result: FutureResult<UserImpl, PubNubChat.User?>) in
       switch result.result {
       case let .success(user):
-        completion?(.success(UserImpl(user: user)))
+        completion?(.success(UserImpl(user: user, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -225,7 +230,7 @@ extension UserImpl: User {
       case let .success(response):
         completion?(.success((
           memberships: response.memberships.map {
-            MembershipImpl(membership: $0)
+            MembershipImpl(membership: $0, chat: result.caller.chat)
           },
           page: PubNubHashedPageBase(
             start: response.next?.pageHash,
@@ -242,9 +247,9 @@ extension UserImpl: User {
   public func streamUpdates(callback: @escaping ((UserImpl?) -> Void)) -> AutoCloseable {
     AutoCloseableImpl(
       user.streamUpdates { [weak self] in
-        if self != nil {
+        if let self = self {
           if let user = $0 {
-            callback(UserImpl(user: user))
+            callback(UserImpl(user: user, chat: self.chat))
           } else {
             callback(nil)
           }

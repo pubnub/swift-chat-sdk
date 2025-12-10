@@ -43,20 +43,21 @@ public final class MessageImpl {
       error: nil
     )
     self.init(
-      message: underlyingMessage
+      message: underlyingMessage,
+      chat: chat
     )
   }
 
-  convenience init?(message: PubNubChat.Message?) {
+  convenience init?(message: PubNubChat.Message?, chat: ChatImpl) {
     if let message {
-      self.init(message: message)
+      self.init(message: message, chat: chat)
     } else {
       return nil
     }
   }
 
-  init(message: PubNubChat.Message) {
-    target = BaseMessage(message: message)
+  init(message: PubNubChat.Message, chat: ChatImpl) {
+    target = BaseMessage(message: message, chat: chat)
   }
 }
 
@@ -84,11 +85,14 @@ extension MessageImpl: Message {
     messages: [MessageImpl],
     callback: @escaping (([MessageImpl]) -> Void)
   ) -> AutoCloseable {
-    AutoCloseableImpl(
-      PubNubChat.MessageCompanion.shared.streamUpdatesOn(messages: messages.map(\.target.message)) {
+    guard let firstChat = messages.first?.chat, messages.allSatisfy({ $0.chat === firstChat }) else {
+      return AutoCloseableImpl.empty()
+    }
+    return AutoCloseableImpl(
+      PubNubChat.MessageCompanion.shared.streamUpdatesOn(messages: messages.map(\.target.message)) { [chat = firstChat] in
         if let messages = $0 as? [PubNubChat.Message] {
           callback(messages.map {
-            MessageImpl(message: $0)
+            MessageImpl(message: $0, chat: chat)
           })
         }
       }
@@ -197,7 +201,7 @@ extension MessageImpl: Message {
     target.toggleReaction(reaction: reaction) {
       switch $0 {
       case let .success(message):
-        completion?(.success(MessageImpl(message: message.message)))
+        completion?(.success(MessageImpl(message: message.message, chat: message.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -207,7 +211,7 @@ extension MessageImpl: Message {
   public func streamUpdates(completion: @escaping ((MessageImpl) -> Void)) -> AutoCloseable {
     target.streamUpdates { [weak self] in
       if self != nil {
-        completion(MessageImpl(message: $0.message))
+        completion(MessageImpl(message: $0.message, chat: $0.chat))
       }
     }
   }
@@ -216,7 +220,7 @@ extension MessageImpl: Message {
     target.restore {
       switch $0 {
       case let .success(message):
-        completion?(.success(MessageImpl(message: message.message)))
+        completion?(.success(MessageImpl(message: message.message, chat: message.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }

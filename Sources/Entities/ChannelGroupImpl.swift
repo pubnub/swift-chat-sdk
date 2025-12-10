@@ -14,13 +14,15 @@ import PubNubChat
 
 /// A concrete implementation of the ``ChannelGroup`` protocol.
 public class ChannelGroupImpl: ChannelGroup {
-  public var chat: ChatImpl { ChatAdapter.map(chat: channelGroup.chat).chat }
-  public var id: String { channelGroup.id }
+  public let chat: ChatImpl
+  public let id: String
 
   private let channelGroup: PubNubChat.ChannelGroup_
 
-  init(channelGroup: PubNubChat.ChannelGroup_) {
+  init(channelGroup: PubNubChat.ChannelGroup_, chat: ChatImpl) {
     self.channelGroup = channelGroup
+    self.id = channelGroup.id
+    self.chat = chat
   }
 
   public func listChannels(
@@ -41,7 +43,7 @@ public class ChannelGroupImpl: ChannelGroup {
         completion?(
           .success((
             channels: getChannelsResponse.channels.compactMap {
-              ChannelImpl(channel: $0)
+              ChannelImpl(channel: $0, chat: result.caller.chat)
             },
             page: PubNubHashedPageBase(
               start: getChannelsResponse.next?.pageHash,
@@ -133,8 +135,8 @@ public class ChannelGroupImpl: ChannelGroup {
   public func connect(callback: @escaping (MessageImpl) -> Void) -> AutoCloseable {
     AutoCloseableImpl(
       channelGroup.connect { [weak self] in
-        if self != nil {
-          callback(MessageImpl(message: $0))
+        if let self = self {
+          callback(MessageImpl(message: $0, chat: self.chat))
         }
       },
       owner: self

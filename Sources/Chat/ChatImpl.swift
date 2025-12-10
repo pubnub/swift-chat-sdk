@@ -45,13 +45,10 @@ public final class ChatImpl {
     mutedUsersManager = MutedUsersManagerImpl(underlying: chat.mutedUsersManager)
 
     pubNub.setConsumer(identifier: "chat-sdk", value: "CA-SWIFT/\(pubNubSwiftChatSDKVersion)")
-    // Creates an association between Kotlin Multiplatform chat and the current instance
-    ChatAdapter.associate(chat: self, with: chat)
   }
 
   deinit {
     destroy()
-    ChatAdapter.clean()
   }
 }
 
@@ -89,7 +86,7 @@ extension ChatImpl {
     ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.Channel_>) in
       switch result.result {
       case let .success(channel):
-        completion?(.success(ChannelImpl(channel: channel)))
+        completion?(.success(ChannelImpl(channel: channel, chat: result.caller)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -105,7 +102,7 @@ extension ChatImpl {
     ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.User>) in
       switch result.result {
       case let .success(createdUser):
-        completion?(.success(UserImpl(user: createdUser)))
+        completion?(.success(UserImpl(user: createdUser, chat: result.caller)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -121,7 +118,7 @@ extension ChatImpl: Chat {
   public typealias ChatChannelType = ChannelImpl
   public typealias ChatThreadChannelType = ThreadChannelImpl
 
-  public var currentUser: UserImpl { UserImpl(user: chat.currentUser) }
+  public var currentUser: UserImpl { UserImpl(user: chat.currentUser, chat: self) }
   public var editMessageActionName: String { chat.editMessageActionName }
   public var deleteMessageActionName: String { chat.deleteMessageActionName }
   public var reactionsActionName: String { chat.reactionsActionName }
@@ -164,7 +161,7 @@ extension ChatImpl: Chat {
     ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.User>) in
       switch result.result {
       case let .success(user):
-        completion?(.success(UserImpl(user: user)))
+        completion?(.success(UserImpl(user: user, chat: result.caller)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -180,7 +177,7 @@ extension ChatImpl: Chat {
     ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.User?>) in
       switch result.result {
       case let .success(user):
-        completion?(.success(UserImpl(user: user)))
+        completion?(.success(UserImpl(user: user, chat: result.caller)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -205,7 +202,7 @@ extension ChatImpl: Chat {
         completion?(
           .success((
             users: getUserResponse.users.compactMap {
-              UserImpl(user: $0)
+              UserImpl(user: $0, chat: result.caller)
             },
             page: PubNubHashedPageBase(
               start: getUserResponse.next?.pageHash,
@@ -243,7 +240,7 @@ extension ChatImpl: Chat {
     ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.User>) in
       switch result.result {
       case let .success(user):
-        completion?(.success(UserImpl(user: user)))
+        completion?(.success(UserImpl(user: user, chat: result.caller)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -261,7 +258,7 @@ extension ChatImpl: Chat {
     ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.User?>) in
       switch result.result {
       case let .success(user):
-        completion?(.success(UserImpl(user: user)))
+        completion?(.success(UserImpl(user: user, chat: result.caller)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -311,7 +308,7 @@ extension ChatImpl: Chat {
     ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.Channel_?>) in
       switch result.result {
       case let .success(channel):
-        completion?(.success(ChannelImpl(channel: channel)))
+        completion?(.success(ChannelImpl(channel: channel, chat: result.caller)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -336,7 +333,7 @@ extension ChatImpl: Chat {
         completion?(
           .success((
             channels: getChannelsResponse.channels.compactMap {
-              ChannelImpl(channel: $0)
+              ChannelImpl(channel: $0, chat: result.caller)
             },
             page: PubNubHashedPageBase(
               start: getChannelsResponse.next?.pageHash,
@@ -370,7 +367,7 @@ extension ChatImpl: Chat {
     ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.Channel_>) in
       switch result.result {
       case let .success(channel):
-        completion?(.success(ChannelImpl(channel: channel)))
+        completion?(.success(ChannelImpl(channel: channel, chat: result.caller)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -388,7 +385,7 @@ extension ChatImpl: Chat {
     ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.Channel_?>) in
       switch result.result {
       case let .success(channel):
-        completion?(.success(ChannelImpl(channel: channel)))
+        completion?(.success(ChannelImpl(channel: channel, chat: result.caller)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -448,7 +445,7 @@ extension ChatImpl: Chat {
     ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.Channel_>) in
       switch result.result {
       case let .success(channel):
-        completion?(.success(ChannelImpl(channel: channel)))
+        completion?(.success(ChannelImpl(channel: channel, chat: result.caller)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -477,9 +474,9 @@ extension ChatImpl: Chat {
       switch result.result {
       case let .success(response):
         completion?(.success(CreateDirectConversationResult(
-          channel: ChannelImpl(channel: response.channel),
-          hostMembership: MembershipImpl(membership: response.hostMembership),
-          inviteeMembership: MembershipImpl(membership: response.inviteeMembership)
+          channel: ChannelImpl(channel: response.channel, chat: result.caller),
+          hostMembership: MembershipImpl(membership: response.hostMembership, chat: result.caller),
+          inviteeMembership: MembershipImpl(membership: response.inviteeMembership, chat: result.caller)
         )))
       case let .failure(error):
         completion?(.failure(error))
@@ -509,9 +506,9 @@ extension ChatImpl: Chat {
       switch result.result {
       case let .success(response):
         completion?(.success(CreateGroupConversationResult(
-          channel: ChannelImpl(channel: response.channel),
-          hostMembership: MembershipImpl(membership: response.hostMembership),
-          inviteeMemberships: transformKotlinArray(response.inviteeMemberships) { MembershipImpl(membership: $0) }
+          channel: ChannelImpl(channel: response.channel, chat: result.caller),
+          hostMembership: MembershipImpl(membership: response.hostMembership, chat: result.caller),
+          inviteeMemberships: transformKotlinArray(response.inviteeMemberships) { MembershipImpl(membership: $0, chat: result.caller) }
         )))
       case let .failure(error):
         completion?(.failure(error))
@@ -610,8 +607,8 @@ extension ChatImpl: Chat {
       case let .success(response):
         completion?(.success(response.map {
           GetUnreadMessagesCount(
-            channel: ChannelImpl(channel: $0.channel),
-            membership: MembershipImpl(membership: $0.membership),
+            channel: ChannelImpl(channel: $0.channel, chat: result.caller),
+            membership: MembershipImpl(membership: $0.membership, chat: result.caller),
             count: UInt64($0.count)
           )
         }))
@@ -642,8 +639,8 @@ extension ChatImpl: Chat {
             (
               countsByChannel: response.countsByChannel.map {
                 GetUnreadMessagesCount(
-                  channel: ChannelImpl(channel: $0.channel),
-                  membership: MembershipImpl(membership: $0.membership),
+                  channel: ChannelImpl(channel: $0.channel, chat: result.caller),
+                  membership: MembershipImpl(membership: $0.membership, chat: result.caller),
                   count: UInt64($0.count)
                 )
               },
@@ -678,7 +675,7 @@ extension ChatImpl: Chat {
         completion?(.success(
           (
             memberships: response.memberships.compactMap {
-              MembershipImpl(membership: $0)
+              MembershipImpl(membership: $0, chat: result.caller)
             },
             page: PubNubHashedPageBase(
               start: response.next?.pageHash,
@@ -762,7 +759,7 @@ extension ChatImpl: Chat {
               return UserMentionDataWrapper(
                 userMentionData: ChannelMentionData(
                   event: mentionEvent,
-                  message: MessageImpl(message: mentionData.message),
+                  message: MessageImpl(message: mentionData.message, chat: result.caller),
                   userId: mentionData.userId,
                   channelId: mentionData.channelId
                 )
@@ -771,7 +768,7 @@ extension ChatImpl: Chat {
               return UserMentionDataWrapper(
                 userMentionData: ThreadMentionData(
                   event: mentionEvent,
-                  message: MessageImpl(message: mentionData.message),
+                  message: MessageImpl(message: mentionData.message, chat: result.caller),
                   userId: mentionData.userId,
                   parentChannelId: mentionData.parentChannelId,
                   threadChannelId: mentionData.threadChannelId
@@ -799,7 +796,7 @@ extension ChatImpl: Chat {
   }
 
   public func getChannelGroup(id: String) -> ChannelGroupImpl {
-    ChannelGroupImpl(channelGroup: chat.getChannelGroup(id: id))
+    ChannelGroupImpl(channelGroup: chat.getChannelGroup(id: id), chat: self)
   }
 
   public func removeChannelGroup(id: String, completion: ((Swift.Result<Void, Error>) -> Void)? = nil) {

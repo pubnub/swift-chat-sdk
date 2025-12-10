@@ -48,17 +48,18 @@ public final class ThreadChannelImpl {
       threadCreated: true
     )
     self.init(
-      channel: underlyingThreadChannel
+      channel: underlyingThreadChannel,
+      chat: chat
     )
   }
 
-  init(channel: PubNubChat.ThreadChannel) {
-    target = BaseChannel(channel: channel)
+  init(channel: PubNubChat.ThreadChannel, chat: ChatImpl) {
+    target = BaseChannel(channel: channel, chat: chat)
   }
 
-  convenience init?(channel: PubNubChat.ThreadChannel?) {
+  convenience init?(channel: PubNubChat.ThreadChannel?, chat: ChatImpl) {
     if let channel {
-      self.init(channel: channel)
+      self.init(channel: channel, chat: chat)
     } else {
       return nil
     }
@@ -74,17 +75,20 @@ extension ThreadChannelImpl: ThreadChannel {
   public var updated: String? { target.updated }
   public var status: String? { target.status }
   public var type: ChannelType? { target.type }
-  public var parentMessage: MessageImpl { MessageImpl(message: target.channel.parentMessage) }
+  public var parentMessage: MessageImpl { MessageImpl(message: target.channel.parentMessage, chat: chat) }
   public var parentChannelId: String { target.channel.parentChannelId }
 
   public static func streamUpdatesOn(
     channels: [ThreadChannelImpl],
     callback: @escaping (([ThreadChannelImpl]) -> Void)
   ) -> AutoCloseable {
-    AutoCloseableImpl(
-      PubNubChat.ThreadChannelCompanion.shared.streamUpdatesOn(channels: channels.map(\.target.channel)) {
+    guard let firstChat = channels.first?.chat, channels.allSatisfy({ $0.chat === firstChat }) else {
+      return AutoCloseableImpl.empty()
+    }
+    return AutoCloseableImpl(
+      PubNubChat.ThreadChannelCompanion.shared.streamUpdatesOn(channels: channels.map(\.target.channel)) { [chat = firstChat] in
         callback(($0 as? [PubNubChat.ThreadChannel] ?? []).map {
-          ThreadChannelImpl(channel: $0)
+          ThreadChannelImpl(channel: $0, chat: chat)
         })
       }
     )
@@ -99,7 +103,7 @@ extension ThreadChannelImpl: ThreadChannel {
     ).async(caller: self) { (result: FutureResult<ThreadChannelImpl, PubNubChat.Channel_>) in
       switch result.result {
       case let .success(channel):
-        completion?(.success(ChannelImpl(channel: channel)))
+        completion?(.success(ChannelImpl(channel: channel, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -112,7 +116,7 @@ extension ThreadChannelImpl: ThreadChannel {
     ) { (result: FutureResult<ThreadChannelImpl, PubNubChat.Channel_>) in
       switch result.result {
       case let .success(channel):
-        completion?(.success(ChannelImpl(channel: channel)))
+        completion?(.success(ChannelImpl(channel: channel, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -196,7 +200,7 @@ extension ThreadChannelImpl: ThreadChannel {
       switch $0 {
       case let .success(res):
         completion?(.success((
-          messages: res.messages.map { ThreadMessageImpl(message: $0.message) },
+          messages: res.messages.map { ThreadMessageImpl(message: $0.message, chat: $0.chat) },
           isMore: res.isMore
         )))
       case let .failure(error):
@@ -344,10 +348,10 @@ extension ThreadChannelImpl: ThreadChannel {
   }
 
   public func pinMessage(message: ThreadMessageImpl, completion: ((Swift.Result<ThreadChannelImpl, Error>) -> Void)? = nil) {
-    target.pinMessage(message: BaseMessage(message: message.target.message)) {
+    target.pinMessage(message: BaseMessage(message: message.target.message, chat: chat)) {
       switch $0 {
       case let .success(channel):
-        completion?(.success(ThreadChannelImpl(channel: channel.channel)))
+        completion?(.success(ThreadChannelImpl(channel: channel.channel, chat: channel.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -358,7 +362,7 @@ extension ThreadChannelImpl: ThreadChannel {
     target.unpinMessage {
       switch $0 {
       case let .success(channel):
-        completion?(.success(ThreadChannelImpl(channel: channel.channel)))
+        completion?(.success(ThreadChannelImpl(channel: channel.channel, chat: channel.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }

@@ -29,7 +29,7 @@ public protocol MessageDraftChangeListener: AnyObject {
 public final class ClosureMessageDraftChangeListener: MessageDraftChangeListener {
   let onChangeClosure: ([MessageElement], any FutureObject<[SuggestedMention]>) -> Void
 
-  init(onChange: @escaping ([MessageElement], any FutureObject<[SuggestedMention]>) -> Void) {
+  public init(onChange: @escaping ([MessageElement], any FutureObject<[SuggestedMention]>) -> Void) {
     onChangeClosure = onChange
   }
 

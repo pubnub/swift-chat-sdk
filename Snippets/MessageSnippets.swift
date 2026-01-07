@@ -170,6 +170,26 @@ func deleteMessageSoft() {
   // snippet.end
 }
 
+// MARK: - Restore Message
+
+func restoreMessage() {
+  // snippet.messages.restore
+  // Assumes a "ChatImpl" reference named "chat"
+  Task {
+    if let channel = try await chat.getChannel(channelId: "support") {
+      if let message = try await channel.getMessage(timetoken: 16200000000000001) {
+        let restoredMessage = try await message.restore()
+        debugPrint("Message restored successfully: \(restoredMessage.text)")
+      } else {
+        debugPrint("Message not found")
+      }
+    } else {
+      debugPrint("Channel not found")
+    }
+  }
+  // snippet.end
+}
+
 // MARK: - Edit Message
 
 func editMessage() {
@@ -931,21 +951,78 @@ func sendMessageDraft() {
 // MARK: - Add Link
 
 func addLink() {
-  // snippet.messages.addLink
+  // snippet.messages.links.add
+  // Assumes a "ChannelImpl" reference named "channel"
+  // Create a message draft.
+  let messageDraft = channel.createMessageDraft(isTypingIndicatorTriggered: channel.type != .public)
+  // Update the text of the message draft
+  messageDraft.update(text: "Hello Alex! I have sent you this link on the #offtopic channel.")
+  // Add a URL mention to the word "link"
+  messageDraft.addMention(offset: 33, length: 4, target: MentionTarget.url(url: "https://example.com"))
+
+  // Additional logic can be implemented as needed
+  // For example, sending the draft or adding listeners
+  // snippet.end
+}
+
+// MARK: - Remove Link
+
+func removeLink() {
+  // snippet.messages.links.remove
+  // Assumes a "MessageDraftImpl" reference named "messageDraft"
+
+  // Assume the message reads: "Hello Alex! I have sent you this link on the #offtopic channel."
+  // Remove the link mention
+  messageDraft.removeMention(offset: 33)
+  // snippet.end
+}
+
+// MARK: - Get Link Suggestions
+
+func getLinkSuggestions() {
+  // snippet.messages.links.suggestions
+  // Define the listener conforming to MessageDraftChangeListener protocol.
+  // You can also use our ClosureMessageDraftChangeListener class to reduce the need for your custom types to implement the MessageDraftChangeListener protocol
+  class LinkSuggestionListener: MessageDraftChangeListener {
+    func onChange(messageElements: [MessageElement], suggestedMentions: any FutureObject<[SuggestedMention]>) {
+      // Update UI with message elements
+      // This function is your own function for updating UI
+      updateUI(with: messageElements)
+      // Asynchronously process suggested URL mentions
+      suggestedMentions.async { result in
+        switch result {
+        case .success(let mentions):
+          // This is your own function for updating URL suggestions
+          updateLinkSuggestions(with: mentions)
+        case .failure(let error):
+          print("Error retrieving URL suggestions: \(error)")
+        }
+      }
+    }
+  }
+
+  // Create a message draft.
   // Assumes a "ChannelImpl" reference named "channel"
   let messageDraft = channel.createMessageDraft(isTypingIndicatorTriggered: channel.type != .public)
-  messageDraft.update(text: "Hello Alex! I have sent you this link on the #offtopic channel.")
-  messageDraft.addMention(offset: 33, length: 4, target: MentionTarget.url(url: "https://example.com"))
+  // Instantiate the listener
+  let listener = LinkSuggestionListener()
+  // Add the listener to the message draft
+  messageDraft.addChangeListener(listener)
+
+  func updateUI(with: [MessageElement]) {}
+  func updateLinkSuggestions(with: [SuggestedMention]) {}
   // snippet.end
 }
 
 // MARK: - Get Text Links
 
 func getTextLinks() {
-  // snippet.messages.getTextLinks
+  // snippet.messages.links.get
   // Assumes a "MessageImpl" reference named "message"
+  // Retrieve the message elements
   let messageElements = message.getMessageElements()
-  
+
+  // Filter the message elements to get only text links
   let textLinks = messageElements.compactMap {
     switch $0 {
     case let .link(text, target):
@@ -958,7 +1035,8 @@ func getTextLinks() {
       return nil
     }
   }
-  
+
+  // Print the text links found, if any
   if !textLinks.isEmpty {
     print("The message contains the following text links:")
     textLinks.forEach { link in
@@ -966,6 +1044,31 @@ func getTextLinks() {
     }
   } else {
     print("The message does not contain any text links.")
+  }
+  // snippet.end
+}
+
+// MARK: - Get Text Links (Deprecated)
+
+func getTextLinksDeprecated() {
+  // snippet.messages.links.getDeprecated
+  // Assumes a "ChatImpl" reference named "chat"
+  Task {
+    if let channel = try await chat.getChannel(channelId: "your-channel") {
+      if let message = try await channel.getMessage(timetoken: 16200000000000000) {
+        if let textLinks = message.textLinks, !textLinks.isEmpty {
+          for textLink in textLinks {
+            debugPrint("Link: \(textLink.link), Start Index: \(textLink.startIndex), End Index: \(textLink.endIndex)")
+          }
+        } else {
+          debugPrint("The message does not contain any text links.")
+        }
+      } else {
+        debugPrint("Message does not exist")
+      }
+    } else {
+      debugPrint("Channel not found")
+    }
   }
   // snippet.end
 }
@@ -1087,6 +1190,106 @@ func getUnreadMessagesCountDeprecated() {
     unreadMessagesResult.forEach { unreadCount in
       debugPrint("Channel: \(unreadCount.channel.id)")
       debugPrint("Unread messages count: \(unreadCount.count)")
+    }
+  }
+  // snippet.end
+}
+
+// MARK: - Report Message
+
+func reportMessage() {
+  // snippet.messages.report
+  // Assumes a "ChatImpl" reference named "chat"
+  Task {
+    if let channel = try await chat.getChannel(channelId: "support") {
+      if let message = try await channel.getHistory(count: 1).messages.first {
+        let timetoken = try await message.report(reason: "Offensive Content")
+        debugPrint("Reported message successfully: \(timetoken)")
+      } else {
+        debugPrint("No messages found in the \"support\" channel")
+      }
+    } else {
+      debugPrint("Channel not found")
+    }
+  }
+  // snippet.end
+}
+
+// MARK: - Get Message Reports History
+
+func getMessageReportsHistory() {
+  // snippet.messages.getReportsHistory
+  // Define timetokens for the message history period
+  let startTimetoken: Timetoken = 1725100800000 // July 1, 2024, 00:00:00 UTC
+  let endTimetoken: Timetoken = 1726780799000 // July 21, 2024, 23:59:59 UTC
+
+  // Assumes a "ChatImpl" reference named "chat"
+  Task {
+    if let channel = try await chat.getChannel(channelId: "support") {
+      let historyResponse = try await channel.getMessageReportsHistory(
+        startTimetoken: startTimetoken,
+        endTimetoken: endTimetoken,
+        count: 25
+      )
+      historyResponse.events.forEach { eventWrapper in
+        print("Payload: \(eventWrapper.event.payload)")
+      }
+    }
+  }
+  // snippet.end
+}
+
+// MARK: - Stream Message Reports
+
+func streamMessageReports() {
+  // snippet.messages.streamReports
+  // Assumes a "ChatImpl" reference named "chat"
+  Task {
+    if let channel = try await chat.getChannel(channelId: "support") {
+      for await event in channel.streamMessageReports() {
+        // Access the report details from the event's payload
+        let reportPayload = event.event.payload
+        let reportReason = reportPayload.reason
+        // Print the notification
+        if reportReason.lowercased() == "offensive" {
+          print("Notification: An offensive message was reported on the 'support' channel by user \(event.event.userId). Reason: \(reportReason)")
+        }
+      }
+    } else {
+      debugPrint("Channel not found")
+    }
+  }
+  // snippet.end
+}
+
+// MARK: - Stream Read Receipts (AsyncStream)
+
+func streamReadReceiptsAsyncStream() {
+  // snippet.messages.readReceipts.asyncStream
+  // Assumes a "ChatImpl" reference named "chat"
+  Task {
+    if let channel = try await chat.getChannel(channelId: "support") {
+      for await readReceipt in channel.streamReadReceipts() {
+        readReceipt.forEach { (messageTimetoken, users) in
+          debugPrint("Message timetoken: \(messageTimetoken) was read by users: \(users)")
+        }
+      }
+    } else {
+      debugPrint("Channel not found")
+    }
+  }
+  // snippet.end
+}
+
+// MARK: - Stream Read Receipts (Closure)
+
+func streamReadReceiptsClosure() {
+  // snippet.messages.readReceipts.closure
+  // Assumes a "ChannelImpl" reference named "channel"
+  autoCloseable = channel.streamReadReceipts { receipts in
+    print("Read Receipts Received:")
+    receipts.forEach { (messageTimetoken, users) in
+      print("Message Timetoken: \(messageTimetoken) was read by users: \(users)")
     }
   }
   // snippet.end

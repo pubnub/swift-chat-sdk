@@ -635,7 +635,7 @@ func getMessageElements() {
 func getReferencedChannels() {
   // snippet.channels.getReferencedChannels
   // Assumes a "ChannelImpl" reference named "channel"
-  
+
   // Get the specific message using its timetoken
   Task {
     if let message = try await channel.getMessage(timetoken: 16200000000000000) {
@@ -648,6 +648,26 @@ func getReferencedChannels() {
       }
     } else {
       debugPrint("Message not found")
+    }
+  }
+  // snippet.end
+}
+
+// MARK: - Pin Message to Channel
+
+func pinMessageToChannel() {
+  // snippet.channels.pinMessage
+  // Assumes a "ChatImpl" reference named "chat"
+  Task {
+    if let channel = try await chat.getChannel(channelId: "incident-management") {
+      if let message = try await channel.getHistory(count: 1).messages.first {
+        let pinnedChannel = try await channel.pinMessage(message: message)
+        debugPrint("A message was pinned to the channel: \(pinnedChannel)")
+      } else {
+        debugPrint("The channel history is empty. No message to pin.")
+      }
+    } else {
+      print("Channel not found")
     }
   }
   // snippet.end

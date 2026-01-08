@@ -10,6 +10,8 @@ disabled_rules:
 included:
   - Sources/
   - Tests/
+excluded:
+  - Snippets/
 opt_in_rules:
   - force_unwrapping
   - overridden_super_call

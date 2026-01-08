@@ -667,7 +667,7 @@ func pinMessageToChannel() {
         debugPrint("The channel history is empty. No message to pin.")
       }
     } else {
-      print("Channel not found")
+      debugPrint("Channel not found")
     }
   }
   // snippet.end

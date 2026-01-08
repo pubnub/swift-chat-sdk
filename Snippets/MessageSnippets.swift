@@ -849,7 +849,7 @@ func addMessageDraftChangeListener() {
   // snippet.messages.addDraftChangeListener
   // Assumes a "ChannelImpl" reference named "channel"
   let messageDraft = channel.createMessageDraft(isTypingIndicatorTriggered: channel.type != .public)
-  let listener = ClosureMessageDraftChangeListener() { elements, suggestedMentions in
+  let listener = ClosureMessageDraftChangeListener { elements, suggestedMentions in
     // updateUI(with:) is your own function for updating UI
     updateUI(with: elements)
     

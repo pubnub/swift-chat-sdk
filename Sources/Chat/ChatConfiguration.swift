@@ -129,7 +129,7 @@ public enum LogLevel {
   /// The most verbose logging - print all other types of logs and more
   case verbose
 
-  func transform() -> PubNubChat.LogLevel {
+  func transform() -> PubNubChat.LogLevel_ {
     switch self {
     case .off:
       .off

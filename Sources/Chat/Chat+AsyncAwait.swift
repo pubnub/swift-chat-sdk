@@ -336,11 +336,14 @@ public extension Chat {
 
   /// Returns a list of ``User`` identifiers present on the given ``Channel``.
   ///
-  /// - Parameter channelId: Unique identifier of the channel where you want to check all present users
+  /// - Parameters:
+  ///   - channelId: Unique identifier of the channel where you want to check all present users
+  ///   - limit: The number of occupants to fetch per channel. The maximum value is 1000
+  ///   - offset: The offset to return occupancy results from
   /// - Returns: A value containing collection of user identifiers
-  func whoIsPresent(channelId: String) async throws -> [String] {
+  func whoIsPresent(channelId: String, limit: Int = 1000, offset: Int? = 0) async throws -> [String] {
     try await withCheckedThrowingContinuation { continuation in
-      whoIsPresent(channelId: channelId) {
+      whoIsPresent(channelId: channelId, limit: limit, offset: offset) {
         switch $0 {
         case let .success(userIdentifiers):
           continuation.resume(returning: userIdentifiers)

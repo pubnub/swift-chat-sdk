@@ -87,10 +87,12 @@ public protocol ChannelGroup {
   /// Returns a collection of users currently present in any channel within the given ``ChannelGroup``.
   ///
   /// - Parameters:
+  ///   - limit: The number of occupants to fetch per channel. The maximum value is 1000
+  ///   - offset: The offset to return occupancy results from
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: A `Dictionary` where the key is a ``Channel`` identifier and the value is an array of present user identifiers
   ///     - **Failure**: An `Error` describing the failure
-  func whoIsPresent(completion: ((Swift.Result<[String: [String]], Error>) -> Void)?)
+  func whoIsPresent(limit: Int, offset: Int?, completion: ((Swift.Result<[String: [String]], Error>) -> Void)?)
 
   /// Enables real-time tracking of users connecting to or disconnecting from the given ``ChannelGroup``.
   ///

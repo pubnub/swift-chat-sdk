@@ -17,8 +17,6 @@ extension PubNubChat.PNPushType {
     switch self {
     case .apns:
       .apns
-    case .mpns:
-      .mpns
     case .gcm:
       .fcm
     case .apns2:

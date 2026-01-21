@@ -156,10 +156,13 @@ public extension Channel {
 
   /// Returns a list of users present on the ``Channel``.
   ///
+  /// - Parameters:
+  ///   - limit: The number of occupants to fetch per channel. The maximum value is 1000
+  ///   - offset: The offset to return occupancy results from
   /// - Returns: A collection of strings representing `userId`
-  func whoIsPresent() async throws -> [String] {
+  func whoIsPresent(limit: Int = 1000, offset: Int? = 0) async throws -> [String] {
     try await withCheckedThrowingContinuation { continuation in
-      whoIsPresent {
+      whoIsPresent(limit: limit, offset: offset) {
         switch $0 {
         case let .success(collection):
           continuation.resume(returning: collection)

@@ -256,11 +256,15 @@ public protocol Chat: AnyObject {
   ///
   /// - Parameters:
   ///   - channelId: Unique identifier of the channel where you want to check all present users
+  ///   - limit: The number of occupants to fetch per channel. The maximum value is 1000
+  ///   - offset: The offset to return occupancy results from
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: A value containing collection of user identifiers
   ///     - **Failure**: An `Error` describing the failure
   func whoIsPresent(
     channelId: String,
+    limit: Int,
+    offset: Int?,
     completion: ((Swift.Result<[String], Error>) -> Void)?
   )
 

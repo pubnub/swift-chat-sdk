@@ -145,8 +145,10 @@ extension ChannelImpl: Channel {
     )
   }
 
-  public func whoIsPresent(completion: ((Swift.Result<[String], Error>) -> Void)? = nil) {
+  public func whoIsPresent(limit: Int = 1000, offset: Int? = 0, completion: ((Swift.Result<[String], Error>) -> Void)? = nil) {
     target.whoIsPresent(
+      limit: limit,
+      offset: offset,
       completion: completion
     )
   }

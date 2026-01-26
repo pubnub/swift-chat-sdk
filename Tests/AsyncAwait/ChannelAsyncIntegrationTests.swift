@@ -127,6 +127,26 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     XCTAssertEqual(whoIsPresent.first, chat.currentUser.id)
   }
 
+  func testChannelAsync_WhoIsPresentWithLimitAndOffset() async throws {
+    // Keeps a strong reference to the returned AsyncStream to prevent it from being deallocated. If this object is not retained,
+    // the AsyncStream will be deallocated, which would cause the behavior being tested to fail.
+    let joinResult = try await channel.join()
+    debugPrint(joinResult)
+
+    try await Task.sleep(nanoseconds: 4_000_000_000)
+
+    let whoIsPresentWithLimit = try await channel.whoIsPresent(limit: 10)
+    XCTAssertEqual(whoIsPresentWithLimit.count, 1)
+    XCTAssertEqual(whoIsPresentWithLimit.first, chat.currentUser.id)
+
+    let whoIsPresentWithOffset = try await channel.whoIsPresent(limit: 10, offset: 1)
+    XCTAssertTrue(whoIsPresentWithOffset.isEmpty)
+
+    let whoIsPresentWithZeroOffset = try await channel.whoIsPresent(limit: 10, offset: 0)
+    XCTAssertEqual(whoIsPresentWithZeroOffset.count, 1)
+    XCTAssertEqual(whoIsPresentWithZeroOffset.first, chat.currentUser.id)
+  }
+
   func testChannelAsync_IsPresent() async throws {
     // Keeps a strong reference to the returned AsyncStream to prevent it from being deallocated. If this object is not retained,
     // the AsyncStream will be deallocated, which would cause the behavior being tested to fail.

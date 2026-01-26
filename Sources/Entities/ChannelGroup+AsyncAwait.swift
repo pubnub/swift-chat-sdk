@@ -123,8 +123,6 @@ public extension ChannelGroup {
   /// Returns a collection of users currently present in any channel within the given ``ChannelGroup``.
   ///
   /// - Parameters:
-  ///   - filter: Expression used to filter the results. Returns only the channels whose properties satisfy the given expression
-  ///   - sort: A collection to specify the sort order
   ///   - limit: The number of occupants to fetch per channel. The maximum value is 1000
   ///   - offset: The offset to return occupancy results from
   /// - Returns: A `Dictionary` where the key is a ``Channel`` identifier and the value is an array of present user identifiers

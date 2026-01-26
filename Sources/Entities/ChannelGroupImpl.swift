@@ -110,8 +110,15 @@ public class ChannelGroupImpl: ChannelGroup {
     }
   }
 
-  public func whoIsPresent(completion: ((Swift.Result<[String: [String]], Error>) -> Void)?) {
-    channelGroup.whoIsPresent().async(caller: self) { (result: FutureResult<ChannelGroupImpl, [String: [String]]>) in
+  public func whoIsPresent(
+    limit: Int = 1000,
+    offset: Int? = 0,
+    completion: ((Swift.Result<[String: [String]], Error>) -> Void)?
+  ) {
+    channelGroup.whoIsPresent(
+      limit: Int32(limit),
+      offset: offset?.asKotlinInt
+    ).async(caller: self) { (result: FutureResult<ChannelGroupImpl, [String: [String]]>) in
       switch result.result {
       case let .success(ids):
         completion?(.success(ids))

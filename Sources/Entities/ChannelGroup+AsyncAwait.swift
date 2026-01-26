@@ -122,10 +122,13 @@ public extension ChannelGroup {
 
   /// Returns a collection of users currently present in any channel within the given ``ChannelGroup``.
   ///
+  /// - Parameters:
+  ///   - limit: The number of occupants to fetch per channel. The maximum value is 1000
+  ///   - offset: The offset to return occupancy results from
   /// - Returns: A `Dictionary` where the key is a ``Channel`` identifier and the value is an array of present user identifiers
-  func whoIsPresent() async throws -> [String: [String]] {
+  func whoIsPresent(limit: Int = 1000, offset: Int? = 0) async throws -> [String: [String]] {
     try await withCheckedThrowingContinuation { continuation in
-      whoIsPresent {
+      whoIsPresent(limit: limit, offset: offset) {
         switch $0 {
         case let .success(result):
           continuation.resume(returning: result)

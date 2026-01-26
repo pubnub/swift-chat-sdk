@@ -132,10 +132,14 @@ public protocol Channel: CustomStringConvertible {
   /// Returns a list of users present on the ``Channel``.
   ///
   /// - Parameters:
+  ///   - limit: The number of occupants to fetch per channel. The maximum value is 1000
+  ///   - offset: The offset to return occupancy results from
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: A collection of strings representing `userId`
   ///     - **Failure**: An `Error` describing the failure
   func whoIsPresent(
+    limit: Int,
+    offset: Int?,
     completion: ((Swift.Result<[String], Error>) -> Void)?
   )
 

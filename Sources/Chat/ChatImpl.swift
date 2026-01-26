@@ -394,10 +394,14 @@ extension ChatImpl: Chat {
 
   public func whoIsPresent(
     channelId: String,
+    limit: Int = 1000,
+    offset: Int? = 0,
     completion: ((Swift.Result<[String], Error>) -> Void)? = nil
   ) {
     chat.whoIsPresent(
-      channelId: channelId
+      channelId: channelId,
+      limit: Int32(limit),
+      offset: offset?.asKotlinInt
     ).async(caller: self) { (result: FutureResult<ChatImpl, [String]>) in
       switch result.result {
       case let .success(ids):

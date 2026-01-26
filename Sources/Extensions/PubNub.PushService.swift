@@ -21,8 +21,6 @@ extension PubNub.PushService {
       .fcm
     case .apns:
       .apns
-    case .mpns:
-      .mpns
     }
   }
 }

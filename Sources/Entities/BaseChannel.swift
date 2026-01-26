@@ -131,8 +131,8 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     )
   }
 
-  func whoIsPresent(completion: ((Swift.Result<[String], Error>) -> Void)?) {
-    channel.whoIsPresent().async(caller: self) { (result: FutureResult<BaseChannel, [String]>) in
+  func whoIsPresent(limit: Int, offset: Int?, completion: ((Swift.Result<[String], Error>) -> Void)?) {
+    channel.whoIsPresent(limit: Int32(limit), offset: offset?.asKotlinInt).async(caller: self) { (result: FutureResult<BaseChannel, [String]>) in
       switch result.result {
       case let .success(userIdentifiers):
         completion?(.success(userIdentifiers))

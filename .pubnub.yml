@@ -1,8 +1,13 @@
 name: swift-chat-sdk
 scm: github.com/pubnub/swift-chat-sdk
-version: 0.33.0
+version: 0.34.0
 schema: 1
 changelog:
+  - date: 2026-01-26
+    version: 0.34.0
+    changes:
+      - type: feature
+        text: "Add limit and offset parameters to whoIsPresent methods."
   - date: 2025-12-10
     version: 0.33.0
     changes:
@@ -202,7 +207,7 @@ sdks:
           - distribution-type: source
             distribution-repository: GitHub release
             package-name: PubNubSwiftChatSDK
-            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.33.0.zip
+            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.34.0.zip
             supported-platforms:
               supported-operating-systems:
                 iOS:

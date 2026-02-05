@@ -479,19 +479,39 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     )
   }
 
-  func streamReadReceipts(callback: @escaping (([Timetoken: [String]]) -> Void)) -> AutoCloseable {
+  func streamReadReceipts(callback: @escaping (([String: Timetoken]) -> Void)) -> AutoCloseable {
     AutoCloseableImpl(
       channel.streamReadReceipts { [weak self] in
         if self != nil {
-          callback(
-            $0.reduce(into: [Timetoken: [String]]()) { res, currentItem in
-              res[Timetoken(currentItem.key.uint64Value)] = currentItem.value
-            }
-          )
+          callback($0.mapValues {
+            Timetoken($0.uint64Value)
+          })
         }
       },
       owner: self
     )
+  }
+
+  func fetchReadReceipts(
+    limit: Int?,
+    page: PubNubHashedPage?,
+    filter: String?,
+    sort: [PubNub.MembershipSortField],
+    completion: ((Swift.Result<(receipts: [String: Timetoken], page: PubNubHashedPage?), Error>) -> Void)?
+  ) {
+    getMembers(limit: limit, page: page, filter: filter, sort: sort) { result in
+      switch result {
+      case let .success((memberships, page)):
+        let receipts = memberships.reduce(into: [String: Timetoken]()) { result, membership in
+          if let timetoken = membership.lastReadMessageTimetoken {
+            result[membership.user.id] = timetoken
+          }
+        }
+        completion?(.success((receipts: receipts, page: page)))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
   }
 
   func getFiles(

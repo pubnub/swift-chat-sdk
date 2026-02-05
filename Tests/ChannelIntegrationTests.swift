@@ -768,10 +768,8 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
     let anotherUserId = anotherUser.id
 
     let closeable = channel.streamReadReceipts {
-      XCTAssertEqual($0[timetoken]?.count, 1)
-      XCTAssertEqual($0[timetoken]?.first, currentUserId)
-      XCTAssertEqual($0[secondTimetoken]?.count, 1)
-      XCTAssertEqual($0[secondTimetoken]?.first, anotherUserId)
+      XCTAssertEqual($0[currentUserId], timetoken)
+      XCTAssertEqual($0[anotherUserId], secondTimetoken)
       expectation.fulfill()
     }
 

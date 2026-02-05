@@ -10,6 +10,8 @@
 - ``streamUpdatesOn(channels:callback:)``
 - ``streamReadReceipts()``
 - ``streamReadReceipts(callback:)``
+- ``fetchReadReceipts(limit:page:filter:sort:)``
+- ``fetchReadReceipts(limit:page:filter:sort:completion:)``
 - ``streamMessageReports()``
 - ``streamMessageReports(callback:)``
 - ``streamPresence()``

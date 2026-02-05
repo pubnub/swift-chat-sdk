@@ -1270,8 +1270,8 @@ func streamReadReceiptsAsyncStream() {
   Task {
     if let channel = try await chat.getChannel(channelId: "support") {
       for await readReceipt in channel.streamReadReceipts() {
-        readReceipt.forEach { (messageTimetoken, users) in
-          debugPrint("Message timetoken: \(messageTimetoken) was read by users: \(users)")
+        readReceipt.forEach { (userId, timetoken) in
+          debugPrint("User \(userId) has read up to timetoken: \(timetoken)")
         }
       }
     } else {
@@ -1288,8 +1288,29 @@ func streamReadReceiptsClosure() {
   // Assumes a "ChannelImpl" reference named "channel"
   autoCloseable = channel.streamReadReceipts { receipts in
     print("Read Receipts Received:")
-    receipts.forEach { (messageTimetoken, users) in
-      print("Message Timetoken: \(messageTimetoken) was read by users: \(users)")
+    receipts.forEach { (userId, timetoken) in
+      print("User \(userId) has read up to timetoken: \(timetoken)")
+    }
+  }
+  // snippet.end
+}
+
+// MARK: - Fetch Read Receipts
+
+func fetchReadReceipts() {
+  // snippet.messages.readReceipts.fetch
+  // Assumes a "ChatImpl" reference named "chat"
+  Task {
+    if let channel = try await chat.getChannel(channelId: "support") {
+      let result = try await channel.fetchReadReceipts()
+      // Dictionary mapping user IDs to the timetoken they have read up to
+      let receipts = result.receipts
+      // Use for subsequent call: channel.fetchReadReceipts(page: nextPage)
+      let nextPage = result.page
+
+      receipts.forEach { (userId, timetoken) in
+        print("User \(userId) has read up to timetoken: \(timetoken)")
+      }
     }
   }
   // snippet.end

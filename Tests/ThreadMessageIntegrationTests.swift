@@ -228,13 +228,12 @@ class ThreadMessageIntegrationTests: BaseClosureIntegrationTestCase {
       )
     }
 
-    let reaction = try XCTUnwrap(result.reactions[":+1"]?.first)
-    let userId = reaction.uuid
+    let reaction = try XCTUnwrap(result.reactions.first)
 
-    XCTAssertEqual(
-      userId,
-      chat.currentUser.id
-    )
+    XCTAssertEqual(reaction.value, ":+1")
+    XCTAssertTrue(reaction.isMine)
+    XCTAssertEqual(reaction.count, 1)
+    XCTAssertTrue(reaction.userIds.contains(chat.currentUser.id))
   }
 
   func testThreadMessage_StreamUpdates() throws {

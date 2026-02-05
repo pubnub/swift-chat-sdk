@@ -27,6 +27,7 @@ public protocol Message: CustomStringConvertible {
   /// Unique ID of the user who sent the message
   var userId: String { get }
   /// Any actions associated with the message, such as reactions, replies, or other interactive elements
+  @available(*, deprecated, message: "Use `Message.reactions` instead for accessing message reactions")
   var actions: [String: [String: [Action]]]? { get }
   /// Extra information added to the message giving additional context
   var meta: [String: JSONCodable]? { get }
@@ -57,7 +58,7 @@ public protocol Message: CustomStringConvertible {
   /// List of attached files to the given ``Message`` with their names, types, and sources
   var files: [File] { get }
   /// List of reactions attached to the given ``Message``
-  var reactions: [String: [Action]] { get }
+  var reactions: [MessageReaction] { get }
   /// Error associated with the message, if any
   var error: Error? { get }
 

@@ -323,6 +323,40 @@ public extension Channel {
     }
   }
 
+  /// Checks if a specific user is a member of this channel.
+  ///
+  /// - Parameter userId: Unique identifier of the user to check
+  /// - Returns: A `Bool` value indicating whether the user is a member of this channel
+  func hasMember(userId: String) async throws -> Bool {
+    try await withCheckedThrowingContinuation { continuation in
+      hasMember(userId: userId) {
+        switch $0 {
+        case let .success(hasMember):
+          continuation.resume(returning: hasMember)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+
+  /// Retrieves the membership of a specific user in this channel.
+  ///
+  /// - Parameter userId: Unique identifier of the user whose membership to retrieve
+  /// - Returns: The user's ``Membership`` in this channel, or `nil` if not a member
+  func getMember(userId: String) async throws -> ChatType.ChatMembershipType? {
+    try await withCheckedThrowingContinuation { continuation in
+      getMember(userId: userId) {
+        switch $0 {
+        case let .success(membership):
+          continuation.resume(returning: membership)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+
   /// Watch the ``Channel`` content without a need to join the ``Channel``.
   ///
   /// - Returns: An asynchronous stream that produces a new value every time a new message is published on the current channel

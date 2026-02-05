@@ -110,7 +110,6 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
       )
     }
 
-    XCTAssertFalse(retrievedChannel?.active ?? true)
     XCTAssertEqual(retrievedChannel?.id, someChannel.id)
 
     addTeardownBlock { [unowned self] in

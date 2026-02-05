@@ -244,6 +244,42 @@ extension UserImpl: User {
     }
   }
 
+  public func isMemberOf(
+    channelId: String,
+    completion: ((Swift.Result<Bool, Error>) -> Void)? = nil
+  ) {
+    user.isMemberOf(
+      channelId: channelId
+    ).async(caller: self) { (result: FutureResult<UserImpl, Bool>) in
+      switch result.result {
+      case let .success(isMember):
+        completion?(.success(isMember))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
+
+  public func getMembership(
+    channelId: String,
+    completion: ((Swift.Result<MembershipImpl?, Error>) -> Void)? = nil
+  ) {
+    user.getMembership(
+      channelId: channelId
+    ).async(caller: self) { (result: FutureResult<UserImpl, PubNubChat.Membership?>) in
+      switch result.result {
+      case let .success(membership):
+        if let membership {
+          completion?(.success(MembershipImpl(membership: membership, chat: result.caller.chat)))
+        } else {
+          completion?(.success(nil))
+        }
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
+
   public func streamUpdates(callback: @escaping ((UserImpl?) -> Void)) -> AutoCloseable {
     AutoCloseableImpl(
       user.streamUpdates { [weak self] in

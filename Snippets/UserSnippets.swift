@@ -383,6 +383,44 @@ func streamPresence() {
   // snippet.end
 }
 
+// MARK: - Channel Membership
+
+func isMemberOf() {
+  // snippet.users.isMemberOf
+  // Assumes a "ChatImpl" reference named "chat"
+  Task {
+    if let user = try await chat.getUser(userId: "support_agent_15") {
+      let isMember = try await user.isMemberOf(channelId: "support")
+      if isMember {
+        debugPrint("User 'support_agent_15' is a member of the 'support' channel")
+      } else {
+        debugPrint("User 'support_agent_15' is not a member of the 'support' channel")
+      }
+    } else {
+      debugPrint("User not found")
+    }
+  }
+  // snippet.end
+}
+
+func getMembership() {
+  // snippet.users.getMembership
+  // Assumes a "ChatImpl" reference named "chat"
+  Task {
+    if let user = try await chat.getUser(userId: "support_agent_15") {
+      if let membership = try await user.getMembership(channelId: "support") {
+        debugPrint("Found membership in channel: \(membership.channel.id)")
+        debugPrint("Membership custom data: \(String(describing: membership.custom))")
+      } else {
+        debugPrint("User 'support_agent_15' is not a member of the 'support' channel")
+      }
+    } else {
+      debugPrint("User not found")
+    }
+  }
+  // snippet.end
+}
+
 // MARK: - Global Presence
 
 func checkUserActive() {

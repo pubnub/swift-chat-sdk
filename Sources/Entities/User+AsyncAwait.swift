@@ -179,6 +179,40 @@ public extension User {
     }
   }
 
+  /// Checks if the user is a member of a specific channel.
+  ///
+  /// - Parameter channelId: Unique identifier of the channel to check
+  /// - Returns: A `Bool` value indicating whether the user is a member of the specified channel
+  func isMemberOf(channelId: String) async throws -> Bool {
+    try await withCheckedThrowingContinuation { continuation in
+      isMemberOf(channelId: channelId) {
+        switch $0 {
+        case let .success(isMember):
+          continuation.resume(returning: isMember)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+
+  /// Retrieves the user's membership for a specific channel.
+  ///
+  /// - Parameter channelId: Unique identifier of the channel
+  /// - Returns: The user's ``Membership`` for the specified channel, or `nil` if not a member
+  func getMembership(channelId: String) async throws -> ChatType.ChatMembershipType? {
+    try await withCheckedThrowingContinuation { continuation in
+      getMembership(channelId: channelId) {
+        switch $0 {
+        case let .success(membership):
+          continuation.resume(returning: membership)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+
   /// Receives updates on a single User object.
   ///
   /// - Returns: An asynchronous stream that produces updates when the current ``User`` is edited or `nil` if the user was removed.

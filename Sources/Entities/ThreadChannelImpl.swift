@@ -297,6 +297,20 @@ extension ThreadChannelImpl: ThreadChannel {
     )
   }
 
+  public func hasMember(userId: String, completion: ((Swift.Result<Bool, Error>) -> Void)? = nil) {
+    target.hasMember(
+      userId: userId,
+      completion: completion
+    )
+  }
+
+  public func getMember(userId: String, completion: ((Swift.Result<MembershipImpl?, Error>) -> Void)? = nil) {
+    target.getMember(
+      userId: userId,
+      completion: completion
+    )
+  }
+
   public func connect(callback: @escaping (MessageImpl) -> Void) -> AutoCloseable {
     target.connect(
       callback: callback

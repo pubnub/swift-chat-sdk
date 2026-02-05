@@ -52,6 +52,10 @@
 - ``inviteMultiple(users:completion:)``
 - ``getMembers(limit:page:filter:sort:)``
 - ``getMembers(limit:page:filter:sort:completion:)``
+- ``hasMember(userId:)``
+- ``hasMember(userId:completion:)``
+- ``getMember(userId:)``
+- ``getMember(userId:completion:)``
 
 ### Sending a text
 

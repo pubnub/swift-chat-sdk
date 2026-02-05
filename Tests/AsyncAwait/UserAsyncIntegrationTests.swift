@@ -197,6 +197,57 @@ class UserAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     }
   }
 
+  func testUserAsync_IsMemberOf() async throws {
+    let channel = try await chat.createChannel(id: randomString())
+    let membership = try await channel.invite(user: chat.currentUser)
+    let isMember = try await chat.currentUser.isMemberOf(channelId: channel.id)
+    
+    XCTAssertTrue(isMember)
+
+    addTeardownBlock { [unowned self] in
+      _ = try? await chat.deleteChannel(id: channel.id)
+      _ = try? await membership.channel.leave()
+    }
+  }
+
+  func testUserAsync_IsMemberOf_NotMember() async throws {
+    let channel = try await chat.createChannel(id: randomString())
+    let isMember = try await chat.currentUser.isMemberOf(channelId: channel.id)
+    
+    XCTAssertFalse(isMember)
+
+    addTeardownBlock { [unowned self] in
+      _ = try? await chat.deleteChannel(id: channel.id)
+    }
+  }
+
+  func testUserAsync_GetMembership() async throws {
+    let channel = try await chat.createChannel(id: randomString())
+    let membership = try await channel.invite(user: chat.currentUser)
+    let retrievedMembership = try await chat.currentUser.getMembership(channelId: channel.id)
+
+    XCTAssertNotNil(retrievedMembership)
+    XCTAssertEqual(retrievedMembership?.user.id, chat.currentUser.id)
+    XCTAssertEqual(retrievedMembership?.channel.id, channel.id)
+
+    addTeardownBlock { [unowned self] in
+      _ = try? await chat.deleteChannel(id: channel.id)
+      _ = try? await membership.channel.leave()
+    }
+  }
+
+  func testUserAsync_GetMembership_NotMember() async throws {
+    let channel = try await chat.createChannel(id: randomString())
+    let membership = try await chat.currentUser.getMembership(channelId: channel.id)
+    
+    XCTAssertNil(membership)
+
+    addTeardownBlock { [unowned self] in
+      _ = try? await chat.deleteChannel(id: channel.id)
+      _ = try? await membership?.channel.leave()
+    }
+  }
+
   func testUserAsync_StreamUpdates() async throws {
     let expectation = expectation(description: "StreamUpdates")
     expectation.assertForOverFulfill = true

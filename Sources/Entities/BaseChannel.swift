@@ -305,6 +305,36 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     }
   }
 
+  func hasMember(userId: String, completion: ((Swift.Result<Bool, Error>) -> Void)?) {
+    channel.hasMember(
+      userId: userId
+    ).async(caller: self) { (result: FutureResult<BaseChannel, Bool>) in
+      switch result.result {
+      case let .success(hasMember):
+        completion?(.success(hasMember))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
+
+  func getMember(userId: String, completion: ((Swift.Result<ChatType.ChatMembershipType?, Error>) -> Void)?) {
+    channel.getMember(
+      userId: userId
+    ).async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.Membership?>) in
+      switch result.result {
+      case let .success(membership):
+        if let membership {
+          completion?(.success(MembershipImpl(membership: membership, chat: result.caller.chat)))
+        } else {
+          completion?(.success(nil))
+        }
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
+
   func connect(callback: @escaping (ChatType.ChatMessageType) -> Void) -> AutoCloseable {
     AutoCloseableImpl(
       channel.connect { [weak self] in

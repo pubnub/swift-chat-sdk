@@ -316,6 +316,56 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     }
   }
 
+  func testChannelAsync_HasMember() async throws {
+    let someUser = try await chat.createUser(id: randomString())
+    let membership = try await channel.invite(user: someUser)
+    let hasMember = try await channel.hasMember(userId: someUser.id)
+    
+    XCTAssertTrue(hasMember)
+
+    addTeardownBlock { [unowned self] in
+      _ = try? await chat.deleteUser(id: someUser.id)
+      _ = try? await membership.channel.leave()
+    }
+  }
+
+  func testChannelAsync_HasMember_NotMember() async throws {
+    let someUser = try await chat.createUser(id: randomString())
+    let hasMember = try await channel.hasMember(userId: someUser.id)
+    
+    XCTAssertFalse(hasMember)
+
+    addTeardownBlock { [unowned self] in
+      _ = try? await chat.deleteUser(id: someUser.id)
+    }
+  }
+
+  func testChannelAsync_GetMember() async throws {
+    let someUser = try await chat.createUser(id: randomString())
+    let membership = try await channel.invite(user: someUser)
+    let retrievedMembership = try await channel.getMember(userId: someUser.id)
+
+    XCTAssertNotNil(retrievedMembership)
+    XCTAssertEqual(retrievedMembership?.user.id, someUser.id)
+    XCTAssertEqual(retrievedMembership?.channel.id, channel.id)
+
+    addTeardownBlock { [unowned self] in
+      _ = try? await chat.deleteUser(id: someUser.id)
+      _ = try? await membership.channel.leave()
+    }
+  }
+
+  func testChannelAsync_GetMember_NotMember() async throws {
+    let someUser = try await chat.createUser(user: UserImpl(chat: chat, id: randomString()))
+    let membership = try await channel.getMember(userId: someUser.id)
+
+    XCTAssertNil(membership)
+
+    addTeardownBlock { [unowned self] in
+      _ = try? await chat.deleteUser(id: someUser.id)
+    }
+  }
+
   func testChannelAsync_Connect() async throws {
     let expectation = XCTestExpectation(description: "Connect")
     expectation.assertForOverFulfill = true

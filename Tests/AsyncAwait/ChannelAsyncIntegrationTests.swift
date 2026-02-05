@@ -320,7 +320,7 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     let someUser = try await chat.createUser(id: randomString())
     let membership = try await channel.invite(user: someUser)
     let hasMember = try await channel.hasMember(userId: someUser.id)
-    
+
     XCTAssertTrue(hasMember)
 
     addTeardownBlock { [unowned self] in
@@ -332,7 +332,7 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
   func testChannelAsync_HasMember_NotMember() async throws {
     let someUser = try await chat.createUser(id: randomString())
     let hasMember = try await channel.hasMember(userId: someUser.id)
-    
+
     XCTAssertFalse(hasMember)
 
     addTeardownBlock { [unowned self] in

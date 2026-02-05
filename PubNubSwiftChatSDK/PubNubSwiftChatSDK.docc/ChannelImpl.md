@@ -35,8 +35,8 @@
 
 ### Presence Management
 
-- ``whoIsPresent()``
-- ``whoIsPresent(completion:)``
+- ``whoIsPresent(limit:offset:)``
+- ``whoIsPresent(limit:offset:completion:)``
 - ``isPresent(userId:)``
 - ``isPresent(userId:completion:)``
 - ``join(custom:)``

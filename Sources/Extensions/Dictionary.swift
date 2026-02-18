@@ -109,3 +109,14 @@ extension [PubNubSwiftChatSDK.ChannelType: Int64] {
     )
   }
 }
+
+extension [PubNubSwiftChatSDK.ChannelType: Bool] {
+  func transform() -> [PubNubChat.ChannelType: KotlinBoolean] {
+    ChatConfigurationKt.EmitReadReceiptEvents(
+      direct: self[.direct] ?? false,
+      group: self[.group] ?? false,
+      public: self[.public] ?? false,
+      unknown: self[.unknown] ?? false
+    )
+  }
+}

@@ -525,7 +525,7 @@ public extension Channel {
   }
 
   /// Lets you get a read confirmation status for messages you published on a channel.
-  func streamReadReceipts() -> AsyncStream<[String: Timetoken]> {
+  func streamReadReceipts() -> AsyncStream<[ReadReceipt]> {
     AsyncStream { continuation in
       let autoCloseable = streamReadReceipts {
         continuation.yield($0)
@@ -543,13 +543,13 @@ public extension Channel {
   ///   - page: Object used for pagination to define which previous or next result page you want to fetch
   ///   - filter: Expression used to filter the results. Returns only these members whose properties satisfy the given expression
   ///   - sort: A collection to specify the sort order
-  /// - Returns: A `Tuple` containing a dictionary mapping user IDs to the timetoken they have read up to, and the next pagination `PubNubHashedPage` (if one exists)
+  /// - Returns: A `Tuple` containing an array of ``ReadReceipt``, and the next pagination `PubNubHashedPage` (if one exists)
   func fetchReadReceipts(
     limit: Int? = nil,
     page: PubNubHashedPage? = nil,
     filter: String? = nil,
     sort: [PubNub.MembershipSortField] = []
-  ) async throws -> (receipts: [String: Timetoken], page: PubNubHashedPage?) {
+  ) async throws -> (receipts: [ReadReceipt], page: PubNubHashedPage?) {
     try await withCheckedThrowingContinuation { continuation in
       fetchReadReceipts(limit: limit, page: page, filter: filter, sort: sort) {
         switch $0 {

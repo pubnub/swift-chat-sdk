@@ -79,3 +79,18 @@ extension [PubNubChat.MessageReaction] {
     map { $0.transform() }
   }
 }
+
+extension PubNubChat.ReadReceipt {
+  func transform() -> ReadReceipt {
+    ReadReceipt(
+      userId: userId,
+      lastReadTimetoken: Timetoken(lastReadTimetoken)
+    )
+  }
+}
+
+extension [PubNubChat.ReadReceipt] {
+  func transform() -> [ReadReceipt] {
+    map { $0.transform() }
+  }
+}

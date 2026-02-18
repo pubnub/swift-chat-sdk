@@ -522,11 +522,11 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
   }
 
   func testChannelAsync_FetchReadReceipts() async throws {
-    let anotherUser = try await chat.createUser(
-      user: UserImpl(chat: chat, id: randomString())
-    )
+    let anotherUser = try await chat.createUser(user: UserImpl(chat: chat, id: randomString()))
     let membership = try await channel.invite(user: chat.currentUser)
+
     try await Task.sleep(nanoseconds: 1_000_000_000)
+
     let anotherMembership = try await channel.invite(user: anotherUser)
 
     let timetoken = try XCTUnwrap(membership.lastReadMessageTimetoken)
@@ -534,10 +534,14 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     let currentUserId = chat.currentUser.id
     let anotherUserId = anotherUser.id
 
-    let (receipts, _) = try await channel.fetchReadReceipts()
+    let response = try await channel.fetchReadReceipts()
+    let readReceipt = response.receipts.first { $0.userId == chat.currentUser.id }
+    let secondReadReceipt = response.receipts.first { $0.userId == anotherUserId }
 
-    XCTAssertEqual(receipts[currentUserId], timetoken)
-    XCTAssertEqual(receipts[anotherUserId], secondTimetoken)
+    XCTAssertEqual(readReceipt?.userId, currentUserId)
+    XCTAssertEqual(readReceipt?.lastReadTimetoken, timetoken)
+    XCTAssertEqual(secondReadReceipt?.userId, anotherUserId)
+    XCTAssertEqual(readReceipt?.lastReadTimetoken, secondTimetoken)
 
     addTeardownBlock { [unowned self] in
       _ = try? await chat.deleteUser(id: anotherUserId)

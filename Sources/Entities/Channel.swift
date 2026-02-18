@@ -428,10 +428,10 @@ public protocol Channel: CustomStringConvertible {
   /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
   /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
   ///
-  /// - Parameter callback: Defines the custom behavior to be executed when receiving a read confirmation status on the joined channel. The callback receives a dictionary mapping user IDs to the timetoken they have read up to.
+  /// - Parameter callback: Defines the custom behavior to be executed when receiving read receipts on the joined channel
   /// - Returns: AutoCloseable Interface you can call to stop listening for message read receipts and clean up resources by invoking the close() method
   func streamReadReceipts(
-    callback: @escaping (([String: Timetoken]) -> Void)
+    callback: @escaping (([ReadReceipt]) -> Void)
   ) -> AutoCloseable
 
   /// Fetches the read receipts for members of this channel.
@@ -442,14 +442,14 @@ public protocol Channel: CustomStringConvertible {
   ///   - filter: Expression used to filter the results. Returns only these members whose properties satisfy the given expression
   ///   - sort: A collection to specify the sort order
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: A `Tuple` containing a dictionary mapping user IDs to the timetoken they have read up to, and the next pagination `PubNubHashedPage` (if one exists)
+  ///     - **Success**: A `Tuple` containing an array of ``ReadReceipt``, and the next pagination `PubNubHashedPage` (if one exists)
   ///     - **Failure**: An `Error` describing the failure
   func fetchReadReceipts(
     limit: Int?,
     page: PubNubHashedPage?,
     filter: String?,
     sort: [PubNub.MembershipSortField],
-    completion: ((Swift.Result<(receipts: [String: Timetoken], page: PubNubHashedPage?), Error>) -> Void)?
+    completion: ((Swift.Result<(receipts: [ReadReceipt], page: PubNubHashedPage?), Error>) -> Void)?
   )
 
   /// Returns all files attached to messages on a given channel.

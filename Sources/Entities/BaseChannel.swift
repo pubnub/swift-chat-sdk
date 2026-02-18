@@ -479,13 +479,11 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     )
   }
 
-  func streamReadReceipts(callback: @escaping (([String: Timetoken]) -> Void)) -> AutoCloseable {
+  func streamReadReceipts(callback: @escaping (([ReadReceipt]) -> Void)) -> AutoCloseable {
     AutoCloseableImpl(
       channel.streamReadReceipts { [weak self] in
         if self != nil {
-          callback($0.mapValues {
-            Timetoken($0.uint64Value)
-          })
+          callback([$0.transform()])
         }
       },
       owner: self
@@ -497,17 +495,24 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     page: PubNubHashedPage?,
     filter: String?,
     sort: [PubNub.MembershipSortField],
-    completion: ((Swift.Result<(receipts: [String: Timetoken], page: PubNubHashedPage?), Error>) -> Void)?
+    completion: ((Swift.Result<(receipts: [ReadReceipt], page: PubNubHashedPage?), Error>) -> Void)?
   ) {
-    getMembers(limit: limit, page: page, filter: filter, sort: sort) { result in
-      switch result {
-      case let .success((memberships, page)):
-        let receipts = memberships.reduce(into: [String: Timetoken]()) { result, membership in
-          if let timetoken = membership.lastReadMessageTimetoken {
-            result[membership.user.id] = timetoken
-          }
-        }
-        completion?(.success((receipts: receipts, page: page)))
+    channel.fetchReadReceipts(
+      limit: limit?.asKotlinInt,
+      page: page?.transform(),
+      filter: filter,
+      sort: sort.compactMap { $0.transform() }
+    ).async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.ReadReceiptsResponse>) in
+      switch result.result {
+      case let .success(response):
+        completion?(.success((
+          receipts: response.receipts.transform(),
+          page: PubNubHashedPageBase(
+            start: response.next?.pageHash,
+            end: response.prev?.pageHash,
+            totalCount: Int(response.total)
+          ))
+        ))
       case let .failure(error):
         completion?(.failure(error))
       }

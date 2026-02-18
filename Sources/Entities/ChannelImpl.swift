@@ -354,7 +354,7 @@ extension ChannelImpl: Channel {
     )
   }
 
-  public func streamReadReceipts(callback: @escaping (([String: Timetoken]) -> Void)) -> AutoCloseable {
+  public func streamReadReceipts(callback: @escaping (([ReadReceipt]) -> Void)) -> AutoCloseable {
     target.streamReadReceipts(
       callback: callback
     )
@@ -365,7 +365,7 @@ extension ChannelImpl: Channel {
     page: PubNubHashedPage? = nil,
     filter: String? = nil,
     sort: [PubNub.MembershipSortField] = [],
-    completion: ((Swift.Result<(receipts: [String: Timetoken], page: PubNubHashedPage?), Error>) -> Void)? = nil
+    completion: ((Swift.Result<(receipts: [ReadReceipt], page: PubNubHashedPage?), Error>) -> Void)? = nil
   ) {
     target.fetchReadReceipts(
       limit: limit,

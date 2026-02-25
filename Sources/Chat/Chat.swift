@@ -448,6 +448,8 @@ public protocol Chat: AnyObject {
 
   /// Allows you to mark as read all messages you didn't read on all joined channels.
   ///
+  /// This method emits a read receipt event on each affected channel, unless ``ChatConfiguration/emitReadReceiptEvents`` is set to `false` for the channel's type.
+  ///
   /// - Parameters:
   ///   - limit: Number of objects to return in response. The maximum value is 100
   ///   - page: Object used for pagination to define which previous or next result page you want to fetch

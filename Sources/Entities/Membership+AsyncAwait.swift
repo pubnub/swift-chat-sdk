@@ -34,6 +34,8 @@ public extension Membership {
 
   /// Setting the last read message for users lets you implement the Read Receipts feature and monitor which channel member read which message.
   ///
+  /// This method emits a read receipt event on the channel, unless ``ChatConfiguration/emitReadReceiptEvents`` is set to `false` for the channel's type.
+  ///
   /// - Parameter message: Last read message on a given channel with the timestamp that gets added to the user-channel membership as the `lastReadMessageTimetoken` property
   /// - Returns: An updated ``Membership`` object
   func setLastReadMessage(message: ChatType.ChatMessageType) async throws -> ChatType.ChatMembershipType {
@@ -67,6 +69,8 @@ public extension Membership {
   }
 
   /// Setting the last read message timetoken for users lets you implement the Read Receipts feature and monitor which channel member read which message.
+  ///
+  /// This method emits a read receipt event on the channel, unless ``ChatConfiguration/emitReadReceiptEvents`` is set to `false` for the channel's type.
   ///
   /// - Parameter timetoken: Timetoken of the last read message on a given channel that gets added to the user-channel membership as the `lastReadMessageTimetoken` property
   /// - Returns: An updated ``Membership`` object

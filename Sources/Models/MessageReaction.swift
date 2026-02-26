@@ -21,10 +21,4 @@ public struct MessageReaction {
 
   /// The number of users who added this reaction
   public var count: Int { userIds.count }
-
-  init(value: String, isMine: Bool, userIds: [String]) {
-    self.value = value
-    self.isMine = isMine
-    self.userIds = userIds
-  }
 }

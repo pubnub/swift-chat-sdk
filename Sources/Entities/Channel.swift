@@ -431,7 +431,7 @@ public protocol Channel: CustomStringConvertible {
   /// - Parameter callback: Defines the custom behavior to be executed when receiving read receipts on the joined channel
   /// - Returns: AutoCloseable Interface you can call to stop listening for message read receipts and clean up resources by invoking the close() method
   func streamReadReceipts(
-    callback: @escaping (([ReadReceipt]) -> Void)
+    callback: @escaping ((ReadReceipt) -> Void)
   ) -> AutoCloseable
 
   /// Fetches the read receipts for members of this channel.

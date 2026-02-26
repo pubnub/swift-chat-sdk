@@ -490,34 +490,28 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
   func testChannelAsync_StreamReadReceipts() async throws {
     let expectation = expectation(description: "StreamReadReceipts")
-    expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
+    expectation.assertForOverFulfill = true
 
-    let anotherUser = try await chat.createUser(user: UserImpl(chat: chat, id: randomString()))
-    try await Task.sleep(nanoseconds: 3_000_000_000)
-
-    let membership = try await channel.invite(user: chat.currentUser)
-    try await Task.sleep(nanoseconds: 1_000_000_000)
-    let anotherMembership = try await channel.invite(user: anotherUser)
-
-    let timetoken = try XCTUnwrap(membership.lastReadMessageTimetoken)
-    let secondTimetoken = try XCTUnwrap(anotherMembership.lastReadMessageTimetoken)
+    let joinResult = try await channel.join()
+    let membership = joinResult.membership
     let currentUserId = chat.currentUser.id
-    let anotherUserId = anotherUser.id
+    let messageTimetoken = try await channel.sendText(text: "Read receipt test")
 
     let task = Task {
       for await readReceipt in channel.streamReadReceipts() {
-        XCTAssertEqual(readReceipt[currentUserId], timetoken)
-        XCTAssertEqual(readReceipt[anotherUserId], secondTimetoken)
+        XCTAssertEqual(readReceipt.userId, currentUserId)
+        XCTAssertEqual(readReceipt.lastReadTimetoken, messageTimetoken)
         expectation.fulfill()
       }
     }
 
+    _ = try await membership.setLastReadMessageTimetoken(messageTimetoken)
+
     await fulfillment(of: [expectation], timeout: 6)
 
-    addTeardownBlock { [unowned self] in
+    addTeardownBlock {
       task.cancel()
-      _ = try? await chat.deleteUser(id: anotherUserId)
     }
   }
 

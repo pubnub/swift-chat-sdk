@@ -354,7 +354,7 @@ extension ChannelImpl: Channel {
     )
   }
 
-  public func streamReadReceipts(callback: @escaping (([ReadReceipt]) -> Void)) -> AutoCloseable {
+  public func streamReadReceipts(callback: @escaping ((ReadReceipt) -> Void)) -> AutoCloseable {
     target.streamReadReceipts(
       callback: callback
     )

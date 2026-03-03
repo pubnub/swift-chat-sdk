@@ -176,10 +176,12 @@ class MessageAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     try await Task.sleep(nanoseconds: 3_000_000_000)
 
     let updatedMessage = try await testMessage.toggleReaction(reaction: ":+1")
-    let reaction = try XCTUnwrap(updatedMessage.reactions[":+1"]?.first)
-    let userId = reaction.uuid
+    let reaction = try XCTUnwrap(updatedMessage.reactions.first)
 
-    XCTAssertEqual(userId, chat.currentUser.id)
+    XCTAssertEqual(reaction.value, ":+1")
+    XCTAssertTrue(reaction.isMine)
+    XCTAssertEqual(reaction.count, 1)
+    XCTAssertTrue(reaction.userIds.contains(chat.currentUser.id))
   }
 
   func testAsyncMessage_Restore() async throws {

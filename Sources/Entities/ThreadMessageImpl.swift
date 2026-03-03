@@ -85,7 +85,7 @@ extension ThreadMessageImpl: ThreadMessage {
   public var hasThread: Bool { target.hasThread }
   public var type: String { target.type }
   public var files: [File] { target.files }
-  public var reactions: [String: [Action]] { target.reactions }
+  public var reactions: [MessageReaction] { target.reactions }
   public var textLinks: [TextLink]? { target.textLinks }
   public var parentChannelId: String { target.message.parentChannelId }
   public var error: Error? { target.message.error }

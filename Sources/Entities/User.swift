@@ -152,6 +152,30 @@ public protocol User: CustomStringConvertible {
     completion: ((Swift.Result<(memberships: [ChatType.ChatMembershipType], page: PubNubHashedPage?), Error>) -> Void)?
   )
 
+  /// Checks if the user is a member of a specific channel.
+  ///
+  /// - Parameters:
+  ///   - channelId: Unique identifier of the channel to check
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: A `Bool` value indicating whether the user is a member of the specified channel
+  ///     - **Failure**: An `Error` describing the failure
+  func isMemberOf(
+    channelId: String,
+    completion: ((Swift.Result<Bool, Error>) -> Void)?
+  )
+
+  /// Retrieves the user's membership for a specific channel.
+  ///
+  /// - Parameters:
+  ///   - channelId: Unique identifier of the channel
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: The user's ``Membership`` for the specified channel, or `nil` if not a member
+  ///     - **Failure**: An `Error` describing the failure
+  func getMembership(
+    channelId: String,
+    completion: ((Swift.Result<ChatType.ChatMembershipType?, Error>) -> Void)?
+  )
+
   /// Receives updates on a single User object.
   ///
   /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,

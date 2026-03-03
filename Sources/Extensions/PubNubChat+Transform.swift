@@ -63,3 +63,34 @@ extension PubNubChat.EventContent.TextMessageContent {
     )
   }
 }
+
+extension PubNubChat.MessageReaction {
+  func transform() -> MessageReaction {
+    MessageReaction(
+      value: value,
+      isMine: isMine,
+      userIds: userIds
+    )
+  }
+}
+
+extension [PubNubChat.MessageReaction] {
+  func transform() -> [MessageReaction] {
+    map { $0.transform() }
+  }
+}
+
+extension PubNubChat.ReadReceipt {
+  func transform() -> ReadReceipt {
+    ReadReceipt(
+      userId: userId,
+      lastReadTimetoken: Timetoken(lastReadTimetoken)
+    )
+  }
+}
+
+extension [PubNubChat.ReadReceipt] {
+  func transform() -> [ReadReceipt] {
+    map { $0.transform() }
+  }
+}

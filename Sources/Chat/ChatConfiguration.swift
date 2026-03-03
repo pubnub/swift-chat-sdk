@@ -190,6 +190,9 @@ public struct ChatConfiguration {
   ///
   public var syncMutedUsers: Bool
 
+  /// Specifies whether read receipt events should be emitted, per channel type. Defaults to `true` for all channel types except `.public`, which defaults to `false`
+  public var emitReadReceiptEvents: [ChannelType: Bool]
+
   /// Creates a new ``ChatConfiguration`` object
   ///
   /// - Parameters:
@@ -202,6 +205,7 @@ public struct ChatConfiguration {
   ///   - rateLimitPerChannel: Client-side limit that states the rate at which messages can be published on a given channel type
   ///   - customPayloads: Custom message payload to be sent and/or received by Chat SDK
   ///   - syncMutedUsers: A boolean value that controls syncing of muted users
+  ///   - emitReadReceiptEvents: Per-channel-type dictionary for emitting read receipt events. Defaults to `true` for all channel types except `.public`
   public init(
     logLevel: LogLevel = .off,
     typingTimeout: Int = 5,
@@ -211,7 +215,8 @@ public struct ChatConfiguration {
     rateLimitFactor: Int = 2,
     rateLimitPerChannel: [ChannelType: Int64] = ChannelType.allCases.reduce(into: [ChannelType: Int64]()) { res, type in res[type] = 0 },
     customPayloads: CustomPayloads? = nil,
-    syncMutedUsers: Bool = false
+    syncMutedUsers: Bool = false,
+    emitReadReceiptEvents: [ChannelType: Bool] = [.direct: true, .group: true, .public: false, .unknown: true]
   ) {
     self.logLevel = logLevel
     self.typingTimeout = typingTimeout
@@ -222,6 +227,7 @@ public struct ChatConfiguration {
     self.rateLimitPerChannel = rateLimitPerChannel
     self.customPayloads = customPayloads
     self.syncMutedUsers = syncMutedUsers
+    self.emitReadReceiptEvents = emitReadReceiptEvents
   }
 
   func transform() -> any PubNubChat.ChatConfiguration {
@@ -240,6 +246,7 @@ public struct ChatConfiguration {
       rateLimitFactor: Int32(rateLimitFactor),
       rateLimitPerChannel: rateLimitPerChannel.transform(),
       customPayloads: customPayloads?.transform(),
+      emitReadReceiptEvents: emitReadReceiptEvents.transform(),
       syncMutedUsers: syncMutedUsers
     )
   }

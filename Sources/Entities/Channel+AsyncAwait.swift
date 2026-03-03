@@ -303,7 +303,7 @@ public extension Channel {
   ///   - limit: Number of objects to return in response
   ///   - page: Object used for pagination to define which previous or next result page you want to fetch
   ///   - filter: Expression used to filter the results. Returns only these members whose properties satisfy the given expression
-  ///   - sort: A collection to specify the sort order. Available options are id, name, and updated
+  ///   - sort: A collection to specify the sort order
   /// - Returns: A `Tuple` containing an array of the members of the channel, and the next pagination `PubNubHashedPage` (if one exists)
   func getMembers(
     limit: Int? = nil,
@@ -316,6 +316,40 @@ public extension Channel {
         switch $0 {
         case let .success(getMembersResult):
           continuation.resume(returning: getMembersResult)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+
+  /// Checks if a specific user is a member of this channel.
+  ///
+  /// - Parameter userId: Unique identifier of the user to check
+  /// - Returns: A `Bool` value indicating whether the user is a member of this channel
+  func hasMember(userId: String) async throws -> Bool {
+    try await withCheckedThrowingContinuation { continuation in
+      hasMember(userId: userId) {
+        switch $0 {
+        case let .success(hasMember):
+          continuation.resume(returning: hasMember)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+
+  /// Retrieves the membership of a specific user in this channel.
+  ///
+  /// - Parameter userId: Unique identifier of the user whose membership to retrieve
+  /// - Returns: The user's ``Membership`` in this channel, or `nil` if not a member
+  func getMember(userId: String) async throws -> ChatType.ChatMembershipType? {
+    try await withCheckedThrowingContinuation { continuation in
+      getMember(userId: userId) {
+        switch $0 {
+        case let .success(membership):
+          continuation.resume(returning: membership)
         case let .failure(error):
           continuation.resume(throwing: error)
         }
@@ -491,13 +525,39 @@ public extension Channel {
   }
 
   /// Lets you get a read confirmation status for messages you published on a channel.
-  func streamReadReceipts() -> AsyncStream<[Timetoken: [String]]> {
+  func streamReadReceipts() -> AsyncStream<ReadReceipt> {
     AsyncStream { continuation in
       let autoCloseable = streamReadReceipts {
         continuation.yield($0)
       }
       continuation.onTermination = { _ in
         autoCloseable.close()
+      }
+    }
+  }
+
+  /// Fetches the read receipts for members of this channel.
+  ///
+  /// - Parameters:
+  ///   - limit: Number of objects to return in response
+  ///   - page: Object used for pagination to define which previous or next result page you want to fetch
+  ///   - filter: Expression used to filter the results. Returns only these members whose properties satisfy the given expression
+  ///   - sort: A collection to specify the sort order
+  /// - Returns: A `Tuple` containing an array of ``ReadReceipt``, and the next pagination `PubNubHashedPage` (if one exists)
+  func fetchReadReceipts(
+    limit: Int? = nil,
+    page: PubNubHashedPage? = nil,
+    filter: String? = nil,
+    sort: [PubNub.MembershipSortField] = []
+  ) async throws -> (receipts: [ReadReceipt], page: PubNubHashedPage?) {
+    try await withCheckedThrowingContinuation { continuation in
+      fetchReadReceipts(limit: limit, page: page, filter: filter, sort: sort) {
+        switch $0 {
+        case let .success(result):
+          continuation.resume(returning: result)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
       }
     }
   }

@@ -144,13 +144,12 @@ class ThreadMessageaAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
   func testThreadMessageAsync_ToggleReaction() async throws {
     let updateMessage = try await threadMessage.toggleReaction(reaction: ":+1")
-    let reaction = try XCTUnwrap(updateMessage.reactions[":+1"]?.first)
-    let userId = reaction.uuid
+    let reaction = try XCTUnwrap(updateMessage.reactions.first)
 
-    XCTAssertEqual(
-      userId,
-      chat.currentUser.id
-    )
+    XCTAssertEqual(reaction.value, ":+1")
+    XCTAssertTrue(reaction.isMine)
+    XCTAssertEqual(reaction.count, 1)
+    XCTAssertTrue(reaction.userIds.contains(chat.currentUser.id))
   }
 
   func testThreadMessageAsync_StreamUpdates() async throws {

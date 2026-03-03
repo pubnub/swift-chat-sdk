@@ -45,7 +45,7 @@ extension BaseMessage: Message {
   public var hasThread: Bool { message.hasThread }
   public var type: String { message.type }
   public var files: [File] { message.files.transform() }
-  public var reactions: [String: [Action]] { message.reactions.transform() }
+  public var reactions: [MessageReaction] { message.reactions.transform() }
   public var textLinks: [TextLink]? { message.textLinks?.transform() }
   public var error: Error? { message.error }
 

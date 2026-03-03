@@ -273,7 +273,7 @@ public protocol Channel: CustomStringConvertible {
   ///   - limit: Number of objects to return in response
   ///   - page: Object used for pagination to define which previous or next result page you want to fetch
   ///   - filter: Expression used to filter the results. Returns only these members whose properties satisfy the given expression
-  ///   - sort: A collection to specify the sort order. Available options are id, name, and updated
+  ///   - sort: A collection to specify the sort order
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: A `Tuple` containing an array of the members of the channel, and the next pagination `PubNubHashedPage` (if one exists)
   ///     - **Failure**: An `Error` describing the failure
@@ -283,6 +283,30 @@ public protocol Channel: CustomStringConvertible {
     filter: String?,
     sort: [PubNub.MembershipSortField],
     completion: ((Swift.Result<(memberships: [ChatType.ChatMembershipType], page: PubNubHashedPage?), Error>) -> Void)?
+  )
+
+  /// Checks if a specific user is a member of this channel.
+  ///
+  /// - Parameters:
+  ///   - userId: Unique identifier of the user to check
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: A `Bool` value indicating whether the user is a member of this channel
+  ///     - **Failure**: An `Error` describing the failure
+  func hasMember(
+    userId: String,
+    completion: ((Swift.Result<Bool, Error>) -> Void)?
+  )
+
+  /// Retrieves the membership of a specific user in this channel.
+  ///
+  /// - Parameters:
+  ///   - userId: Unique identifier of the user whose membership to retrieve
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: The user's ``Membership`` in this channel, or `nil` if not a member
+  ///     - **Failure**: An `Error` describing the failure
+  func getMember(
+    userId: String,
+    completion: ((Swift.Result<ChatType.ChatMembershipType?, Error>) -> Void)?
   )
 
   /// Watch the ``Channel`` content without a need to join the ``Channel``.
@@ -404,11 +428,29 @@ public protocol Channel: CustomStringConvertible {
   /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
   /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
   ///
-  /// - Parameter callback: Defines the custom behavior to be executed when receiving a read confirmation status on the joined channel.
+  /// - Parameter callback: Defines the custom behavior to be executed when receiving read receipts on the joined channel
   /// - Returns: AutoCloseable Interface you can call to stop listening for message read receipts and clean up resources by invoking the close() method
   func streamReadReceipts(
-    callback: @escaping (([Timetoken: [String]]) -> Void)
+    callback: @escaping ((ReadReceipt) -> Void)
   ) -> AutoCloseable
+
+  /// Fetches the read receipts for members of this channel.
+  ///
+  /// - Parameters:
+  ///   - limit: Number of objects to return in response
+  ///   - page: Object used for pagination to define which previous or next result page you want to fetch
+  ///   - filter: Expression used to filter the results. Returns only these members whose properties satisfy the given expression
+  ///   - sort: A collection to specify the sort order
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: A `Tuple` containing an array of ``ReadReceipt``, and the next pagination `PubNubHashedPage` (if one exists)
+  ///     - **Failure**: An `Error` describing the failure
+  func fetchReadReceipts(
+    limit: Int?,
+    page: PubNubHashedPage?,
+    filter: String?,
+    sort: [PubNub.MembershipSortField],
+    completion: ((Swift.Result<(receipts: [ReadReceipt], page: PubNubHashedPage?), Error>) -> Void)?
+  )
 
   /// Returns all files attached to messages on a given channel.
   ///

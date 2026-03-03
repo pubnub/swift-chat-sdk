@@ -672,3 +672,43 @@ func pinMessageToChannel() {
   }
   // snippet.end
 }
+
+// MARK: - Check if User is Channel Member
+
+func hasMember() {
+  // snippet.channels.hasMember
+  // Assumes a "ChatImpl" reference named "chat"
+  Task {
+    if let channel = try await chat.getChannel(channelId: "support") {
+      let isMember = try await channel.hasMember(userId: "support_agent_15")
+      if isMember {
+        debugPrint("User 'support_agent_15' is a member of the 'support' channel")
+      } else {
+        debugPrint("User 'support_agent_15' is not a member of the 'support' channel")
+      }
+    } else {
+      debugPrint("Channel not found")
+    }
+  }
+  // snippet.end
+}
+
+// MARK: - Get Specific Channel Member
+
+func getMember() {
+  // snippet.channels.getMember
+  // Assumes a "ChatImpl" reference named "chat"
+  Task {
+    if let channel = try await chat.getChannel(channelId: "support") {
+      if let membership = try await channel.getMember(userId: "support_agent_15") {
+        debugPrint("Found membership for user: \(membership.user.id)")
+        debugPrint("Membership custom data: \(String(describing: membership.custom))")
+      } else {
+        debugPrint("User 'support_agent_15' is not a member of the 'support' channel")
+      }
+    } else {
+      debugPrint("Channel not found")
+    }
+  }
+  // snippet.end
+}

@@ -10,6 +10,8 @@
 - ``streamUpdatesOn(channels:callback:)``
 - ``streamReadReceipts()``
 - ``streamReadReceipts(callback:)``
+- ``fetchReadReceipts(limit:page:filter:sort:)``
+- ``fetchReadReceipts(limit:page:filter:sort:completion:)``
 - ``streamMessageReports()``
 - ``streamMessageReports(callback:)``
 - ``streamPresence()``
@@ -33,8 +35,8 @@
 
 ### Presence Management
 
-- ``whoIsPresent()``
-- ``whoIsPresent(completion:)``
+- ``whoIsPresent(limit:offset:)``
+- ``whoIsPresent(limit:offset:completion:)``
 - ``isPresent(userId:)``
 - ``isPresent(userId:completion:)``
 - ``join(custom:)``
@@ -52,6 +54,10 @@
 - ``inviteMultiple(users:completion:)``
 - ``getMembers(limit:page:filter:sort:)``
 - ``getMembers(limit:page:filter:sort:completion:)``
+- ``hasMember(userId:)``
+- ``hasMember(userId:completion:)``
+- ``getMember(userId:)``
+- ``getMember(userId:completion:)``
 
 ### Sending a text
 

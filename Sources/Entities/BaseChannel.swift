@@ -305,6 +305,36 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     }
   }
 
+  func hasMember(userId: String, completion: ((Swift.Result<Bool, Error>) -> Void)?) {
+    channel.hasMember(
+      userId: userId
+    ).async(caller: self) { (result: FutureResult<BaseChannel, Bool>) in
+      switch result.result {
+      case let .success(hasMember):
+        completion?(.success(hasMember))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
+
+  func getMember(userId: String, completion: ((Swift.Result<ChatType.ChatMembershipType?, Error>) -> Void)?) {
+    channel.getMember(
+      userId: userId
+    ).async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.Membership?>) in
+      switch result.result {
+      case let .success(membership):
+        if let membership {
+          completion?(.success(MembershipImpl(membership: membership, chat: result.caller.chat)))
+        } else {
+          completion?(.success(nil))
+        }
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
+
   func connect(callback: @escaping (ChatType.ChatMessageType) -> Void) -> AutoCloseable {
     AutoCloseableImpl(
       channel.connect { [weak self] in
@@ -449,19 +479,44 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     )
   }
 
-  func streamReadReceipts(callback: @escaping (([Timetoken: [String]]) -> Void)) -> AutoCloseable {
+  func streamReadReceipts(callback: @escaping ((ReadReceipt) -> Void)) -> AutoCloseable {
     AutoCloseableImpl(
       channel.streamReadReceipts { [weak self] in
         if self != nil {
-          callback(
-            $0.reduce(into: [Timetoken: [String]]()) { res, currentItem in
-              res[Timetoken(currentItem.key.uint64Value)] = currentItem.value
-            }
-          )
+          callback($0.transform())
         }
       },
       owner: self
     )
+  }
+
+  func fetchReadReceipts(
+    limit: Int?,
+    page: PubNubHashedPage?,
+    filter: String?,
+    sort: [PubNub.MembershipSortField],
+    completion: ((Swift.Result<(receipts: [ReadReceipt], page: PubNubHashedPage?), Error>) -> Void)?
+  ) {
+    channel.fetchReadReceipts(
+      limit: limit?.asKotlinInt,
+      page: page?.transform(),
+      filter: filter,
+      sort: sort.compactMap { $0.transform() }
+    ).async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.ReadReceiptsResponse>) in
+      switch result.result {
+      case let .success(response):
+        completion?(.success((
+          receipts: response.receipts.transform(),
+          page: PubNubHashedPageBase(
+            start: response.next?.pageHash,
+            end: response.prev?.pageHash,
+            totalCount: Int(response.total)
+          ))
+        ))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
   }
 
   func getFiles(

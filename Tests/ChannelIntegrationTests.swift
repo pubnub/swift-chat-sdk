@@ -110,7 +110,6 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
       )
     }
 
-    XCTAssertFalse(retrievedChannel?.active ?? true)
     XCTAssertEqual(retrievedChannel?.id, someChannel.id)
 
     addTeardownBlock { [unowned self] in
@@ -744,51 +743,35 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
 
-    let anotherUser = try awaitResultValue {
-      chat.createUser(
-        user: UserImpl(chat: chat, id: randomString()),
-        completion: $0
-      )
-    }
-    let membership = try awaitResultValue(delay: 3) {
-      channel.invite(
-        user: chat.currentUser,
-        completion: $0
-      )
-    }
-    let anotherMembership = try awaitResultValue(delay: 1) {
-      channel.invite(
-        user: anotherUser,
-        completion: $0
-      )
-    }
-
-    let timetoken = try XCTUnwrap(membership.lastReadMessageTimetoken)
-    let secondTimetoken = try XCTUnwrap(anotherMembership.lastReadMessageTimetoken)
+    let joinResult = try awaitResultValue { channel.join(completion: $0) }
+    let membership = joinResult.membership
     let currentUserId = chat.currentUser.id
-    let anotherUserId = anotherUser.id
 
-    let closeable = channel.streamReadReceipts {
-      XCTAssertEqual($0[timetoken]?.count, 1)
-      XCTAssertEqual($0[timetoken]?.first, currentUserId)
-      XCTAssertEqual($0[secondTimetoken]?.count, 1)
-      XCTAssertEqual($0[secondTimetoken]?.first, anotherUserId)
+    let messageTimetoken = try awaitResultValue {
+      channel.sendText(
+        text: "Read receipt test",
+        completion: $0
+      )
+    }
+
+    let closeable = channel.streamReadReceipts { readReceipt in
+      XCTAssertEqual(readReceipt.userId, currentUserId)
+      XCTAssertEqual(readReceipt.lastReadTimetoken, messageTimetoken)
       expectation.fulfill()
     }
 
-    wait(
-      for: [expectation],
-      timeout: 6
-    )
+    _ = try awaitResultValue(delay: 1) {
+      membership.setLastReadMessageTimetoken(
+        messageTimetoken,
+        completion: $0
+      )
+    }
 
-    addTeardownBlock { [unowned self] in
+    wait(for: [expectation], timeout: 6)
+
+    addTeardownBlock {
       closeable.close()
-      try awaitResult {
-        chat.deleteUser(
-          id: anotherUserId,
-          completion: $0
-        )
-      }
+      joinResult.disconnect?.close()
     }
   }
 

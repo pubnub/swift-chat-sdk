@@ -265,6 +265,20 @@ extension ChannelImpl: Channel {
     )
   }
 
+  public func hasMember(userId: String, completion: ((Swift.Result<Bool, Error>) -> Void)? = nil) {
+    target.hasMember(
+      userId: userId,
+      completion: completion
+    )
+  }
+
+  public func getMember(userId: String, completion: ((Swift.Result<MembershipImpl?, Error>) -> Void)? = nil) {
+    target.getMember(
+      userId: userId,
+      completion: completion
+    )
+  }
+
   public func connect(callback: @escaping (MessageImpl) -> Void) -> AutoCloseable {
     target.connect(callback: callback)
   }
@@ -340,9 +354,25 @@ extension ChannelImpl: Channel {
     )
   }
 
-  public func streamReadReceipts(callback: @escaping (([Timetoken: [String]]) -> Void)) -> AutoCloseable {
+  public func streamReadReceipts(callback: @escaping ((ReadReceipt) -> Void)) -> AutoCloseable {
     target.streamReadReceipts(
       callback: callback
+    )
+  }
+
+  public func fetchReadReceipts(
+    limit: Int? = nil,
+    page: PubNubHashedPage? = nil,
+    filter: String? = nil,
+    sort: [PubNub.MembershipSortField] = [],
+    completion: ((Swift.Result<(receipts: [ReadReceipt], page: PubNubHashedPage?), Error>) -> Void)? = nil
+  ) {
+    target.fetchReadReceipts(
+      limit: limit,
+      page: page,
+      filter: filter,
+      sort: sort,
+      completion: completion
     )
   }
 

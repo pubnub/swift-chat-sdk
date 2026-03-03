@@ -77,7 +77,7 @@ extension MessageImpl: Message {
   public var hasThread: Bool { target.hasThread }
   public var type: String { target.type }
   public var files: [File] { target.files }
-  public var reactions: [String: [Action]] { target.reactions }
+  public var reactions: [MessageReaction] { target.reactions }
   public var textLinks: [TextLink]? { target.textLinks }
   public var error: Error? { target.error }
 

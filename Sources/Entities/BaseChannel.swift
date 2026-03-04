@@ -479,11 +479,15 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     )
   }
 
-  func streamReadReceipts(callback: @escaping ((ReadReceipt) -> Void)) -> AutoCloseable {
+  func streamReadReceipts(callback: @escaping (([Timetoken: [String]]) -> Void)) -> AutoCloseable {
     AutoCloseableImpl(
       channel.streamReadReceipts { [weak self] in
         if self != nil {
-          callback($0.transform())
+          callback(
+            $0.reduce(into: [Timetoken: [String]]()) { res, currentItem in
+              res[Timetoken(currentItem.key.uint64Value)] = currentItem.value
+            }
+          )
         }
       },
       owner: self

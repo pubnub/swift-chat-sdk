@@ -525,7 +525,7 @@ public extension Channel {
   }
 
   /// Lets you get a read confirmation status for messages you published on a channel.
-  func streamReadReceipts() -> AsyncStream<ReadReceipt> {
+  func streamReadReceipts() -> AsyncStream<[Timetoken: [String]]> {
     AsyncStream { continuation in
       let autoCloseable = streamReadReceipts {
         continuation.yield($0)

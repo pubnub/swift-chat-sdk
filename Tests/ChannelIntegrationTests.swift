@@ -742,36 +742,52 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
     let expectation = expectation(description: "StreamReadReceipts")
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
-
-    let joinResult = try awaitResultValue { channel.join(completion: $0) }
-    let membership = joinResult.membership
-    let currentUserId = chat.currentUser.id
-
-    let messageTimetoken = try awaitResultValue {
-      channel.sendText(
-        text: "Read receipt test",
+    
+    let anotherUser = try awaitResultValue {
+      chat.createUser(
+        user: UserImpl(chat: chat, id: randomString()),
         completion: $0
       )
     }
-
-    let closeable = channel.streamReadReceipts { readReceipt in
-      XCTAssertEqual(readReceipt.userId, currentUserId)
-      XCTAssertEqual(readReceipt.lastReadTimetoken, messageTimetoken)
+    let membership = try awaitResultValue(delay: 3) {
+      channel.invite(
+        user: chat.currentUser,
+        completion: $0
+      )
+    }
+    let anotherMembership = try awaitResultValue(delay: 1) {
+      channel.invite(
+        user: anotherUser,
+        completion: $0
+      )
+    }
+    
+    let timetoken = try XCTUnwrap(membership.lastReadMessageTimetoken)
+    let secondTimetoken = try XCTUnwrap(anotherMembership.lastReadMessageTimetoken)
+    let currentUserId = chat.currentUser.id
+    let anotherUserId = anotherUser.id
+    
+    let closeable = channel.streamReadReceipts {
+      XCTAssertEqual($0[timetoken]?.count, 1)
+      XCTAssertEqual($0[timetoken]?.first, currentUserId)
+      XCTAssertEqual($0[secondTimetoken]?.count, 1)
+      XCTAssertEqual($0[secondTimetoken]?.first, anotherUserId)
       expectation.fulfill()
     }
-
-    _ = try awaitResultValue(delay: 1) {
-      membership.setLastReadMessageTimetoken(
-        messageTimetoken,
-        completion: $0
-      )
-    }
-
-    wait(for: [expectation], timeout: 6)
-
-    addTeardownBlock {
+    
+    wait(
+      for: [expectation],
+      timeout: 6
+    )
+    
+    addTeardownBlock { [unowned self] in
       closeable.close()
-      joinResult.disconnect?.close()
+      try awaitResult {
+        chat.deleteUser(
+          id: anotherUserId,
+          completion: $0
+        )
+      }
     }
   }
 

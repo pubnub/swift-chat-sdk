@@ -185,4 +185,82 @@ final class MembershipTests: BaseClosureIntegrationTestCase {
       closeable.close()
     }
   }
+
+  // MARK: - Entity-first streaming API tests
+
+  func testMembership_OnUpdated() throws {
+    let expectation = expectation(description: "OnUpdated")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let expectedCustom: [String: JSONCodableScalar] = [
+      "a": 1,
+      "b": "Text"
+    ]
+
+    let closeable = membership.onUpdated { [unowned self] updatedMembership in
+      XCTAssertEqual(updatedMembership.channel.id, membership.channel.id)
+      XCTAssertEqual(updatedMembership.user.id, membership.user.id)
+      XCTAssertEqual(updatedMembership.custom?.mapValues { $0.scalarValue }, expectedCustom.mapValues { $0.scalarValue })
+      expectation.fulfill()
+    }
+
+    try awaitResultValue(delay: 3) {
+      membership.update(
+        custom: expectedCustom,
+        completion: $0
+      )
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 6
+    )
+    addTeardownBlock {
+      closeable.close()
+    }
+  }
+
+  func testMembership_OnDeleted() throws {
+    let expectation = expectation(description: "OnDeleted")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let anotherChannel = try awaitResultValue {
+      chat.createChannel(
+        id: randomString(),
+        completion: $0
+      )
+    }
+    let anotherMembership = try awaitResultValue {
+      anotherChannel.invite(
+        user: chat.currentUser,
+        completion: $0
+      )
+    }
+
+    let closeable = anotherMembership.onDeleted {
+      expectation.fulfill()
+    }
+
+    try awaitResultValue(delay: 3) {
+      anotherChannel.leave(
+        completion: $0
+      )
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 6
+    )
+    addTeardownBlock { [unowned self] in
+      closeable.close()
+      try awaitResult {
+        chat.deleteChannel(
+          id: anotherChannel.id,
+          completion: $0
+        )
+      }
+    }
+  }
 }

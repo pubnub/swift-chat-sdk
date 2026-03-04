@@ -32,12 +32,18 @@ public enum RestrictionType: String {
   }
 }
 
-struct Restriction {
-  var userId: String
-  var channelId: String
-  var ban: Bool
-  var mute: Bool
-  var reason: String?
+/// Represents a restriction applied to a specific user.
+public struct Restriction {
+  /// The unique identifier of the ``User`` who is subject to the restriction
+  public var userId: String
+  /// The unique identifier of the channel where the restriction applies
+  public var channelId: String
+  /// Indicates whether the user is banned from the channel
+  public var ban: Bool
+  /// Indicates whether the user is muted in the channel
+  public var mute: Bool
+  /// An optional description or explanation for the restriction
+  public var reason: String?
 
   init(userId: String, channelId: String, ban: Bool, mute: Bool, reason: String? = nil) {
     self.userId = userId

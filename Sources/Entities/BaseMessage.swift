@@ -244,6 +244,17 @@ extension BaseMessage: Message {
     )
   }
 
+  func onUpdated(callback: @escaping (ChatType.ChatMessageType) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      message.onUpdated { [weak self] in
+        if let message = $0 as? M, let self = self {
+          callback(MessageImpl(message: message, chat: self.chat))
+        }
+      },
+      owner: self
+    )
+  }
+
   func restore(completion: ((Swift.Result<BaseMessage<M>, Error>) -> Void)?) {
     message.restore().async(caller: self) { (result: FutureResult<BaseMessage, M>) in
       switch result.result {

@@ -487,7 +487,7 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     await fulfillment(of: [expectation], timeout: 6)
     addTeardownBlock { task.cancel() }
   }
-  
+
   func testChannelAsync_StreamReadReceipts() async throws {
     let expectation = expectation(description: "StreamReadReceipts")
     expectation.assertForOverFulfill = true

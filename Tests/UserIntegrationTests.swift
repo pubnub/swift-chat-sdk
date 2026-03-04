@@ -392,4 +392,85 @@ final class UserIntegrationTests: BaseClosureIntegrationTestCase {
       }
     }
   }
+
+  // MARK: - Entity-first streaming API tests
+
+  func testUser_OnUpdated() throws {
+    let expectation = expectation(description: "OnUpdated")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let createdUser = try awaitResultValue {
+      chat.createUser(
+        user: testableUser(),
+        completion: $0
+      )
+    }
+    let closeable = createdUser.onUpdated { user in
+      XCTAssertEqual(user.name, "NewName")
+      XCTAssertEqual(user.status, "NewStatus")
+      expectation.fulfill()
+    }
+
+    try awaitResultValue(delay: 3) {
+      createdUser.update(
+        name: "NewName",
+        status: "NewStatus",
+        completion: $0
+      )
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 6
+    )
+    addTeardownBlock { [unowned self] in
+      closeable.close()
+      try awaitResult {
+        chat.deleteUser(
+          id: createdUser.id,
+          completion: $0
+        )
+      }
+    }
+  }
+
+  func testUser_OnDeleted() throws {
+    let expectation = expectation(description: "OnDeleted")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let createdUser = try awaitResultValue {
+      chat.createUser(
+        user: testableUser(),
+        completion: $0
+      )
+    }
+    let closeable = createdUser.onDeleted {
+      expectation.fulfill()
+    }
+
+    try awaitResultValue(delay: 3) {
+      createdUser.delete(
+        soft: false,
+        completion: $0
+      )
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 6
+    )
+    addTeardownBlock { [unowned self] in
+      closeable.close()
+      try awaitResult {
+        chat.deleteUser(
+          id: createdUser.id,
+          completion: $0
+        )
+      }
+    }
+  }
+
+  // swiftlint:disable:next file_length
 }

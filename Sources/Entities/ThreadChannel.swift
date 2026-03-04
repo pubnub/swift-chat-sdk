@@ -22,6 +22,22 @@ public protocol ThreadChannel: Channel {
   /// Message for which the thread was created
   var parentMessage: ChatType.ChatMessageType { get }
 
+  /// Emits the received thread message whenever a new message is published on this thread channel.
+  ///
+  /// - Parameter callback: A closure invoked with the received ``ThreadMessage`` entity
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onThreadMessageReceived(
+    callback: @escaping (ChatType.ChatThreadMessageType) -> Void
+  ) -> AutoCloseable
+
+  /// Emits the updated thread channel entity whenever this thread channel's metadata is modified.
+  ///
+  /// - Parameter callback: A closure invoked with the updated ``ThreadChannel`` entity
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onThreadChannelUpdated(
+    callback: @escaping (ChatType.ChatThreadChannelType) -> Void
+  ) -> AutoCloseable
+
   /// Pins a selected thread message to the thread channel.
   ///
   /// - Parameters:

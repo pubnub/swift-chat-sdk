@@ -295,6 +295,61 @@ extension UserImpl: User {
     )
   }
 
+  public func onUpdated(callback: @escaping (UserImpl) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      user.onUpdated { [weak self] in
+        if let self = self {
+          callback(UserImpl(user: $0, chat: self.chat))
+        }
+      },
+      owner: self
+    )
+  }
+
+  public func onDeleted(callback: @escaping () -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      user.onDeleted { [weak self] in
+        if self != nil {
+          callback()
+        }
+      },
+      owner: self
+    )
+  }
+
+  public func onMentioned(callback: @escaping (Mention) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      user.onMentioned { [weak self] in
+        if self != nil {
+          callback($0.transform())
+        }
+      },
+      owner: self
+    )
+  }
+
+  public func onInvited(callback: @escaping (Invite) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      user.onInvited { [weak self] in
+        if self != nil {
+          callback($0.transform())
+        }
+      },
+      owner: self
+    )
+  }
+
+  public func onRestrictionChanged(callback: @escaping (Restriction) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      user.onRestrictionChanged { [weak self] in
+        if self != nil {
+          callback($0.transform())
+        }
+      },
+      owner: self
+    )
+  }
+
   public func active(completion: ((Swift.Result<Bool, Error>) -> Void)? = nil) {
     user.active().async(caller: self) { (result: FutureResult<UserImpl, Bool>) in
       switch result.result {

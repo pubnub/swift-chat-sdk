@@ -216,6 +216,10 @@ extension MessageImpl: Message {
     }
   }
 
+  public func onUpdated(callback: @escaping (MessageImpl) -> Void) -> AutoCloseable {
+    target.onUpdated(callback: callback)
+  }
+
   public func restore(completion: ((Swift.Result<MessageImpl, Error>) -> Void)? = nil) {
     target.restore {
       switch $0 {

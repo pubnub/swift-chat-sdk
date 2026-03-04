@@ -480,5 +480,51 @@ final class MessageIntegrationTests: BaseClosureIntegrationTestCase {
     XCTAssertTrue(restoredMessage.actions?.isEmpty ?? false)
   }
 
+  // MARK: - Entity-first streaming API tests
+
+  func testMessage_OnUpdated() throws {
+    let expectation = expectation(description: "OnUpdated")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let timetoken = try awaitResultValue {
+      channel?.sendText(
+        text: "Some text \(randomString())",
+        completion: $0
+      )
+    }
+    let message = try XCTUnwrap(
+      awaitResultValue(delay: 3) {
+        channel.getMessage(
+          timetoken: timetoken,
+          completion: $0
+        )
+      }
+    )
+
+    let closeable = message.onUpdated {
+      XCTAssertTrue($0.hasUserReaction(reaction: "myReaction"))
+      XCTAssertEqual($0.channelId, message.channelId)
+      XCTAssertEqual($0.userId, message.userId)
+      expectation.fulfill()
+    }
+
+    try awaitResultValue(delay: 3) {
+      message.toggleReaction(
+        reaction: "myReaction",
+        completion: $0
+      )
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 6
+    )
+    addTeardownBlock { [unowned self] in
+      closeable.close()
+      try awaitResult { message.delete(completion: $0) }
+    }
+  }
+
   // swiftlint:disable:next file_length
 }

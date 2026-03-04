@@ -434,6 +434,34 @@ extension ChannelImpl: Channel {
     )
   }
 
+  public func onTypingChanged(callback: @escaping (([String]) -> Void)) -> AutoCloseable {
+    target.onTypingChanged(callback: callback)
+  }
+
+  public func onMessageReceived(callback: @escaping (MessageImpl) -> Void) -> AutoCloseable {
+    target.onMessageReceived(callback: callback)
+  }
+
+  public func onUpdated(callback: @escaping (ChannelImpl) -> Void) -> AutoCloseable {
+    target.onUpdated(callback: callback)
+  }
+
+  public func onDeleted(callback: @escaping () -> Void) -> AutoCloseable {
+    target.onDeleted(callback: callback)
+  }
+
+  public func onReadReceiptReceived(callback: @escaping (ReadReceipt) -> Void) -> AutoCloseable {
+    target.onReadReceiptReceived(callback: callback)
+  }
+
+  public func onPresenceChanged(callback: @escaping (Set<String>) -> Void) -> AutoCloseable {
+    target.onPresenceChanged(callback: callback)
+  }
+
+  public func onMessageReported(callback: @escaping (Report) -> Void) -> AutoCloseable {
+    target.onMessageReported(callback: callback)
+  }
+
   public func createMessageDraft(
     userSuggestionSource: UserSuggestionSource = .channel,
     isTypingIndicatorTriggered: Bool = true,

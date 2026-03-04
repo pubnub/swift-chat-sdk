@@ -15,6 +15,7 @@ import PubNubSDK
 /// Represents the content of various types of events emitted during chat operations.
 public class EventContent {
   /// Represents a report event, which is used to report a message or user to the admin.
+  @available(*, deprecated, message: "Use `Report` struct and `channel.onMessageReported(callback:)` instead")
   public class Report: EventContent, CustomStringConvertible {
     /// The text of the report, if provided
     public let text: String?
@@ -71,6 +72,7 @@ public class EventContent {
   }
 
   /// Represents a typing event that indicates whether a user is typing.
+  @available(*, deprecated, message: "Use `channel.onTypingChanged(callback:)` instead")
   public class Typing: EventContent, CustomStringConvertible {
     /// A boolean value indicating whether the user is typing (true) or not (false)
     public let value: Bool
@@ -90,6 +92,7 @@ public class EventContent {
   }
 
   /// Represents a receipt event, indicating that a message was read.
+  @available(*, deprecated, message: "Use `ReadReceipt` struct and `channel.onReadReceiptReceived(callback:)` instead")
   public class Receipt: EventContent, CustomStringConvertible {
     /// The timetoken of the message for which the receipt is being acknowledged
     public let messageTimetoken: Timetoken
@@ -109,6 +112,7 @@ public class EventContent {
   }
 
   /// Represents a mention event, which indicates that a user was mentioned in a message.
+  @available(*, deprecated, message: "Use `Mention` struct and `user.onMentioned(callback:)` instead")
   public class Mention: EventContent, CustomStringConvertible {
     /// The timetoken of the message in which the user was mentioned
     public let messageTimetoken: Timetoken
@@ -144,6 +148,7 @@ public class EventContent {
   }
 
   /// Represents an invite event, which is used when a user is invited to join a channel.
+  @available(*, deprecated, message: "Use `Invite` struct and `user.onInvited(callback:)` instead")
   public class Invite: EventContent, CustomStringConvertible {
     /// The type of the channel
     public let channelType: ChannelType
@@ -204,6 +209,7 @@ public class EventContent {
   }
 
   /// Represents a moderation event, which is triggered when a restriction is applied to a user.
+  @available(*, deprecated, message: "Use `Restriction` struct and `user.onRestrictionChanged(callback:)` instead")
   public class Moderation: EventContent, CustomStringConvertible {
     /// The ID of the channel where the moderation event occurred
     public let channelId: String

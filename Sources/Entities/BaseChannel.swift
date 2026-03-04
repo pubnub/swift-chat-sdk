@@ -653,6 +653,83 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     )
   }
 
+  func onTypingChanged(callback: @escaping (([String]) -> Void)) -> AutoCloseable {
+    AutoCloseableImpl(
+      channel.onTypingChanged { [weak self] in
+        if let typingUserIdentifiers = $0 as? [String], self != nil {
+          callback(typingUserIdentifiers)
+        }
+      },
+      owner: self
+    )
+  }
+
+  func onMessageReceived(callback: @escaping (ChatType.ChatMessageType) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      channel.onMessageReceived { [weak self] in
+        if let self = self, let message = $0 as? M {
+          callback(MessageImpl(message: message, chat: self.chat))
+        }
+      },
+      owner: self
+    )
+  }
+
+  func onUpdated(callback: @escaping (ChatType.ChatChannelType) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      channel.onUpdated { [weak self] in
+        if let self = self {
+          callback(ChannelImpl(channel: $0, chat: self.chat))
+        }
+      },
+      owner: self
+    )
+  }
+
+  func onDeleted(callback: @escaping () -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      channel.onDeleted { [weak self] in
+        if self != nil {
+          callback()
+        }
+      },
+      owner: self
+    )
+  }
+
+  func onReadReceiptReceived(callback: @escaping (ReadReceipt) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      channel.onReadReceiptReceived { [weak self] in
+        if self != nil {
+          callback($0.transform())
+        }
+      },
+      owner: self
+    )
+  }
+
+  func onPresenceChanged(callback: @escaping (Set<String>) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      channel.onPresenceChanged { [weak self] in
+        if let userIds = $0 as? Set<String>, self != nil {
+          callback(userIds)
+        }
+      },
+      owner: self
+    )
+  }
+
+  func onMessageReported(callback: @escaping (Report) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      channel.onMessageReported { [weak self] in
+        if self != nil {
+          callback($0.transform())
+        }
+      },
+      owner: self
+    )
+  }
+
   func createMessageDraft(
     userSuggestionSource: UserSuggestionSource,
     isTypingIndicatorTriggered: Bool,

@@ -228,8 +228,17 @@ public protocol Message: CustomStringConvertible {
   ///
   /// - Parameter completion: Function that takes a single Message object. It defines the custom behavior to be executed when detecting message or message reaction changes
   /// - Returns: Interface that lets you stop receiving message-related updates by invoking the ``AutoCloseable/close()`` method
+  @available(*, deprecated, message: "Use `onUpdated(callback:)` instead")
   func streamUpdates(
     completion: @escaping ((Self) -> Void)
+  ) -> AutoCloseable
+
+  /// Emits the updated message entity whenever this message's content or reactions are modified.
+  ///
+  /// - Parameter callback: A closure invoked with the updated ``Message`` entity
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onUpdated(
+    callback: @escaping (ChatType.ChatMessageType) -> Void
   ) -> AutoCloseable
 
   /// If you delete a message, you can restore its content together with the attached files using the ``restore(completion:)`` method.

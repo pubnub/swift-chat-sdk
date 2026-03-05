@@ -15,6 +15,12 @@ import PubNubSDK
 /// Extension providing `async-await` support for ``Channel``.
 ///
 public extension Channel {
+
+  /// Namespace for `AsyncStream`-based streaming methods.
+  var stream: ChannelStream<Self> {
+    ChannelStream(channel: self)
+  }
+
   /// Receive updates when specific channels are updated or removed.
   ///
   /// Emits the complete list of monitored channels whenever any one of them changes, excluding any that were removed.
@@ -143,6 +149,7 @@ public extension Channel {
   /// Enables continuous tracking of typing activity within the ``Channel``.
   ///
   /// - Returns: An asynchronous stream producing typing user identifiers
+  @available(*, deprecated, message: "Use `stream.typingChanges()` instead")
   func getTyping() -> AsyncStream<[String]> {
     AsyncStream { continuation in
       let autoCloseable = getTyping {
@@ -360,6 +367,7 @@ public extension Channel {
   /// Watch the ``Channel`` content without a need to join the ``Channel``.
   ///
   /// - Returns: An asynchronous stream that produces a new value every time a new message is published on the current channel
+  @available(*, deprecated, message: "Use `stream.messages()` instead")
   func connect() -> AsyncStream<ChatType.ChatMessageType> {
     AsyncStream { continuation in
       let autoCloseable = connect {
@@ -383,7 +391,14 @@ public extension Channel {
     membership: ChatType.ChatMembershipType,
     messagesStream: AsyncStream<ChatType.ChatMessageType>
   ) {
-    let messagesStream = connect()
+    let messagesStream = AsyncStream { continuation in
+      let autoCloseable = connect {
+        continuation.yield($0)
+      }
+      continuation.onTermination = { _ in
+        autoCloseable.close()
+      }
+    }
 
     return try await withCheckedThrowingContinuation { continuation in
       join(custom: custom, callback: nil) {
@@ -513,6 +528,7 @@ public extension Channel {
   /// Receives updates on a single ``Channel`` object.
   ///
   /// - Returns: An asynchronous stream that produces updates when the current ``Channel`` is edited or `nil` if the channel was removed.
+  @available(*, deprecated, message: "Use `stream.updates()` and `stream.deletions()` instead")
   func streamUpdates() -> AsyncStream<ChatType.ChatChannelType?> {
     AsyncStream { continuation in
       let autoCloseable = streamUpdates {
@@ -525,6 +541,7 @@ public extension Channel {
   }
 
   /// Lets you get a read confirmation status for messages you published on a channel.
+  @available(*, deprecated, message: "Use `stream.readReceipts()` instead")
   func streamReadReceipts() -> AsyncStream<[Timetoken: [String]]> {
     AsyncStream { continuation in
       let autoCloseable = streamReadReceipts {
@@ -606,6 +623,7 @@ public extension Channel {
   }
 
   /// Enables real-time tracking of users connecting to or disconnecting from a ``Channel``.
+  @available(*, deprecated, message: "Use `stream.presenceChanges()` instead")
   func streamPresence() -> AsyncStream<Set<String>> {
     AsyncStream { continuation in
       let autoCloseable = streamPresence {
@@ -667,6 +685,7 @@ public extension Channel {
   }
 
   /// As an admin of your chat app, monitor all events emitted when someone reports an offensive message.
+  @available(*, deprecated, message: "Use `stream.reports()` instead")
   func streamMessageReports() -> AsyncStream<EventWrapper<EventContent.Report>> {
     AsyncStream { continuation in
       let autoCloseable = streamMessageReports {

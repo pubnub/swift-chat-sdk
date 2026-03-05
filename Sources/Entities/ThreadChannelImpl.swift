@@ -94,7 +94,7 @@ extension ThreadChannelImpl: ThreadChannel {
     )
   }
 
-  public func onThreadMessageReceived(callback: @escaping (ThreadMessageImpl) -> Void) -> AutoCloseable {
+  public func onMessageReceived(callback: @escaping (ThreadMessageImpl) -> Void) -> AutoCloseable {
     AutoCloseableImpl(
       target.channel.onThreadMessageReceived { [weak self] in
         if let self = self {
@@ -105,7 +105,7 @@ extension ThreadChannelImpl: ThreadChannel {
     )
   }
 
-  public func onThreadChannelUpdated(callback: @escaping (ThreadChannelImpl) -> Void) -> AutoCloseable {
+  public func onUpdated(callback: @escaping (ThreadChannelImpl) -> Void) -> AutoCloseable {
     AutoCloseableImpl(
       target.channel.onThreadChannelUpdated { [weak self] in
         if let self = self {
@@ -495,14 +495,6 @@ extension ThreadChannelImpl: ThreadChannel {
 
   public func onTypingChanged(callback: @escaping (([String]) -> Void)) -> AutoCloseable {
     target.onTypingChanged(callback: callback)
-  }
-
-  public func onMessageReceived(callback: @escaping (MessageImpl) -> Void) -> AutoCloseable {
-    target.onMessageReceived(callback: callback)
-  }
-
-  public func onUpdated(callback: @escaping (ChannelImpl) -> Void) -> AutoCloseable {
-    target.onUpdated(callback: callback)
   }
 
   public func onDeleted(callback: @escaping () -> Void) -> AutoCloseable {

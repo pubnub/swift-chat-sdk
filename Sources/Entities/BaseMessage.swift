@@ -244,11 +244,11 @@ extension BaseMessage: Message {
     )
   }
 
-  func onUpdated(callback: @escaping (ChatType.ChatMessageType) -> Void) -> AutoCloseable {
+  func onUpdated(callback: @escaping (BaseMessage<M>) -> Void) -> AutoCloseable {
     AutoCloseableImpl(
       message.onUpdated { [weak self] in
         if let message = $0 as? M, let self = self {
-          callback(MessageImpl(message: message, chat: self.chat))
+          callback(BaseMessage(message: message, chat: self.chat))
         }
       },
       owner: self

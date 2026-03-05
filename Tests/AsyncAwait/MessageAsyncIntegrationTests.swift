@@ -266,4 +266,41 @@ class MessageAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
       _ = try? await unwrappedMessage.delete()
     }
   }
+
+  // MARK: - Stream Namespace Tests
+
+  func testMessageAsync_Stream_Updates() async throws {
+    let expectation = expectation(description: "Stream_Updates")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let timetoken = try await channel?.sendText(text: "Some text \(randomString())")
+    let unwrappedTimetoken = try XCTUnwrap(timetoken)
+
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+    let message = try await channel.getMessage(timetoken: unwrappedTimetoken)
+    let unwrappedMessage = try XCTUnwrap(message)
+
+    let task = Task {
+      for await receivedMessage in unwrappedMessage.stream.updates() {
+        XCTAssertTrue(receivedMessage.hasUserReaction(reaction: "myReaction"))
+        XCTAssertEqual(receivedMessage.channelId, message?.channelId)
+        XCTAssertEqual(receivedMessage.userId, message?.userId)
+        expectation.fulfill()
+      }
+    }
+
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+    _ = try await message?.toggleReaction(reaction: "myReaction")
+
+    await fulfillment(
+      of: [expectation],
+      timeout: 6
+    )
+
+    addTeardownBlock {
+      task.cancel()
+      _ = try? await unwrappedMessage.delete()
+    }
+  }
 }

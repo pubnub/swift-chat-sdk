@@ -664,22 +664,22 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     )
   }
 
-  func onMessageReceived(callback: @escaping (ChatType.ChatMessageType) -> Void) -> AutoCloseable {
+  func onMessageReceived(callback: @escaping (BaseMessage<M>) -> Void) -> AutoCloseable {
     AutoCloseableImpl(
       channel.onMessageReceived { [weak self] in
         if let self = self, let message = $0 as? M {
-          callback(MessageImpl(message: message, chat: self.chat))
+          callback(BaseMessage(message: message, chat: self.chat))
         }
       },
       owner: self
     )
   }
 
-  func onUpdated(callback: @escaping (ChatType.ChatChannelType) -> Void) -> AutoCloseable {
+  func onUpdated(callback: @escaping (BaseChannel<C, M>) -> Void) -> AutoCloseable {
     AutoCloseableImpl(
       channel.onUpdated { [weak self] in
-        if let self = self {
-          callback(ChannelImpl(channel: $0, chat: self.chat))
+        if let self = self, let channel = $0 as? C {
+          callback(BaseChannel(channel: channel, chat: self.chat))
         }
       },
       owner: self

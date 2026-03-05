@@ -16,27 +16,11 @@ import PubNubSDK
 ///
 /// ``ThreadChannel`` inherits all the functionalities provided by the ``Channel`` protocol, and include additional behaviors and properties specific to threaded conversations.
 /// This type allows for finer control and representation of threads within a parent channel.
-public protocol ThreadChannel: Channel {
+public protocol ThreadChannel: Channel where MessageType == ChatType.ChatThreadMessageType {
   /// Unique identifier of the main channel on which you create a subchannel (thread channel) and thread messages
   var parentChannelId: String { get }
   /// Message for which the thread was created
   var parentMessage: ChatType.ChatMessageType { get }
-
-  /// Emits the received thread message whenever a new message is published on this thread channel.
-  ///
-  /// - Parameter callback: A closure invoked with the received ``ThreadMessage`` entity
-  /// - Returns: An ``AutoCloseable`` that stops listening when closed
-  func onThreadMessageReceived(
-    callback: @escaping (ChatType.ChatThreadMessageType) -> Void
-  ) -> AutoCloseable
-
-  /// Emits the updated thread channel entity whenever this thread channel's metadata is modified.
-  ///
-  /// - Parameter callback: A closure invoked with the updated ``ThreadChannel`` entity
-  /// - Returns: An ``AutoCloseable`` that stops listening when closed
-  func onThreadChannelUpdated(
-    callback: @escaping (ChatType.ChatThreadChannelType) -> Void
-  ) -> AutoCloseable
 
   /// Pins a selected thread message to the thread channel.
   ///

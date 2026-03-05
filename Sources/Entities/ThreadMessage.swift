@@ -17,14 +17,6 @@ public protocol ThreadMessage: Message {
   /// Unique identifier of the main channel on which you create a subchannel (thread channel) and thread messages
   var parentChannelId: String { get }
 
-  /// Emits the updated thread message entity whenever this thread message's content or reactions are modified.
-  ///
-  /// - Parameter callback: A closure invoked with the updated ``ThreadMessage`` entity
-  /// - Returns: An ``AutoCloseable`` that stops listening when closed
-  func onThreadMessageUpdated(
-    callback: @escaping (ChatType.ChatThreadMessageType) -> Void
-  ) -> AutoCloseable
-
   /// Pins the thread message to the parent channel.
   ///
   /// This action updates the parent channel's metadata with the following fields:

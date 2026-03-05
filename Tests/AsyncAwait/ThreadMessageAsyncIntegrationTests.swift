@@ -231,4 +231,36 @@ class ThreadMessageaAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
     XCTAssertNil(pinnedMessage)
   }
+
+  // MARK: - Stream Namespace Tests
+
+  func testThreadMessageAsync_Stream_Updates() async throws {
+    let expectation = expectation(description: "Stream_Updates")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+
+    let message = try await threadChannel.getHistory().messages.first
+    let unwrappedMessage = try XCTUnwrap(message)
+
+    let task = Task {
+      for await receivedMessage in threadMessage.stream.updates() {
+        XCTAssertTrue(receivedMessage.hasUserReaction(reaction: "myReaction"))
+        XCTAssertEqual(receivedMessage.channelId, unwrappedMessage.channelId)
+        XCTAssertEqual(receivedMessage.userId, unwrappedMessage.userId)
+        expectation.fulfill()
+      }
+    }
+
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+    _ = try await unwrappedMessage.toggleReaction(reaction: "myReaction")
+
+    await fulfillment(of: [expectation], timeout: 6)
+
+    addTeardownBlock {
+      task.cancel()
+      _ = try? await unwrappedMessage.delete()
+    }
+  }
 }

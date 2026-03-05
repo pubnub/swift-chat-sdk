@@ -15,6 +15,12 @@ import PubNubSDK
 /// Extension providing `async-await` support for ``User``.
 ///
 public extension User {
+
+  /// Namespace for `AsyncStream`-based streaming methods
+  var stream: UserStream<Self> {
+    UserStream(user: self)
+  }
+
   /// Receive updates when specific users are updated or removed.
   ///
   /// Emits the complete list of monitored users whenever any one of them changes, excluding any that were removed.
@@ -216,6 +222,7 @@ public extension User {
   /// Receives updates on a single User object.
   ///
   /// - Returns: An asynchronous stream that produces updates when the current ``User`` is edited or `nil` if the user was removed.
+  @available(*, deprecated, message: "Use `stream.updates()` and `stream.deletions()` instead")
   func streamUpdates() -> AsyncStream<ChatType.ChatUserType?> {
     AsyncStream { continuation in
       let autoCloseable = streamUpdates {

@@ -714,5 +714,170 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     }
   }
 
+  // MARK: - Stream Namespace Tests
+
+  func testChannelAsync_Stream_TypingChanges() async throws {
+    let expectation = expectation(description: "Stream_TypingChanges")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let task = Task {
+      for await userIdentifiers in channel.stream.typingChanges() {
+        XCTAssertEqual(userIdentifiers.first, chat.currentUser.id)
+        expectation.fulfill()
+      }
+    }
+
+    try await Task.sleep(nanoseconds: 2_000_000_000)
+    try await channel.startTyping()
+
+    await fulfillment(of: [expectation], timeout: 3)
+    addTeardownBlock { task.cancel() }
+  }
+
+  func testChannelAsync_Stream_Messages() async throws {
+    let expectation = XCTestExpectation(description: "Stream_Messages")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let task = Task {
+      for await message in channel.stream.messages() {
+        XCTAssertEqual(message.text, "This is a text")
+        XCTAssertEqual(message.channelId, channel.id)
+        expectation.fulfill()
+      }
+    }
+
+    try await Task.sleep(nanoseconds: 2_000_000_000)
+    try await channel.sendText(text: "This is a text")
+
+    await fulfillment(of: [expectation], timeout: 6)
+    addTeardownBlock { task.cancel() }
+  }
+
+  func testChannelAsync_Stream_Updates() async throws {
+    let expectation = expectation(description: "Stream_Updates")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let task = Task {
+      for await receivedChannel in channel.stream.updates() {
+        XCTAssertEqual(receivedChannel.name, "NewName")
+        XCTAssertEqual(receivedChannel.status, "NewStatus")
+        expectation.fulfill()
+      }
+    }
+
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+    _ = try await channel.update(name: "NewName", status: "NewStatus")
+
+    await fulfillment(of: [expectation], timeout: 6)
+    addTeardownBlock { task.cancel() }
+  }
+
+  func testChannelAsync_Stream_Deletions() async throws {
+    let someChannel = try await chat.createChannel(id: randomString())
+
+    let expectation = expectation(description: "Stream_Deletions")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let task = Task {
+      for await _ in someChannel.stream.deletions() {
+        expectation.fulfill()
+      }
+    }
+
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+    _ = try await someChannel.delete()
+
+    await fulfillment(of: [expectation], timeout: 6)
+
+    addTeardownBlock { [unowned self] in
+      task.cancel()
+      _ = try? await chat.deleteChannel(id: someChannel.id)
+    }
+  }
+
+  func testChannelAsync_Stream_PresenceChanges() async throws {
+    let expectation = expectation(description: "Stream_PresenceChanges")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let connectTask = Task {
+      for await message in channel.connect() {
+        debugPrint("Did receive message: \(message)")
+      }
+    }
+
+    let presenceTask = Task {
+      for await userIdentifiers in channel.stream.presenceChanges() where !userIdentifiers.isEmpty {
+        XCTAssertEqual(userIdentifiers.count, 1)
+        XCTAssertEqual(userIdentifiers.first, chat.currentUser.id)
+        expectation.fulfill()
+      }
+    }
+
+    await fulfillment(of: [expectation], timeout: 5)
+
+    addTeardownBlock {
+      presenceTask.cancel()
+      connectTask.cancel()
+    }
+  }
+
+  func testChannelAsync_Stream_ReadReceipts() async throws {
+    let expectation = expectation(description: "Stream_ReadReceipts")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let membership = try await channel.invite(user: chat.currentUser)
+    let currentUserId = chat.currentUser.id
+
+    let task = Task {
+      for await receipt in channel.stream.readReceipts() {
+        XCTAssertEqual(receipt.userId, currentUserId)
+        expectation.fulfill()
+      }
+    }
+
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+
+    let tt = try await channel.sendText(text: "Read receipt test")
+    try await Task.sleep(nanoseconds: 2_000_000_000)
+    _ = try await membership.setLastReadMessageTimetoken(tt)
+
+    await fulfillment(of: [expectation], timeout: 10)
+    addTeardownBlock { task.cancel() }
+  }
+
+  func testChannelAsync_Stream_Reports() async throws {
+    let expectation = expectation(description: "Stream_Reports")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let tt = try await channel.sendText(text: "Some text")
+    try await Task.sleep(nanoseconds: 2_000_000_000)
+    let message = try await channel.getMessage(timetoken: tt)
+
+    let task = Task {
+      for await report in channel.stream.reports() {
+        XCTAssertEqual(report.reason, "reportReason")
+        XCTAssertEqual(report.reportedUserId, chat.currentUser.id)
+        expectation.fulfill()
+      }
+    }
+
+    try await Task.sleep(nanoseconds: 4_000_000_000)
+    try await message?.report(reason: "reportReason")
+
+    await fulfillment(of: [expectation], timeout: 10)
+
+    addTeardownBlock {
+      task.cancel()
+      _ = try? await message?.delete()
+    }
+  }
+
   // swiftlint:disable:next file_length
 }

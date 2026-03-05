@@ -48,4 +48,45 @@ class ThreadChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
     XCTAssertNotNil(pinnedMessage)
   }
+
+  // MARK: - Stream Namespace Tests
+
+  func testThreadChannelAsync_Stream_Messages() async throws {
+    let expectation = expectation(description: "Stream_Messages")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let task = Task {
+      for await threadMessage in threadChannel.stream.messages() {
+        XCTAssertEqual(threadMessage.text, "New thread reply")
+        XCTAssertEqual(threadMessage.channelId, threadChannel.id)
+        expectation.fulfill()
+      }
+    }
+
+    try await Task.sleep(nanoseconds: 2_000_000_000)
+    try await threadChannel.sendText(text: "New thread reply")
+
+    await fulfillment(of: [expectation], timeout: 6)
+    addTeardownBlock { task.cancel() }
+  }
+
+  func testThreadChannelAsync_Stream_Updates() async throws {
+    let expectation = expectation(description: "Stream_Updates")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let task = Task {
+      for await updatedThreadChannel in threadChannel.stream.updates() {
+        XCTAssertEqual(updatedThreadChannel.name, "UpdatedThread")
+        expectation.fulfill()
+      }
+    }
+
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+    _ = try await threadChannel.update(name: "UpdatedThread")
+
+    await fulfillment(of: [expectation], timeout: 6)
+    addTeardownBlock { task.cancel() }
+  }
 }

@@ -15,6 +15,12 @@ import PubNubSDK
 /// Extension providing `async-await` support for ``Membership``.
 ///
 public extension Membership {
+
+  /// Namespace for `AsyncStream`-based streaming methods
+  var stream: MembershipStream<Self> {
+    MembershipStream(membership: self)
+  }
+
   /// Receive updates when specific memberships are updated or removed.
   ///
   /// Emits the complete list of monitored memberships whenever any one of them changes, excluding any that were removed.
@@ -106,6 +112,7 @@ public extension Membership {
   /// You can receive updates when this user-channel Membership object is updated or removed.
   ///
   /// - Returns: An asynchronous stream that produces updates when the current ``Membership`` is updated or `nil` if the membership was removed.
+  @available(*, deprecated, message: "Use `stream.updates()` and `stream.deletions()` instead")
   func streamUpdates() -> AsyncStream<ChatType.ChatMembershipType?> {
     AsyncStream { continuation in
       let autoCloseable = streamUpdates {

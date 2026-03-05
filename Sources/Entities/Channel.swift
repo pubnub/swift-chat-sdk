@@ -332,10 +332,12 @@ public protocol Channel: CustomStringConvertible {
 
   /// Emits the received message whenever a new message is published on this channel.
   ///
-  /// - Parameter callback: A closure invoked with the received ``Message`` entity
+  /// For a ``ThreadChannel``, this returns thread messages (``ChatType/ChatThreadMessageType``).
+  ///
+  /// - Parameter callback: A closure invoked with the received message
   /// - Returns: An ``AutoCloseable`` that stops listening when closed
   func onMessageReceived(
-    callback: @escaping (ChatType.ChatMessageType) -> Void
+    callback: @escaping (MessageType) -> Void
   ) -> AutoCloseable
 
   /// Connects a user to the ``Channel`` and sets membership - this way, the chat user can both watch the channel's ontent and be its full-fledged member.
@@ -444,10 +446,12 @@ public protocol Channel: CustomStringConvertible {
 
   /// Emits the updated channel entity whenever this channel's metadata is modified.
   ///
-  /// - Parameter callback: A closure invoked with the updated ``Channel`` entity
+  /// For a ``ThreadChannel``, this returns the updated ``ThreadChannel`` (not the base ``Channel``).
+  ///
+  /// - Parameter callback: A closure invoked with the updated channel
   /// - Returns: An ``AutoCloseable`` that stops listening when closed
   func onUpdated(
-    callback: @escaping (ChatType.ChatChannelType) -> Void
+    callback: @escaping (Self) -> Void
   ) -> AutoCloseable
 
   /// Emits an event whenever this channel is deleted (soft or hard).

@@ -235,10 +235,12 @@ public protocol Message: CustomStringConvertible {
 
   /// Emits the updated message entity whenever this message's content or reactions are modified.
   ///
-  /// - Parameter callback: A closure invoked with the updated ``Message`` entity
+  /// For a ``ThreadMessage``, this returns the updated ``ThreadMessage`` (not the base ``Message``).
+  ///
+  /// - Parameter callback: A closure invoked with the updated message
   /// - Returns: An ``AutoCloseable`` that stops listening when closed
   func onUpdated(
-    callback: @escaping (ChatType.ChatMessageType) -> Void
+    callback: @escaping (Self) -> Void
   ) -> AutoCloseable
 
   /// If you delete a message, you can restore its content together with the attached files using the ``restore(completion:)`` method.

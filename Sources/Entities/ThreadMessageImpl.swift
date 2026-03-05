@@ -108,7 +108,7 @@ extension ThreadMessageImpl: ThreadMessage {
     )
   }
 
-  public func onThreadMessageUpdated(callback: @escaping (ThreadMessageImpl) -> Void) -> AutoCloseable {
+  public func onUpdated(callback: @escaping (ThreadMessageImpl) -> Void) -> AutoCloseable {
     AutoCloseableImpl(
       target.message.onThreadMessageUpdated { [weak self] in
         if let self = self {
@@ -117,10 +117,6 @@ extension ThreadMessageImpl: ThreadMessage {
       },
       owner: self
     )
-  }
-
-  public func onUpdated(callback: @escaping (MessageImpl) -> Void) -> AutoCloseable {
-    target.onUpdated(callback: callback)
   }
 
   public func pinToParentChannel(completion: ((Swift.Result<ChannelImpl, Error>) -> Void)? = nil) {

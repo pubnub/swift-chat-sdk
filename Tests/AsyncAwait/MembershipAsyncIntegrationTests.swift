@@ -138,4 +138,60 @@ class MembershipAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
       task.cancel()
     }
   }
+
+  // MARK: - Stream Namespace Tests
+
+  func testMembershipAsync_Stream_Updates() async throws {
+    let expectation = expectation(description: "Stream_Updates")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let expectedCustom: [String: JSONCodableScalar] = [
+      "a": 1,
+      "b": "Text"
+    ]
+
+    let task = Task {
+      for await updatedMembership in membership.stream.updates() {
+        XCTAssertEqual(updatedMembership.channel.id, membership.channel.id)
+        XCTAssertEqual(updatedMembership.user.id, membership.user.id)
+        XCTAssertEqual(updatedMembership.custom?.mapValues { $0.scalarValue }, expectedCustom.mapValues { $0.scalarValue })
+        expectation.fulfill()
+      }
+    }
+
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+    _ = try await membership.update(custom: expectedCustom)
+
+    await fulfillment(of: [expectation], timeout: 6)
+
+    addTeardownBlock {
+      task.cancel()
+    }
+  }
+
+  func testMembershipAsync_Stream_Deletions() async throws {
+    let someChannel = try await chat.createChannel(id: randomString())
+    let someMembership = try await someChannel.invite(user: chat.currentUser)
+
+    let expectation = expectation(description: "Stream_Deletions")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let task = Task {
+      for await _ in someMembership.stream.deletions() {
+        expectation.fulfill()
+      }
+    }
+
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+    try await someChannel.leave()
+
+    await fulfillment(of: [expectation], timeout: 6)
+
+    addTeardownBlock { [unowned self] in
+      task.cancel()
+      _ = try? await chat.deleteChannel(id: someChannel.id)
+    }
+  }
 }

@@ -454,7 +454,7 @@ public protocol Channel: CustomStringConvertible {
     callback: @escaping (Self) -> Void
   ) -> AutoCloseable
 
-  /// Emits an event whenever this channel is deleted (soft or hard).
+  /// Emits an event whenever this channel is permanently deleted.
   ///
   /// - Parameter callback: A closure invoked when the channel is deleted
   /// - Returns: An ``AutoCloseable`` that stops listening when closed

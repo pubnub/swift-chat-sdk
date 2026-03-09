@@ -30,7 +30,7 @@ public struct UserStream<U: User> {
     }
   }
 
-  /// Emits an event whenever this user is deleted (soft or hard).
+  /// Emits an event whenever this user is permanently deleted.
   ///
   /// Async equivalent of ``User/onDeleted(callback:)``.
   ///

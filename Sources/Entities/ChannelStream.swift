@@ -62,7 +62,7 @@ public struct ChannelStream<C: Channel> {
     }
   }
 
-  /// Emits an event whenever this channel is deleted (soft or hard).
+  /// Emits an event whenever this channel is permanently deleted.
   ///
   /// Async equivalent of ``Channel/onDeleted(callback:)``.
   ///

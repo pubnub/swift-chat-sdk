@@ -197,7 +197,7 @@ public protocol User: CustomStringConvertible {
     callback: @escaping (ChatType.ChatUserType) -> Void
   ) -> AutoCloseable
 
-  /// Emits an event whenever this user is deleted (soft or hard).
+  /// Emits an event whenever this user is permanently deleted.
   ///
   /// - Parameter callback: A closure invoked when the user is deleted
   /// - Returns: An ``AutoCloseable`` that stops listening when closed

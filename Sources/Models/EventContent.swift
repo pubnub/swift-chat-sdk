@@ -325,9 +325,9 @@ extension EventContent {
         reportedUserId: content.reportedUserId,
         autoModerationId: content.autoModerationId
       )
-    case let conent as PubNubChat.EventContent.Receipt:
+    case let content as PubNubChat.EventContent.Receipt:
       EventContent.Receipt(
-        messageTimetoken: Timetoken(conent.messageTimetoken)
+        messageTimetoken: Timetoken(content.messageTimetoken)
       )
     case let content as PubNubChat.EventContent.Mention:
       EventContent.Mention(

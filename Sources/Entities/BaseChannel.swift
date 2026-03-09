@@ -637,10 +637,10 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
   func streamMessageReports(callback: @escaping (any Event<EventContent.Report>) -> Void) -> AutoCloseable {
     AutoCloseableImpl(
       channel.streamMessageReports { [weak self] in
-        if let selfRef = self, let payload = $0.payload.map() as? EventContent.Report {
+        if let self = self, let payload = $0.payload.map() as? EventContent.Report {
           callback(
             EventImpl(
-              chat: selfRef.chat,
+              chat: self.chat,
               timetoken: Timetoken($0.timetoken_),
               payload: payload,
               channelId: $0.channelId,

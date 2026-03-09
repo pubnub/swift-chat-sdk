@@ -532,11 +532,11 @@ extension ChatImpl: Chat {
         channelId: channelId,
         customMethod: customMethod == .publish ? .publish : .signal,
         callback: { [weak self] in
-          if let selfRef = self, let payload = $0.payload.map() as? T {
+          if let self = self, let payload = $0.payload.map() as? T {
             callback(
               EventWrapper(
                 event: EventImpl(
-                  chat: selfRef,
+                  chat: self,
                   timetoken: Timetoken($0.timetoken_),
                   payload: payload,
                   channelId: $0.channelId,

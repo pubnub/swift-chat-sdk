@@ -15,6 +15,12 @@ import PubNubSDK
 /// Extension providing `async-await` support for ``Message``.
 ///
 public extension Message {
+
+  /// Namespace for `AsyncStream`-based streaming methods
+  var stream: MessageStream<Self> {
+    MessageStream(message: self)
+  }
+
   /// Receive updates when specific messages and related message reactions are updated or removed.
   ///
   /// Emits the complete list of monitored messages whenever any one of them changes, excluding any that were removed.
@@ -244,6 +250,7 @@ public extension Message {
   /// You can receive updates when this message and related message reactions are added, edited, or removed.
   ///
   /// - Returns: An asynchronous stream that produces updates when the current ``Message`` is edited.
+  @available(*, deprecated, message: "Use `stream.updates()` instead")
   func streamUpdates() -> AsyncStream<Self> {
     AsyncStream { continuation in
       let autoCloseable = streamUpdates {

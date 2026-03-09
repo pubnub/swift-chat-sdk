@@ -479,11 +479,15 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     )
   }
 
-  func streamReadReceipts(callback: @escaping ((ReadReceipt) -> Void)) -> AutoCloseable {
+  func streamReadReceipts(callback: @escaping (([Timetoken: [String]]) -> Void)) -> AutoCloseable {
     AutoCloseableImpl(
       channel.streamReadReceipts { [weak self] in
         if self != nil {
-          callback($0.transform())
+          callback(
+            $0.reduce(into: [Timetoken: [String]]()) { res, currentItem in
+              res[Timetoken(currentItem.key.uint64Value)] = currentItem.value
+            }
+          )
         }
       },
       owner: self
@@ -633,16 +637,93 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
   func streamMessageReports(callback: @escaping (any Event<EventContent.Report>) -> Void) -> AutoCloseable {
     AutoCloseableImpl(
       channel.streamMessageReports { [weak self] in
-        if let selfRef = self, let payload = $0.payload.map() as? EventContent.Report {
+        if let self = self, let payload = $0.payload.map() as? EventContent.Report {
           callback(
             EventImpl(
-              chat: selfRef.chat,
+              chat: self.chat,
               timetoken: Timetoken($0.timetoken_),
               payload: payload,
               channelId: $0.channelId,
               userId: $0.userId
             )
           )
+        }
+      },
+      owner: self
+    )
+  }
+
+  func onTypingChanged(callback: @escaping (([String]) -> Void)) -> AutoCloseable {
+    AutoCloseableImpl(
+      channel.onTypingChanged { [weak self] in
+        if let typingUserIdentifiers = $0 as? [String], self != nil {
+          callback(typingUserIdentifiers)
+        }
+      },
+      owner: self
+    )
+  }
+
+  func onMessageReceived(callback: @escaping (BaseMessage<M>) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      channel.onMessageReceived { [weak self] in
+        if let self = self, let message = $0 as? M {
+          callback(BaseMessage(message: message, chat: self.chat))
+        }
+      },
+      owner: self
+    )
+  }
+
+  func onUpdated(callback: @escaping (BaseChannel<C, M>) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      channel.onUpdated { [weak self] in
+        if let self = self, let channel = $0 as? C {
+          callback(BaseChannel(channel: channel, chat: self.chat))
+        }
+      },
+      owner: self
+    )
+  }
+
+  func onDeleted(callback: @escaping () -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      channel.onDeleted { [weak self] in
+        if self != nil {
+          callback()
+        }
+      },
+      owner: self
+    )
+  }
+
+  func onReadReceiptReceived(callback: @escaping (ReadReceipt) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      channel.onReadReceiptReceived { [weak self] in
+        if self != nil {
+          callback($0.transform())
+        }
+      },
+      owner: self
+    )
+  }
+
+  func onPresenceChanged(callback: @escaping (Set<String>) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      channel.onPresenceChanged { [weak self] in
+        if let userIds = $0 as? Set<String>, self != nil {
+          callback(userIds)
+        }
+      },
+      owner: self
+    )
+  }
+
+  func onMessageReported(callback: @escaping (Report) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      channel.onMessageReported { [weak self] in
+        if self != nil {
+          callback($0.transform())
         }
       },
       owner: self

@@ -108,6 +108,17 @@ extension ThreadMessageImpl: ThreadMessage {
     )
   }
 
+  public func onUpdated(callback: @escaping (ThreadMessageImpl) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      target.message.onThreadMessageUpdated { [weak self] in
+        if let self = self {
+          callback(ThreadMessageImpl(message: $0, chat: self.chat))
+        }
+      },
+      owner: self
+    )
+  }
+
   public func pinToParentChannel(completion: ((Swift.Result<ChannelImpl, Error>) -> Void)? = nil) {
     target.message.pinToParentChannel().async(
       caller: self

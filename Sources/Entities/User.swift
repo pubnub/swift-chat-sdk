@@ -184,8 +184,49 @@ public protocol User: CustomStringConvertible {
   /// - Parameters:
   ///   - callback: A closure to be executed when detecting user changes. Takes a User object or `nil` if the user was removed
   /// - Returns: An ``AutoCloseable`` that you can use to stop receiving objects events by invoking its ``AutoCloseable/close()`` method
+  @available(*, deprecated, message: "Use `onUpdated(callback:)` and `onDeleted(callback:)` instead")
   func streamUpdates(
     callback: @escaping ((ChatType.ChatUserType?) -> Void)
+  ) -> AutoCloseable
+
+  /// Emits the updated user entity whenever this user's metadata is modified.
+  ///
+  /// - Parameter callback: A closure invoked with the updated ``User`` entity
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onUpdated(
+    callback: @escaping (ChatType.ChatUserType) -> Void
+  ) -> AutoCloseable
+
+  /// Emits an event whenever this user is permanently deleted.
+  ///
+  /// - Parameter callback: A closure invoked when the user is deleted
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onDeleted(
+    callback: @escaping () -> Void
+  ) -> AutoCloseable
+
+  /// Emits a mention whenever this user is mentioned in a message.
+  ///
+  /// - Parameter callback: A closure invoked with the ``Mention`` containing details about the mention
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onMentioned(
+    callback: @escaping (Mention) -> Void
+  ) -> AutoCloseable
+
+  /// Emits an invite whenever this user is invited to a channel.
+  ///
+  /// - Parameter callback: A closure invoked with the ``Invite`` containing details about the invitation
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onInvited(
+    callback: @escaping (Invite) -> Void
+  ) -> AutoCloseable
+
+  /// Emits a restriction whenever the moderation status changes for this user.
+  ///
+  /// - Parameter callback: A closure invoked with the ``Restriction`` containing the updated restriction details
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onRestrictionChanged(
+    callback: @escaping (Restriction) -> Void
   ) -> AutoCloseable
 
   /// Checks if the user is currently active.

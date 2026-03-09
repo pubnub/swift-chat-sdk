@@ -216,6 +216,17 @@ extension MessageImpl: Message {
     }
   }
 
+  public func onUpdated(callback: @escaping (MessageImpl) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      target.message.onUpdated { [weak self] in
+        if let message = $0 as? PubNubChat.Message, let self = self {
+          callback(MessageImpl(message: message, chat: self.chat))
+        }
+      },
+      owner: self
+    )
+  }
+
   public func restore(completion: ((Swift.Result<MessageImpl, Error>) -> Void)? = nil) {
     target.restore {
       switch $0 {

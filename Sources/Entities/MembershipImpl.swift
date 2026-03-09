@@ -140,6 +140,28 @@ extension MembershipImpl: Membership {
     }
   }
 
+  public func onUpdated(callback: @escaping (MembershipImpl) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      membership.onUpdated { [weak self] in
+        if let self = self {
+          callback(MembershipImpl(membership: $0, chat: self.chat))
+        }
+      },
+      owner: self
+    )
+  }
+
+  public func onDeleted(callback: @escaping () -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      membership.onDeleted { [weak self] in
+        if self != nil {
+          callback()
+        }
+      },
+      owner: self
+    )
+  }
+
   public func streamUpdates(callback: @escaping ((MembershipImpl?) -> Void)) -> AutoCloseable {
     AutoCloseableImpl(
       membership.streamUpdates { [weak self] in

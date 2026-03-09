@@ -332,4 +332,118 @@ class UserAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
       _ = try? await chat.deleteUser(id: secondUser.id)
     }
   }
+
+  // MARK: - Stream Namespace Tests
+
+  func testUserAsync_Stream_Updates() async throws {
+    let expectation = expectation(description: "Stream_Updates")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let createdUser = try await chat.createUser(user: testableUser())
+
+    let task = Task {
+      for await updatedUser in createdUser.stream.updates() {
+        XCTAssertEqual(updatedUser.name, "NewName")
+        XCTAssertEqual(updatedUser.status, "NewStatus")
+        expectation.fulfill()
+      }
+    }
+
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+
+    _ = try await createdUser.update(
+      name: "NewName",
+      status: "NewStatus"
+    )
+
+    await fulfillment(of: [expectation], timeout: 6)
+
+    addTeardownBlock { [unowned self] in
+      task.cancel()
+      _ = try? await chat.deleteUser(id: createdUser.id)
+    }
+  }
+
+  func testUserAsync_Stream_Deletions() async throws {
+    let expectation = expectation(description: "Stream_Deletions")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let createdUser = try await chat.createUser(user: testableUser())
+
+    let task = Task {
+      for await _ in createdUser.stream.deletions() {
+        expectation.fulfill()
+      }
+    }
+
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+    _ = try await createdUser.delete()
+
+    await fulfillment(of: [expectation], timeout: 6)
+
+    addTeardownBlock { [unowned self] in
+      task.cancel()
+      _ = try? await chat.deleteUser(id: createdUser.id)
+    }
+  }
+
+  func testUserAsync_Stream_Mentions() async throws {
+    let expectation = expectation(description: "Stream_Mentions")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let channel = try await chat.createChannel(id: randomString())
+    _ = try await channel.invite(user: chat.currentUser)
+
+    let task = Task {
+      for await mention in chat.currentUser.stream.mentions() {
+        XCTAssertEqual(mention.channelId, channel.id)
+        expectation.fulfill()
+      }
+    }
+
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+    _ = try await channel.sendText(
+      text: "Hello @\(chat.currentUser.id)",
+      usersToMention: [chat.currentUser.id]
+    )
+
+    await fulfillment(of: [expectation], timeout: 10)
+
+    addTeardownBlock { [unowned self] in
+      task.cancel()
+      _ = try? await chat.deleteChannel(id: channel.id)
+    }
+  }
+
+  func testUserAsync_Stream_Invites() async throws {
+    let expectation = expectation(description: "Stream_Invites")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let someUser = try await chat.createUser(user: testableUser())
+    let channel = try await chat.createChannel(id: randomString())
+
+    let task = Task {
+      for await invite in someUser.stream.invites() {
+        XCTAssertEqual(invite.channelId, channel.id)
+        expectation.fulfill()
+      }
+    }
+
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+    _ = try await channel.invite(user: someUser)
+
+    await fulfillment(of: [expectation], timeout: 10)
+
+    addTeardownBlock { [unowned self] in
+      task.cancel()
+      _ = try? await chat.deleteChannel(id: channel.id)
+      _ = try? await chat.deleteUser(id: someUser.id)
+    }
+  }
+
+  // swiftlint:disable:next file_length
 }

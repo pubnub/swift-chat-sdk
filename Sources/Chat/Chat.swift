@@ -368,6 +368,7 @@ public protocol Chat: AnyObject {
   ///   - customMethod: An optional custom method for emitting events
   ///   - callback: A function that is called with an ``EventWrapper`` as its parameter. It defines the custom behavior to be executed whenever an event is detected on the specified channel
   /// - Returns: ``AutoCloseable`` interface you can call to stop listening for new events and clean up resources when they re no longer needed by invoking the ``AutoCloseable/close()`` method
+  @available(*, deprecated, message: "Use entity-specific methods instead")
   func listenForEvents<T: EventContent>(
     type: T.Type,
     channelId: String,

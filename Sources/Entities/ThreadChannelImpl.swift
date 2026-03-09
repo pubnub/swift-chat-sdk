@@ -94,6 +94,28 @@ extension ThreadChannelImpl: ThreadChannel {
     )
   }
 
+  public func onMessageReceived(callback: @escaping (ThreadMessageImpl) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      target.channel.onThreadMessageReceived { [weak self] in
+        if let self = self {
+          callback(ThreadMessageImpl(message: $0, chat: self.chat))
+        }
+      },
+      owner: self
+    )
+  }
+
+  public func onUpdated(callback: @escaping (ThreadChannelImpl) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      target.channel.onThreadChannelUpdated { [weak self] in
+        if let self = self {
+          callback(ThreadChannelImpl(channel: $0, chat: self.chat))
+        }
+      },
+      owner: self
+    )
+  }
+
   public func pinMessageToParentChannel(
     message: ThreadMessageImpl,
     completion: ((Swift.Result<ChannelImpl, Error>) -> Void)? = nil
@@ -248,7 +270,7 @@ extension ThreadChannelImpl: ThreadChannel {
     usePost: Bool = false,
     ttl: Int? = nil,
     quotedMessage: MessageImpl? = nil,
-    files: [InputFile]?,
+    files: [InputFile]? = nil,
     usersToMention: [String]? = nil,
     customPushData: [String: String]? = nil,
     completion: ((Swift.Result<Timetoken, Error>) -> Void)? = nil
@@ -391,7 +413,7 @@ extension ThreadChannelImpl: ThreadChannel {
     )
   }
 
-  public func streamReadReceipts(callback: @escaping ((ReadReceipt) -> Void)) -> AutoCloseable {
+  public func streamReadReceipts(callback: @escaping (([Timetoken: [String]]) -> Void)) -> AutoCloseable {
     target.streamReadReceipts(
       callback: callback
     )
@@ -469,6 +491,26 @@ extension ThreadChannelImpl: ThreadChannel {
     target.streamMessageReports(
       callback: callback
     )
+  }
+
+  public func onTypingChanged(callback: @escaping (([String]) -> Void)) -> AutoCloseable {
+    target.onTypingChanged(callback: callback)
+  }
+
+  public func onDeleted(callback: @escaping () -> Void) -> AutoCloseable {
+    target.onDeleted(callback: callback)
+  }
+
+  public func onReadReceiptReceived(callback: @escaping (ReadReceipt) -> Void) -> AutoCloseable {
+    target.onReadReceiptReceived(callback: callback)
+  }
+
+  public func onPresenceChanged(callback: @escaping (Set<String>) -> Void) -> AutoCloseable {
+    target.onPresenceChanged(callback: callback)
+  }
+
+  public func onMessageReported(callback: @escaping (Report) -> Void) -> AutoCloseable {
+    target.onMessageReported(callback: callback)
   }
 
   public func createMessageDraft(

@@ -125,7 +125,16 @@ public protocol Channel: CustomStringConvertible {
   ///
   /// - Parameter callback: Callback function passed as a parameter. It defines the custom behavior to be executed whenever a user starts/stops typing
   /// - Returns: ``AutoCloseable`` you can call to disconnect (unsubscribe) from the channel and stop receiving signal events for someone typing by invoking the `close()` method
+  @available(*, deprecated, message: "Use `onTypingChanged(callback:)` instead")
   func getTyping(
+    callback: @escaping (([String]) -> Void)
+  ) -> AutoCloseable
+
+  /// Emits a list of user IDs whenever the typing status changes on this channel.
+  ///
+  /// - Parameter callback: A closure invoked with the list of user IDs currently typing
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onTypingChanged(
     callback: @escaping (([String]) -> Void)
   ) -> AutoCloseable
 
@@ -316,8 +325,19 @@ public protocol Channel: CustomStringConvertible {
   ///
   /// - Parameter callback: Defines the custom behavior to be executed whenever a message is received on the ``Channel``
   /// - Returns: ``AutoCloseable`` interface you can call to stop listening for new messages and clean up resources when they are no longer needed by invoking the `close()` method
+  @available(*, deprecated, message: "Use `onMessageReceived(callback:)` instead")
   func connect(
     callback: @escaping (ChatType.ChatMessageType) -> Void
+  ) -> AutoCloseable
+
+  /// Emits the received message whenever a new message is published on this channel.
+  ///
+  /// For a ``ThreadChannel``, this returns thread messages (``ChatType/ChatThreadMessageType``).
+  ///
+  /// - Parameter callback: A closure invoked with the received message
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onMessageReceived(
+    callback: @escaping (MessageType) -> Void
   ) -> AutoCloseable
 
   /// Connects a user to the ``Channel`` and sets membership - this way, the chat user can both watch the channel's ontent and be its full-fledged member.
@@ -419,8 +439,27 @@ public protocol Channel: CustomStringConvertible {
   ///
   /// - Parameter callback: A closure to be executed when detecting channel changes. Takes a single Channel object or `nil` if the channel was removed
   /// - Returns: ``AutoCloseable`` interface that lets you stop receiving channel-related updates (objects events) and clean up resources by invoking the `close()` method
+  @available(*, deprecated, message: "Use `onUpdated(callback:)` and `onDeleted(callback:)` instead")
   func streamUpdates(
     callback: @escaping ((ChatType.ChatChannelType)?) -> Void
+  ) -> AutoCloseable
+
+  /// Emits the updated channel entity whenever this channel's metadata is modified.
+  ///
+  /// For a ``ThreadChannel``, this returns the updated ``ThreadChannel`` (not the base ``Channel``).
+  ///
+  /// - Parameter callback: A closure invoked with the updated channel
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onUpdated(
+    callback: @escaping (Self) -> Void
+  ) -> AutoCloseable
+
+  /// Emits an event whenever this channel is permanently deleted.
+  ///
+  /// - Parameter callback: A closure invoked when the channel is deleted
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onDeleted(
+    callback: @escaping () -> Void
   ) -> AutoCloseable
 
   /// Lets you get a read confirmation status for messages you published on a channel.
@@ -430,9 +469,14 @@ public protocol Channel: CustomStringConvertible {
   ///
   /// - Parameter callback: Defines the custom behavior to be executed when receiving read receipts on the joined channel
   /// - Returns: AutoCloseable Interface you can call to stop listening for message read receipts and clean up resources by invoking the close() method
-  func streamReadReceipts(
-    callback: @escaping ((ReadReceipt) -> Void)
-  ) -> AutoCloseable
+  @available(*, deprecated, message: "Use `onReadReceiptReceived(callback:)` instead")
+  func streamReadReceipts(callback: @escaping (([Timetoken: [String]]) -> Void)) -> AutoCloseable
+
+  /// Emits a read receipt whenever a member reads a message on this channel.
+  ///
+  /// - Parameter callback: A closure invoked with the ``ReadReceipt`` containing the user ID and last read timetoken
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onReadReceiptReceived(callback: @escaping (ReadReceipt) -> Void) -> AutoCloseable
 
   /// Fetches the read receipts for members of this channel.
   ///
@@ -487,7 +531,16 @@ public protocol Channel: CustomStringConvertible {
   ///
   /// - Parameter callback: Defines the custom behavior to be executed when detecting user presence event
   /// - Returns: ``AutoCloseable`` interface that lets you stop receiving presence-related updates (presence events) by invoking the `close()` method
+  @available(*, deprecated, message: "Use `onPresenceChanged(callback:)` instead")
   func streamPresence(
+    callback: @escaping (Set<String>) -> Void
+  ) -> AutoCloseable
+
+  /// Emits the list of user IDs whenever the presence state changes on this channel.
+  ///
+  /// - Parameter callback: A closure invoked with the list of currently present user IDs
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onPresenceChanged(
     callback: @escaping (Set<String>) -> Void
   ) -> AutoCloseable
 
@@ -528,8 +581,17 @@ public protocol Channel: CustomStringConvertible {
   ///
   /// - Parameter callback: Callback function passed as a parameter. It defines the custom behavior to be executed when detecting new message report events
   /// - Returns: ``AutoCloseable`` interface that lets you stop receiving report-related updates (report events) by invoking the close() method
+  @available(*, deprecated, message: "Use `onMessageReported(callback:)` instead")
   func streamMessageReports(
     callback: @escaping (any Event<EventContent.Report>) -> Void
+  ) -> AutoCloseable
+
+  /// Emits a report whenever a message in this channel is reported by a user.
+  ///
+  /// - Parameter callback: A closure invoked with the ``Report`` containing details about the reported message
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onMessageReported(
+    callback: @escaping (Report) -> Void
   ) -> AutoCloseable
 
   /// Creates a ``MessageDraft`` for composing a message that will be sent to this ``Channel``

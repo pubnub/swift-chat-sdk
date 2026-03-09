@@ -743,35 +743,51 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
 
-    let joinResult = try awaitResultValue { channel.join(completion: $0) }
-    let membership = joinResult.membership
-    let currentUserId = chat.currentUser.id
-
-    let messageTimetoken = try awaitResultValue {
-      channel.sendText(
-        text: "Read receipt test",
+    let anotherUser = try awaitResultValue {
+      chat.createUser(
+        user: UserImpl(chat: chat, id: randomString()),
+        completion: $0
+      )
+    }
+    let membership = try awaitResultValue(delay: 3) {
+      channel.invite(
+        user: chat.currentUser,
+        completion: $0
+      )
+    }
+    let anotherMembership = try awaitResultValue(delay: 1) {
+      channel.invite(
+        user: anotherUser,
         completion: $0
       )
     }
 
-    let closeable = channel.streamReadReceipts { readReceipt in
-      XCTAssertEqual(readReceipt.userId, currentUserId)
-      XCTAssertEqual(readReceipt.lastReadTimetoken, messageTimetoken)
+    let timetoken = try XCTUnwrap(membership.lastReadMessageTimetoken)
+    let secondTimetoken = try XCTUnwrap(anotherMembership.lastReadMessageTimetoken)
+    let currentUserId = chat.currentUser.id
+    let anotherUserId = anotherUser.id
+
+    let closeable = channel.streamReadReceipts {
+      XCTAssertEqual($0[timetoken]?.count, 1)
+      XCTAssertEqual($0[timetoken]?.first, currentUserId)
+      XCTAssertEqual($0[secondTimetoken]?.count, 1)
+      XCTAssertEqual($0[secondTimetoken]?.first, anotherUserId)
       expectation.fulfill()
     }
 
-    _ = try awaitResultValue(delay: 1) {
-      membership.setLastReadMessageTimetoken(
-        messageTimetoken,
-        completion: $0
-      )
-    }
+    wait(
+      for: [expectation],
+      timeout: 6
+    )
 
-    wait(for: [expectation], timeout: 6)
-
-    addTeardownBlock {
+    addTeardownBlock { [unowned self] in
       closeable.close()
-      joinResult.disconnect?.close()
+      try awaitResult {
+        chat.deleteUser(
+          id: anotherUserId,
+          completion: $0
+        )
+      }
     }
   }
 
@@ -1015,6 +1031,189 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
     addTeardownBlock { [unowned self] in
       closeable.close()
       try awaitResult { message?.delete(completion: $0) }
+    }
+  }
+
+  // MARK: - Entity-first streaming API tests
+
+  func testChannel_OnUpdated() throws {
+    let expectation = expectation(description: "OnUpdated")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let closeable = channel.onUpdated { updatedChannel in
+      XCTAssertEqual(updatedChannel.name, "NewName")
+      XCTAssertEqual(updatedChannel.status, "NewStatus")
+      expectation.fulfill()
+    }
+
+    try awaitResultValue(delay: 3) {
+      channel.update(
+        name: "NewName",
+        status: "NewStatus",
+        completion: $0
+      )
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 6
+    )
+    addTeardownBlock {
+      closeable.close()
+    }
+  }
+
+  func testChannel_OnDeleted() throws {
+    let expectation = expectation(description: "OnDeleted")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let channelToDelete = try awaitResultValue {
+      chat.createChannel(
+        id: randomString(),
+        completion: $0
+      )
+    }
+
+    let closeable = channelToDelete.onDeleted {
+      expectation.fulfill()
+    }
+
+    try awaitResultValue(delay: 3) {
+      channelToDelete.delete(
+        soft: false,
+        completion: $0
+      )
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 6
+    )
+    addTeardownBlock {
+      closeable.close()
+    }
+  }
+
+  func testChannel_OnMessageReceived() throws {
+    let expectation = XCTestExpectation(description: "OnMessageReceived")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let closeable = channel.onMessageReceived { [unowned self] in
+      XCTAssertEqual($0.text, "This is a text")
+      XCTAssertEqual($0.channelId, channel.id)
+      expectation.fulfill()
+    }
+
+    try awaitResultValue(delay: 3) {
+      channel.sendText(
+        text: "This is a text",
+        completion: $0
+      )
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 6
+    )
+    addTeardownBlock {
+      closeable.close()
+    }
+  }
+
+  func testChannel_OnTypingChanged() throws {
+    let expectation = expectation(description: "OnTypingChanged")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let closeable = channel.onTypingChanged { [unowned self] typingUsers in
+      if !typingUsers.isEmpty {
+        XCTAssertTrue(typingUsers.contains(chat.currentUser.id))
+        expectation.fulfill()
+      }
+    }
+
+    try awaitResultValue(delay: 3) {
+      channel.startTyping(
+        completion: $0
+      )
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 6
+    )
+    addTeardownBlock {
+      closeable.close()
+    }
+  }
+
+  func testChannel_OnPresenceChanged() throws {
+    let expectation = expectation(description: "OnPresenceChanged")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let presenceCloseable = channel.onPresenceChanged { [unowned self] userIds in
+      if !userIds.isEmpty {
+        XCTAssertEqual(userIds.count, 1)
+        XCTAssertEqual(userIds.first, chat.currentUser.id)
+        expectation.fulfill()
+      }
+    }
+
+    let connectCloseable = channel.connect(callback: {
+      debugPrint("Did receive message: \($0)")
+    })
+
+    wait(
+      for: [expectation],
+      timeout: 5
+    )
+    addTeardownBlock {
+      presenceCloseable.close()
+      connectCloseable.close()
+    }
+  }
+
+  func testChannel_OnReadReceiptReceived() throws {
+    let expectation = expectation(description: "OnReadReceiptReceived")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let membership = try awaitResultValue(delay: 3) {
+      channel.invite(
+        user: chat.currentUser,
+        completion: $0
+      )
+    }
+
+    let closeable = channel.onReadReceiptReceived { receipt in
+      XCTAssertEqual(receipt.userId, membership.user.id)
+      expectation.fulfill()
+    }
+
+    let timetoken = try awaitResultValue(delay: 3) {
+      channel.sendText(
+        text: "Test message",
+        completion: $0
+      )
+    }
+
+    try awaitResultValue(delay: 1) {
+      membership.setLastReadMessageTimetoken(
+        timetoken,
+        completion: $0
+      )
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 10
+    )
+    addTeardownBlock {
+      closeable.close()
     }
   }
 

@@ -340,18 +340,21 @@ public protocol Channel: CustomStringConvertible {
     callback: @escaping (MessageType) -> Void
   ) -> AutoCloseable
 
-  /// Connects a user to the ``Channel`` and sets membership - this way, the chat user can both watch the channel's ontent and be its full-fledged member.
+  /// Sets the caller's membership on this channel.
   ///
   /// - Parameters:
   ///   - custom: Any custom properties or metadata associated with the channel-user membership in the form of key-value pairs
-  ///   - callback: Defines the custom behavior to be executed whenever a message is received on the [Channel]
+  ///   - status: Optional membership status value
+  ///   - type: Optional membership type value
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: A `Tuple` containing the user's ``Membership`` in the channel, and ``AutoCloseable`` that  lets you stop listening to new channel messages while remaining a channel membership
   ///     - **Failure**: An `Error` describing the failure
+  /// - Returns: The caller's membership in the channel
   func join(
     custom: [String: JSONCodableScalar]?,
-    callback: ((ChatType.ChatMessageType) -> Void)?,
-    completion: ((Swift.Result<(membership: ChatType.ChatMembershipType, disconnect: AutoCloseable?), Error>) -> Void)?
+    status: String?,
+    type: String?,
+    completion: ((Swift.Result<ChatType.ChatMembershipType, Error>) -> Void)?
   )
 
   /// Remove user's channel membership.

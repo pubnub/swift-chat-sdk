@@ -348,20 +348,18 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
 
   func join(
     custom: [String: JSONCodableScalar]?,
-    callback: ((ChatType.ChatMessageType) -> Void)?,
-    completion: ((Swift.Result<(membership: MembershipImpl, disconnect: AutoCloseable?), Error>) -> Void)?
+    status: String?,
+    type: String?,
+    completion: ((Swift.Result<ChatType.ChatMembershipType, Error>) -> Void)?
   ) {
-    channel.join(custom: custom?.asCustomObject(), callback: { [weak self] in
-      if let self = self {
-        callback?(MessageImpl(message: $0, chat: self.chat))
-      }
-    }).async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.JoinResult>) in
+    channel.join(
+      status: status,
+      type: type,
+      custom: custom?.asCustomObject()
+    ).async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.Membership>) in
       switch result.result {
-      case let .success(joinRes):
-        completion?(.success((
-          membership: MembershipImpl(membership: joinRes.membership, chat: result.caller.chat),
-          disconnect: AutoCloseableImpl(joinRes.disconnect, owner: result.caller)
-        )))
+      case let .success(membership):
+        completion?(.success(MembershipImpl(membership: membership, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }

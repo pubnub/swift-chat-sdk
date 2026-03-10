@@ -341,12 +341,14 @@ extension ThreadChannelImpl: ThreadChannel {
 
   public func join(
     custom: [String: JSONCodableScalar]? = nil,
-    callback: ((MessageImpl) -> Void)? = nil,
-    completion: ((Swift.Result<(membership: MembershipImpl, disconnect: AutoCloseable?), Error>) -> Void)? = nil
+    status: String? = nil,
+    type: String? = nil,
+    completion: ((Swift.Result<MembershipImpl, any Error>) -> Void)? = nil
   ) {
     target.join(
       custom: custom,
-      callback: callback,
+      status: status,
+      type: type,
       completion: completion
     )
   }

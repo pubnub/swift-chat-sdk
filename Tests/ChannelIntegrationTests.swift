@@ -201,11 +201,7 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
   }
 
   func testChannel_WhoIsPresent() throws {
-    let joinValue = try awaitResultValue {
-      channel.join(
-        completion: $0
-      )
-    }
+    channel.chat.pubNub.subscribe(to: [channel.id])
 
     let whoIsPresentValue = try awaitResultValue(delay: 4) {
       channel.whoIsPresent(
@@ -215,18 +211,10 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
 
     XCTAssertEqual(whoIsPresentValue.count, 1)
     XCTAssertEqual(whoIsPresentValue.first, chat.currentUser.id)
-
-    addTeardownBlock {
-      joinValue.disconnect?.close()
-    }
   }
 
   func testChannel_IsPresent() throws {
-    let joinValue = try awaitResultValue {
-      channel.join(
-        completion: $0
-      )
-    }
+    channel.chat.pubNub.subscribe(to: [channel.id])
 
     XCTAssertTrue(try awaitResultValue(delay: 3) {
       channel.isPresent(
@@ -234,10 +222,6 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
         completion: $0
       )
     })
-
-    addTeardownBlock {
-      joinValue.disconnect?.close()
-    }
   }
 
   func testChannel_GetHistory() throws {
@@ -559,42 +543,18 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
   }
 
   func testChannel_Join() throws {
-    let expectation = XCTestExpectation(description: "Connect")
-    expectation.assertForOverFulfill = true
-    expectation.expectedFulfillmentCount = 1
-
-    let joinValue = try awaitResultValue { [unowned self] in
+    let membership = try awaitResultValue {
       channel.join(
-        callback: {
-          XCTAssertEqual($0.text, "This is a text")
-          XCTAssertEqual($0.channelId, self.channel.id)
-          expectation.fulfill()
-        },
         completion: $0
       )
     }
 
-    XCTAssertEqual(joinValue.membership.channel.id, channel.id)
-    XCTAssertEqual(joinValue.membership.user.id, chat.currentUser.id)
-
-    try awaitResultValue(delay: 3) {
-      channel.sendText(
-        text: "This is a text",
-        completion: $0
-      )
-    }
-
-    wait(
-      for: [expectation],
-      timeout: 7
-    )
-    addTeardownBlock {
-      joinValue.disconnect?.close()
-    }
+    XCTAssertEqual(membership.channel.id, channel.id)
+    XCTAssertEqual(membership.user.id, chat.currentUser.id)
   }
 
   func testChannel_Leave() throws {
-    let joinValue = try awaitResultValue {
+    try awaitResultValue {
       channel.join(
         completion: $0
       )
@@ -611,10 +571,6 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
         )
       }.memberships.isEmpty
     )
-
-    addTeardownBlock {
-      joinValue.disconnect?.close()
-    }
   }
 
   func testChannel_PinMessageGetPinnedMessage() throws {
@@ -923,10 +879,6 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
 
-    let connectCloseable = channel.connect(callback: {
-      debugPrint("Did receive message: \($0)")
-    })
-
     let presenceCloseable = channel.streamPresence { [unowned self] in
       if !$0.isEmpty {
         XCTAssertEqual($0.count, 1)
@@ -935,13 +887,14 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
       }
     }
 
+    channel.chat.pubNub.subscribe(to: [channel.id])
+
     wait(
       for: [expectation],
       timeout: 5
     )
     addTeardownBlock {
       presenceCloseable.close()
-      connectCloseable.close()
     }
   }
 
@@ -1163,9 +1116,7 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
       }
     }
 
-    let connectCloseable = channel.connect(callback: {
-      debugPrint("Did receive message: \($0)")
-    })
+    channel.chat.pubNub.subscribe(to: [channel.id])
 
     wait(
       for: [expectation],
@@ -1173,7 +1124,6 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
     )
     addTeardownBlock {
       presenceCloseable.close()
-      connectCloseable.close()
     }
   }
 

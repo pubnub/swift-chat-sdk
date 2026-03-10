@@ -1127,6 +1127,71 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
     }
   }
 
+  func testChannel_OnCustomEvent() throws {
+    let expectation = expectation(description: "OnCustomEvent")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let closeable = channel.onCustomEvent { [unowned self] event in
+      XCTAssertEqual(event.userId, chat.currentUser.id)
+      XCTAssertEqual(event.payload["key"]?.stringOptional, "value")
+      expectation.fulfill()
+    }
+
+    try awaitResultValue(delay: 2) {
+      channel.emitCustomEvent(
+        payload: ["key": "value"],
+        completion: $0
+      )
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 10
+    )
+    addTeardownBlock {
+      closeable.close()
+    }
+  }
+
+  func testChannel_OnCustomEvent_WithMessageTypeFilter() throws {
+    let expectation = expectation(description: "OnCustomEvent_Filtered")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let closeable = channel.onCustomEvent(messageType: "myType") { [unowned self] event in
+      XCTAssertEqual(event.payload["key"]?.stringOptional, "value")
+      XCTAssertEqual(event.userId, chat.currentUser.id)
+      expectation.fulfill()
+    }
+
+    // Emit with a different type first - should not trigger
+    try awaitResultValue(delay: 2) {
+      channel.emitCustomEvent(
+        payload: ["key": "other"],
+        messageType: "otherType",
+        completion: $0
+      )
+    }
+
+    // Emit with the matching type - should trigger
+    try awaitResultValue(delay: 1) {
+      channel.emitCustomEvent(
+        payload: ["key": "value"],
+        messageType: "myType",
+        completion: $0
+      )
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 10
+    )
+    addTeardownBlock {
+      closeable.close()
+    }
+  }
+
   func testChannel_OnReadReceiptReceived() throws {
     let expectation = expectation(description: "OnReadReceiptReceived")
     expectation.assertForOverFulfill = true

@@ -728,6 +728,47 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     )
   }
 
+  func emitCustomEvent(
+    payload: [String: JSONCodable],
+    messageType: String?,
+    storeInHistory: Bool,
+    completion: ((Swift.Result<Timetoken, Error>) -> Void)?
+  ) {
+    channel.emitCustomEvent(
+      payload: payload,
+      messageType: messageType,
+      storeInHistory: storeInHistory
+    ).async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.PNPublishResult>) in
+      switch result.result {
+      case let .success(response):
+        completion?(.success(Timetoken(response.timetoken)))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
+
+  func onCustomEvent(
+    messageType: String?,
+    callback: @escaping (CustomEvent) -> Void
+  ) -> AutoCloseable {
+    AutoCloseableImpl(
+      channel.onCustomEvent(messageType: messageType) { [weak self] in
+        if self != nil {
+          callback(
+            CustomEvent(
+              timetoken: Timetoken($0.timetoken),
+              userId: $0.userId,
+              type: $0.type,
+              payload: ($0.payload as? [String: Any])?.compactMapValues { AnyJSON($0) } ?? [:]
+            )
+          )
+        }
+      },
+      owner: self
+    )
+  }
+
   func createMessageDraft(
     userSuggestionSource: UserSuggestionSource,
     isTypingIndicatorTriggered: Bool,

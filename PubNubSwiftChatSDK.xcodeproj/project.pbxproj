@@ -51,6 +51,7 @@
 		3D64DC732F58A58C004AC52B /* Mention.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D64DC722F58A58C004AC52B /* Mention.swift */; };
 		3D64DC742F58A58C004AC52B /* Invite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D64DC712F58A58C004AC52B /* Invite.swift */; };
 		3D64DC762F58A803004AC52B /* Report.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D64DC752F58A803004AC52B /* Report.swift */; };
+		3D64DC772F58A803004AC52B /* CustomEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D64DC782F58A803004AC52B /* CustomEvent.swift */; };
 		3D7062C62D2D4A4F000729E1 /* ChatAsyncIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7062C52D2D4A4F000729E1 /* ChatAsyncIntegrationTests.swift */; };
 		3D7062C82D2D82A5000729E1 /* User+AsyncAwait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7062C72D2D82A5000729E1 /* User+AsyncAwait.swift */; };
 		3D7062CB2D2D8C27000729E1 /* UserAsyncIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7062C92D2D8BD9000729E1 /* UserAsyncIntegrationTests.swift */; };
@@ -198,6 +199,7 @@
 		3D64DC712F58A58C004AC52B /* Invite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Invite.swift; sourceTree = "<group>"; };
 		3D64DC722F58A58C004AC52B /* Mention.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mention.swift; sourceTree = "<group>"; };
 		3D64DC752F58A803004AC52B /* Report.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Report.swift; sourceTree = "<group>"; };
+		3D64DC782F58A803004AC52B /* CustomEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomEvent.swift; sourceTree = "<group>"; };
 		3D7062C52D2D4A4F000729E1 /* ChatAsyncIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAsyncIntegrationTests.swift; sourceTree = "<group>"; };
 		3D7062C72D2D82A5000729E1 /* User+AsyncAwait.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+AsyncAwait.swift"; sourceTree = "<group>"; };
 		3D7062C92D2D8BD9000729E1 /* UserAsyncIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAsyncIntegrationTests.swift; sourceTree = "<group>"; };
@@ -510,6 +512,7 @@
 				3D64DC712F58A58C004AC52B /* Invite.swift */,
 				3D64DC722F58A58C004AC52B /* Mention.swift */,
 				3D64DC752F58A803004AC52B /* Report.swift */,
+				3D64DC782F58A803004AC52B /* CustomEvent.swift */,
 				3D2CA23B2C5B9E51008D2284 /* Action.swift */,
 				3DB2A8BA2C8099F300167058 /* EventContent.swift */,
 				3DB2A8BC2C809A1400167058 /* ChatError.swift */,
@@ -757,6 +760,7 @@
 				3DB49E212C761BD1006356ED /* AutoCloseable.swift in Sources */,
 				3DB73A532C53A20C007FE249 /* MessageImpl.swift in Sources */,
 				3D64DC762F58A803004AC52B /* Report.swift in Sources */,
+				3D64DC772F58A803004AC52B /* CustomEvent.swift in Sources */,
 				3D1CE5232D79DED800617200 /* String+Helpers.swift in Sources */,
 				3DB73A672C57A8C5007FE249 /* CreateGroupConversationResult.swift in Sources */,
 				3DB2A8B52C807E2A00167058 /* MembershipImpl.swift in Sources */,

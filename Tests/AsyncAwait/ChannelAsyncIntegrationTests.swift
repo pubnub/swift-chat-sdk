@@ -692,6 +692,51 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     }
   }
 
+  func testChannelAsync_Stream_CustomEvents() async throws {
+    let expectation = expectation(description: "Stream_CustomEvents")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let task = Task {
+      for await event in channel.stream.customEvents() {
+        XCTAssertEqual(event.userId, chat.currentUser.id)
+        expectation.fulfill()
+      }
+    }
+
+    try await Task.sleep(nanoseconds: 2_000_000_000)
+    try await channel.emitCustomEvent(payload: ["key": "value"])
+
+    await fulfillment(of: [expectation], timeout: 10)
+    addTeardownBlock { task.cancel() }
+  }
+
+  func testChannelAsync_Stream_CustomEvents_WithMessageTypeFilter() async throws {
+    let expectation = expectation(description: "Stream_CustomEvents_Filtered")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let task = Task {
+      for await event in channel.stream.customEvents(messageType: "myType") {
+        XCTAssertEqual(event.type, "myType")
+        XCTAssertEqual(event.userId, chat.currentUser.id)
+        expectation.fulfill()
+      }
+    }
+
+    try await Task.sleep(nanoseconds: 2_000_000_000)
+
+    // Emit with a different type first - should not trigger
+    try await channel.emitCustomEvent(payload: ["key": "other"], messageType: "otherType")
+    try await Task.sleep(nanoseconds: 1_000_000_000)
+
+    // Emit with the matching type - should trigger
+    try await channel.emitCustomEvent(payload: ["key": "value"], messageType: "myType")
+
+    await fulfillment(of: [expectation], timeout: 10)
+    addTeardownBlock { task.cancel() }
+  }
+
   // MARK: - Stream Namespace Tests
 
   func testChannelAsync_Stream_TypingChanges() async throws {

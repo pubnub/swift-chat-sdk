@@ -340,6 +340,36 @@ public protocol Channel: CustomStringConvertible {
     callback: @escaping (MessageType) -> Void
   ) -> AutoCloseable
 
+  /// Emits a custom event on this channel.
+  ///
+  /// - Parameters:
+  ///   - payload: Arbitrary key-value payload to publish
+  ///   - messageType: Optional custom message type used for filtering
+  ///   - storeInHistory: If true, event is stored in Message Persistence (if enabled)
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: The timetoken of the emitted event
+  ///     - **Failure**: An `Error` describing the failure
+  func emitCustomEvent(
+    payload: [String: JSONCodable],
+    messageType: String?,
+    storeInHistory: Bool,
+    completion: ((Swift.Result<Timetoken, Error>) -> Void)?
+  )
+
+  /// Listens for custom events on this channel.
+  ///
+  /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
+  /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
+  ///
+  /// - Parameters:
+  ///   - messageType: Optional custom message type filter. If nil, all custom message types are accepted
+  ///   - callback: A closure invoked for each matching custom event
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onCustomEvent(
+    messageType: String?,
+    callback: @escaping (CustomEvent) -> Void
+  ) -> AutoCloseable
+
   /// Sets the caller's membership on this channel.
   ///
   /// - Parameters:

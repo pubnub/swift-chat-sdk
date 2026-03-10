@@ -675,6 +675,35 @@ public extension Channel {
     }
   }
 
+  /// Emits a custom event on this channel.
+  ///
+  /// - Parameters:
+  ///   - payload: Arbitrary key-value payload to publish
+  ///   - messageType: Optional custom message type used for filtering
+  ///   - storeInHistory: If true, event is stored in Message Persistence (if enabled)
+  /// - Returns: The timetoken of the emitted event
+  @discardableResult
+  func emitCustomEvent(
+    payload: [String: JSONCodable],
+    messageType: String? = nil,
+    storeInHistory: Bool = true
+  ) async throws -> Timetoken {
+    try await withCheckedThrowingContinuation { continuation in
+      emitCustomEvent(
+        payload: payload,
+        messageType: messageType,
+        storeInHistory: storeInHistory
+      ) {
+        switch $0 {
+        case let .success(timetoken):
+          continuation.resume(returning: timetoken)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+
   /// As an admin of your chat app, monitor all events emitted when someone reports an offensive message.
   @available(*, deprecated, message: "Use `stream.reports()` instead")
   func streamMessageReports() -> AsyncStream<EventWrapper<EventContent.Report>> {

@@ -523,7 +523,7 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     XCTAssertEqual(readReceipt?.userId, currentUserId)
     XCTAssertEqual(readReceipt?.lastReadTimetoken, timetoken)
     XCTAssertEqual(secondReadReceipt?.userId, anotherUserId)
-    XCTAssertEqual(readReceipt?.lastReadTimetoken, secondTimetoken)
+    XCTAssertEqual(secondReadReceipt?.lastReadTimetoken, secondTimetoken)
 
     addTeardownBlock { [unowned self] in
       _ = try? await chat.deleteUser(id: anotherUserId)

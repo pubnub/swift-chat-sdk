@@ -441,25 +441,19 @@ extension ChannelImpl: Channel {
   }
 
   public func onMessageReceived(callback: @escaping (MessageImpl) -> Void) -> AutoCloseable {
-    AutoCloseableImpl(
-      target.channel.onMessageReceived { [weak self] in
-        if let self = self, let message = $0 as? PubNubChat.Message {
-          callback(MessageImpl(message: message, chat: self.chat))
-        }
-      },
-      owner: self
-    )
+    target.onMessageReceived { [weak self] in
+      if let self = self {
+        callback(MessageImpl(message: $0.message, chat: self.chat))
+      }
+    }
   }
 
   public func onUpdated(callback: @escaping (ChannelImpl) -> Void) -> AutoCloseable {
-    AutoCloseableImpl(
-      target.channel.onUpdated { [weak self] in
-        if let self = self {
-          callback(ChannelImpl(channel: $0, chat: self.chat))
-        }
-      },
-      owner: self
-    )
+    target.onUpdated { [weak self] in
+      if let self = self {
+        callback(ChannelImpl(channel: $0.channel, chat: self.chat))
+      }
+    }
   }
 
   public func onDeleted(callback: @escaping () -> Void) -> AutoCloseable {

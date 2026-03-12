@@ -218,8 +218,8 @@ extension MessageImpl: Message {
 
   public func onUpdated(callback: @escaping (MessageImpl) -> Void) -> AutoCloseable {
     target.onUpdated { [weak self] in
-      if let message = $0 as? PubNubChat.Message, let self = self {
-        callback(MessageImpl(message: message, chat: self.chat))
+      if let self = self {
+        callback(MessageImpl(message: $0.message, chat: self.chat))
       }
     }
   }

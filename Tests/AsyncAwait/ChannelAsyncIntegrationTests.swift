@@ -382,16 +382,10 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
   }
 
   func testChannelAsync_Join() async throws {
-    let expectation = XCTestExpectation(description: "Connect")
-    expectation.assertForOverFulfill = true
-    expectation.expectedFulfillmentCount = 1
-
     let membership = try await channel.join()
 
     XCTAssertEqual(membership.channel.id, channel.id)
     XCTAssertEqual(membership.user.id, chat.currentUser.id)
-
-    await fulfillment(of: [expectation], timeout: 5)
   }
 
   func testChannelAsync_Leave() async throws {
@@ -829,6 +823,9 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
     channel.chat.pubNub.subscribe(to: [channel.id])
 
+    // Allow time for the subscription to register, ensuring the user appears as present on the channel
+    try await Task.sleep(nanoseconds: 4_000_000_000)
+
     let presenceTask = Task {
       for await userIdentifiers in channel.stream.presenceChanges() where !userIdentifiers.isEmpty {
         XCTAssertEqual(userIdentifiers.count, 1)
@@ -837,7 +834,7 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
       }
     }
 
-    await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: 6)
 
     addTeardownBlock {
       presenceTask.cancel()

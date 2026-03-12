@@ -887,11 +887,14 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
       }
     }
 
-    channel.chat.pubNub.subscribe(to: [channel.id])
+    // Allow time for the subscription to register, ensuring the user appears as present on the channel
+    DispatchQueue.global().asyncAfter(deadline: .now() + 2) { [weak self] in
+      self?.channel.chat.pubNub.subscribe(to: [self?.channel.id ?? ""])
+    }
 
     wait(
       for: [expectation],
-      timeout: 5
+      timeout: 6
     )
     addTeardownBlock {
       presenceCloseable.close()
@@ -1116,7 +1119,10 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
       }
     }
 
-    channel.chat.pubNub.subscribe(to: [channel.id])
+    // Allow time for the subscription to register, ensuring the user appears as present on the channel
+    DispatchQueue.global().asyncAfter(deadline: .now() + 2) { [weak self] in
+      self?.channel.chat.pubNub.subscribe(to: [self?.channel.id ?? ""])
+    }
 
     wait(
       for: [expectation],

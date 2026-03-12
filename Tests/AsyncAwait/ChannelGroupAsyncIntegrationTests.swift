@@ -69,23 +69,18 @@ class ChannelGroupAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
   func testChannelGroup_WhoIsPresent() async throws {
     try await channelGroup.add(channels: [channel, secondChannel])
 
-    let connectStream = channelGroup.connect()
-    let connectTask = Task {
-      for await message in connectStream {
-        debugPrint("Did receive message: \(message)")
-      }
-    }
+    channelGroup.chat.pubNub.subscribe(
+      to: [randomString()],
+      and: [channelGroup.id]
+    )
 
-    try await Task.sleep(nanoseconds: 3_000_000_000)
+    // Allow time for the subscription to register, ensuring the user appears as present on the channel group
+    try await Task.sleep(nanoseconds: 4_000_000_000)
+
     let whoIsPresentValue = try await channelGroup.whoIsPresent()
-
     XCTAssertEqual(whoIsPresentValue.count, 2)
     XCTAssertEqual(whoIsPresentValue[channel.id], [chat.currentUser.id])
     XCTAssertEqual(whoIsPresentValue[secondChannel.id], [chat.currentUser.id])
-
-    addTeardownBlock {
-      connectTask.cancel()
-    }
   }
 
   func testChannelGroup_StreamPresence() async throws {

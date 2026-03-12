@@ -201,11 +201,7 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
   }
 
   func testChannel_WhoIsPresent() throws {
-    let joinValue = try awaitResultValue {
-      channel.join(
-        completion: $0
-      )
-    }
+    channel.chat.pubNub.subscribe(to: [channel.id])
 
     let whoIsPresentValue = try awaitResultValue(delay: 4) {
       channel.whoIsPresent(
@@ -215,18 +211,10 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
 
     XCTAssertEqual(whoIsPresentValue.count, 1)
     XCTAssertEqual(whoIsPresentValue.first, chat.currentUser.id)
-
-    addTeardownBlock {
-      joinValue.disconnect?.close()
-    }
   }
 
   func testChannel_IsPresent() throws {
-    let joinValue = try awaitResultValue {
-      channel.join(
-        completion: $0
-      )
-    }
+    channel.chat.pubNub.subscribe(to: [channel.id])
 
     XCTAssertTrue(try awaitResultValue(delay: 3) {
       channel.isPresent(
@@ -234,10 +222,6 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
         completion: $0
       )
     })
-
-    addTeardownBlock {
-      joinValue.disconnect?.close()
-    }
   }
 
   func testChannel_GetHistory() throws {
@@ -559,42 +543,18 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
   }
 
   func testChannel_Join() throws {
-    let expectation = XCTestExpectation(description: "Connect")
-    expectation.assertForOverFulfill = true
-    expectation.expectedFulfillmentCount = 1
-
-    let joinValue = try awaitResultValue { [unowned self] in
+    let membership = try awaitResultValue {
       channel.join(
-        callback: {
-          XCTAssertEqual($0.text, "This is a text")
-          XCTAssertEqual($0.channelId, self.channel.id)
-          expectation.fulfill()
-        },
         completion: $0
       )
     }
 
-    XCTAssertEqual(joinValue.membership.channel.id, channel.id)
-    XCTAssertEqual(joinValue.membership.user.id, chat.currentUser.id)
-
-    try awaitResultValue(delay: 3) {
-      channel.sendText(
-        text: "This is a text",
-        completion: $0
-      )
-    }
-
-    wait(
-      for: [expectation],
-      timeout: 7
-    )
-    addTeardownBlock {
-      joinValue.disconnect?.close()
-    }
+    XCTAssertEqual(membership.channel.id, channel.id)
+    XCTAssertEqual(membership.user.id, chat.currentUser.id)
   }
 
   func testChannel_Leave() throws {
-    let joinValue = try awaitResultValue {
+    try awaitResultValue {
       channel.join(
         completion: $0
       )
@@ -611,10 +571,6 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
         )
       }.memberships.isEmpty
     )
-
-    addTeardownBlock {
-      joinValue.disconnect?.close()
-    }
   }
 
   func testChannel_PinMessageGetPinnedMessage() throws {
@@ -923,10 +879,6 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
 
-    let connectCloseable = channel.connect(callback: {
-      debugPrint("Did receive message: \($0)")
-    })
-
     let presenceCloseable = channel.streamPresence { [unowned self] in
       if !$0.isEmpty {
         XCTAssertEqual($0.count, 1)
@@ -935,13 +887,17 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
       }
     }
 
+    // Allow time for the subscription to register, ensuring the user appears as present on the channel
+    DispatchQueue.global().asyncAfter(deadline: .now() + 2) { [weak self] in
+      self?.channel.chat.pubNub.subscribe(to: [self?.channel.id ?? ""])
+    }
+
     wait(
       for: [expectation],
-      timeout: 5
+      timeout: 6
     )
     addTeardownBlock {
       presenceCloseable.close()
-      connectCloseable.close()
     }
   }
 
@@ -1163,9 +1119,10 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
       }
     }
 
-    let connectCloseable = channel.connect(callback: {
-      debugPrint("Did receive message: \($0)")
-    })
+    // Allow time for the subscription to register, ensuring the user appears as present on the channel
+    DispatchQueue.global().asyncAfter(deadline: .now() + 2) { [weak self] in
+      self?.channel.chat.pubNub.subscribe(to: [self?.channel.id ?? ""])
+    }
 
     wait(
       for: [expectation],
@@ -1173,7 +1130,71 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
     )
     addTeardownBlock {
       presenceCloseable.close()
-      connectCloseable.close()
+    }
+  }
+
+  func testChannel_OnCustomEvent() throws {
+    let expectation = expectation(description: "OnCustomEvent")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let closeable = channel.onCustomEvent { [unowned self] event in
+      XCTAssertEqual(event.userId, chat.currentUser.id)
+      XCTAssertEqual(event.payload["key"]?.stringOptional, "value")
+      expectation.fulfill()
+    }
+
+    try awaitResultValue(delay: 2) {
+      channel.emitCustomEvent(
+        payload: ["key": "value"],
+        completion: $0
+      )
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 10
+    )
+    addTeardownBlock {
+      closeable.close()
+    }
+  }
+
+  func testChannel_OnCustomEvent_WithMessageTypeFilter() throws {
+    let expectation = expectation(description: "OnCustomEvent_Filtered")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let closeable = channel.onCustomEvent(messageType: "myType") { [unowned self] event in
+      XCTAssertEqual(event.payload["key"]?.stringOptional, "value")
+      XCTAssertEqual(event.userId, chat.currentUser.id)
+      expectation.fulfill()
+    }
+
+    // Emit with a different type first - should not trigger
+    try awaitResultValue(delay: 2) {
+      channel.emitCustomEvent(
+        payload: ["key": "other"],
+        messageType: "otherType",
+        completion: $0
+      )
+    }
+
+    // Emit with the matching type - should trigger
+    try awaitResultValue(delay: 1) {
+      channel.emitCustomEvent(
+        payload: ["key": "value"],
+        messageType: "myType",
+        completion: $0
+      )
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 10
+    )
+    addTeardownBlock {
+      closeable.close()
     }
   }
 

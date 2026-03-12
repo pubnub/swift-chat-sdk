@@ -269,15 +269,10 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
   func testChat_IsPresent() throws {
     let channelId = randomString()
     let channel = try awaitResultValue { chat.createChannel(id: channelId, name: channelId, completion: $0) }
-    let closeable = channel.connect(callback: { _ in })
 
-    let joinValue = try awaitResultValue {
-      channel.join(
-        completion: $0
-      )
-    }
+    channel.chat.pubNub.subscribe(to: [channelId])
 
-    XCTAssertTrue(try awaitResultValue(delay: 3) {
+    XCTAssertTrue(try awaitResultValue(delay: 4) {
       chat.isPresent(
         userId: chat.currentUser.id,
         channelId: channelId,
@@ -286,9 +281,6 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
     })
 
     addTeardownBlock { [unowned self] in
-      joinValue.disconnect?.close()
-      closeable.close()
-
       try awaitResult {
         chat.deleteChannel(
           id: channelId,
@@ -551,11 +543,9 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
         completion: $0
       )
     }
-    let joinValue = try awaitResultValue {
-      channel.join(
-        completion: $0
-      )
-    }
+
+    channel.chat.pubNub.subscribe(to: [channel.id])
+
     let whoIsPresentValue = try awaitResultValue(delay: 4) {
       chat.whoIsPresent(
         channelId: channel.id,
@@ -567,7 +557,6 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
     XCTAssertEqual(whoIsPresentValue.first, chat.currentUser.id)
 
     addTeardownBlock { [unowned self] in
-      joinValue.disconnect?.close()
       try awaitResult {
         chat.deleteChannel(
           id: channel.id,

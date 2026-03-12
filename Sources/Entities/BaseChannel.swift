@@ -348,20 +348,18 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
 
   func join(
     custom: [String: JSONCodableScalar]?,
-    callback: ((ChatType.ChatMessageType) -> Void)?,
-    completion: ((Swift.Result<(membership: MembershipImpl, disconnect: AutoCloseable?), Error>) -> Void)?
+    status: String?,
+    type: String?,
+    completion: ((Swift.Result<ChatType.ChatMembershipType, Error>) -> Void)?
   ) {
-    channel.join(custom: custom?.asCustomObject(), callback: { [weak self] in
-      if let self = self {
-        callback?(MessageImpl(message: $0, chat: self.chat))
-      }
-    }).async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.JoinResult>) in
+    channel.join(
+      status: status,
+      type: type,
+      custom: custom?.asCustomObject()
+    ).async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.Membership>) in
       switch result.result {
-      case let .success(joinRes):
-        completion?(.success((
-          membership: MembershipImpl(membership: joinRes.membership, chat: result.caller.chat),
-          disconnect: AutoCloseableImpl(joinRes.disconnect, owner: result.caller)
-        )))
+      case let .success(membership):
+        completion?(.success(MembershipImpl(membership: membership, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -724,6 +722,47 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
       channel.onMessageReported { [weak self] in
         if self != nil {
           callback($0.transform())
+        }
+      },
+      owner: self
+    )
+  }
+
+  func emitCustomEvent(
+    payload: [String: JSONCodable],
+    messageType: String?,
+    storeInHistory: Bool,
+    completion: ((Swift.Result<Timetoken, Error>) -> Void)?
+  ) {
+    channel.emitCustomEvent(
+      payload: payload,
+      messageType: messageType,
+      storeInHistory: storeInHistory
+    ).async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.PNPublishResult>) in
+      switch result.result {
+      case let .success(response):
+        completion?(.success(Timetoken(response.timetoken)))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
+
+  func onCustomEvent(
+    messageType: String?,
+    callback: @escaping (CustomEvent) -> Void
+  ) -> AutoCloseable {
+    AutoCloseableImpl(
+      channel.onCustomEvent(messageType: messageType) { [weak self] in
+        if self != nil {
+          callback(
+            CustomEvent(
+              timetoken: Timetoken($0.timetoken),
+              userId: $0.userId,
+              type: $0.type,
+              payload: ($0.payload as? [String: Any])?.compactMapValues { AnyJSON($0) } ?? [:]
+            )
+          )
         }
       },
       owner: self

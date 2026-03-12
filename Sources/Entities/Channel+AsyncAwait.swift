@@ -379,33 +379,24 @@ public extension Channel {
     }
   }
 
-  /// Connects a user to the ``Channel`` and sets membership - this way, the chat user can both watch the channel's content and be its full-fledged member.
+  /// Sets the caller's membership on this channel.
   ///
   /// - Parameters:
   ///   - custom: Any custom properties or metadata associated with the channel-user membership in the form of key-value pairs
-  /// - Returns: A `Tuple` containing the user's membership in the channel, and an asynchronous stream that produces a new value every time a new message is published on the current channel
+  ///   - status: Optional membership status value
+  ///   - type: Optional membership type value
+  /// - Returns: The caller's membership in the channel
   @discardableResult
   func join(
-    custom: [String: JSONCodableScalar]? = nil
-  ) async throws -> (
-    membership: ChatType.ChatMembershipType,
-    messagesStream: AsyncStream<ChatType.ChatMessageType>
-  ) {
-    let messagesStream = AsyncStream { continuation in
-      let autoCloseable = connect {
-        continuation.yield($0)
-      }
-      continuation.onTermination = { _ in
-        autoCloseable.close()
-      }
-    }
-
+    custom: [String: JSONCodableScalar]? = nil,
+    status: String? = nil,
+    type: String? = nil
+  ) async throws -> ChatType.ChatMembershipType {
     return try await withCheckedThrowingContinuation { continuation in
-      join(custom: custom, callback: nil) {
+      join(custom: custom, status: status, type: type) {
         switch $0 {
-        case let .success(joinResult):
-          joinResult.disconnect?.close()
-          continuation.resume(returning: (membership: joinResult.membership, messagesStream: messagesStream))
+        case let .success(membership):
+          continuation.resume(returning: membership)
         case let .failure(error):
           continuation.resume(throwing: error)
         }
@@ -677,6 +668,35 @@ public extension Channel {
         switch $0 {
         case let .success(reportsTuple):
           continuation.resume(returning: reportsTuple)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+
+  /// Emits a custom event on this channel.
+  ///
+  /// - Parameters:
+  ///   - payload: Arbitrary key-value payload to publish
+  ///   - messageType: Optional custom message type used for filtering
+  ///   - storeInHistory: If true, event is stored in Message Persistence (if enabled)
+  /// - Returns: The timetoken of the emitted event
+  @discardableResult
+  func emitCustomEvent(
+    payload: [String: JSONCodable],
+    messageType: String? = nil,
+    storeInHistory: Bool = true
+  ) async throws -> Timetoken {
+    try await withCheckedThrowingContinuation { continuation in
+      emitCustomEvent(
+        payload: payload,
+        messageType: messageType,
+        storeInHistory: storeInHistory
+      ) {
+        switch $0 {
+        case let .success(timetoken):
+          continuation.resume(returning: timetoken)
         case let .failure(error):
           continuation.resume(throwing: error)
         }

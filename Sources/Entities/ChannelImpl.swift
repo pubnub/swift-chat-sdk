@@ -81,7 +81,7 @@ extension ChannelImpl: Channel {
       return AutoCloseableImpl.empty()
     }
     return AutoCloseableImpl(
-      PubNubChat.ThreadChannelCompanion.shared.streamUpdatesOn(channels: channels.map(\.target.channel)) { [chat = firstChat] in
+      PubNubChat.BaseChannelCompanion.shared.streamUpdatesOn(channels: channels.map(\.target.channel)) { [chat = firstChat] in
         callback(($0 as? [PubNubChat.Channel_] ?? []).map {
           ChannelImpl(channel: $0, chat: chat)
         })
@@ -285,12 +285,14 @@ extension ChannelImpl: Channel {
 
   public func join(
     custom: [String: JSONCodableScalar]? = nil,
-    callback: ((MessageImpl) -> Void)? = nil,
-    completion: ((Swift.Result<(membership: MembershipImpl, disconnect: AutoCloseable?), Error>) -> Void)? = nil
+    status: String? = nil,
+    type: String? = nil,
+    completion: ((Swift.Result<MembershipImpl, any Error>) -> Void)? = nil
   ) {
     target.join(
       custom: custom,
-      callback: callback,
+      status: status,
+      type: type,
       completion: completion
     )
   }
@@ -439,25 +441,19 @@ extension ChannelImpl: Channel {
   }
 
   public func onMessageReceived(callback: @escaping (MessageImpl) -> Void) -> AutoCloseable {
-    AutoCloseableImpl(
-      target.channel.onMessageReceived { [weak self] in
-        if let self = self, let message = $0 as? PubNubChat.Message {
-          callback(MessageImpl(message: message, chat: self.chat))
-        }
-      },
-      owner: self
-    )
+    target.onMessageReceived { [weak self] in
+      if let self = self {
+        callback(MessageImpl(message: $0.message, chat: self.chat))
+      }
+    }
   }
 
   public func onUpdated(callback: @escaping (ChannelImpl) -> Void) -> AutoCloseable {
-    AutoCloseableImpl(
-      target.channel.onUpdated { [weak self] in
-        if let self = self {
-          callback(ChannelImpl(channel: $0, chat: self.chat))
-        }
-      },
-      owner: self
-    )
+    target.onUpdated { [weak self] in
+      if let self = self {
+        callback(ChannelImpl(channel: $0.channel, chat: self.chat))
+      }
+    }
   }
 
   public func onDeleted(callback: @escaping () -> Void) -> AutoCloseable {
@@ -474,6 +470,30 @@ extension ChannelImpl: Channel {
 
   public func onMessageReported(callback: @escaping (Report) -> Void) -> AutoCloseable {
     target.onMessageReported(callback: callback)
+  }
+
+  public func emitCustomEvent(
+    payload: [String: JSONCodable],
+    messageType: String? = nil,
+    storeInHistory: Bool = true,
+    completion: ((Swift.Result<Timetoken, Error>) -> Void)? = nil
+  ) {
+    target.emitCustomEvent(
+      payload: payload,
+      messageType: messageType,
+      storeInHistory: storeInHistory,
+      completion: completion
+    )
+  }
+
+  public func onCustomEvent(
+    messageType: String? = nil,
+    callback: @escaping (CustomEvent) -> Void
+  ) -> AutoCloseable {
+    target.onCustomEvent(
+      messageType: messageType,
+      callback: callback
+    )
   }
 
   public func createMessageDraft(

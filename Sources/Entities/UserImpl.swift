@@ -224,7 +224,7 @@ extension UserImpl: User {
       limit: limit?.asKotlinInt,
       page: page?.transform(),
       filter: filter,
-      sort: sort.compactMap { $0.transform }
+      sort: sort.compactMap { $0.transform() }
     ).async(caller: self) { (result: FutureResult<UserImpl, MembershipsResponse>) in
       switch result.result {
       case let .success(response):

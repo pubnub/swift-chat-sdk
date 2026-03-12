@@ -115,24 +115,20 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
   }
 
   func testChannelAsync_WhoIsPresent() async throws {
-    // Keeps a strong reference to the returned AsyncStream to prevent it from being deallocated. If this object is not retained,
-    // the AsyncStream will be deallocated, which would cause the behavior being tested to fail.
-    let joinResult = try await channel.join()
-    debugPrint(joinResult)
+    channel.chat.pubNub.subscribe(to: [channel.id])
 
+    // Allow time for the subscription to register, ensuring the user appears as present on the channel
     try await Task.sleep(nanoseconds: 4_000_000_000)
-    let whoIsPresent = try await channel.whoIsPresent()
 
+    let whoIsPresent = try await channel.whoIsPresent()
     XCTAssertEqual(whoIsPresent.count, 1)
     XCTAssertEqual(whoIsPresent.first, chat.currentUser.id)
   }
 
   func testChannelAsync_WhoIsPresentWithLimitAndOffset() async throws {
-    // Keeps a strong reference to the returned AsyncStream to prevent it from being deallocated. If this object is not retained,
-    // the AsyncStream will be deallocated, which would cause the behavior being tested to fail.
-    let joinResult = try await channel.join()
-    debugPrint(joinResult)
+    channel.chat.pubNub.subscribe(to: [channel.id])
 
+    // Allow time for the subscription to register, ensuring the user appears as present on the channel
     try await Task.sleep(nanoseconds: 4_000_000_000)
 
     let whoIsPresentWithLimit = try await channel.whoIsPresent(limit: 10)
@@ -148,12 +144,11 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
   }
 
   func testChannelAsync_IsPresent() async throws {
-    // Keeps a strong reference to the returned AsyncStream to prevent it from being deallocated. If this object is not retained,
-    // the AsyncStream will be deallocated, which would cause the behavior being tested to fail.
-    let joinResult = try await channel.join()
-    debugPrint(joinResult)
+    channel.chat.pubNub.subscribe(to: [channel.id])
 
+    // Allow time for the subscription to register, ensuring the user appears as present on the channel
     try await Task.sleep(nanoseconds: 4_000_000_000)
+
     let isPresent = try await channel.isPresent(userId: chat.currentUser.id)
     XCTAssertTrue(isPresent)
   }
@@ -387,28 +382,10 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
   }
 
   func testChannelAsync_Join() async throws {
-    let expectation = XCTestExpectation(description: "Connect")
-    expectation.assertForOverFulfill = true
-    expectation.expectedFulfillmentCount = 1
+    let membership = try await channel.join()
 
-    let joinResult = try await channel.join()
-
-    XCTAssertEqual(joinResult.membership.channel.id, channel.id)
-    XCTAssertEqual(joinResult.membership.user.id, chat.currentUser.id)
-
-    let task = Task {
-      for await message in joinResult.messagesStream {
-        XCTAssertEqual(message.text, "This is a text")
-        XCTAssertEqual(message.channelId, channel.id)
-        expectation.fulfill()
-      }
-    }
-
-    try await Task.sleep(nanoseconds: 2_000_000_000)
-    try await channel.sendText(text: "This is a text")
-
-    await fulfillment(of: [expectation], timeout: 7)
-    addTeardownBlock { task.cancel() }
+    XCTAssertEqual(membership.channel.id, channel.id)
+    XCTAssertEqual(membership.user.id, chat.currentUser.id)
   }
 
   func testChannelAsync_Leave() async throws {
@@ -540,7 +517,7 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     XCTAssertEqual(readReceipt?.userId, currentUserId)
     XCTAssertEqual(readReceipt?.lastReadTimetoken, timetoken)
     XCTAssertEqual(secondReadReceipt?.userId, anotherUserId)
-    XCTAssertEqual(readReceipt?.lastReadTimetoken, secondTimetoken)
+    XCTAssertEqual(secondReadReceipt?.lastReadTimetoken, secondTimetoken)
 
     addTeardownBlock { [unowned self] in
       _ = try? await chat.deleteUser(id: anotherUserId)
@@ -637,11 +614,7 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
 
-    let task = Task {
-      for await message in channel.connect() {
-        debugPrint("Did receive message: \(message)")
-      }
-    }
+    channel.chat.pubNub.subscribe(to: [channel.id])
 
     let presenceStreamTask = Task {
       for await userIdentifiers in channel.streamPresence() where !userIdentifiers.isEmpty {
@@ -655,7 +628,6 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
     addTeardownBlock {
       presenceStreamTask.cancel()
-      task.cancel()
     }
   }
 
@@ -712,6 +684,51 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
       task.cancel()
       _ = try? await message?.delete()
     }
+  }
+
+  func testChannelAsync_Stream_CustomEvents() async throws {
+    let expectation = expectation(description: "Stream_CustomEvents")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let task = Task {
+      for await event in channel.stream.customEvents() {
+        XCTAssertEqual(event.userId, chat.currentUser.id)
+        expectation.fulfill()
+      }
+    }
+
+    try await Task.sleep(nanoseconds: 2_000_000_000)
+    try await channel.emitCustomEvent(payload: ["key": "value"])
+
+    await fulfillment(of: [expectation], timeout: 10)
+    addTeardownBlock { task.cancel() }
+  }
+
+  func testChannelAsync_Stream_CustomEvents_WithMessageTypeFilter() async throws {
+    let expectation = expectation(description: "Stream_CustomEvents_Filtered")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let task = Task {
+      for await event in channel.stream.customEvents(messageType: "myType") {
+        XCTAssertEqual(event.type, "myType")
+        XCTAssertEqual(event.userId, chat.currentUser.id)
+        expectation.fulfill()
+      }
+    }
+
+    try await Task.sleep(nanoseconds: 2_000_000_000)
+
+    // Emit with a different type first - should not trigger
+    try await channel.emitCustomEvent(payload: ["key": "other"], messageType: "otherType")
+    try await Task.sleep(nanoseconds: 1_000_000_000)
+
+    // Emit with the matching type - should trigger
+    try await channel.emitCustomEvent(payload: ["key": "value"], messageType: "myType")
+
+    await fulfillment(of: [expectation], timeout: 10)
+    addTeardownBlock { task.cancel() }
   }
 
   // MARK: - Stream Namespace Tests
@@ -804,11 +821,10 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
 
-    let connectTask = Task {
-      for await message in channel.connect() {
-        debugPrint("Did receive message: \(message)")
-      }
-    }
+    channel.chat.pubNub.subscribe(to: [channel.id])
+
+    // Allow time for the subscription to register, ensuring the user appears as present on the channel
+    try await Task.sleep(nanoseconds: 4_000_000_000)
 
     let presenceTask = Task {
       for await userIdentifiers in channel.stream.presenceChanges() where !userIdentifiers.isEmpty {
@@ -818,11 +834,10 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
       }
     }
 
-    await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: 6)
 
     addTeardownBlock {
       presenceTask.cancel()
-      connectTask.cancel()
     }
   }
 

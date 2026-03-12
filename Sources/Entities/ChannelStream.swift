@@ -111,6 +111,23 @@ public struct ChannelStream<C: Channel> {
     }
   }
 
+  /// Emits custom events published on this channel.
+  ///
+  /// Async equivalent of ``Channel/onCustomEvent(messageType:callback:)``.
+  ///
+  /// - Parameter messageType: Optional custom message type filter
+  /// - Returns: An `AsyncStream` of ``CustomEvent`` values
+  public func customEvents(messageType: String? = nil) -> AsyncStream<CustomEvent> {
+    AsyncStream { continuation in
+      let autoCloseable = channel.onCustomEvent(messageType: messageType) {
+        continuation.yield($0)
+      }
+      continuation.onTermination = { _ in
+        autoCloseable.close()
+      }
+    }
+  }
+
   /// Emits a report whenever a message in this channel is reported by a user.
   ///
   /// Async equivalent of ``Channel/onMessageReported(callback:)``.

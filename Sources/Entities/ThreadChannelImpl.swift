@@ -341,12 +341,14 @@ extension ThreadChannelImpl: ThreadChannel {
 
   public func join(
     custom: [String: JSONCodableScalar]? = nil,
-    callback: ((MessageImpl) -> Void)? = nil,
-    completion: ((Swift.Result<(membership: MembershipImpl, disconnect: AutoCloseable?), Error>) -> Void)? = nil
+    status: String? = nil,
+    type: String? = nil,
+    completion: ((Swift.Result<MembershipImpl, any Error>) -> Void)? = nil
   ) {
     target.join(
       custom: custom,
-      callback: callback,
+      status: status,
+      type: type,
       completion: completion
     )
   }
@@ -511,6 +513,30 @@ extension ThreadChannelImpl: ThreadChannel {
 
   public func onMessageReported(callback: @escaping (Report) -> Void) -> AutoCloseable {
     target.onMessageReported(callback: callback)
+  }
+
+  public func emitCustomEvent(
+    payload: [String: JSONCodable],
+    messageType: String? = nil,
+    storeInHistory: Bool = true,
+    completion: ((Swift.Result<Timetoken, Error>) -> Void)? = nil
+  ) {
+    target.emitCustomEvent(
+      payload: payload,
+      messageType: messageType,
+      storeInHistory: storeInHistory,
+      completion: completion
+    )
+  }
+
+  public func onCustomEvent(
+    messageType: String? = nil,
+    callback: @escaping (CustomEvent) -> Void
+  ) -> AutoCloseable {
+    target.onCustomEvent(
+      messageType: messageType,
+      callback: callback
+    )
   }
 
   public func createMessageDraft(

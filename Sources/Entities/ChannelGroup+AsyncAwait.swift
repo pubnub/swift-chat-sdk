@@ -15,6 +15,11 @@ import PubNubSDK
 /// Extension providing `async-await` support for ``ChannelGroup``.
 ///
 public extension ChannelGroup {
+  /// Namespace for `AsyncStream`-based streaming methods.
+  var stream: ChannelGroupStream<Self> {
+    ChannelGroupStream(channelGroup: self)
+  }
+
   /// Returns a paginated list of all existing channels in a given ``ChannelGroup``.
   ///
   /// - Parameters:
@@ -140,11 +145,10 @@ public extension ChannelGroup {
   }
 
   /// Enables real-time tracking of users connecting to or disconnecting from the given ``ChannelGroup``.
-  ///
-  /// - Returns: An asynchronous stream that produces a dictionary of channel identifiers and their present user identifiers
+  @available(*, deprecated, message: "Use `stream.presenceChanges()` instead")
   func streamPresence() -> AsyncStream<[String: [String]]> {
     AsyncStream { continuation in
-      let autoCloseable = streamPresence {
+      let autoCloseable = onPresenceChanged {
         continuation.yield($0)
       }
       continuation.onTermination = { _ in
@@ -154,11 +158,10 @@ public extension ChannelGroup {
   }
 
   /// Watch the ``ChannelGroup`` content.
-  ///
-  /// - Returns: An asynchronous stream that produces new messages from any channel in the group
+  @available(*, deprecated, message: "Use `stream.messages()` instead")
   func connect() -> AsyncStream<ChatType.ChatMessageType> {
     AsyncStream { continuation in
-      let autoCloseable = connect {
+      let autoCloseable = onMessageReceived {
         continuation.yield($0)
       }
       continuation.onTermination = { _ in

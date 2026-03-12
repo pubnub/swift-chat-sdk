@@ -81,7 +81,7 @@ extension ChannelImpl: Channel {
       return AutoCloseableImpl.empty()
     }
     return AutoCloseableImpl(
-      PubNubChat.ThreadChannelCompanion.shared.streamUpdatesOn(channels: channels.map(\.target.channel)) { [chat = firstChat] in
+      PubNubChat.BaseChannelCompanion.shared.streamUpdatesOn(channels: channels.map(\.target.channel)) { [chat = firstChat] in
         callback(($0 as? [PubNubChat.Channel_] ?? []).map {
           ChannelImpl(channel: $0, chat: chat)
         })

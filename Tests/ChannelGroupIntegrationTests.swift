@@ -238,4 +238,77 @@ final class ChannelGroupIntegrationTests: BaseClosureIntegrationTestCase {
       closeable.close()
     }
   }
+
+  func testChannelGroup_OnPresenceChanged() throws {
+    let expectation = expectation(description: "OnPresenceChanged")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    try awaitResultValue {
+      channelGroup.add(
+        channels: [channel, secondChannel],
+        completion: $0
+      )
+    }
+
+    let presenceCloseable = channelGroup.onPresenceChanged { [unowned self] in
+      if $0.count == 2 {
+        XCTAssertEqual($0[channel.id], [chat.currentUser.id])
+        XCTAssertEqual($0[secondChannel.id], [chat.currentUser.id])
+        expectation.fulfill()
+      }
+    }
+
+    // Allow time for the subscription to register, ensuring the user appears as present on the channel group
+    DispatchQueue.global().asyncAfter(deadline: .now() + 2) { [weak self] in
+      self?.channel.chat.pubNub.subscribe(
+        to: [self?.randomString() ?? ""],
+        and: [self?.channelGroup.id ?? ""]
+      )
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 7
+    )
+
+    addTeardownBlock {
+      presenceCloseable.close()
+    }
+  }
+
+  func testChannelGroup_OnMessageReceived() throws {
+    let expectation = XCTestExpectation(description: "OnMessageReceived")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    try awaitResultValue {
+      channelGroup.add(
+        channels: [channel, secondChannel],
+        completion: $0
+      )
+    }
+
+    let closeable = channelGroup.onMessageReceived { [unowned self] in
+      XCTAssertEqual($0.text, "This is a text")
+      XCTAssertEqual($0.channelId, channel.id)
+      expectation.fulfill()
+    }
+
+    try awaitResultValue(delay: 4) {
+      channel.sendText(
+        text: "This is a text",
+        completion: $0
+      )
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 6
+    )
+
+    addTeardownBlock {
+      closeable.close()
+    }
+  }
 }

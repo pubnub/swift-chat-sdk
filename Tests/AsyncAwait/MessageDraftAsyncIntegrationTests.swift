@@ -307,4 +307,21 @@ class MessageDraftIntegrationTests: BaseAsyncIntegrationTestCase {
     XCTAssertEqual(receivedQuotedMessage.timetoken, 17_296_737_530_374_172)
     XCTAssertEqual(receivedQuotedMessage.text, "Lorem ipsum")
   }
+
+  func testMessageDraft_SendWithParams() async throws {
+    let messageDraft = channel.createMessageDraft()
+    messageDraft.update(text: "Draft with params")
+
+    let params = SendTextParams(
+      meta: ["draft": "test"],
+      shouldStore: true
+    )
+
+    let timetoken = try await messageDraft.send(params: params)
+    try await Task.sleep(nanoseconds: 2_000_000_000)
+    let message = try await channel.getMessage(timetoken: timetoken)
+
+    XCTAssertEqual(message?.text, "Draft with params")
+    XCTAssertEqual(message?.meta?["draft"]?.stringOptional, "test")
+  }
 }

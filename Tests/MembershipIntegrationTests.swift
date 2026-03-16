@@ -186,8 +186,6 @@ final class MembershipTests: BaseClosureIntegrationTestCase {
     }
   }
 
-  // MARK: - Entity-first streaming API tests
-
   func testMembership_OnUpdated() throws {
     let expectation = expectation(description: "OnUpdated")
     expectation.assertForOverFulfill = true

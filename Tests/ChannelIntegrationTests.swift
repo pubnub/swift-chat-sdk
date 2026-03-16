@@ -990,8 +990,6 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
     }
   }
 
-  // MARK: - Entity-first streaming API tests
-
   func testChannel_OnUpdated() throws {
     let expectation = expectation(description: "OnUpdated")
     expectation.assertForOverFulfill = true
@@ -1236,6 +1234,32 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
     addTeardownBlock {
       closeable.close()
     }
+  }
+
+  func testChannel_SendTextWithParams() throws {
+    let params = SendTextParams(
+      meta: ["x": 42, "y": "hello"],
+      shouldStore: true
+    )
+
+    let tt = try awaitResultValue {
+      channel.sendText(
+        text: "Params text",
+        params: params,
+        completion: $0
+      )
+    }
+
+    let retrievedMessage = try awaitResultValue(delay: 2) {
+      channel.getMessage(
+        timetoken: tt,
+        completion: $0
+      )
+    }
+
+    XCTAssertEqual(retrievedMessage?.text, "Params text")
+    XCTAssertEqual(retrievedMessage?.meta?["x"]?.codableValue.rawValue as? Int, 42)
+    XCTAssertEqual(retrievedMessage?.meta?["y"]?.codableValue.rawValue as? String, "hello")
   }
 
   // swiftlint:disable:next file_length

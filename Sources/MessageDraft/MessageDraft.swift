@@ -104,11 +104,24 @@ public protocol MessageDraft {
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: The `Timetoken` of the sent message
   ///     - **Failure**: An `Error` describing the failure
+  @available(*, deprecated, message: "Use `send(params:completion:)` instead")
   func send(
     meta: [String: JSONCodable]?,
     shouldStore: Bool,
     usePost: Bool,
     ttl: Int?,
+    completion: ((Swift.Result<Timetoken, Error>) -> Void)?
+  )
+
+  /// Send the ``MessageDraft``, along with its ``files`` and ``quotedMessage`` if any, on the ``channel``.
+  ///
+  /// - Parameters:
+  ///   - params: Additional parameters for sending, encapsulated in a ``SendTextParams`` object
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: The `Timetoken` of the sent message
+  ///     - **Failure**: An `Error` describing the failure
+  func send(
+    params: SendTextParams,
     completion: ((Swift.Result<Timetoken, Error>) -> Void)?
   )
 }

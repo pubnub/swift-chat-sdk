@@ -246,6 +246,24 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     }
   }
 
+  func sendText(
+    text: String,
+    params: SendTextParams,
+    completion: ((Swift.Result<Timetoken, Error>) -> Void)?
+  ) {
+    channel.sendText(
+      text: text,
+      params: params.transform()
+    ).async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.PNPublishResult>) in
+      switch result.result {
+      case let .success(response):
+        completion?(.success(Timetoken(response.timetoken)))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
+
   func invite(user: ChatType.ChatUserType, completion: ((Swift.Result<MembershipImpl, Error>) -> Void)?) {
     channel.invite(
       user: user.user

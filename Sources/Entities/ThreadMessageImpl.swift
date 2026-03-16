@@ -238,6 +238,18 @@ extension ThreadMessageImpl: ThreadMessage {
     )
   }
 
+  public func createThreadWithResult(
+    text: String,
+    params: SendTextParams = SendTextParams(),
+    completion: ((Swift.Result<CreateThreadResult<ThreadChannelImpl, MessageImpl>, Error>) -> Void)? = nil
+  ) {
+    target.createThreadWithResult(
+      text: text,
+      params: params,
+      completion: completion
+    )
+  }
+
   public func removeThread(completion: ((Swift.Result<ChannelImpl?, Error>) -> Void)? = nil) {
     target.removeThread(
       completion: completion

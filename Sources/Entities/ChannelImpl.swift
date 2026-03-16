@@ -241,6 +241,18 @@ extension ChannelImpl: Channel {
     )
   }
 
+  public func sendText(
+    text: String,
+    params: SendTextParams = SendTextParams(),
+    completion: ((Swift.Result<Timetoken, Error>) -> Void)? = nil
+  ) {
+    target.sendText(
+      text: text,
+      params: params,
+      completion: completion
+    )
+  }
+
   public func invite(user: UserImpl, completion: ((Swift.Result<MembershipImpl, Error>) -> Void)? = nil) {
     target.invite(
       user: user,

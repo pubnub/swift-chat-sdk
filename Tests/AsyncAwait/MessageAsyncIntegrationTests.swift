@@ -147,6 +147,34 @@ class MessageAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     }
   }
 
+  func testAsyncMessage_CreateThreadWithResult() async throws {
+    let params = SendTextParams(
+      meta: ["key": "value"],
+      shouldStore: true
+    )
+    let result = try await testMessage.createThreadWithResult(
+      text: "Thread reply with params",
+      params: params
+    )
+
+    XCTAssertTrue(result.parentMessage.hasThread)
+    XCTAssertEqual(result.threadChannel.parentChannelId, testMessage.channelId)
+
+    try await Task.sleep(nanoseconds: 4_000_000_000)
+
+    let threadChannelHistory = try await result.threadChannel.getHistory()
+    let retrievedThreadMessage = try XCTUnwrap(threadChannelHistory.messages.first)
+
+    XCTAssertEqual(retrievedThreadMessage.text, "Thread reply with params")
+    XCTAssertEqual(retrievedThreadMessage.meta?.count, 1)
+    XCTAssertEqual(retrievedThreadMessage.meta?["key"]?.stringOptional, "value")
+
+    addTeardownBlock { [unowned self] in
+      _ = try? await retrievedThreadMessage.delete()
+      _ = try? await testMessage?.removeThread()
+    }
+  }
+
   func testAsyncMessage_RemoveThread() async throws {
     let threadChannel = try await testMessage.createThread()
 

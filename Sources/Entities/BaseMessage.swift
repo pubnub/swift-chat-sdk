@@ -204,6 +204,27 @@ extension BaseMessage: Message {
     }
   }
 
+  func createThreadWithResult(
+    text: String,
+    params: SendTextParams,
+    completion: ((Swift.Result<CreateThreadResult<ThreadChannelImpl, MessageImpl>, Error>) -> Void)?
+  ) {
+    message.createThreadWithResult(
+      text: text,
+      params: params.transform()
+    ).async(caller: self) { (result: FutureResult<BaseMessage, PubNubChat.CreateThreadResult>) in
+      switch result.result {
+      case let .success(kmpResult):
+        completion?(.success(CreateThreadResult(
+          threadChannel: ThreadChannelImpl(channel: kmpResult.threadChannel, chat: result.caller.chat),
+          parentMessage: MessageImpl(message: kmpResult.parentMessage, chat: result.caller.chat)
+        )))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
+
   public func removeThread(completion: ((Swift.Result<ChannelImpl?, Error>) -> Void)?) {
     message.removeThread().async(
       caller: self

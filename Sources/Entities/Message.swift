@@ -95,7 +95,7 @@ public protocol Message: CustomStringConvertible {
   ///     - **Failure**: An `Error` describing the failure
   func editText(
     newText: String,
-    completion: ((Swift.Result<ChatType.ChatMessageType, Error>) -> Void)?
+    completion: ((Swift.Result<Self, Error>) -> Void)?
   )
 
   /// Either permanently removes a historical message from Message Persistence or marks it as deleted (if you remove the message with the soft option).

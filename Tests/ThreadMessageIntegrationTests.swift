@@ -220,6 +220,27 @@ class ThreadMessageIntegrationTests: BaseClosureIntegrationTestCase {
     XCTAssertEqual((error as? ChatError)?.message, "There is no thread to be deleted.")
   }
 
+  func testThreadMessage_Restore() throws {
+    let message = try awaitResultValue {
+      threadMessage.delete(
+        soft: true,
+        completion: $0
+      )
+    }
+
+    XCTAssertNotNil(message?.deleted)
+    XCTAssertTrue(message?.deleted ?? false)
+
+    let restoredMessage = try awaitResultValue {
+      message?.restore(
+        completion: $0
+      )
+    }
+
+    XCTAssertNotNil(restoredMessage)
+    XCTAssertFalse(restoredMessage.deleted)
+  }
+
   func testThreadMessage_ToggleReaction() throws {
     let result = try awaitResultValue {
       threadMessage.toggleReaction(

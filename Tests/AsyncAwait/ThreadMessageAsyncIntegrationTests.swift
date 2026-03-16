@@ -142,6 +142,17 @@ class ThreadMessageAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     }
   }
 
+  func testThreadMessageAsync_Restore() async throws {
+    let message = try await threadMessage.delete(soft: true)
+
+    XCTAssertNotNil(message?.deleted)
+    XCTAssertTrue(message?.deleted ?? false)
+
+    let restoredMessage = try await message?.restore()
+    XCTAssertNotNil(restoredMessage)
+    XCTAssertFalse(restoredMessage?.deleted ?? true)
+  }
+
   func testThreadMessageAsync_ToggleReaction() async throws {
     let updateMessage = try await threadMessage.toggleReaction(reaction: ":+1")
     let reaction = try XCTUnwrap(updateMessage.reactions.first)

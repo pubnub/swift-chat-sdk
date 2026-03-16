@@ -53,7 +53,7 @@ public extension Channel {
     description: String? = nil,
     status: String? = nil,
     type: ChannelType? = nil
-  ) async throws -> ChatType.ChatChannelType {
+  ) async throws -> Self {
     try await withCheckedThrowingContinuation { continuation in
       update(
         name: name,
@@ -423,7 +423,7 @@ public extension Channel {
   /// There can be only one pinned message on a channel at a time.
   ///
   /// - Returns: A pinned ``Message``
-  func getPinnedMessage() async throws -> ChatType.ChatMessageType? {
+  func getPinnedMessage() async throws -> MessageType? {
     try await withCheckedThrowingContinuation { continuation in
       getPinnedMessage {
         switch $0 {
@@ -440,7 +440,7 @@ public extension Channel {
   ///
   /// - Parameter timetoken: Timetoken of the message you want to retrieve from Message Persistence
   /// - Returns: A message object (if any)
-  func getMessage(timetoken: Timetoken) async throws -> ChatType.ChatMessageType? {
+  func getMessage(timetoken: Timetoken) async throws -> MessageType? {
     try await withCheckedThrowingContinuation { continuation in
       getMessage(timetoken: timetoken) {
         switch $0 {

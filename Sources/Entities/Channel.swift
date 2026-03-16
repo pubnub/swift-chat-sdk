@@ -67,7 +67,7 @@ public protocol Channel: CustomStringConvertible {
     description: String?,
     status: String?,
     type: ChannelType?,
-    completion: ((Swift.Result<ChatType.ChatChannelType, Error>) -> Void)?
+    completion: ((Swift.Result<Self, Error>) -> Void)?
   )
 
   /// Allows to delete  an existing ``Channel`` with or without deleting its historical data from the App Context storage.
@@ -406,7 +406,7 @@ public protocol Channel: CustomStringConvertible {
   ///     - **Success**: A pinned ``Message``
   ///     - **Failure**: An `Error` describing the failure
   func getPinnedMessage(
-    completion: ((Swift.Result<(ChatType.ChatMessageType)?, Error>) -> Void)?
+    completion: ((Swift.Result<MessageType?, Error>) -> Void)?
   )
 
   /// Fetches the message from Message Persistence based on the message `timetoken`.
@@ -418,7 +418,7 @@ public protocol Channel: CustomStringConvertible {
   ///     - **Failure**: An `Error` describing the failure
   func getMessage(
     timetoken: Timetoken,
-    completion: ((Swift.Result<(ChatType.ChatMessageType)?, Error>) -> Void)?
+    completion: ((Swift.Result<MessageType?, Error>) -> Void)?
   )
 
   /// Register a device on the ``Channel`` to receive push notifications. Push options can be configured in ``ChatConfiguration``.

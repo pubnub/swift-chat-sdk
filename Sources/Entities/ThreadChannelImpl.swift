@@ -151,16 +151,22 @@ extension ThreadChannelImpl: ThreadChannel {
     description: String? = nil,
     status: String? = nil,
     type: ChannelType? = nil,
-    completion: ((Swift.Result<ChannelImpl, Error>) -> Void)? = nil
+    completion: ((Swift.Result<ThreadChannelImpl, Error>) -> Void)? = nil
   ) {
     target.update(
       name: name,
       custom: custom,
       description: description,
       status: status,
-      type: type,
-      completion: completion
-    )
+      type: type
+    ) {
+      switch $0 {
+      case let .success(channel):
+        completion?(.success(ThreadChannelImpl(channel: channel.channel, chat: channel.chat)))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
   }
 
   public func delete(soft: Bool = false, completion: ((Swift.Result<ChannelImpl?, Error>) -> Void)? = nil) {
@@ -359,20 +365,29 @@ extension ThreadChannelImpl: ThreadChannel {
     )
   }
 
-  public func getPinnedMessage(completion: ((Swift.Result<MessageImpl?, Error>) -> Void)? = nil) {
-    target.getPinnedMessage(
-      completion: completion
-    )
+  public func getPinnedMessage(completion: ((Swift.Result<ThreadMessageImpl?, Error>) -> Void)? = nil) {
+    target.getPinnedMessage {
+      switch $0 {
+      case let .success(message):
+        completion?(.success(ThreadMessageImpl(message: message?.message, chat: message?.chat)))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
   }
 
   public func getMessage(
     timetoken: Timetoken,
-    completion: ((Swift.Result<MessageImpl?, Error>) -> Void)? = nil
+    completion: ((Swift.Result<ThreadMessageImpl?, Error>) -> Void)? = nil
   ) {
-    target.getMessage(
-      timetoken: timetoken,
-      completion: completion
-    )
+    target.getMessage(timetoken: timetoken) {
+      switch $0 {
+      case let .success(message):
+        completion?(.success(ThreadMessageImpl(message: message?.message, chat: message?.chat)))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
   }
 
   public func registerForPush(completion: ((Swift.Result<Void, Error>) -> Void)? = nil) {

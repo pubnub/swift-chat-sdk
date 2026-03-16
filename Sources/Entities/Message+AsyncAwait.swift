@@ -42,7 +42,7 @@ public extension Message {
   ///
   /// - Parameter newText: New/updated text that you want to add in place of the existing message
   /// - Returns: An updated ``Message`` object
-  func editText(newText: String) async throws -> ChatType.ChatMessageType {
+  func editText(newText: String) async throws -> Self {
     try await withCheckedThrowingContinuation { continuation in
       editText(newText: newText) {
         switch $0 {

@@ -102,9 +102,15 @@ extension ChannelImpl: Channel {
       custom: custom,
       description: description,
       status: status,
-      type: type,
-      completion: completion
-    )
+      type: type
+    ) {
+      switch $0 {
+      case let .success(channel):
+        completion?(.success(ChannelImpl(channel: channel.channel, chat: channel.chat)))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
   }
 
   public func delete(
@@ -304,16 +310,25 @@ extension ChannelImpl: Channel {
   }
 
   public func getPinnedMessage(completion: ((Swift.Result<MessageImpl?, Error>) -> Void)? = nil) {
-    target.getPinnedMessage(
-      completion: completion
-    )
+    target.getPinnedMessage {
+      switch $0 {
+      case let .success(message):
+        completion?(.success(MessageImpl(message: message?.message, chat: message?.chat)))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
   }
 
   public func getMessage(timetoken: Timetoken, completion: ((Swift.Result<MessageImpl?, Error>) -> Void)? = nil) {
-    target.getMessage(
-      timetoken: timetoken,
-      completion: completion
-    )
+    target.getMessage(timetoken: timetoken) {
+      switch $0 {
+      case let .success(message):
+        completion?(.success(MessageImpl(message: message?.message, chat: message?.chat)))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
   }
 
   public func registerForPush(completion: ((Swift.Result<Void, Error>) -> Void)? = nil) {

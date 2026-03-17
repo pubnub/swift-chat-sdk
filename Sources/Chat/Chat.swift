@@ -444,7 +444,10 @@ public protocol Chat: AnyObject {
     page: PubNubHashedPage?,
     filter: String?,
     sort: [PubNub.MembershipSortField],
-    completion: ((Swift.Result<(countsByChannel: [GetUnreadMessagesCount<ChatChannelType, ChatMembershipType>], page: PubNubHashedPage?), Error>) -> Void)?
+    completion: ((Swift.Result<(
+      countsByChannel: [GetUnreadMessagesCount<ChatChannelType, ChatMembershipType>],
+      page: PubNubHashedPage?), Error>) -> Void
+    )?
   )
 
   /// Allows you to mark as read all messages you didn't read on all joined channels.

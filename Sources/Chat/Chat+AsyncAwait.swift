@@ -430,7 +430,7 @@ public extension Chat {
   ///   - membershipCustom: Any custom properties or metadata associated with the user-channel membership in the form of a map of key-value pairs
   /// - Returns: A ``CreateDirectConversationResult`` value representing the result of creating a direct conversation (private channel) between two users.
   func createDirectConversation(
-    invitedUser: UserImpl,
+    invitedUser: ChatUserType,
     channelId: String? = nil,
     channelName: String? = nil,
     channelDescription: String? = nil,
@@ -470,7 +470,7 @@ public extension Chat {
   ///   - membershipCustom: Any custom properties or metadata associated with the membership in the form of key-value pairs
   /// - Returns: A  ``CreateGroupConversationResult`` value representing the result of creating a group conversation (group channel) for collaborative communication
   func createGroupConversation(
-    invitedUsers: [UserImpl],
+    invitedUsers: [ChatUserType],
     channelId: String? = nil,
     channelName: String? = nil,
     channelDescription: String? = nil,
@@ -580,7 +580,7 @@ public extension Chat {
     page: PubNubHashedPage? = nil,
     filter: String? = nil,
     sort: [PubNub.MembershipSortField] = []
-  ) async throws -> [GetUnreadMessagesCount<ChannelImpl, MembershipImpl>] {
+  ) async throws -> [GetUnreadMessagesCount<ChatChannelType, ChatMembershipType>] {
     try await withCheckedThrowingContinuation { continuation in
       getUnreadMessagesCount(
         limit: limit,
@@ -612,7 +612,7 @@ public extension Chat {
     page: PubNubHashedPage? = nil,
     filter: String? = nil,
     sort: [PubNub.MembershipSortField] = []
-  ) async throws -> (countsByChannel: [GetUnreadMessagesCount<ChannelImpl, MembershipImpl>], page: PubNubHashedPage?) {
+  ) async throws -> (countsByChannel: [GetUnreadMessagesCount<ChatChannelType, ChatMembershipType>], page: PubNubHashedPage?) {
     try await withCheckedThrowingContinuation { continuation in
       fetchUnreadMessagesCounts(
         limit: limit,

@@ -50,8 +50,8 @@ public final class ThreadMessageImpl {
     )
   }
 
-  convenience init?(message: PubNubChat.ThreadMessage?, chat: ChatImpl) {
-    if let message {
+  convenience init?(message: PubNubChat.ThreadMessage?, chat: ChatImpl?) {
+    if let message, let chat = chat {
       self.init(message: message, chat: chat)
     } else {
       return nil
@@ -153,12 +153,16 @@ extension ThreadMessageImpl: ThreadMessage {
 
   public func editText(
     newText: String,
-    completion: ((Swift.Result<MessageImpl, Error>) -> Void)? = nil
+    completion: ((Swift.Result<ThreadMessageImpl, Error>) -> Void)? = nil
   ) {
-    target.editText(
-      newText: newText,
-      completion: completion
-    )
+    target.editText(newText: newText) {
+      switch $0 {
+      case let .success(message):
+        completion?(.success(ThreadMessageImpl(message: message.message, chat: message.chat)))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
   }
 
   public func delete(
@@ -230,6 +234,18 @@ extension ThreadMessageImpl: ThreadMessage {
       files: files,
       usersToMention: usersToMention,
       customPushData: customPushData,
+      completion: completion
+    )
+  }
+
+  public func createThreadWithResult(
+    text: String,
+    params: SendTextParams = SendTextParams(),
+    completion: ((Swift.Result<CreateThreadResult<ThreadChannelImpl, MessageImpl>, Error>) -> Void)? = nil
+  ) {
+    target.createThreadWithResult(
+      text: text,
+      params: params,
       completion: completion
     )
   }

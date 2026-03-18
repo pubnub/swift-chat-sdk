@@ -75,14 +75,14 @@ extension BaseMessage: Message {
 
   public func editText(
     newText: String,
-    completion: ((Swift.Result<MessageImpl, Error>) -> Void)?
+    completion: ((Swift.Result<BaseMessage, Error>) -> Void)?
   ) {
     message.editText(
       newText: newText
     ).async(caller: self) { (result: FutureResult<BaseMessage, M>) in
       switch result.result {
       case let .success(message):
-        completion?(.success(MessageImpl(message: message, chat: result.caller.chat)))
+        completion?(.success(BaseMessage(message: message, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -198,6 +198,27 @@ extension BaseMessage: Message {
       switch result.result {
       case let .success(threadChannel):
         completion?(.success(ThreadChannelImpl(channel: threadChannel, chat: result.caller.chat)))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
+
+  func createThreadWithResult(
+    text: String,
+    params: SendTextParams,
+    completion: ((Swift.Result<CreateThreadResult<ThreadChannelImpl, MessageImpl>, Error>) -> Void)?
+  ) {
+    message.createThreadWithResult(
+      text: text,
+      params: params.transform()
+    ).async(caller: self) { (result: FutureResult<BaseMessage, PubNubChat.CreateThreadResult>) in
+      switch result.result {
+      case let .success(kmpResult):
+        completion?(.success(CreateThreadResult(
+          threadChannel: ThreadChannelImpl(channel: kmpResult.threadChannel, chat: result.caller.chat),
+          parentMessage: MessageImpl(message: kmpResult.parentMessage, chat: result.caller.chat)
+        )))
       case let .failure(error):
         completion?(.failure(error))
       }

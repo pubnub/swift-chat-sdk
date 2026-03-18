@@ -894,5 +894,24 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     }
   }
 
+  func testChannelAsync_SendTextWithParams() async throws {
+    let params = SendTextParams(
+      meta: ["x": 42, "y": "hello"],
+      shouldStore: true
+    )
+
+    let tt = try await channel.sendText(
+      text: "Params text",
+      params: params
+    )
+
+    try await Task.sleep(nanoseconds: 2_000_000_000)
+    let retrievedMessage = try await channel.getMessage(timetoken: tt)
+
+    XCTAssertEqual(retrievedMessage?.text, "Params text")
+    XCTAssertEqual(retrievedMessage?.meta?["x"]?.codableValue.rawValue as? Int, 42)
+    XCTAssertEqual(retrievedMessage?.meta?["y"]?.codableValue.rawValue as? String, "hello")
+  }
+
   // swiftlint:disable:next file_length
 }

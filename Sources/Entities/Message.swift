@@ -95,7 +95,7 @@ public protocol Message: CustomStringConvertible {
   ///     - **Failure**: An `Error` describing the failure
   func editText(
     newText: String,
-    completion: ((Swift.Result<ChatType.ChatMessageType, Error>) -> Void)?
+    completion: ((Swift.Result<Self, Error>) -> Void)?
   )
 
   /// Either permanently removes a historical message from Message Persistence or marks it as deleted (if you remove the message with the soft option).
@@ -162,8 +162,7 @@ public protocol Message: CustomStringConvertible {
   ///   - completion: The async `Result` of the method call
   ///     - **Success**:  Returns a ``ThreadChannel`` object which can be used for sending and reading messages from the newly created message thread
   ///     - **Failure**: An `Error` describing the failure
-  @available(*, deprecated, message: "Use `createThread(text:meta:shouldStore:usePost:ttl:quotedMessage:files:usersToMention:customPushData:completion:)` instead")
-  // swiftlint:disable:previous line_length
+  @available(*, deprecated, message: "Use `createThreadWithResult(text:params:completion:)` instead")
   func createThread(
     completion: ((Swift.Result<ChatType.ChatThreadChannelType, Error>) -> Void)?
   )
@@ -183,6 +182,7 @@ public protocol Message: CustomStringConvertible {
   ///   - completion: The async `Result` of the method call
   ///     - **Success**:  Returns a ``ThreadChannel`` object which can be used for sending and reading messages from the newly created message thread
   ///     - **Failure**: An `Error` describing the failure
+  @available(*, deprecated, message: "Use `createThreadWithResult(text:params:completion:)` instead")
   func createThread(
     text: String,
     meta: [String: JSONCodable]?,
@@ -194,6 +194,20 @@ public protocol Message: CustomStringConvertible {
     usersToMention: [String]?,
     customPushData: [String: String]?,
     completion: ((Swift.Result<ChatType.ChatThreadChannelType, Error>) -> Void)?
+  )
+
+  /// Create a thread by sending the first reply and return both the thread channel and updated parent message.
+  ///
+  /// - Parameters:
+  ///   - text: Text of the first reply to send in the thread
+  ///   - params: Additional parameters for sending text, encapsulated in a ``SendTextParams`` object
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: A ``CreateThreadResult`` containing the thread channel and updated parent message
+  ///     - **Failure**: An `Error` describing the failure
+  func createThreadWithResult(
+    text: String,
+    params: SendTextParams,
+    completion: ((Swift.Result<CreateThreadResult<ChatType.ChatThreadChannelType, ChatType.ChatMessageType>, Error>) -> Void)?
   )
 
   /// Removes a thread (channel) for a selected message.

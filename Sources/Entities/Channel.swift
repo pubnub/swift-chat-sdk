@@ -67,7 +67,7 @@ public protocol Channel: CustomStringConvertible {
     description: String?,
     status: String?,
     type: ChannelType?,
-    completion: ((Swift.Result<ChatType.ChatChannelType, Error>) -> Void)?
+    completion: ((Swift.Result<Self, Error>) -> Void)?
   )
 
   /// Allows to delete  an existing ``Channel`` with or without deleting its historical data from the App Context storage.
@@ -202,8 +202,7 @@ public protocol Channel: CustomStringConvertible {
   ///   - completion: The async `Result` of the method callnel
   ///     - **Success**: The timetoken of the sent message
   ///     - **Failure**: An `Error` describing the failure
-  @available(*, deprecated, message: "Use `sendText(text:meta:shouldStore:usePost:ttl:quotedMessage:files:usersToMention:customPushData:completion:)` instead")
-  // swiftlint:disable:previous line_length
+  @available(*, deprecated, message: "Use `sendText(text:params:completion:)` instead")
   func sendText(
     text: String,
     meta: [String: JSONCodable]?,
@@ -221,11 +220,6 @@ public protocol Channel: CustomStringConvertible {
 
   /// Sends text to the ``Channel``.
   ///
-  /// The following example describes how `mentionedUsers` and `referencedChannels` work.
-  /// For example, `{ 0: { id: 123, name: "Mark" }, 2: { id: 345, name: "Rob" } }` means that Mark will be shown on the first mention (@) in the message
-  /// and Rob on the third. The same rule applies for referenced channels. For example, `{ 0: { id: 123, name: "Support" }, 2: { id: 345, name: "Off-topic" } }`
-  /// means that Support will be shown on the first reference in the message and Off-topic on the third.
-  ///
   /// - Parameters:
   ///   - text: Text that you want to send to the selected channel
   ///   - meta: Publish additional details with the request
@@ -239,6 +233,7 @@ public protocol Channel: CustomStringConvertible {
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: The timetoken of the sent message
   ///     - **Failure**: An `Error` describing the failure
+  @available(*, deprecated, message: "Use `sendText(text:params:completion:)` instead")
   func sendText(
     text: String,
     meta: [String: JSONCodable]?,
@@ -249,6 +244,20 @@ public protocol Channel: CustomStringConvertible {
     files: [InputFile]?,
     usersToMention: [String]?,
     customPushData: [String: String]?,
+    completion: ((Swift.Result<Timetoken, Error>) -> Void)?
+  )
+
+  /// Sends text to the ``Channel``.
+  ///
+  /// - Parameters:
+  ///   - text: Text that you want to send to the selected channel
+  ///   - params: Additional parameters for sending text, encapsulated in a ``SendTextParams`` object
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: The timetoken of the sent message
+  ///     - **Failure**: An `Error` describing the failure
+  func sendText(
+    text: String,
+    params: SendTextParams,
     completion: ((Swift.Result<Timetoken, Error>) -> Void)?
   )
 
@@ -406,7 +415,7 @@ public protocol Channel: CustomStringConvertible {
   ///     - **Success**: A pinned ``Message``
   ///     - **Failure**: An `Error` describing the failure
   func getPinnedMessage(
-    completion: ((Swift.Result<(ChatType.ChatMessageType)?, Error>) -> Void)?
+    completion: ((Swift.Result<MessageType?, Error>) -> Void)?
   )
 
   /// Fetches the message from Message Persistence based on the message `timetoken`.
@@ -418,7 +427,7 @@ public protocol Channel: CustomStringConvertible {
   ///     - **Failure**: An `Error` describing the failure
   func getMessage(
     timetoken: Timetoken,
-    completion: ((Swift.Result<(ChatType.ChatMessageType)?, Error>) -> Void)?
+    completion: ((Swift.Result<MessageType?, Error>) -> Void)?
   )
 
   /// Register a device on the ``Channel`` to receive push notifications. Push options can be configured in ``ChatConfiguration``.

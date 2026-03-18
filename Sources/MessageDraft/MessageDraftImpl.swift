@@ -137,6 +137,22 @@ extension MessageDraftImpl: MessageDraft {
       }
     }
   }
+
+  public func send(
+    params: SendTextParams = SendTextParams(),
+    completion: ((Swift.Result<Timetoken, Error>) -> Void)? = nil
+  ) {
+    messageDraft.send(
+      params: params.transform()
+    ).async(caller: self) { (result: FutureResult<MessageDraftImpl, PNPublishResult>) in
+      switch result.result {
+      case let .success(result):
+        completion?(.success(Timetoken(result.timetoken)))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
 }
 
 class KMPMessageDraftChangeListener: PubNubChat.MessageDraftChangeListener {

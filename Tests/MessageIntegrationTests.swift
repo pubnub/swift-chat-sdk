@@ -300,6 +300,49 @@ final class MessageIntegrationTests: BaseClosureIntegrationTestCase {
     }
   }
 
+  func testMessage_CreateThreadWithResult() throws {
+    let params = SendTextParams(
+      meta: ["key": "value"],
+      shouldStore: true
+    )
+
+    let result = try awaitResultValue {
+      testMessage.createThreadWithResult(
+        text: "Thread reply with params",
+        params: params,
+        completion: $0
+      )
+    }
+
+    XCTAssertTrue(result.parentMessage.hasThread)
+    XCTAssertEqual(result.threadChannel.parentChannelId, testMessage.channelId)
+
+    let threadChannelHistory = try awaitResultValue(delay: 4) {
+      result.threadChannel.getHistory(
+        completion: $0
+      )
+    }
+
+    let retrievedThreadMessage = try XCTUnwrap(threadChannelHistory.messages.first)
+
+    XCTAssertEqual(retrievedThreadMessage.text, "Thread reply with params")
+    XCTAssertEqual(retrievedThreadMessage.meta?.count, 1)
+    XCTAssertEqual(retrievedThreadMessage.meta?["key"]?.stringOptional, "value")
+
+    addTeardownBlock { [unowned self] in
+      try awaitResult {
+        retrievedThreadMessage.delete(
+          completion: $0
+        )
+      }
+      try awaitResult {
+        testMessage.removeThread(
+          completion: $0
+        )
+      }
+    }
+  }
+
   func testMessage_RemoveThread() throws {
     let threadChannel = try awaitResultValue {
       testMessage.createThread(
@@ -479,8 +522,6 @@ final class MessageIntegrationTests: BaseClosureIntegrationTestCase {
 
     XCTAssertTrue(restoredMessage.actions?.isEmpty ?? false)
   }
-
-  // MARK: - Entity-first streaming API tests
 
   func testMessage_OnUpdated() throws {
     let expectation = expectation(description: "OnUpdated")

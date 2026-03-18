@@ -323,7 +323,7 @@ public protocol Chat: AnyObject {
   ///     - **Success**: A ``CreateDirectConversationResult`` value representing the result of creating a direct conversation (private channel) between two users.
   ///     - **Failure**: An `Error` describing the failure
   func createDirectConversation(
-    invitedUser: UserImpl,
+    invitedUser: ChatUserType,
     channelId: String?,
     channelName: String?,
     channelDescription: String?,
@@ -347,7 +347,7 @@ public protocol Chat: AnyObject {
   ///     - **Success**: A  ``CreateGroupConversationResult`` value representing the result of creating a group conversation (group channel) for collaborative communication
   ///     - **Failure**: An `Error` describing the failure
   func createGroupConversation(
-    invitedUsers: [UserImpl],
+    invitedUsers: [ChatUserType],
     channelId: String?,
     channelName: String?,
     channelDescription: String?,
@@ -426,7 +426,7 @@ public protocol Chat: AnyObject {
     page: PubNubHashedPage?,
     filter: String?,
     sort: [PubNub.MembershipSortField],
-    completion: ((Swift.Result<[GetUnreadMessagesCount<ChannelImpl, MembershipImpl>], Error>) -> Void)?
+    completion: ((Swift.Result<[GetUnreadMessagesCount<ChatChannelType, ChatMembershipType>], Error>) -> Void)?
   )
 
   /// Returns info on all messages you didn't read on all joined channels. You can display this number on UI in the channel list of your chat app.
@@ -444,7 +444,10 @@ public protocol Chat: AnyObject {
     page: PubNubHashedPage?,
     filter: String?,
     sort: [PubNub.MembershipSortField],
-    completion: ((Swift.Result<(countsByChannel: [GetUnreadMessagesCount<ChannelImpl, MembershipImpl>], page: PubNubHashedPage?), Error>) -> Void)?
+    completion: ((Swift.Result<(
+      countsByChannel: [GetUnreadMessagesCount<ChatChannelType, ChatMembershipType>],
+      page: PubNubHashedPage?), Error>) -> Void
+    )?
   )
 
   /// Allows you to mark as read all messages you didn't read on all joined channels.

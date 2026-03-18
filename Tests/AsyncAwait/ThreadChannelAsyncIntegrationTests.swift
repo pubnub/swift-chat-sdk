@@ -49,6 +49,82 @@ class ThreadChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     XCTAssertNotNil(pinnedMessage)
   }
 
+  func testThreadChannelAsync_Update() async throws {
+    let updatedThreadChannel = try await threadChannel.update(
+      name: "UpdatedName",
+      custom: ["key": "value"],
+      description: "UpdatedDescription",
+      status: "UpdatedStatus"
+    )
+
+    XCTAssertEqual(updatedThreadChannel.id, threadChannel.id)
+    XCTAssertEqual(updatedThreadChannel.name, "UpdatedName")
+    XCTAssertEqual(updatedThreadChannel.channelDescription, "UpdatedDescription")
+    XCTAssertEqual(updatedThreadChannel.status, "UpdatedStatus")
+  }
+
+  func testThreadChannelAsync_PinMessage() async throws {
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+
+    let message = try await threadChannel.getHistory().messages.first
+    let unwrappedMessage = try XCTUnwrap(message)
+
+    let updatedThreadChannel = try await threadChannel.pinMessage(message: unwrappedMessage)
+    let pinnedMessage = try await updatedThreadChannel.getPinnedMessage()
+
+    XCTAssertNotNil(pinnedMessage)
+    XCTAssertEqual(pinnedMessage?.channelId, threadChannel.id)
+  }
+
+  func testThreadChannelAsync_UnpinMessage() async throws {
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+
+    let message = try await threadChannel.getHistory().messages.first
+    let unwrappedMessage = try XCTUnwrap(message)
+
+    let channelWithPinnedMessage = try await threadChannel.pinMessage(message: unwrappedMessage)
+    let updatedThreadChannel = try await channelWithPinnedMessage.unpinMessage()
+    let pinnedMessage = try await updatedThreadChannel.getPinnedMessage()
+
+    XCTAssertNil(pinnedMessage)
+  }
+
+  func testThreadChannelAsync_GetHistory() async throws {
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+
+    let history = try await threadChannel.getHistory()
+
+    XCTAssertEqual(history.messages.count, 1)
+    XCTAssertEqual(history.messages.first?.text, "Reply in a thread")
+    XCTAssertEqual(history.messages.first?.channelId, threadChannel.id)
+  }
+
+  func testThreadChannelAsync_GetMessage() async throws {
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+
+    let historyMessage = try await threadChannel.getHistory().messages.first
+    let unwrappedMessage = try XCTUnwrap(historyMessage)
+    let message = try await threadChannel.getMessage(timetoken: unwrappedMessage.timetoken)
+
+    XCTAssertNotNil(message)
+    XCTAssertEqual(message?.text, "Reply in a thread")
+    XCTAssertEqual(message?.channelId, threadChannel.id)
+  }
+
+  func testThreadChannelAsync_GetPinnedMessage() async throws {
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+
+    let message = try await threadChannel.getHistory().messages.first
+    let unwrappedMessage = try XCTUnwrap(message)
+
+    let updatedChannel = try await threadChannel.pinMessage(message: unwrappedMessage)
+    let pinnedMessage = try await updatedChannel.getPinnedMessage()
+
+    XCTAssertNotNil(pinnedMessage)
+    XCTAssertEqual(pinnedMessage?.text, "Reply in a thread")
+    XCTAssertEqual(pinnedMessage?.channelId, threadChannel.id)
+  }
+
   // MARK: - Stream Namespace Tests
 
   func testThreadChannelAsync_Stream_Messages() async throws {

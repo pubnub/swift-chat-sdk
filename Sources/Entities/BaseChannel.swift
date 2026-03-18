@@ -54,7 +54,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     description: String?,
     status: String?,
     type: ChannelType?,
-    completion: ((Swift.Result<ChatType.ChatChannelType, Error>) -> Void)?
+    completion: ((Swift.Result<BaseChannel, Error>) -> Void)?
   ) {
     channel.update(
       name: name,
@@ -65,7 +65,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     ).async(caller: self) { (result: FutureResult<BaseChannel, C>) in
       switch result.result {
       case let .success(channel):
-        completion?(.success(ChannelImpl(channel: channel, chat: result.caller.chat)))
+        completion?(.success(BaseChannel(channel: channel, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -246,6 +246,24 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     }
   }
 
+  func sendText(
+    text: String,
+    params: SendTextParams,
+    completion: ((Swift.Result<Timetoken, Error>) -> Void)?
+  ) {
+    channel.sendText(
+      text: text,
+      params: params.transform()
+    ).async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.PNPublishResult>) in
+      switch result.result {
+      case let .success(response):
+        completion?(.success(Timetoken(response.timetoken)))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
+
   func invite(user: ChatType.ChatUserType, completion: ((Swift.Result<MembershipImpl, Error>) -> Void)?) {
     channel.invite(
       user: user.user
@@ -377,15 +395,11 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     }
   }
 
-  func getPinnedMessage(completion: ((Swift.Result<(ChatType.ChatMessageType)?, Error>) -> Void)?) {
+  func getPinnedMessage(completion: ((Swift.Result<(BaseMessage<M>)?, Error>) -> Void)?) {
     channel.getPinnedMessage().async(caller: self) { (result: FutureResult<BaseChannel, M?>) in
       switch result.result {
       case let .success(message):
-        if let message {
-          completion?(.success(MessageImpl(message: message, chat: result.caller.chat)))
-        } else {
-          completion?(.success(nil))
-        }
+        completion?(.success(BaseMessage(message: message, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -394,18 +408,14 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
 
   func getMessage(
     timetoken: Timetoken,
-    completion: ((Swift.Result<ChatType.ChatMessageType?, Error>) -> Void)?
+    completion: ((Swift.Result<BaseMessage<M>?, Error>) -> Void)?
   ) {
     channel.getMessage(
       timetoken: Int64(timetoken)
-    ).async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.Message?>) in
+    ).async(caller: self) { (result: FutureResult<BaseChannel, M?>) in
       switch result.result {
       case let .success(message):
-        if let message {
-          completion?(.success(MessageImpl(message: message, chat: result.caller.chat)))
-        } else {
-          completion?(.success(nil))
-        }
+        completion?(.success(BaseMessage(message: message, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }

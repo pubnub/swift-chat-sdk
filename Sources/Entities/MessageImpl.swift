@@ -48,8 +48,8 @@ public final class MessageImpl {
     )
   }
 
-  convenience init?(message: PubNubChat.Message?, chat: ChatImpl) {
-    if let message {
+  convenience init?(message: PubNubChat.Message?, chat: ChatImpl?) {
+    if let message, let chat = chat {
       self.init(message: message, chat: chat)
     } else {
       return nil
@@ -109,10 +109,14 @@ extension MessageImpl: Message {
     newText: String,
     completion: ((Swift.Result<MessageImpl, Error>) -> Void)? = nil
   ) {
-    target.editText(
-      newText: newText,
-      completion: completion
-    )
+    target.editText(newText: newText) {
+      switch $0 {
+      case let .success(message):
+        completion?(.success(MessageImpl(message: message.message, chat: message.chat)))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
   }
 
   public func delete(
@@ -184,6 +188,18 @@ extension MessageImpl: Message {
       files: files,
       usersToMention: usersToMention,
       customPushData: customPushData,
+      completion: completion
+    )
+  }
+
+  public func createThreadWithResult(
+    text: String,
+    params: SendTextParams = SendTextParams(),
+    completion: ((Swift.Result<CreateThreadResult<ThreadChannelImpl, MessageImpl>, Error>) -> Void)? = nil
+  ) {
+    target.createThreadWithResult(
+      text: text,
+      params: params,
       completion: completion
     )
   }

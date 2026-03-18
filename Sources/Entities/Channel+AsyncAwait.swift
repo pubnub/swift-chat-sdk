@@ -53,7 +53,7 @@ public extension Channel {
     description: String? = nil,
     status: String? = nil,
     type: ChannelType? = nil
-  ) async throws -> ChatType.ChatChannelType {
+  ) async throws -> Self {
     try await withCheckedThrowingContinuation { continuation in
       update(
         name: name,
@@ -233,6 +233,7 @@ public extension Channel {
   ///   - usersToMention: A collection of user ids to automatically notify with a mention after this message is sent
   ///   - customPushData: Additional key-value pairs that will be added to the FCM and/or APNS push messages for the message itself and any user mentions
   /// - Returns: The timetoken of the sent message
+  @available(*, deprecated, message: "Use `sendText(text:params:)` instead")
   @discardableResult
   func sendText(
     text: String,
@@ -256,6 +257,32 @@ public extension Channel {
         files: files,
         usersToMention: usersToMention,
         customPushData: customPushData
+      ) {
+        switch $0 {
+        case let .success(timetoken):
+          continuation.resume(returning: timetoken)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+
+  /// Sends text to the ``Channel``.
+  ///
+  /// - Parameters:
+  ///   - text: Text that you want to send to the selected channel
+  ///   - params: Additional parameters for sending text, encapsulated in a ``SendTextParams`` object
+  /// - Returns: The timetoken of the sent message
+  @discardableResult
+  func sendText(
+    text: String,
+    params: SendTextParams = SendTextParams()
+  ) async throws -> Timetoken {
+    try await withCheckedThrowingContinuation { continuation in
+      sendText(
+        text: text,
+        params: params
       ) {
         switch $0 {
         case let .success(timetoken):
@@ -423,7 +450,7 @@ public extension Channel {
   /// There can be only one pinned message on a channel at a time.
   ///
   /// - Returns: A pinned ``Message``
-  func getPinnedMessage() async throws -> ChatType.ChatMessageType? {
+  func getPinnedMessage() async throws -> MessageType? {
     try await withCheckedThrowingContinuation { continuation in
       getPinnedMessage {
         switch $0 {
@@ -440,7 +467,7 @@ public extension Channel {
   ///
   /// - Parameter timetoken: Timetoken of the message you want to retrieve from Message Persistence
   /// - Returns: A message object (if any)
-  func getMessage(timetoken: Timetoken) async throws -> ChatType.ChatMessageType? {
+  func getMessage(timetoken: Timetoken) async throws -> MessageType? {
     try await withCheckedThrowingContinuation { continuation in
       getMessage(timetoken: timetoken) {
         switch $0 {

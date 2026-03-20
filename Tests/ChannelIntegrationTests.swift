@@ -66,7 +66,6 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
     }
     try awaitResult {
       someChannel.delete(
-        soft: false,
         completion: $0
       )
     }
@@ -78,39 +77,6 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
         )
       }
     )
-
-    addTeardownBlock { [unowned self] in
-      try awaitResult {
-        chat.deleteChannel(
-          id: someChannel.id,
-          completion: $0
-        )
-      }
-    }
-  }
-
-  func testChannel_SoftDelete() throws {
-    let someChannel = try awaitResultValue {
-      chat.createChannel(
-        id: randomString(),
-        completion: $0
-      )
-    }
-
-    try awaitResult {
-      someChannel.delete(
-        soft: true,
-        completion: $0
-      )
-    }
-    let retrievedChannel = try awaitResultValue {
-      chat.getChannel(
-        channelId: someChannel.id,
-        completion: $0
-      )
-    }
-
-    XCTAssertEqual(retrievedChannel?.id, someChannel.id)
 
     addTeardownBlock { [unowned self] in
       try awaitResult {
@@ -1034,9 +1000,8 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
       expectation.fulfill()
     }
 
-    try awaitResultValue(delay: 3) {
+    try awaitResult(delay: 3) {
       channelToDelete.delete(
-        soft: false,
         completion: $0
       )
     }

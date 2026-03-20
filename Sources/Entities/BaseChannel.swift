@@ -72,13 +72,11 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     }
   }
 
-  func delete(soft: Bool, completion: ((Swift.Result<ChatType.ChatChannelType?, Error>) -> Void)?) {
-    channel.delete(
-      soft: soft
-    ).async(caller: self) { (result: FutureResult<BaseChannel, C?>) in
+  func delete(completion: ((Swift.Result<Void, Error>) -> Void)?) {
+    channel.delete().async(caller: self) { (result: FutureResult<BaseChannel, C?>) in
       switch result.result {
-      case let .success(channel):
-        completion?(.success(ChannelImpl(channel: channel, chat: result.caller.chat)))
+      case .success:
+        completion?(.success(()))
       case let .failure(error):
         completion?(.failure(error))
       }

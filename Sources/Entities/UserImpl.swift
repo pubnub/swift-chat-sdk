@@ -171,15 +171,12 @@ extension UserImpl: User {
   }
 
   public func delete(
-    soft: Bool = false,
-    completion: ((Swift.Result<UserImpl?, Error>) -> Void)? = nil
+    completion: ((Swift.Result<Void, Error>) -> Void)? = nil
   ) {
-    user.delete(
-      soft: soft
-    ).async(caller: self) { (result: FutureResult<UserImpl, PubNubChat.User?>) in
+    user.delete().async(caller: self) { (result: FutureResult<UserImpl, PubNubChat.User?>) in
       switch result.result {
-      case let .success(user):
-        completion?(.success(UserImpl(user: user, chat: result.caller.chat)))
+      case .success:
+        completion?(.success(()))
       case let .failure(error):
         completion?(.failure(error))
       }

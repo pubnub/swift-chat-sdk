@@ -23,7 +23,7 @@ class BaseClosureIntegrationTestCase: BaseIntegrationTestCase {
 
   override func tearDownWithError() throws {
     try customTearDownWithError()
-    try awaitResultValue { chat.deleteUser(id: chat.currentUser.id, completion: $0) }
+    try awaitResult { chat.deleteUser(id: chat.currentUser.id, completion: $0) }
 
     chat = nil
 

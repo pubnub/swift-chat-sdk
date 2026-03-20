@@ -47,24 +47,10 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
   func testChannelAsync_Delete() async throws {
     let someChannel = try await chat.createChannel(id: randomString())
-    let removalResult = try await someChannel.delete(soft: false)
+    try await someChannel.delete()
     let retrievedChannel = try await chat.getChannel(channelId: someChannel.id)
 
-    XCTAssertNil(removalResult)
     XCTAssertNil(retrievedChannel)
-
-    addTeardownBlock { [unowned self] in
-      _ = try? await chat.deleteChannel(id: someChannel.id)
-    }
-  }
-
-  func testChannelAsync_SoftDelete() async throws {
-    let someChannel = try await chat.createChannel(id: randomString())
-    let removalResult = try await someChannel.delete(soft: true)
-    let retrievedChannel = try await chat.getChannel(channelId: someChannel.id)
-
-    XCTAssertNotNil(removalResult)
-    XCTAssertEqual(retrievedChannel?.id, someChannel.id)
 
     addTeardownBlock { [unowned self] in
       _ = try? await chat.deleteChannel(id: someChannel.id)

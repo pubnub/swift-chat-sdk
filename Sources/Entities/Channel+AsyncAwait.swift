@@ -72,16 +72,13 @@ public extension Channel {
     }
   }
 
-  /// Allows to delete  an existing ``Channel`` with or without deleting its historical data from the App Context storage.
-  ///
-  /// - Parameter soft: Decide if you want to permanently remove channel metadata
-  /// - Returns: For hard delete, the method returns `nil`. Otherwise, an updated ``Channel`` instance with the status field set to `"deleted"`
-  func delete(soft: Bool = false) async throws -> ChatType.ChatChannelType? {
-    try await withCheckedThrowingContinuation { continuation in
-      delete(soft: soft) {
+  /// Deletes an existing ``Channel`` and its historical data from the App Context storage.
+  func delete() async throws {
+    try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+      delete {
         switch $0 {
-        case let .success(message):
-          continuation.resume(returning: message)
+        case .success:
+          continuation.resume()
         case let .failure(error):
           continuation.resume(throwing: error)
         }

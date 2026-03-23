@@ -251,7 +251,7 @@ extension ChatImpl: Chat {
     id: String,
     completion: ((Swift.Result<Void, Error>) -> Void)? = nil
   ) {
-    chat.deleteUser(id: id).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.User?>) in
+    chat.deleteUser(id: id).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.KotlinUnit>) in
       switch result.result {
       case .success:
         completion?(.success(()))
@@ -374,7 +374,7 @@ extension ChatImpl: Chat {
     id: String,
     completion: ((Swift.Result<Void, Error>) -> Void)? = nil
   ) {
-    chat.deleteChannel(id: id).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.Channel_?>) in
+    chat.deleteChannel(id: id).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.KotlinUnit>) in
       switch result.result {
       case .success:
         completion?(.success(()))

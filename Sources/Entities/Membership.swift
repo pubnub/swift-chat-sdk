@@ -100,6 +100,16 @@ public protocol Membership: CustomStringConvertible {
     completion: ((Swift.Result<UInt64?, Error>) -> Void)?
   )
 
+  /// Deletes the membership.
+  ///
+  /// - Parameters:
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: A `Void` indicating a success
+  ///     - **Failure**: An `Error` describing the failure
+  func delete(
+    completion: ((Swift.Result<Void, Error>) -> Void)?
+  )
+
   /// You can receive updates when this user-channel Membership object is updated or removed.
   ///
   /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,

@@ -73,7 +73,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
   }
 
   func delete(completion: ((Swift.Result<Void, Error>) -> Void)?) {
-    channel.delete().async(caller: self) { (result: FutureResult<BaseChannel, C?>) in
+    channel.delete().async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.KotlinUnit>) in
       switch result.result {
       case .success:
         completion?(.success(()))

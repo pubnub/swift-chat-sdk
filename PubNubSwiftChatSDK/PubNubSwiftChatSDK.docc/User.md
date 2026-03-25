@@ -15,8 +15,8 @@
 - ``update(name:externalId:profileUrl:email:custom:status:type:completion:)``
 - ``update(updateAction:)``
 - ``update(updateAction:completion:)``
-- ``delete(soft:)``
-- ``delete(soft:completion:)``
+- ``delete()``
+- ``delete(completion:)``
 
 ### Presence Management
 

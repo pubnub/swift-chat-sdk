@@ -13,7 +13,7 @@ import PubNubSDK
 
 /// A protocol that defines the basic structure and behavior for a chat.
 ///
-/// For example, you can use ``deleteChannel(id:soft:completion:)``
+/// For example, you can use ``deleteChannel(id:completion:)``
 /// to remove a given channel or ``wherePresent(userId:completion:)`` to check which channels a given user is subscribed to.
 ///
 /// By calling methods on the ``Chat`` entity, you create chat objects like ``Channel``, ``User``, ``Message``, ``Membership``,  ``ThreadChannel``,

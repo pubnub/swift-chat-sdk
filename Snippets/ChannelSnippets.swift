@@ -88,23 +88,6 @@ func deleteChannel() {
   // snippet.end
 }
 
-// MARK: - Delete Channel (Soft)
-
-func deleteChannelSoft() {
-  // snippet.channels.deleteSoft
-  // Assumes a "ChatImpl" reference named "chat"
-  Task {
-    if let channel = try await chat.getChannel(channelId: "support") {
-      let deletionResult = try await channel.delete(soft: true)
-      debugPrint(String(describing: deletionResult?.id))
-      debugPrint(String(describing: deletionResult?.status))
-    } else {
-      debugPrint("Channel not found")
-    }
-  }
-  // snippet.end
-}
-
 // MARK: - Get Channel Details
 
 func getChannel() {

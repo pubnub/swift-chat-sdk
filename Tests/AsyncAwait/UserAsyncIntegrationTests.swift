@@ -130,32 +130,16 @@ class UserAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
   func testUserAsync_Delete() async throws {
     let createdUser = try await chat.createUser(user: testableUser())
-    let deletedUser = try await createdUser.delete(soft: false)
-
-    XCTAssertNil(deletedUser)
+    try await createdUser.delete()
 
     addTeardownBlock { [unowned self] in
       _ = try? await chat.deleteUser(id: createdUser.id)
     }
   }
 
-  func testUserAsync_SoftDelete() async throws {
-    let createdUser = try await chat.createUser(user: testableUser())
-    let deletedUser = try await createdUser.delete(soft: true)
-
-    XCTAssertFalse(deletedUser?.active ?? true)
-    XCTAssertEqual(createdUser.id, deletedUser?.id)
-
-     addTeardownBlock { [unowned self] in
-      _ = try? await chat.deleteUser(id: createdUser.id)
-    }
-  }
-
   func testUserAsync_DeleteNotExistingUser() async throws {
     let someUser = testableUser()
-    let resultValue = try await someUser.delete(soft: false)
-
-    XCTAssertNil(resultValue)
+    try await someUser.delete()
   }
 
   func testUserAsync_WherePresent() async throws {

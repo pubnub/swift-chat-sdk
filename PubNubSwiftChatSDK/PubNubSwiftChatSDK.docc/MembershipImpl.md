@@ -22,3 +22,8 @@
 
 - ``update(custom:)``
 - ``update(custom:completion:)``
+
+### Deleting Membership
+
+- ``delete()``
+- ``delete(completion:)``

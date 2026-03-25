@@ -43,13 +43,11 @@ final class ChannelGroupIntegrationTests: BaseClosureIntegrationTestCase {
     }
     try awaitResult {
       channel.delete(
-        soft: false,
         completion: $0
       )
     }
     try awaitResult {
       secondChannel.delete(
-        soft: false,
         completion: $0
       )
     }

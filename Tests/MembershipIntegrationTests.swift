@@ -119,6 +119,45 @@ final class MembershipTests: BaseClosureIntegrationTestCase {
     )
   }
 
+  func testMembership_Delete() throws {
+    let someChannel = try awaitResultValue {
+      chat.createChannel(
+        id: randomString(),
+        completion: $0
+      )
+    }
+    let someMembership = try awaitResultValue {
+      someChannel.invite(
+        user: chat.currentUser,
+        completion: $0
+      )
+    }
+
+    try awaitResult {
+      someMembership.delete(
+        completion: $0
+      )
+    }
+
+    let isMember = try awaitResultValue {
+      chat.currentUser.isMemberOf(
+        channelId: someChannel.id,
+        completion: $0
+      )
+    }
+
+    XCTAssertFalse(isMember)
+
+    addTeardownBlock { [unowned self] in
+      try awaitResult {
+        chat.deleteChannel(
+          id: someChannel.id,
+          completion: $0
+        )
+      }
+    }
+  }
+
   func testMembership_StreamUpdates() throws {
     let expectation = expectation(description: "MembershipStreamUpdates")
     expectation.assertForOverFulfill = true

@@ -139,6 +139,20 @@ class MembershipAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     }
   }
 
+  func testMembershipAsync_Delete() async throws {
+    let someChannel = try await chat.createChannel(id: randomString())
+    let someMembership = try await someChannel.invite(user: chat.currentUser)
+
+    try await someMembership.delete()
+
+    let isMember = try await chat.currentUser.isMemberOf(channelId: someChannel.id)
+    XCTAssertFalse(isMember)
+
+    addTeardownBlock { [unowned self] in
+      _ = try? await chat.deleteChannel(id: someChannel.id)
+    }
+  }
+
   // MARK: - Stream Namespace Tests
 
   func testMembershipAsync_Stream_Updates() async throws {

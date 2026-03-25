@@ -169,21 +169,17 @@ public extension Chat {
     }
   }
 
-  /// Deletes a user with or without deleting its historical data from the App Context storage.
+  /// Deletes a user and its historical data from the App Context storage.
   ///
-  /// - Parameters:
-  ///   - id: Unique user identifier
-  ///   - soft: Decide if you want to permanently remove user metadata
-  /// - Returns: For hard delete, the method returns `nil`. Otherwise, an updated ``User`` instance with the status field set to `"deleted"`
+  /// - Parameter id: Unique user identifier
   func deleteUser(
-    id: String,
-    soft: Bool = false
-  ) async throws -> ChatUserType? {
-    try await withCheckedThrowingContinuation { continuation in
-      deleteUser(id: id, soft: soft) {
+    id: String
+  ) async throws {
+    try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+      deleteUser(id: id) {
         switch $0 {
-        case let .success(user):
-          continuation.resume(returning: user)
+        case .success:
+          continuation.resume()
         case let .failure(error):
           continuation.resume(throwing: error)
         }
@@ -315,18 +311,15 @@ public extension Chat {
     }
   }
 
-  /// Allows to delete ``Channel`` with or without deleting its historical data from the App Context storage.
+  /// Deletes a ``Channel`` and its historical data from the App Context storage.
   ///
-  /// - Parameters:
-  ///   - id: Unique channel identifier (up to 92 UTF-8 byte sequences)
-  ///   - soft: Decide if you want to permanently remove channel metadata. If you set this parameter to true, the ``Channel`` object gets the deleted status, and you can still restore/get its data
-  /// - Returns: For hard delete, the method returns `nil`. Otherwise, an updated ``Channel`` instance with the status field set to `"deleted"`
-  func deleteChannel(id: String, soft: Bool = false) async throws -> ChatChannelType? {
-    try await withCheckedThrowingContinuation { continuation in
-      deleteChannel(id: id, soft: soft) {
+  /// - Parameter id: Unique channel identifier (up to 92 UTF-8 byte sequences)
+  func deleteChannel(id: String) async throws {
+    try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+      deleteChannel(id: id) {
         switch $0 {
-        case let .success(channel):
-          continuation.resume(returning: channel)
+        case .success:
+          continuation.resume()
         case let .failure(error):
           continuation.resume(throwing: error)
         }

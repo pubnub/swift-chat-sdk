@@ -100,16 +100,14 @@ public protocol User: CustomStringConvertible {
     completion: ((Swift.Result<ChatType.ChatUserType, Error>) -> Void)?
   )
 
-  /// Deletes the user. If soft deletion is enabled, the user's data is retained but marked as inactive.
+  /// Deletes the user.
   ///
   /// - Parameters:
-  ///   - soft: If true, the user is soft deleted, retaining their data but making them inactive
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: For hard delete, the method returns `nil`. Otherwise, an updated ``User`` instance with the status field set to `"deleted"`
+  ///     - **Success**: A `Void` indicating a success
   ///     - **Failure**: An `Error` describing the failure
   func delete(
-    soft: Bool,
-    completion: ((Swift.Result<ChatType.ChatUserType?, Error>) -> Void)?
+    completion: ((Swift.Result<Void, Error>) -> Void)?
   )
 
   /// Retrieves a list of channels where the user is currently present.

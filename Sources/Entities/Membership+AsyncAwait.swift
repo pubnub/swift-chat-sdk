@@ -109,6 +109,20 @@ public extension Membership {
     }
   }
 
+  /// Deletes the membership.
+  func delete() async throws {
+    try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+      delete {
+        switch $0 {
+        case .success:
+          continuation.resume()
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+
   /// You can receive updates when this user-channel Membership object is updated or removed.
   ///
   /// - Returns: An asynchronous stream that produces updates when the current ``Membership`` is updated or `nil` if the membership was removed.

@@ -147,46 +147,11 @@ final class UserIntegrationTests: BaseClosureIntegrationTestCase {
         completion: $0
       )
     }
-    let deletedUser = try awaitResultValue {
+    try awaitResult {
       createdUser.delete(
-        soft: false,
         completion: $0
       )
     }
-
-    XCTAssertNil(deletedUser)
-
-    addTeardownBlock { [unowned self] in
-      try awaitResult {
-        chat.deleteUser(
-          id: createdUser.id,
-          completion: $0
-        )
-      }
-    }
-  }
-
-  func testUser_SoftDelete() throws {
-    let createdUser = try awaitResultValue {
-      chat.createUser(
-        user: testableUser(),
-        completion: $0
-      )
-    }
-    let deletedUser = try awaitResultValue {
-      createdUser.delete(
-        soft: true,
-        completion: $0
-      )
-    }
-
-    XCTAssertFalse(
-      deletedUser?.active ?? true
-    )
-    XCTAssertEqual(
-      createdUser.id,
-      deletedUser?.id
-    )
 
     addTeardownBlock { [unowned self] in
       try awaitResult {
@@ -200,9 +165,7 @@ final class UserIntegrationTests: BaseClosureIntegrationTestCase {
 
   func testUser_DeleteNotExistingUser() throws {
     let someUser = testableUser()
-    let resultValue = try awaitResultValue { someUser.delete(soft: false, completion: $0) }
-
-    XCTAssertNil(resultValue)
+    try awaitResult { someUser.delete(completion: $0) }
   }
 
   func testUser_WherePresent() throws {
@@ -448,9 +411,8 @@ final class UserIntegrationTests: BaseClosureIntegrationTestCase {
       expectation.fulfill()
     }
 
-    try awaitResultValue(delay: 3) {
+    try awaitResult(delay: 3) {
       createdUser.delete(
-        soft: false,
         completion: $0
       )
     }

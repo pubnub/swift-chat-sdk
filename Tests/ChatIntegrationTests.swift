@@ -215,7 +215,7 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
         completion: $0
       )
     }
-    try awaitResultValue {
+    try awaitResult {
       chat.deleteUser(
         id: user.id,
         completion: $0
@@ -509,7 +509,7 @@ class ChatIntegrationTests: BaseClosureIntegrationTestCase {
         completion: $0
       )
     }
-    try awaitResultValue {
+    try awaitResult {
       chat.deleteChannel(
         id: channel.id,
         completion: $0

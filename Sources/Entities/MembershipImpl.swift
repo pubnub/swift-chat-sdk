@@ -140,6 +140,17 @@ extension MembershipImpl: Membership {
     }
   }
 
+  public func delete(completion: ((Swift.Result<Void, Error>) -> Void)? = nil) {
+    membership.delete().async(caller: self) { (result: FutureResult<MembershipImpl, PubNubChat.KotlinUnit>) in
+      switch result.result {
+      case .success:
+        completion?(.success(()))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
+
   public func onUpdated(callback: @escaping (MembershipImpl) -> Void) -> AutoCloseable {
     AutoCloseableImpl(
       membership.onUpdated { [weak self] in

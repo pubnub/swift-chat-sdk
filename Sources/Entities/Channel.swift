@@ -70,16 +70,14 @@ public protocol Channel: CustomStringConvertible {
     completion: ((Swift.Result<Self, Error>) -> Void)?
   )
 
-  /// Allows to delete  an existing ``Channel`` with or without deleting its historical data from the App Context storage.
+  /// Deletes an existing ``Channel`` and its historical data from the App Context storage.
   ///
   /// - Parameters:
-  ///   - soft: Decide if you want to permanently remove channel metadata
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: For hard delete, the method returns `nil`. Otherwise, an updated ``Channel`` instance with the status field set to `"deleted"`
+  ///     - **Success**: A `Void` indicating a success
   ///     - **Failure**: An `Error` describing the failure
   func delete(
-    soft: Bool,
-    completion: ((Swift.Result<ChatType.ChatChannelType?, Error>) -> Void)?
+    completion: ((Swift.Result<Void, Error>) -> Void)?
   )
 
   /// Forwards a message to existing channel.

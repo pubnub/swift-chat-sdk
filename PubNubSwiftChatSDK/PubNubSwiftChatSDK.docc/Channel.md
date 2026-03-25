@@ -21,8 +21,8 @@
 
 - ``update(name:custom:description:status:type:)``
 - ``update(name:custom:description:status:type:completion:)``
-- ``delete(soft:)``
-- ``delete(soft:completion:)``
+- ``delete()``
+- ``delete(completion:)``
 
 ### Typing Indicator
 

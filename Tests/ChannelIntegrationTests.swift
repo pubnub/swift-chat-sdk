@@ -1201,6 +1201,56 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
     }
   }
 
+  func testChannel_GetInvitees() throws {
+    let someUser = UserImpl(
+      chat: chat,
+      id: randomString()
+    )
+
+    try awaitResultValue {
+      chat.createUser(
+        user: someUser,
+        completion: $0
+      )
+    }
+
+    try awaitResultValue {
+      channel.inviteMultiple(
+        users: [chat.currentUser, someUser],
+        completion: $0
+      )
+    }
+
+    let invitees = try XCTUnwrap(
+      awaitResultValue {
+        channel.getInvitees(
+          completion: $0
+        )
+      }.memberships
+    )
+
+    let firstMatch = try XCTUnwrap(
+      invitees.first {
+        $0.user.id == chat.currentUser.id && $0.channel.id == channel.id
+      }
+    )
+    let secondMatch = try XCTUnwrap(
+      invitees.first {
+        $0.user.id == someUser.id && $0.channel.id == channel.id
+      }
+    )
+
+    XCTAssertEqual(invitees.count, 2)
+    XCTAssertNotNil(firstMatch)
+    XCTAssertNotNil(secondMatch)
+
+    addTeardownBlock { [unowned self] in
+      try awaitResult {
+        chat.deleteUser(id: someUser.id, completion: $0)
+      }
+    }
+  }
+
   func testChannel_SendTextWithParams() throws {
     let params = SendTextParams(
       meta: ["x": 42, "y": "hello"],

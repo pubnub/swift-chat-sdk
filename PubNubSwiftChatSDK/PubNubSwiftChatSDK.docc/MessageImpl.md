@@ -14,10 +14,12 @@
 
 ### Receiving Updates
 
+- ``stream``
 - ``streamUpdates()``
 - ``streamUpdates(completion:)``
 - ``streamUpdatesOn(messages:)``
 - ``streamUpdatesOn(messages:callback:)``
+- ``onUpdated(callback:)``
 
 ### Reactions
 
@@ -63,3 +65,4 @@
 
 - ``report(reason:)``
 - ``report(reason:completion:)``
+

@@ -29,8 +29,8 @@
 - ``updateChannel(id:name:custom:description:status:type:completion:)``
 - ``deleteChannel(id:)``
 - ``deleteChannel(id:completion:)``
-- ``whoIsPresent(channelId:)``
-- ``whoIsPresent(channelId:completion:)``
+- ``whoIsPresent(channelId:limit:offset:)``
+- ``whoIsPresent(channelId:limit:offset:completion:)``
 - ``getPushChannels()``
 - ``getPushChannels(completion:)``
 - ``registerPushChannels(channels:)``

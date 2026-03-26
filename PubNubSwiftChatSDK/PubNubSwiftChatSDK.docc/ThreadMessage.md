@@ -8,3 +8,7 @@
 - ``pinToParentChannel(completion:)``
 - ``unpinFromParentChannel()``
 - ``unpinFromParentChannel(completion:)``
+
+### Receiving Updates
+
+- ``onUpdated(callback:)``

@@ -59,11 +59,18 @@ public extension Membership {
 
   /// Updates the channel membership information for a given user.
   ///
-  /// - Parameter custom: Any custom properties or metadata associated with the channel-user membership in a form of key-value pairs
+  /// - Parameters:
+  ///   - custom: Any custom properties or metadata associated with the channel-user membership in a form of key-value pairs
+  ///   - status: Optional membership status value
+  ///   - type: Optional membership type value
   /// - Returns: An updated ``Membership`` object
-  func update(custom: [String: JSONCodableScalar]) async throws -> ChatType.ChatMembershipType {
+  func update(
+    custom: [String: JSONCodableScalar],
+    status: String? = nil,
+    type: String? = nil
+  ) async throws -> ChatType.ChatMembershipType {
     try await withCheckedThrowingContinuation { continuation in
-      update(custom: custom) {
+      update(custom: custom, status: status, type: type) {
         switch $0 {
         case let .success(membership):
           continuation.resume(returning: membership)

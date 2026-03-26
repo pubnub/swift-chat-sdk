@@ -587,6 +587,39 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     )
   }
 
+  func getInvitees(
+    limit: Int?,
+    page: PubNubHashedPage?,
+    filter: String?,
+    sort: [PubNub.MembershipSortField],
+    completion: ((Swift.Result<(memberships: [ChatType.ChatMembershipType], page: PubNubHashedPage?), Error>) -> Void)?
+  ) {
+    channel.getInvitees(
+      limit: limit?.asKotlinInt,
+      page: page?.transform(),
+      filter: filter,
+      sort: sort.compactMap { $0.transform() }
+    ).async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.MembersResponse>) in
+      switch result.result {
+      case let .success(response):
+        completion?(.success(
+          (
+            memberships: response.members.map {
+              MembershipImpl(membership: $0, chat: result.caller.chat)
+            },
+            page: PubNubHashedPageBase(
+              start: response.next?.pageHash,
+              end: response.prev?.pageHash,
+              totalCount: Int(response.total)
+            )
+          )
+        ))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
+
   func getUserSuggestions(
     text: String,
     limit: Int,

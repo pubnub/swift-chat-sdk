@@ -102,9 +102,13 @@ extension MembershipImpl: Membership {
 
   public func update(
     custom: [String: JSONCodableScalar],
+    status: String? = nil,
+    type: String? = nil,
     completion: ((Swift.Result<MembershipImpl, Error>) -> Void)? = nil
   ) {
     membership.update(
+      status: status,
+      type: type,
       custom: custom
     ).async(caller: self) { (result: FutureResult<MembershipImpl, PubNubChat.Membership>) in
       switch result.result {

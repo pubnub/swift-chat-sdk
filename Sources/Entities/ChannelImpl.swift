@@ -429,6 +429,22 @@ extension ChannelImpl: Channel {
     )
   }
 
+  public func getInvitees(
+    limit: Int? = nil,
+    page: PubNubHashedPage? = nil,
+    filter: String? = nil,
+    sort: [PubNub.MembershipSortField] = [],
+    completion: ((Swift.Result<(memberships: [MembershipImpl], page: PubNubHashedPage?), Error>) -> Void)? = nil
+  ) {
+    target.getInvitees(
+      limit: limit,
+      page: page,
+      filter: filter,
+      sort: sort,
+      completion: completion
+    )
+  }
+
   public func getUserSuggestions(
     text: String,
     limit: Int = 10,

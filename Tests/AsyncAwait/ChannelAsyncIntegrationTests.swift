@@ -880,6 +880,32 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     }
   }
 
+  func testChannelAsync_GetInvitees() async throws {
+    let someUser = try await chat.createUser(user: UserImpl(chat: chat, id: randomString()))
+    try await channel.inviteMultiple(users: [chat.currentUser, someUser])
+
+    let invitees = try await channel.getInvitees().memberships
+
+    let firstMatch = try XCTUnwrap(
+      invitees.first {
+        $0.user.id == chat.currentUser.id && $0.channel.id == channel.id
+      }
+    )
+    let secondMatch = try XCTUnwrap(
+      invitees.first {
+        $0.user.id == someUser.id && $0.channel.id == channel.id
+      }
+    )
+
+    XCTAssertEqual(invitees.count, 2)
+    XCTAssertNotNil(firstMatch)
+    XCTAssertNotNil(secondMatch)
+
+    addTeardownBlock { [unowned self] in
+      _ = try? await chat.deleteUser(id: someUser.id)
+    }
+  }
+
   func testChannelAsync_SendTextWithParams() async throws {
     let params = SendTextParams(
       meta: ["x": 42, "y": "hello"],

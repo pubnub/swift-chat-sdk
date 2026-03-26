@@ -4,10 +4,16 @@
 
 ### Receiving Updates
 
+- ``stream``
 - ``streamUpdates()``
 - ``streamUpdates(callback:)``
 - ``streamUpdatesOn(users:)``
 - ``streamUpdatesOn(users:callback:)``
+- ``onUpdated(callback:)``
+- ``onDeleted(callback:)``
+- ``onMentioned(callback:)``
+- ``onInvited(callback:)``
+- ``onRestrictionChanged(callback:)``
 
 ### Update and Delete a User
 
@@ -33,3 +39,4 @@
 - ``isMemberOf(channelId:completion:)``
 - ``getMembership(channelId:)``
 - ``getMembership(channelId:completion:)``
+

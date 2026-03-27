@@ -129,7 +129,7 @@ class MessageAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
   }
 
   func testAsyncMessage_CreateThreadWithParameters() async throws {
-    let threadChannel = try await testMessage.createThread(text: "This is reply in a thread")
+    let threadChannel = try await testMessage.createThread(text: "This is reply in a thread").threadChannel
     XCTAssertEqual(threadChannel.parentMessage.timetoken, testMessage.timetoken)
     XCTAssertEqual(threadChannel.parentChannelId, testMessage.channelId)
 
@@ -147,12 +147,12 @@ class MessageAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     }
   }
 
-  func testAsyncMessage_CreateThreadWithResult() async throws {
+  func testAsyncMessage_CreateThread_WithResult() async throws {
     let params = SendTextParams(
       meta: ["key": "value"],
       shouldStore: true
     )
-    let result = try await testMessage.createThreadWithResult(
+    let result = try await testMessage.createThread(
       text: "Thread reply with params",
       params: params
     )

@@ -150,7 +150,7 @@ public extension Message {
   /// Create a thread (channel) for a selected message.
   ///
   /// - Returns: A ``ThreadChannel`` object which can be used for sending and reading messages from the newly created message thread
-  @available(*, deprecated, message: "Use `createThreadWithResult(text:params:)` instead")
+  @available(*, deprecated, message: "Use `createThread(text:params:)` instead")
   func createThread() async throws -> ChatType.ChatThreadChannelType {
     try await withCheckedThrowingContinuation { continuation in
       createThread {
@@ -177,7 +177,7 @@ public extension Message {
   ///   - usersToMention: A collection of user ids to automatically notify with a mention after this message is sent
   ///   - customPushData: Additional key-value pairs that will be added to the FCM and/or APNS push messages for the message itself and any user mentions
   /// - Returns: A ``ThreadChannel`` object which can be used for sending and reading messages from the newly created message thread
-  @available(*, deprecated, message: "Use `createThreadWithResult(text:params:)` instead")
+  @available(*, deprecated, message: "Use `createThread(text:params:)` instead")
   func createThread(
     text: String,
     meta: [String: JSONCodable]? = nil,
@@ -217,12 +217,12 @@ public extension Message {
   ///   - text: Text of the first reply to send in the thread
   ///   - params: Additional parameters for sending text, encapsulated in a ``SendTextParams`` object
   /// - Returns: A ``CreateThreadResult`` containing the thread channel and updated parent message
-  func createThreadWithResult(
+  func createThread(
     text: String,
     params: SendTextParams = SendTextParams()
   ) async throws -> CreateThreadResult<ChatType.ChatThreadChannelType, ChatType.ChatMessageType> {
     try await withCheckedThrowingContinuation { continuation in
-      createThreadWithResult(
+      createThread(
         text: text,
         params: params
       ) {

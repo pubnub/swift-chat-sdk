@@ -192,12 +192,12 @@ extension MessageImpl: Message {
     )
   }
 
-  public func createThreadWithResult(
+  public func createThread(
     text: String,
     params: SendTextParams = SendTextParams(),
     completion: ((Swift.Result<CreateThreadResult<ThreadChannelImpl, MessageImpl>, Error>) -> Void)? = nil
   ) {
-    target.createThreadWithResult(
+    target.createThread(
       text: text,
       params: params,
       completion: completion

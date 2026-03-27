@@ -46,8 +46,8 @@
 
 - ``getThread()``
 - ``getThread(completion:)``
-- ``createThread()``
-- ``createThread(completion:)``
+- ``createThread(text:params:)``
+- ``createThread(text:params:completion:)``
 - ``removeThread()``
 - ``removeThread(completion:)``
 

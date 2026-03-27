@@ -516,10 +516,10 @@ public protocol Chat: AnyObject {
   /// Returns a reference to a ``ChannelGroup`` with the specified id.
   ///
   /// This does **not** create a group on the server. If the group exists, the reference points to it. If the group does not exist, it serves as a handle to create
-  /// and modify it via channel changes. For example, ``ChannelGroup/add(channels:completion:)``, ``ChannelGroup/addChannelIdentifiers(ids:completion:)``
+  /// and modify it via channel changes. For example, ``ChannelGroup/add(channels:completion:)``, ``ChannelGroup/addChannelIdentifiers(_:completion:)``
   ///
   /// - Parameter id: The ID of the ``ChannelGroup`` to get
-  /// - Returns: A ``ChatChannelGroupType`` instance
+  /// - Returns: A ``ChannelGroup`` instance
   func getChannelGroup(id: String) -> ChatChannelGroupType
 
   /// Removes a channel group with the specified id.
@@ -538,17 +538,9 @@ public protocol Chat: AnyObject {
   func addConnectionStatusListener(_ listener: @escaping (ConnectionStatus) -> Void) -> AutoCloseable
 
   /// Reconnects the client to the PubNub system.
-  ///
-  /// - Parameter completion: The async `Result` of the method call
-  ///     - **Success**: A `Void` indicating a success
-  ///     - **Failure**: An `Error` describing the failure
   func reconnectSubscriptions()
 
   /// Disconnects the client from the PubNub system.
-  ///
-  /// - Parameter completion: The async `Result` of the method call
-  ///     - **Success**: A `Void` indicating a success
-  ///     - **Failure**: An `Error` describing the failure
   func disconnectSubscriptions()
 
   // swiftlint:disable:next file_length

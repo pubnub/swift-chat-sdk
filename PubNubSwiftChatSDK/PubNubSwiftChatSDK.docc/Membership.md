@@ -4,10 +4,13 @@
 
 ### Receiving Updates
 
+- ``stream``
 - ``streamUpdates()``
 - ``streamUpdates(callback:)``
 - ``streamUpdatesOn(memberships:)``
 - ``streamUpdatesOn(memberships:callback:)``
+- ``onUpdated(callback:)``
+- ``onDeleted(callback:)``
 
 ### Read Receipts
 
@@ -20,10 +23,11 @@
 
 ### Updating Membership
 
-- ``update(custom:)``
-- ``update(custom:completion:)``
+- ``update(custom:status:type:)``
+- ``update(custom:status:type:completion:)``
 
 ### Deleting Membership
 
 - ``delete()``
 - ``delete(completion:)``
+

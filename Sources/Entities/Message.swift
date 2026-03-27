@@ -162,7 +162,7 @@ public protocol Message: CustomStringConvertible {
   ///   - completion: The async `Result` of the method call
   ///     - **Success**:  Returns a ``ThreadChannel`` object which can be used for sending and reading messages from the newly created message thread
   ///     - **Failure**: An `Error` describing the failure
-  @available(*, deprecated, message: "Use `createThreadWithResult(text:params:completion:)` instead")
+  @available(*, deprecated, message: "Use `createThread(text:params:completion:)` instead")
   func createThread(
     completion: ((Swift.Result<ChatType.ChatThreadChannelType, Error>) -> Void)?
   )
@@ -182,7 +182,7 @@ public protocol Message: CustomStringConvertible {
   ///   - completion: The async `Result` of the method call
   ///     - **Success**:  Returns a ``ThreadChannel`` object which can be used for sending and reading messages from the newly created message thread
   ///     - **Failure**: An `Error` describing the failure
-  @available(*, deprecated, message: "Use `createThreadWithResult(text:params:completion:)` instead")
+  @available(*, deprecated, message: "Use `createThread(text:params:completion:)` instead")
   func createThread(
     text: String,
     meta: [String: JSONCodable]?,
@@ -204,7 +204,7 @@ public protocol Message: CustomStringConvertible {
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: A ``CreateThreadResult`` containing the thread channel and updated parent message
   ///     - **Failure**: An `Error` describing the failure
-  func createThreadWithResult(
+  func createThread(
     text: String,
     params: SendTextParams,
     completion: ((Swift.Result<CreateThreadResult<ChatType.ChatThreadChannelType, ChatType.ChatMessageType>, Error>) -> Void)?

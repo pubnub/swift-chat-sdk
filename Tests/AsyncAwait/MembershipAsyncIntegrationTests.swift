@@ -45,12 +45,18 @@ class MembershipAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
   func testMembershipAsync_Update() async throws {
     let newCustom: [String: JSONCodableScalar] = ["a": 1, "b": "Lorem ipsum", "c": 3.557]
-    let updatedMembership = try await membership.update(custom: newCustom)
+    let updatedMembership = try await membership.update(
+      custom: newCustom,
+      status: "active",
+      type: "premium"
+    )
 
     XCTAssertEqual(
       newCustom.mapValues { $0.scalarValue },
       updatedMembership.custom?.mapValues { $0.scalarValue }
     )
+    XCTAssertEqual(updatedMembership.status, "active")
+    XCTAssertEqual(updatedMembership.type, "premium")
   }
 
   func testMembershipAsync_SetLastReadMessageTimetoken() async throws {

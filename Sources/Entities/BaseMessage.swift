@@ -204,7 +204,7 @@ extension BaseMessage: Message {
     }
   }
 
-  func createThreadWithResult(
+  func createThread(
     text: String,
     params: SendTextParams,
     completion: ((Swift.Result<CreateThreadResult<ThreadChannelImpl, MessageImpl>, Error>) -> Void)?

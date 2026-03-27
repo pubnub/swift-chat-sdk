@@ -274,7 +274,7 @@ final class MessageIntegrationTests: BaseClosureIntegrationTestCase {
         text: "This is reply in a thread",
         completion: $0
       )
-    }
+    }.threadChannel
 
     let threadChannelHistory = try awaitResultValue(delay: 4) {
       threadChannel.getHistory(
@@ -300,14 +300,14 @@ final class MessageIntegrationTests: BaseClosureIntegrationTestCase {
     }
   }
 
-  func testMessage_CreateThreadWithResult() throws {
+  func testMessage_CreateThread_WithResult() throws {
     let params = SendTextParams(
       meta: ["key": "value"],
       shouldStore: true
     )
 
     let result = try awaitResultValue {
-      testMessage.createThreadWithResult(
+      testMessage.createThread(
         text: "Thread reply with params",
         params: params,
         completion: $0

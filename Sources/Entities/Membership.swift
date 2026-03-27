@@ -68,11 +68,15 @@ public protocol Membership: CustomStringConvertible {
   ///
   /// - Parameters:
   ///   - custom: Any custom properties or metadata associated with the channel-user membership in a form of key-value pairs
+  ///   - status: Optional membership status value
+  ///   - type: Optional membership type value
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: An updated ``Membership`` object
   ///     - **Failure**: An `Error` describing the failure
   func update(
     custom: [String: JSONCodableScalar],
+    status: String?,
+    type: String?,
     completion: ((Swift.Result<ChatType.ChatMembershipType, Error>) -> Void)?
   )
 

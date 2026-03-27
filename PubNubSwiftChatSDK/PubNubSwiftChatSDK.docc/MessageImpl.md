@@ -14,10 +14,12 @@
 
 ### Receiving Updates
 
+- ``stream``
 - ``streamUpdates()``
 - ``streamUpdates(completion:)``
 - ``streamUpdatesOn(messages:)``
 - ``streamUpdatesOn(messages:callback:)``
+- ``onUpdated(callback:)``
 
 ### Reactions
 
@@ -44,8 +46,8 @@
 
 - ``getThread()``
 - ``getThread(completion:)``
-- ``createThread()``
-- ``createThread(completion:)``
+- ``createThread(text:params:)``
+- ``createThread(text:params:completion:)``
 - ``removeThread()``
 - ``removeThread(completion:)``
 
@@ -63,3 +65,4 @@
 
 - ``report(reason:)``
 - ``report(reason:completion:)``
+

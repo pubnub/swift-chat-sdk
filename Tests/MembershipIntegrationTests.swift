@@ -73,6 +73,8 @@ final class MembershipTests: BaseClosureIntegrationTestCase {
     let newValue = try awaitResultValue {
       membership.update(
         custom: newCustom,
+        status: "active",
+        type: "premium",
         completion: $0
       )
     }
@@ -80,6 +82,8 @@ final class MembershipTests: BaseClosureIntegrationTestCase {
       newCustom.mapValues { $0.scalarValue },
       newValue.custom?.mapValues { $0.scalarValue }
     )
+    XCTAssertEqual(newValue.status, "active")
+    XCTAssertEqual(newValue.type, "premium")
   }
 
   func testMembership_SetLastReadMessageTimetoken() throws {

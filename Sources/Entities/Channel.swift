@@ -339,7 +339,7 @@ public protocol Channel: CustomStringConvertible {
 
   /// Emits the received message whenever a new message is published on this channel.
   ///
-  /// For a ``ThreadChannel``, this returns thread messages (``ChatType/ChatThreadMessageType``).
+  /// For a ``ThreadChannel``, this returns thread messages (``ThreadMessage``).
   ///
   /// - Parameter callback: A closure invoked with the received message
   /// - Returns: An ``AutoCloseable`` that stops listening when closed
@@ -386,7 +386,6 @@ public protocol Channel: CustomStringConvertible {
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: A `Tuple` containing the user's ``Membership`` in the channel, and ``AutoCloseable`` that  lets you stop listening to new channel messages while remaining a channel membership
   ///     - **Failure**: An `Error` describing the failure
-  /// - Returns: The caller's membership in the channel
   func join(
     custom: [String: JSONCodableScalar]?,
     status: String?,
@@ -583,6 +582,24 @@ public protocol Channel: CustomStringConvertible {
   func onPresenceChanged(
     callback: @escaping (Set<String>) -> Void
   ) -> AutoCloseable
+
+  /// Returns the list of all invited members of the channel.
+  ///
+  /// - Parameters:
+  ///   - limit: Number of objects to return in response
+  ///   - page: Object used for pagination to define which previous or next result page you want to fetch
+  ///   - filter: Expression used to filter the results. Returns only these members whose properties satisfy the given expression
+  ///   - sort: A collection to specify the sort order
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: A `Tuple` containing an array of the invitees of the channel, and the next pagination `PubNubHashedPage` (if one exists)
+  ///     - **Failure**: An `Error` describing the failure
+  func getInvitees(
+    limit: Int?,
+    page: PubNubHashedPage?,
+    filter: String?,
+    sort: [PubNub.MembershipSortField],
+    completion: ((Swift.Result<(memberships: [ChatType.ChatMembershipType], page: PubNubHashedPage?), Error>) -> Void)?
+  )
 
   /// Fetches all suggested users that match the provided 3-letter string from ``Channel``.
   ///

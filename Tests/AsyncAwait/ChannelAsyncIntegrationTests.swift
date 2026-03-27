@@ -372,6 +372,7 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
     XCTAssertEqual(membership.channel.id, channel.id)
     XCTAssertEqual(membership.user.id, chat.currentUser.id)
+    XCTAssertEqual(membership.status, "")
   }
 
   func testChannelAsync_Leave() async throws {
@@ -877,6 +878,32 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     addTeardownBlock {
       task.cancel()
       _ = try? await message?.delete()
+    }
+  }
+
+  func testChannelAsync_GetInvitees() async throws {
+    let someUser = try await chat.createUser(user: UserImpl(chat: chat, id: randomString()))
+    try await channel.inviteMultiple(users: [chat.currentUser, someUser])
+
+    let invitees = try await channel.getInvitees().memberships
+
+    let firstMatch = try XCTUnwrap(
+      invitees.first {
+        $0.user.id == chat.currentUser.id && $0.channel.id == channel.id
+      }
+    )
+    let secondMatch = try XCTUnwrap(
+      invitees.first {
+        $0.user.id == someUser.id && $0.channel.id == channel.id
+      }
+    )
+
+    XCTAssertEqual(invitees.count, 2)
+    XCTAssertNotNil(firstMatch)
+    XCTAssertNotNil(secondMatch)
+
+    addTeardownBlock { [unowned self] in
+      _ = try? await chat.deleteUser(id: someUser.id)
     }
   }
 

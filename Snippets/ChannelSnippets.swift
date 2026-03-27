@@ -110,9 +110,9 @@ func joinChannel() {
   // Assumes a "ChatImpl" reference named "chat"
   Task {
     if let channel = try await chat.getChannel(channelId: "support") {
-      let joinResult = try await channel.join(custom: ["support_plan": "premium"])
-      debugPrint("Channel membership: \(joinResult.membership)")
-      debugPrint("Membership channel ID: \(joinResult.membership.channel.id)")
+      let membership = try await channel.join(custom: ["support_plan": "premium"])
+      debugPrint("Channel membership: \(membership)")
+      debugPrint("Membership channel ID: \(membership.channel.id)")
     } else {
       debugPrint("Channel not found")
     }
@@ -128,9 +128,10 @@ func joinChannelAsyncStream() {
   Task {
     if let channel = try await chat.getChannel(channelId: "support") {
       // Join the channel
-      let joinResult = try await channel.join(custom: ["support_plan": "premium"])
-      // Continuously fetch and process values from the stream
-      for await message in joinResult.messagesStream {
+      let membership = try await channel.join(custom: ["support_plan": "premium"])
+      debugPrint("Joined channel: \(membership.channel.id)")
+      // Continuously listen for new messages on the channel
+      for await message in channel.connect() {
         debugPrint("Received a new message: \(message)")
       }
     } else {
@@ -145,19 +146,21 @@ func joinChannelAsyncStream() {
 func joinChannelClosure() {
   // snippet.channels.join.closure
   // Assumes a "ChannelImpl" reference named "channel"
-  channel.join(custom: ["support_plan": "premium"]) { message in
-    debugPrint("Received a new message: \(message)")
-  } completion: { result in
+
+  // Important: Keep a strong reference to the returned "AutoCloseable" object as long as you want
+  // to receive new messages. If the "AutoCloseable" is deallocated, the stream will be cancelled,
+  // and no further items will be produced. You can also stop receiving messages manually
+  // by calling the "close()" method on the "AutoCloseable" object.
+  channel.join(custom: ["support_plan": "premium"]) { result in
     switch result {
-    case let .success((_, disconnect)):
-      // Important: Keep a strong reference to the returned "AutoCloseable" object as long as you want
-      // to receive new messages. If the "AutoCloseable" is deallocated, the stream will be cancelled,
-      // and no further items will be produced. You can also stop receiving messages manually
-      // by calling the "close()" method on the "AutoCloseable" object.
-      autoCloseable = disconnect
+    case let .success(membership):
+      debugPrint("Joined channel: \(membership.channel.id)")
     case let .failure(error):
       debugPrint("An error occurred: \(error)")
     }
+  }
+  autoCloseable = channel.connect { message in
+    debugPrint("Received a new message: \(message)")
   }
   // snippet.end
 }

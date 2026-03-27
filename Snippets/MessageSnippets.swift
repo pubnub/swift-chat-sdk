@@ -33,9 +33,11 @@ func sendText() {
     if let channel = try await chat.getChannel(channelId: "support") {
       let timetoken = try await channel.sendText(
         text: "Hi Everyone",
-        meta: ["messageImportance": "high"],
-        shouldStore: true,
-        ttl: 15
+        params: SendTextParams(
+          meta: ["messageImportance": "high"],
+          shouldStore: true,
+          ttl: 15
+        )
       )
       debugPrint("Message sent successfully at \(timetoken)")
     } else {
@@ -402,10 +404,11 @@ func quoteMessage() {
   Task {
     if let channel = try await chat.getChannel(channelId: "support") {
       if let message = try await channel.getMessage(timetoken: timetoken) {
-        try await channel.sendText(
-          text: "Quoting the message with timetoken \(timetoken)",
-          quotedMessage: message
-        )
+        // Create a message draft and set the quoted message
+        let messageDraft = channel.createMessageDraft()
+        messageDraft.update(text: "Quoting the message with timetoken \(timetoken)")
+        messageDraft.quotedMessage = message
+        try await messageDraft.send()
       } else {
         debugPrint("Message with the specified timetoken not found")
       }
@@ -584,9 +587,11 @@ func createThread() {
     if let channel = try await chat.getChannel(channelId: "support") {
       let timetoken: Timetoken = 16200000000000001
       if let message = try await channel.getMessage(timetoken: timetoken) {
-        let threadChannel = try await message.createThread()
-        debugPrint("Thread created successfully with ID: \(threadChannel.id)")
-        debugPrint("Parent channel ID: \(threadChannel.parentChannelId)")
+        // Create a thread by sending the first reply
+        let result = try await message.createThread(text: "Starting a thread on this topic")
+        debugPrint("Thread created successfully with ID: \(result.threadChannel.id)")
+        debugPrint("Parent channel ID: \(result.threadChannel.parentChannelId)")
+        debugPrint("Updated parent message: \(result.parentMessage.hasThread)")
       } else {
         debugPrint("No message found with this timetoken")
       }
@@ -1177,6 +1182,80 @@ func pinMessageToThreadChannel() {
   // snippet.end
 }
 
+// MARK: - Pin Thread Message to Parent Channel
+
+func pinThreadMessageToParentChannel() {
+  // snippet.messages.pinThreadMessageToParentChannel
+  // Assumes a "ChatImpl" reference named "chat"
+  Task {
+    if let channel = try await chat.getChannel(channelId: "support") {
+      if let message = try await channel.getHistory(count: 1).messages.first {
+        let threadChannel = try await message.getThread()
+        if let threadMessage = try await threadChannel.getHistory(count: 1).messages.first {
+          // Pin the thread message to the parent channel
+          let updatedParentChannel = try await threadMessage.pinToParentChannel()
+          debugPrint("Pinned thread message to parent channel: \(updatedParentChannel.id)")
+        } else {
+          debugPrint("No messages found in the thread channel.")
+        }
+      } else {
+        debugPrint("Message not found")
+      }
+    } else {
+      debugPrint("Channel not found")
+    }
+  }
+  // snippet.end
+}
+
+// MARK: - Unpin Thread Message from Parent Channel
+
+func unpinThreadMessageFromParentChannel() {
+  // snippet.messages.unpinThreadMessageFromParentChannel
+  // Assumes a "ChatImpl" reference named "chat"
+  Task {
+    if let channel = try await chat.getChannel(channelId: "support") {
+      if let message = try await channel.getHistory(count: 1).messages.first {
+        let threadChannel = try await message.getThread()
+        if let threadMessage = try await threadChannel.getHistory(count: 1).messages.first {
+          // Unpin the thread message from the parent channel
+          let updatedParentChannel = try await threadMessage.unpinFromParentChannel()
+          debugPrint("Unpinned thread message from parent channel: \(updatedParentChannel.id)")
+        } else {
+          debugPrint("No messages found in the thread channel.")
+        }
+      } else {
+        debugPrint("Message not found")
+      }
+    } else {
+      debugPrint("Channel not found")
+    }
+  }
+  // snippet.end
+}
+
+// MARK: - Unpin Thread Message from Thread Channel
+
+func unpinThreadMessageFromThreadChannel() {
+  // snippet.messages.unpinThreadMessageFromThreadChannel
+  // Assumes a "ChatImpl" reference named "chat"
+  Task {
+    if let channel = try await chat.getChannel(channelId: "support") {
+      if let message = try await channel.getHistory(count: 1).messages.first {
+        let threadChannel = try await message.getThread()
+        // Unpin whatever message is currently pinned on the thread channel
+        let updatedThreadChannel = try await threadChannel.unpinMessage()
+        debugPrint("Unpinned message from thread channel: \(updatedThreadChannel.id)")
+      } else {
+        debugPrint("Message not found")
+      }
+    } else {
+      debugPrint("Channel not found")
+    }
+  }
+  // snippet.end
+}
+
 // MARK: - Get Unread Messages Count (Deprecated)
 
 func getUnreadMessagesCountDeprecated() {
@@ -1269,8 +1348,12 @@ func streamReadReceiptsAsyncStream() {
   // Assumes a "ChatImpl" reference named "chat"
   Task {
     if let channel = try await chat.getChannel(channelId: "support") {
-      for await readReceipt in channel.streamReadReceipts() {
-        debugPrint("User \(readReceipt.userId) has read up to timetoken: \(readReceipt.lastReadTimetoken)")
+      for await readReceipts in channel.streamReadReceipts() {
+        // readReceipts is a [Timetoken: [String]] dictionary
+        // mapping each last-read timetoken to the list of user IDs who read up to that point
+        for (timetoken, userIds) in readReceipts {
+          debugPrint("Timetoken \(timetoken) was last read by users: \(userIds)")
+        }
       }
     } else {
       debugPrint("Channel not found")
@@ -1284,8 +1367,16 @@ func streamReadReceiptsAsyncStream() {
 func streamReadReceiptsClosure() {
   // snippet.messages.readReceipts.closure
   // Assumes a "ChannelImpl" reference named "channel"
-  autoCloseable = channel.streamReadReceipts { readReceipt in
-    print("User \(readReceipt.userId) has read up to timetoken: \(readReceipt.lastReadTimetoken)")
+
+  // Important: Keep a strong reference to the returned "AutoCloseable" object as long as you want
+  // to receive updates. If the "AutoCloseable" is deallocated, the stream will be cancelled,
+  // and no further items will be produced. You can also stop receiving updates manually
+  // by calling the "close()" method on the "AutoCloseable" object.
+  autoCloseable = channel.streamReadReceipts { readReceipts in
+    // readReceipts is a [Timetoken: [String]] dictionary
+    for (timetoken, userIds) in readReceipts {
+      print("Timetoken \(timetoken) was last read by users: \(userIds)")
+    }
   }
   // snippet.end
 }

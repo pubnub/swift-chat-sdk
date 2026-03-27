@@ -517,6 +517,7 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
 
     XCTAssertEqual(membership.channel.id, channel.id)
     XCTAssertEqual(membership.user.id, chat.currentUser.id)
+    XCTAssertEqual(membership.status, "")
   }
 
   func testChannel_Leave() throws {

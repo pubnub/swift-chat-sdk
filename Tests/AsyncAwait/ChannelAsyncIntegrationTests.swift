@@ -372,6 +372,7 @@ class ChannelAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
     XCTAssertEqual(membership.channel.id, channel.id)
     XCTAssertEqual(membership.user.id, chat.currentUser.id)
+    XCTAssertEqual(membership.status, "")
   }
 
   func testChannelAsync_Leave() async throws {

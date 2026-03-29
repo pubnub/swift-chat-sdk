@@ -850,10 +850,10 @@ func createMessageDraft() {
 
 // MARK: - Create Thread Message Draft
 
-func createThreadMessageDraft() {
+func createThreadMessageDraft() async throws {
   // snippet.messages.createThreadMessageDraft
   // Assuming you have a reference of type "MessageImpl" named "message"
-  let threadDraft = message.createThreadMessageDraft(
+  let threadDraft = try await message.createThreadMessageDraft(
       isTypingIndicatorTriggered: true
   )
 

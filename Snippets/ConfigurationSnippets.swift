@@ -215,19 +215,20 @@ func initializeChatWithLogging() {
 
 func connectionStatusListener() {
   // snippet.configuration.connectionStatusListener
-  let listener = chat.addConnectionStatusListener { status in
-      switch status {
-      case .connected:
-          print("Connected to PubNub")
-      case .reconnecting:
-          print("Reconnecting...")
-      case .disconnected:
-          print("Disconnected from PubNub")
-      case .connectionError(let error):
-          print("Connection error: \(error)")
-      }
+  // Important: Keep a strong reference to the returned "AutoCloseable" object as long as you want
+  // to receive updates. If the "AutoCloseable" is deallocated, the stream will be cancelled,
+  // and no further items will be produced. You can also stop receiving updates manually
+  // by calling the "close()" method on the "AutoCloseable" object.
+  autoCloseable = chat.addConnectionStatusListener { status in
+    switch status {
+    case .online:
+      print("Connected to PubNub")
+    case .offline:
+      print("Disconnected from PubNub")
+    case .connectionError(let error):
+      print("Connection error: \(error)")
+    }
   }
-  // Retain 'listener'. When done, call listener.close() to stop receiving updates.
   // snippet.end
 }
 

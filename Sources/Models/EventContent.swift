@@ -92,7 +92,7 @@ public class EventContent {
   }
 
   /// Represents a receipt event, indicating that a message was read.
-  @available(*, deprecated, message: "Use Membership.setLastReadMessage/setLastReadMessageTimetoken() and Channel.fetchReadReceipts() instead")
+  @available(*, deprecated, message: "Use Channel.onReadReceiptReceived(callback:) or channel.stream.readReceipts() instead")
   public class Receipt: EventContent, CustomStringConvertible {
     /// The timetoken of the message for which the receipt is being acknowledged
     public let messageTimetoken: Timetoken

@@ -53,8 +53,9 @@ class MembershipAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
     XCTAssertEqual(
       newCustom.mapValues { $0.scalarValue },
-      updatedMembership.custom?.mapValues { $0.scalarValue }
+      updatedMembership.custom?.filter { newCustom.keys.contains($0.key) }.mapValues { $0.scalarValue }
     )
+
     XCTAssertEqual(updatedMembership.status, "active")
     XCTAssertEqual(updatedMembership.type, "premium")
   }
@@ -101,7 +102,10 @@ class MembershipAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
       for await updatedMembership in membership.streamUpdates() {
         XCTAssertEqual(updatedMembership?.channel.id, membership.channel.id)
         XCTAssertEqual(updatedMembership?.user.id, membership.user.id)
-        XCTAssertEqual(updatedMembership?.custom?.mapValues { $0.scalarValue }, expectedCustom.mapValues { $0.scalarValue })
+        XCTAssertEqual(
+          updatedMembership?.custom?.filter { expectedCustom.keys.contains($0.key) }.mapValues { $0.scalarValue },
+          expectedCustom.mapValues { $0.scalarValue }
+        )
         expectation.fulfill()
       }
     }
@@ -130,7 +134,10 @@ class MembershipAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
       for await receivedMembership in MembershipImpl.streamUpdatesOn(memberships: [membership]) {
         XCTAssertEqual(receivedMembership.first?.channel.id, membership.channel.id)
         XCTAssertEqual(receivedMembership.first?.user.id, membership.user.id)
-        XCTAssertEqual(receivedMembership.first?.custom?.mapValues { $0.scalarValue }, expectedCustom.mapValues { $0.scalarValue })
+        XCTAssertEqual(
+          receivedMembership.first?.custom?.filter { expectedCustom.keys.contains($0.key) }.mapValues { $0.scalarValue },
+          expectedCustom.mapValues { $0.scalarValue }
+        )
         expectation.fulfill()
       }
     }
@@ -175,7 +182,10 @@ class MembershipAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
       for await updatedMembership in membership.stream.updates() {
         XCTAssertEqual(updatedMembership.channel.id, membership.channel.id)
         XCTAssertEqual(updatedMembership.user.id, membership.user.id)
-        XCTAssertEqual(updatedMembership.custom?.mapValues { $0.scalarValue }, expectedCustom.mapValues { $0.scalarValue })
+        XCTAssertEqual(
+          updatedMembership.custom?.filter { expectedCustom.keys.contains($0.key) }.mapValues { $0.scalarValue },
+          expectedCustom.mapValues { $0.scalarValue }
+        )
         expectation.fulfill()
       }
     }

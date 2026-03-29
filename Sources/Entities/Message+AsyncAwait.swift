@@ -237,9 +237,7 @@ public extension Message {
   }
 
   /// Removes a thread (channel) for a selected message.
-  ///
-  /// - Returns: The updated ``Channel`` object after the removal of the thread
-  func removeThread() async throws -> ChatType.ChatChannelType? {
+  func removeThread() async throws {
     try await withCheckedThrowingContinuation { continuation in
       removeThread {
         switch $0 {

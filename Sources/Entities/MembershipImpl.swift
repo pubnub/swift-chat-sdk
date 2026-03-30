@@ -106,14 +106,74 @@ extension MembershipImpl: Membership {
     type: String? = nil,
     completion: ((Swift.Result<MembershipImpl, Error>) -> Void)? = nil
   ) {
-    membership.update(
-      status: status,
-      type: type,
-      custom: custom
-    ).async(caller: self) { (result: FutureResult<MembershipImpl, PubNubChat.Membership>) in
-      switch result.result {
-      case let .success(membership):
-        completion?(.success(MembershipImpl(membership: membership, chat: result.caller.chat)))
+    // We don't forward to KMP due to crash
+    let userId = user.id
+    let channelId = channel.id
+    let filter = "channel.id == '\(channelId)'"
+
+    chat.pubNub.fetchMemberships(
+      userId: userId,
+      filter: filter
+    ) { [weak self] result in
+      guard let self else { return }
+      switch result {
+      case let .success(response):
+        if response.memberships.isEmpty {
+          completion?(.failure(ChatError(message: "No such membership exists")))
+          return
+        }
+        let mergedCustom: [String: JSONCodableScalar] = {
+          if custom["lastReadMessageTimetoken"] == nil, let existingTimetoken = self.custom?["lastReadMessageTimetoken"] {
+            var result = custom
+            result["lastReadMessageTimetoken"] = existingTimetoken
+            return result
+          }
+          return custom
+        }()
+        let membershipMetadata = PubNubMembershipMetadataBase(
+          userMetadataId: userId,
+          channelMetadataId: channelId,
+          status: status,
+          type: type,
+          custom: mergedCustom
+        )
+        self.chat.pubNub.setMemberships(
+          userId: userId,
+          channels: [membershipMetadata],
+          include: PubNub.MembershipInclude(
+            customFields: true,
+            channelFields: true,
+            statusField: true,
+            typeField: true,
+            channelCustomFields: true,
+            channelTypeField: true,
+            channelStatusField: true,
+            totalCount: true
+          ),
+          filter: filter
+        ) { [weak self] result in
+          guard let self else { return }
+          switch result {
+          case let .success(response):
+            guard let first = response.memberships.first else {
+              completion?(.failure(ChatError(message: "Unexpected empty response from setMemberships")))
+              return
+            }
+            let updatedMembership = MembershipImpl(
+              chat: self.chat,
+              channel: self.channel,
+              user: self.user,
+              custom: first.custom,
+              updated: first.updated.map { DateFormatter.iso8601.string(from: $0) },
+              eTag: first.eTag,
+              status: first.status,
+              type: first.type
+            )
+            completion?(.success(updatedMembership))
+          case let .failure(error):
+            completion?(.failure(error))
+          }
+        }
       case let .failure(error):
         completion?(.failure(error))
       }

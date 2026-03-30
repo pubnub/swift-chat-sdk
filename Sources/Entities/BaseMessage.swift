@@ -225,13 +225,13 @@ extension BaseMessage: Message {
     }
   }
 
-  public func removeThread(completion: ((Swift.Result<ChannelImpl?, Error>) -> Void)?) {
+  public func removeThread(completion: ((Swift.Result<Void, Error>) -> Void)?) {
     message.removeThread().async(
       caller: self
-    ) { (result: FutureResult<BaseMessage, KotlinPair<PNRemoveMessageActionResult, PubNubChat.ThreadChannel>>) in
+    ) { (result: FutureResult<BaseMessage, PubNubChat.KotlinUnit>) in
       switch result.result {
       case let .success(pair):
-        completion?(.success(ChannelImpl(channel: pair.second, chat: result.caller.chat)))
+        completion?(.success(()))
       case let .failure(error):
         completion?(.failure(error))
       }

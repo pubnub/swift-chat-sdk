@@ -11,6 +11,7 @@
 import Foundation
 
 /// Enum representing the method used to emit an event in the chat system.
+@available(*, deprecated, message: "Use Channel.emitCustomEvent() and Channel.onCustomEvent(callback:) instead")
 public enum EmitEventMethod {
   /// Represents events emitted using the "signal" method, typically for lightweight real-time updates
   case signal

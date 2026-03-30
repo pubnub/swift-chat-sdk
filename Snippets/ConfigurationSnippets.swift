@@ -11,6 +11,8 @@
 import PubNubSDK
 import PubNubSwiftChatSDK
 
+var chat: ChatImpl!
+
 // MARK: - Basic Initialization
 
 func initializeChat() async throws {
@@ -206,5 +208,53 @@ func initializeChatWithLogging() {
     chatConfiguration: chatConfiguration,
     pubNubConfiguration: pubNubConfiguration
   )
+  // snippet.end
+}
+
+// MARK: - Connection Status Listener
+
+func connectionStatusListener() {
+  // snippet.configuration.connectionStatusListener
+  // Important: Keep a strong reference to the returned "AutoCloseable" object as long as you want
+  // to receive updates. If the "AutoCloseable" is deallocated, the stream will be cancelled,
+  // and no further items will be produced. You can also stop receiving updates manually
+  // by calling the "close()" method on the "AutoCloseable" object.
+  autoCloseable = chat.addConnectionStatusListener { status in
+    switch status {
+    case .online:
+      print("Connected to PubNub")
+    case .offline:
+      print("Disconnected from PubNub")
+    case .connectionError(let error):
+      print("Connection error: \(error)")
+    }
+  }
+  // snippet.end
+}
+
+// MARK: - Disconnect Subscriptions
+
+func disconnectSubscriptions() {
+  // snippet.configuration.disconnectSubscriptions
+  // Pause all subscriptions when the app enters the background.
+  chat.disconnectSubscriptions()
+  // snippet.end
+}
+
+// MARK: - Reconnect Subscriptions
+
+func reconnectSubscriptions() {
+  // snippet.configuration.reconnectSubscriptions
+  // Resume all subscriptions when the app returns to the foreground.
+  chat.reconnectSubscriptions()
+  // snippet.end
+}
+
+// MARK: - Destroy
+
+func destroyChat() {
+  // snippet.configuration.destroy
+  // Release all Chat SDK resources on logout.
+  chat.destroy()
   // snippet.end
 }

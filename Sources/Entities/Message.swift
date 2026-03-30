@@ -214,10 +214,10 @@ public protocol Message: CustomStringConvertible {
   ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**:  The updated ``Channel`` object after the removal of the thread
+  ///     - **Success**: A `Void` indicating a success
   ///     - **Failure**: An `Error` describing the failure
   func removeThread(
-    completion: ((Swift.Result<ChatType.ChatChannelType?, Error>) -> Void)?
+    completion: ((Swift.Result<Void, Error>) -> Void)?
   )
 
   /// Add or remove a reaction to a message.

@@ -204,7 +204,7 @@ extension MessageImpl: Message {
     )
   }
 
-  public func removeThread(completion: ((Swift.Result<ChannelImpl?, Error>) -> Void)? = nil) {
+  public func removeThread(completion: ((Swift.Result<Void, Error>) -> Void)? = nil) {
     target.removeThread(
       completion: completion
     )

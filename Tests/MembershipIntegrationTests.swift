@@ -78,10 +78,12 @@ final class MembershipTests: BaseClosureIntegrationTestCase {
         completion: $0
       )
     }
+
     XCTAssertEqual(
       newCustom.mapValues { $0.scalarValue },
-      newValue.custom?.mapValues { $0.scalarValue }
+      newValue.custom?.filter { newCustom.keys.contains($0.key) }.mapValues { $0.scalarValue }
     )
+
     XCTAssertEqual(newValue.status, "active")
     XCTAssertEqual(newValue.type, "premium")
   }
@@ -175,7 +177,10 @@ final class MembershipTests: BaseClosureIntegrationTestCase {
     let closeable = membership.streamUpdates { [unowned self] membership in
       XCTAssertEqual(membership?.channel.id, self.membership.channel.id)
       XCTAssertEqual(membership?.user.id, self.membership.user.id)
-      XCTAssertEqual(membership?.custom?.mapValues { $0.scalarValue }, expectedCustom.mapValues { $0.scalarValue })
+      XCTAssertEqual(
+        membership?.custom?.filter { expectedCustom.keys.contains($0.key) }.mapValues { $0.scalarValue },
+        expectedCustom.mapValues { $0.scalarValue }
+      )
       expectation.fulfill()
     }
 
@@ -209,7 +214,10 @@ final class MembershipTests: BaseClosureIntegrationTestCase {
       let receivedMembership = $0[0]
       XCTAssertEqual(receivedMembership.channel.id, membership.channel.id)
       XCTAssertEqual(receivedMembership.user.id, membership.user.id)
-      XCTAssertEqual(receivedMembership.custom?.mapValues { $0.scalarValue }, expectedCustom.mapValues { $0.scalarValue })
+      XCTAssertEqual(
+        receivedMembership.custom?.filter { expectedCustom.keys.contains($0.key) }.mapValues { $0.scalarValue },
+        expectedCustom.mapValues { $0.scalarValue }
+      )
       expectation.fulfill()
     }
 
@@ -242,7 +250,10 @@ final class MembershipTests: BaseClosureIntegrationTestCase {
     let closeable = membership.onUpdated { [unowned self] updatedMembership in
       XCTAssertEqual(updatedMembership.channel.id, membership.channel.id)
       XCTAssertEqual(updatedMembership.user.id, membership.user.id)
-      XCTAssertEqual(updatedMembership.custom?.mapValues { $0.scalarValue }, expectedCustom.mapValues { $0.scalarValue })
+      XCTAssertEqual(
+        updatedMembership.custom?.filter { expectedCustom.keys.contains($0.key) }.mapValues { $0.scalarValue },
+        expectedCustom.mapValues { $0.scalarValue }
+      )
       expectation.fulfill()
     }
 

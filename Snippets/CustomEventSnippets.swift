@@ -120,3 +120,89 @@ func getEventsHistory() {
   }
   // snippet.end
 }
+
+// MARK: - Emit Custom Event (Documentation Sample)
+
+func emitCustomEventSample() {
+  // snippet.customEvents.emitSample
+  // Emit the custom event to the "CUSTOMER-SATISFACTION-CREW" channel.
+  // Assuming you have a reference of type "ChannelImpl" named "channel".
+  Task {
+    try await channel.emitCustomEvent(
+      payload: [
+        "chatID": "chat1234",
+        "timestamp": "2022-04-30T10:30:00Z",
+        "customerID": "customer5678",
+        "triggerWord": "frustrated"
+      ],
+      messageType: "customer-satisfaction",
+      storeInHistory: true
+    )
+  }
+  // snippet.end
+}
+
+// MARK: - Listen for Custom Events (Documentation Sample)
+
+func onCustomEventSample() {
+  // snippet.customEvents.onCustomEventSample
+  // Function to handle the "frustrated" event and respond to the customer
+  func handleFrustratedEvent(customerID: String, triggerWord: String) {
+    let response = "Thank you for reaching out. We're sorry to hear that you're \(triggerWord). Our team is here to help."
+    // Send the response back to the customer's chat (mocked function)
+    sendResponseToCustomerChat(customerID: customerID, response: response)
+  }
+
+  // Mocked function to send a response back to the customer's chat
+  func sendResponseToCustomerChat(customerID: String, response: String) {
+    debugPrint("Sent response to customer \(customerID): \(response)")
+  }
+
+  // Listen for custom events on the "CUSTOMER-SATISFACTION-CREW" channel.
+  // Assuming you have a reference of type "ChannelImpl" named "channel".
+  // Hold a strong reference to the returned "AutoCloseable"; otherwise, it will be canceled.
+  let stopCustomEvents = channel.onCustomEvent(messageType: "customer-satisfaction") { event in
+    if let triggerWord = event.payload["triggerWord"]?.rawValue as? String {
+      if triggerWord == "frustrated" {
+        if let customerID = event.payload["customerID"]?.rawValue as? String {
+          handleFrustratedEvent(customerID: customerID, triggerWord: triggerWord)
+        }
+      }
+    }
+  }
+
+  // AsyncStream equivalent
+  Task {
+    for await event in channel.stream.customEvents(messageType: "customer-satisfaction") {
+      if let triggerWord = event.payload["triggerWord"]?.rawValue as? String {
+        debugPrint("Trigger word received: \(triggerWord)")
+      }
+    }
+  }
+
+  // To stop listening:
+  stopCustomEvents.close()
+  // snippet.end
+}
+
+// MARK: - Get Historical Events (Documentation Sample)
+
+func getEventsHistorySample() {
+  // snippet.customEvents.historySample
+  // Pull historical events from the "CUSTOMER-SATISFACTION-CREW" channel with count of 10.
+  // Assuming you have a reference of type "ChatImpl" named "chat"
+  Task {
+    let historyResponse = try await chat.getEventsHistory(
+      channelId: "CUSTOMER-SATISFACTION-CREW",
+      count: 10
+    )
+    historyResponse.events.forEach { wrapper in
+      debugPrint("Event at \(wrapper.event.timetoken) by \(wrapper.event.userId)")
+      debugPrint("Payload: \(wrapper.event.payload)")
+    }
+    if historyResponse.isMore {
+      debugPrint("More events available")
+    }
+  }
+  // snippet.end
+}

@@ -273,6 +273,7 @@ public protocol Chat: AnyObject {
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: A `Timetoken` value that holds the timestamp of the emitted event
   ///     - **Failure**: An `Error` describing the failure
+  @available(*, deprecated, message: "Use `Channel.emitCustomEvent(payload:messageType:storeInHistory:completion:)` for custom events")
   func emitEvent<T: EventContent>(
     channelId: String,
     payload: T,

@@ -354,6 +354,7 @@ public extension Chat {
   ///   - payload: The payload of the emitted event. Use one of ``EventContent`` subclasses. For example: `EventContent.TextMessageContent`, `EventContent.Mention`
   ///   - otherPayload: Metadata in the form of key-value pairs you want to pass as events from your chat app. Can contain anything in case of custom events, but has a predefined structure for other types of events
   /// - Returns: A `Timetoken` value that holds the timestamp of the emitted event
+  @available(*, deprecated, message: "Use `Channel.emitCustomEvent(payload:messageType:storeInHistory:)` for custom events")
   @discardableResult
   func emitEvent(
     channelId: String,

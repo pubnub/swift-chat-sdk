@@ -1197,7 +1197,7 @@
 			repositoryURL = "https://github.com/pubnub/kmp-chat";
 			requirement = {
 				kind = exactVersion;
-				version = "0.16.2-swift";
+				version = "1.0.0-swift";
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

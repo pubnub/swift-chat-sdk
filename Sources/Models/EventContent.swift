@@ -15,6 +15,7 @@ import PubNubSDK
 /// Represents the content of various types of events emitted during chat operations.
 public class EventContent {
   /// Represents a report event, which is used to report a message or user to the admin.
+  @available(*, deprecated, message: "Use Channel.onMessageReported(callback:) instead")
   public class Report: EventContent, CustomStringConvertible {
     /// The text of the report, if provided
     public let text: String?
@@ -71,6 +72,7 @@ public class EventContent {
   }
 
   /// Represents a typing event that indicates whether a user is typing.
+  @available(*, deprecated, message: "Use Channel.startTyping(), Channel.stopTyping(), and Channel.onTypingChanged(callback:) instead")
   public class Typing: EventContent, CustomStringConvertible {
     /// A boolean value indicating whether the user is typing (true) or not (false)
     public let value: Bool
@@ -90,6 +92,7 @@ public class EventContent {
   }
 
   /// Represents a receipt event, indicating that a message was read.
+  @available(*, deprecated, message: "Use Channel.onReadReceiptReceived(callback:) or channel.stream.readReceipts() instead")
   public class Receipt: EventContent, CustomStringConvertible {
     /// The timetoken of the message for which the receipt is being acknowledged
     public let messageTimetoken: Timetoken
@@ -109,6 +112,7 @@ public class EventContent {
   }
 
   /// Represents a mention event, which indicates that a user was mentioned in a message.
+  @available(*, deprecated, message: "Use User.onMentioned(callback:) with Mention instead")
   public class Mention: EventContent, CustomStringConvertible {
     /// The timetoken of the message in which the user was mentioned
     public let messageTimetoken: Timetoken
@@ -144,6 +148,7 @@ public class EventContent {
   }
 
   /// Represents an invite event, which is used when a user is invited to join a channel.
+  @available(*, deprecated, message: "Use User.onInvited(callback:) with Invite instead")
   public class Invite: EventContent, CustomStringConvertible {
     /// The type of the channel
     public let channelType: ChannelType
@@ -174,6 +179,7 @@ public class EventContent {
   }
 
   /// Represents a custom event with arbitrary data.
+  @available(*, deprecated, message: "Use Channel.emitCustomEvent() and Channel.onCustomEvent(callback:) instead")
   public class Custom: EventContent, CustomStringConvertible {
     /// A map containing key-value pairs of custom data associated with the event
     public let data: [String: Any]
@@ -204,6 +210,7 @@ public class EventContent {
   }
 
   /// Represents a moderation event, which is triggered when a restriction is applied to a user.
+  @available(*, deprecated, message: "Use User.onRestrictionChanged(callback:) with Restriction instead")
   public class Moderation: EventContent, CustomStringConvertible {
     /// The ID of the channel where the moderation event occurred
     public let channelId: String
@@ -283,6 +290,7 @@ public class EventContent {
   }
 
   /// Represents a message with an unknown format, used to handle cases where the message format doesn't match known types.
+  @available(*, deprecated, message: "Will be removed from SDK in the future")
   public class UnknownMessageFormat: EventContent, CustomStringConvertible {
     /// The raw JSON element representing the message with the unknown format
     public let element: Any?
@@ -319,9 +327,9 @@ extension EventContent {
         reportedUserId: content.reportedUserId,
         autoModerationId: content.autoModerationId
       )
-    case let conent as PubNubChat.EventContent.Receipt:
+    case let content as PubNubChat.EventContent.Receipt:
       EventContent.Receipt(
-        messageTimetoken: Timetoken(conent.messageTimetoken)
+        messageTimetoken: Timetoken(content.messageTimetoken)
       )
     case let content as PubNubChat.EventContent.Mention:
       EventContent.Mention(

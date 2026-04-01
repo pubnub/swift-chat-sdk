@@ -54,7 +54,7 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     description: String?,
     status: String?,
     type: ChannelType?,
-    completion: ((Swift.Result<ChatType.ChatChannelType, Error>) -> Void)?
+    completion: ((Swift.Result<BaseChannel, Error>) -> Void)?
   ) {
     channel.update(
       name: name,
@@ -65,20 +65,18 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     ).async(caller: self) { (result: FutureResult<BaseChannel, C>) in
       switch result.result {
       case let .success(channel):
-        completion?(.success(ChannelImpl(channel: channel, chat: result.caller.chat)))
+        completion?(.success(BaseChannel(channel: channel, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
     }
   }
 
-  func delete(soft: Bool, completion: ((Swift.Result<ChatType.ChatChannelType?, Error>) -> Void)?) {
-    channel.delete(
-      soft: soft
-    ).async(caller: self) { (result: FutureResult<BaseChannel, C?>) in
+  func delete(completion: ((Swift.Result<Void, Error>) -> Void)?) {
+    channel.delete().async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.KotlinUnit>) in
       switch result.result {
-      case let .success(channel):
-        completion?(.success(ChannelImpl(channel: channel, chat: result.caller.chat)))
+      case .success:
+        completion?(.success(()))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -246,6 +244,24 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     }
   }
 
+  func sendText(
+    text: String,
+    params: SendTextParams,
+    completion: ((Swift.Result<Timetoken, Error>) -> Void)?
+  ) {
+    channel.sendText(
+      text: text,
+      params: params.transform()
+    ).async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.PNPublishResult>) in
+      switch result.result {
+      case let .success(response):
+        completion?(.success(Timetoken(response.timetoken)))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
+
   func invite(user: ChatType.ChatUserType, completion: ((Swift.Result<MembershipImpl, Error>) -> Void)?) {
     channel.invite(
       user: user.user
@@ -305,6 +321,36 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     }
   }
 
+  func hasMember(userId: String, completion: ((Swift.Result<Bool, Error>) -> Void)?) {
+    channel.hasMember(
+      userId: userId
+    ).async(caller: self) { (result: FutureResult<BaseChannel, Bool>) in
+      switch result.result {
+      case let .success(hasMember):
+        completion?(.success(hasMember))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
+
+  func getMember(userId: String, completion: ((Swift.Result<ChatType.ChatMembershipType?, Error>) -> Void)?) {
+    channel.getMember(
+      userId: userId
+    ).async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.Membership?>) in
+      switch result.result {
+      case let .success(membership):
+        if let membership {
+          completion?(.success(MembershipImpl(membership: membership, chat: result.caller.chat)))
+        } else {
+          completion?(.success(nil))
+        }
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
+
   func connect(callback: @escaping (ChatType.ChatMessageType) -> Void) -> AutoCloseable {
     AutoCloseableImpl(
       channel.connect { [weak self] in
@@ -318,20 +364,18 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
 
   func join(
     custom: [String: JSONCodableScalar]?,
-    callback: ((ChatType.ChatMessageType) -> Void)?,
-    completion: ((Swift.Result<(membership: MembershipImpl, disconnect: AutoCloseable?), Error>) -> Void)?
+    status: String?,
+    type: String?,
+    completion: ((Swift.Result<ChatType.ChatMembershipType, Error>) -> Void)?
   ) {
-    channel.join(custom: custom?.asCustomObject(), callback: { [weak self] in
-      if let self = self {
-        callback?(MessageImpl(message: $0, chat: self.chat))
-      }
-    }).async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.JoinResult>) in
+    channel.join(
+      status: status,
+      type: type,
+      custom: custom?.asCustomObject()
+    ).async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.Membership>) in
       switch result.result {
-      case let .success(joinRes):
-        completion?(.success((
-          membership: MembershipImpl(membership: joinRes.membership, chat: result.caller.chat),
-          disconnect: AutoCloseableImpl(joinRes.disconnect, owner: result.caller)
-        )))
+      case let .success(membership):
+        completion?(.success(MembershipImpl(membership: membership, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -349,15 +393,11 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     }
   }
 
-  func getPinnedMessage(completion: ((Swift.Result<(ChatType.ChatMessageType)?, Error>) -> Void)?) {
+  func getPinnedMessage(completion: ((Swift.Result<(BaseMessage<M>)?, Error>) -> Void)?) {
     channel.getPinnedMessage().async(caller: self) { (result: FutureResult<BaseChannel, M?>) in
       switch result.result {
       case let .success(message):
-        if let message {
-          completion?(.success(MessageImpl(message: message, chat: result.caller.chat)))
-        } else {
-          completion?(.success(nil))
-        }
+        completion?(.success(BaseMessage(message: message, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -366,18 +406,14 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
 
   func getMessage(
     timetoken: Timetoken,
-    completion: ((Swift.Result<ChatType.ChatMessageType?, Error>) -> Void)?
+    completion: ((Swift.Result<BaseMessage<M>?, Error>) -> Void)?
   ) {
     channel.getMessage(
       timetoken: Int64(timetoken)
-    ).async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.Message?>) in
+    ).async(caller: self) { (result: FutureResult<BaseChannel, M?>) in
       switch result.result {
       case let .success(message):
-        if let message {
-          completion?(.success(MessageImpl(message: message, chat: result.caller.chat)))
-        } else {
-          completion?(.success(nil))
-        }
+        completion?(.success(BaseMessage(message: message, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -464,6 +500,35 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     )
   }
 
+  func fetchReadReceipts(
+    limit: Int?,
+    page: PubNubHashedPage?,
+    filter: String?,
+    sort: [PubNub.MembershipSortField],
+    completion: ((Swift.Result<(receipts: [ReadReceipt], page: PubNubHashedPage?), Error>) -> Void)?
+  ) {
+    channel.fetchReadReceipts(
+      limit: limit?.asKotlinInt,
+      page: page?.transform(),
+      filter: filter,
+      sort: sort.compactMap { $0.transform() }
+    ).async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.ReadReceiptsResponse>) in
+      switch result.result {
+      case let .success(response):
+        completion?(.success((
+          receipts: response.receipts.transform(),
+          page: PubNubHashedPageBase(
+            start: response.next?.pageHash,
+            end: response.prev?.pageHash,
+            totalCount: Int(response.total)
+          ))
+        ))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
+
   func getFiles(
     limit: Int,
     next: String?,
@@ -522,6 +587,39 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
     )
   }
 
+  func getInvitees(
+    limit: Int?,
+    page: PubNubHashedPage?,
+    filter: String?,
+    sort: [PubNub.MembershipSortField],
+    completion: ((Swift.Result<(memberships: [ChatType.ChatMembershipType], page: PubNubHashedPage?), Error>) -> Void)?
+  ) {
+    channel.getInvitees(
+      limit: limit?.asKotlinInt,
+      page: page?.transform(),
+      filter: filter,
+      sort: sort.compactMap { $0.transform() }
+    ).async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.MembersResponse>) in
+      switch result.result {
+      case let .success(response):
+        completion?(.success(
+          (
+            memberships: response.members.map {
+              MembershipImpl(membership: $0, chat: result.caller.chat)
+            },
+            page: PubNubHashedPageBase(
+              start: response.next?.pageHash,
+              end: response.prev?.pageHash,
+              totalCount: Int(response.total)
+            )
+          )
+        ))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
+
   func getUserSuggestions(
     text: String,
     limit: Int,
@@ -578,14 +676,132 @@ final class BaseChannel<C: PubNubChat.Channel_, M: PubNubChat.Message>: Channel 
   func streamMessageReports(callback: @escaping (any Event<EventContent.Report>) -> Void) -> AutoCloseable {
     AutoCloseableImpl(
       channel.streamMessageReports { [weak self] in
-        if let selfRef = self, let payload = $0.payload.map() as? EventContent.Report {
+        if let self = self, let payload = $0.payload.map() as? EventContent.Report {
           callback(
             EventImpl(
-              chat: selfRef.chat,
+              chat: self.chat,
               timetoken: Timetoken($0.timetoken_),
               payload: payload,
               channelId: $0.channelId,
               userId: $0.userId
+            )
+          )
+        }
+      },
+      owner: self
+    )
+  }
+
+  func onTypingChanged(callback: @escaping (([String]) -> Void)) -> AutoCloseable {
+    AutoCloseableImpl(
+      channel.onTypingChanged { [weak self] in
+        if let typingUserIdentifiers = $0 as? [String], self != nil {
+          callback(typingUserIdentifiers)
+        }
+      },
+      owner: self
+    )
+  }
+
+  func onMessageReceived(callback: @escaping (BaseMessage<M>) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      channel.onMessageReceived { [weak self] in
+        if let self = self, let message = $0 as? M {
+          callback(BaseMessage(message: message, chat: self.chat))
+        }
+      },
+      owner: self
+    )
+  }
+
+  func onUpdated(callback: @escaping (BaseChannel<C, M>) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      channel.onUpdated { [weak self] in
+        if let self = self, let channel = $0 as? C {
+          callback(BaseChannel(channel: channel, chat: self.chat))
+        }
+      },
+      owner: self
+    )
+  }
+
+  func onDeleted(callback: @escaping () -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      channel.onDeleted { [weak self] in
+        if self != nil {
+          callback()
+        }
+      },
+      owner: self
+    )
+  }
+
+  func onReadReceiptReceived(callback: @escaping (ReadReceipt) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      channel.onReadReceiptReceived { [weak self] in
+        if self != nil {
+          callback($0.transform())
+        }
+      },
+      owner: self
+    )
+  }
+
+  func onPresenceChanged(callback: @escaping (Set<String>) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      channel.onPresenceChanged { [weak self] in
+        if let userIds = $0 as? Set<String>, self != nil {
+          callback(userIds)
+        }
+      },
+      owner: self
+    )
+  }
+
+  func onMessageReported(callback: @escaping (Report) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      channel.onMessageReported { [weak self] in
+        if self != nil {
+          callback($0.transform())
+        }
+      },
+      owner: self
+    )
+  }
+
+  func emitCustomEvent(
+    payload: [String: JSONCodable],
+    messageType: String?,
+    storeInHistory: Bool,
+    completion: ((Swift.Result<Timetoken, Error>) -> Void)?
+  ) {
+    channel.emitCustomEvent(
+      payload: payload,
+      messageType: messageType,
+      storeInHistory: storeInHistory
+    ).async(caller: self) { (result: FutureResult<BaseChannel, PubNubChat.PNPublishResult>) in
+      switch result.result {
+      case let .success(response):
+        completion?(.success(Timetoken(response.timetoken)))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
+
+  func onCustomEvent(
+    messageType: String?,
+    callback: @escaping (CustomEvent) -> Void
+  ) -> AutoCloseable {
+    AutoCloseableImpl(
+      channel.onCustomEvent(messageType: messageType) { [weak self] in
+        if self != nil {
+          callback(
+            CustomEvent(
+              timetoken: Timetoken($0.timetoken),
+              userId: $0.userId,
+              type: $0.type,
+              payload: ($0.payload as? [String: Any])?.compactMapValues { AnyJSON($0) } ?? [:]
             )
           )
         }

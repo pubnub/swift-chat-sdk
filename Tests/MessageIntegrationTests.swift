@@ -274,7 +274,7 @@ final class MessageIntegrationTests: BaseClosureIntegrationTestCase {
         text: "This is reply in a thread",
         completion: $0
       )
-    }
+    }.threadChannel
 
     let threadChannelHistory = try awaitResultValue(delay: 4) {
       threadChannel.getHistory(
@@ -285,6 +285,49 @@ final class MessageIntegrationTests: BaseClosureIntegrationTestCase {
     let retrievedThreadMessage = try XCTUnwrap(threadChannelHistory.messages.first)
     XCTAssertEqual(threadChannelHistory.messages.count, 1)
     XCTAssertEqual(retrievedThreadMessage.text, "This is reply in a thread")
+
+    addTeardownBlock { [unowned self] in
+      try awaitResult {
+        retrievedThreadMessage.delete(
+          completion: $0
+        )
+      }
+      try awaitResult {
+        testMessage.removeThread(
+          completion: $0
+        )
+      }
+    }
+  }
+
+  func testMessage_CreateThread_WithResult() throws {
+    let params = SendTextParams(
+      meta: ["key": "value"],
+      shouldStore: true
+    )
+
+    let result = try awaitResultValue {
+      testMessage.createThread(
+        text: "Thread reply with params",
+        params: params,
+        completion: $0
+      )
+    }
+
+    XCTAssertTrue(result.parentMessage.hasThread)
+    XCTAssertEqual(result.threadChannel.parentChannelId, testMessage.channelId)
+
+    let threadChannelHistory = try awaitResultValue(delay: 4) {
+      result.threadChannel.getHistory(
+        completion: $0
+      )
+    }
+
+    let retrievedThreadMessage = try XCTUnwrap(threadChannelHistory.messages.first)
+
+    XCTAssertEqual(retrievedThreadMessage.text, "Thread reply with params")
+    XCTAssertEqual(retrievedThreadMessage.meta?.count, 1)
+    XCTAssertEqual(retrievedThreadMessage.meta?["key"]?.stringOptional, "value")
 
     addTeardownBlock { [unowned self] in
       try awaitResult {
@@ -359,10 +402,12 @@ final class MessageIntegrationTests: BaseClosureIntegrationTestCase {
       )
     }
 
-    let reaction = try XCTUnwrap(result.reactions[":+1"]?.first)
-    let userId = reaction.uuid
+    let reaction = try XCTUnwrap(result.reactions.first)
 
-    XCTAssertEqual(userId, chat.currentUser.id)
+    XCTAssertEqual(reaction.value, ":+1")
+    XCTAssertTrue(reaction.isMine)
+    XCTAssertEqual(reaction.count, 1)
+    XCTAssertTrue(reaction.userIds.contains(chat.currentUser.id))
   }
 
   func testMessage_StreamUpdates() throws {
@@ -476,6 +521,50 @@ final class MessageIntegrationTests: BaseClosureIntegrationTestCase {
     }
 
     XCTAssertTrue(restoredMessage.actions?.isEmpty ?? false)
+  }
+
+  func testMessage_OnUpdated() throws {
+    let expectation = expectation(description: "OnUpdated")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let timetoken = try awaitResultValue {
+      channel?.sendText(
+        text: "Some text \(randomString())",
+        completion: $0
+      )
+    }
+    let message = try XCTUnwrap(
+      awaitResultValue(delay: 3) {
+        channel.getMessage(
+          timetoken: timetoken,
+          completion: $0
+        )
+      }
+    )
+
+    let closeable = message.onUpdated {
+      XCTAssertTrue($0.hasUserReaction(reaction: "myReaction"))
+      XCTAssertEqual($0.channelId, message.channelId)
+      XCTAssertEqual($0.userId, message.userId)
+      expectation.fulfill()
+    }
+
+    try awaitResultValue(delay: 3) {
+      message.toggleReaction(
+        reaction: "myReaction",
+        completion: $0
+      )
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 6
+    )
+    addTeardownBlock { [unowned self] in
+      closeable.close()
+      try awaitResult { message.delete(completion: $0) }
+    }
   }
 
   // swiftlint:disable:next file_length

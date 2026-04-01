@@ -4,6 +4,7 @@
 
 ### Receiving Updates
 
+- ``stream``
 - ``streamUpdates()``
 - ``streamUpdates(callback:)``
 - ``streamUpdatesOn(channels:)``
@@ -14,13 +15,26 @@
 - ``streamMessageReports(callback:)``
 - ``streamPresence()``
 - ``streamPresence(callback:)``
+- ``onUpdated(callback:)``
+- ``onDeleted(callback:)``
+- ``onTypingChanged(callback:)``
+- ``onMessageReceived(callback:)``
+- ``onReadReceiptReceived(callback:)``
+- ``onPresenceChanged(callback:)``
+- ``onMessageReported(callback:)``
+- ``onCustomEvent(messageType:callback:)``
+
+### Read Receipts
+
+- ``fetchReadReceipts(limit:page:filter:sort:)``
+- ``fetchReadReceipts(limit:page:filter:sort:completion:)``
 
 ### Update and Delete a Channel
 
 - ``update(name:custom:description:status:type:)``
 - ``update(name:custom:description:status:type:completion:)``
-- ``delete(soft:)``
-- ``delete(soft:completion:)``
+- ``delete()``
+- ``delete(completion:)``
 
 ### Typing Indicator
 
@@ -33,12 +47,12 @@
 
 ### Presence Management
 
-- ``whoIsPresent()``
-- ``whoIsPresent(completion:)``
+- ``whoIsPresent(limit:offset:)``
+- ``whoIsPresent(limit:offset:completion:)``
 - ``isPresent(userId:)``
 - ``isPresent(userId:completion:)``
-- ``join(custom:)``
-- ``join(custom:callback:completion:)``
+- ``join(custom:status:type:)``
+- ``join(custom:status:type:completion:)``
 - ``leave()``
 - ``leave(completion:)``
 - ``streamPresence()``
@@ -52,6 +66,12 @@
 - ``inviteMultiple(users:completion:)``
 - ``getMembers(limit:page:filter:sort:)``
 - ``getMembers(limit:page:filter:sort:completion:)``
+- ``getInvitees(limit:page:filter:sort:)``
+- ``getInvitees(limit:page:filter:sort:completion:)``
+- ``hasMember(userId:)``
+- ``hasMember(userId:completion:)``
+- ``getMember(userId:)``
+- ``getMember(userId:completion:)``
 
 ### Sending a text
 

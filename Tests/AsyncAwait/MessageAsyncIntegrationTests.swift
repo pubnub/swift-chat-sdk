@@ -129,7 +129,7 @@ class MessageAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
   }
 
   func testAsyncMessage_CreateThreadWithParameters() async throws {
-    let threadChannel = try await testMessage.createThread(text: "This is reply in a thread")
+    let threadChannel = try await testMessage.createThread(text: "This is reply in a thread").threadChannel
     XCTAssertEqual(threadChannel.parentMessage.timetoken, testMessage.timetoken)
     XCTAssertEqual(threadChannel.parentChannelId, testMessage.channelId)
 
@@ -140,6 +140,34 @@ class MessageAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
     XCTAssertEqual(threadChannelHistory.messages.count, 1)
     XCTAssertEqual(retrievedThreadMessage.text, "This is reply in a thread")
+
+    addTeardownBlock { [unowned self] in
+      _ = try? await retrievedThreadMessage.delete()
+      _ = try? await testMessage?.removeThread()
+    }
+  }
+
+  func testAsyncMessage_CreateThread_WithResult() async throws {
+    let params = SendTextParams(
+      meta: ["key": "value"],
+      shouldStore: true
+    )
+    let result = try await testMessage.createThread(
+      text: "Thread reply with params",
+      params: params
+    )
+
+    XCTAssertTrue(result.parentMessage.hasThread)
+    XCTAssertEqual(result.threadChannel.parentChannelId, testMessage.channelId)
+
+    try await Task.sleep(nanoseconds: 4_000_000_000)
+
+    let threadChannelHistory = try await result.threadChannel.getHistory()
+    let retrievedThreadMessage = try XCTUnwrap(threadChannelHistory.messages.first)
+
+    XCTAssertEqual(retrievedThreadMessage.text, "Thread reply with params")
+    XCTAssertEqual(retrievedThreadMessage.meta?.count, 1)
+    XCTAssertEqual(retrievedThreadMessage.meta?["key"]?.stringOptional, "value")
 
     addTeardownBlock { [unowned self] in
       _ = try? await retrievedThreadMessage.delete()
@@ -176,10 +204,12 @@ class MessageAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     try await Task.sleep(nanoseconds: 3_000_000_000)
 
     let updatedMessage = try await testMessage.toggleReaction(reaction: ":+1")
-    let reaction = try XCTUnwrap(updatedMessage.reactions[":+1"]?.first)
-    let userId = reaction.uuid
+    let reaction = try XCTUnwrap(updatedMessage.reactions.first)
 
-    XCTAssertEqual(userId, chat.currentUser.id)
+    XCTAssertEqual(reaction.value, ":+1")
+    XCTAssertTrue(reaction.isMine)
+    XCTAssertEqual(reaction.count, 1)
+    XCTAssertTrue(reaction.userIds.contains(chat.currentUser.id))
   }
 
   func testAsyncMessage_Restore() async throws {
@@ -247,6 +277,43 @@ class MessageAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
         XCTAssertTrue(try (XCTUnwrap(messages.first)).hasUserReaction(reaction: "myReaction"))
         XCTAssertEqual(try (XCTUnwrap(messages.first)).channelId, unwrappedMessage.channelId)
         XCTAssertEqual(try (XCTUnwrap(messages.first)).userId, unwrappedMessage.userId)
+        expectation.fulfill()
+      }
+    }
+
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+    _ = try await message?.toggleReaction(reaction: "myReaction")
+
+    await fulfillment(
+      of: [expectation],
+      timeout: 6
+    )
+
+    addTeardownBlock {
+      task.cancel()
+      _ = try? await unwrappedMessage.delete()
+    }
+  }
+
+  // MARK: - Stream Namespace Tests
+
+  func testMessageAsync_Stream_Updates() async throws {
+    let expectation = expectation(description: "Stream_Updates")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let timetoken = try await channel?.sendText(text: "Some text \(randomString())")
+    let unwrappedTimetoken = try XCTUnwrap(timetoken)
+
+    try await Task.sleep(nanoseconds: 3_000_000_000)
+    let message = try await channel.getMessage(timetoken: unwrappedTimetoken)
+    let unwrappedMessage = try XCTUnwrap(message)
+
+    let task = Task {
+      for await receivedMessage in unwrappedMessage.stream.updates() {
+        XCTAssertTrue(receivedMessage.hasUserReaction(reaction: "myReaction"))
+        XCTAssertEqual(receivedMessage.channelId, message?.channelId)
+        XCTAssertEqual(receivedMessage.userId, message?.userId)
         expectation.fulfill()
       }
     }

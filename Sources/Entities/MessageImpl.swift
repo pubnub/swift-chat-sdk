@@ -48,8 +48,8 @@ public final class MessageImpl {
     )
   }
 
-  convenience init?(message: PubNubChat.Message?, chat: ChatImpl) {
-    if let message {
+  convenience init?(message: PubNubChat.Message?, chat: ChatImpl?) {
+    if let message, let chat = chat {
       self.init(message: message, chat: chat)
     } else {
       return nil
@@ -77,7 +77,7 @@ extension MessageImpl: Message {
   public var hasThread: Bool { target.hasThread }
   public var type: String { target.type }
   public var files: [File] { target.files }
-  public var reactions: [String: [Action]] { target.reactions }
+  public var reactions: [MessageReaction] { target.reactions }
   public var textLinks: [TextLink]? { target.textLinks }
   public var error: Error? { target.error }
 
@@ -109,10 +109,14 @@ extension MessageImpl: Message {
     newText: String,
     completion: ((Swift.Result<MessageImpl, Error>) -> Void)? = nil
   ) {
-    target.editText(
-      newText: newText,
-      completion: completion
-    )
+    target.editText(newText: newText) {
+      switch $0 {
+      case let .success(message):
+        completion?(.success(MessageImpl(message: message.message, chat: message.chat)))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
   }
 
   public func delete(
@@ -188,7 +192,19 @@ extension MessageImpl: Message {
     )
   }
 
-  public func removeThread(completion: ((Swift.Result<ChannelImpl?, Error>) -> Void)? = nil) {
+  public func createThread(
+    text: String,
+    params: SendTextParams = SendTextParams(),
+    completion: ((Swift.Result<CreateThreadResult<ThreadChannelImpl, MessageImpl>, Error>) -> Void)? = nil
+  ) {
+    target.createThread(
+      text: text,
+      params: params,
+      completion: completion
+    )
+  }
+
+  public func removeThread(completion: ((Swift.Result<Void, Error>) -> Void)? = nil) {
     target.removeThread(
       completion: completion
     )
@@ -212,6 +228,14 @@ extension MessageImpl: Message {
     target.streamUpdates { [weak self] in
       if self != nil {
         completion(MessageImpl(message: $0.message, chat: $0.chat))
+      }
+    }
+  }
+
+  public func onUpdated(callback: @escaping (MessageImpl) -> Void) -> AutoCloseable {
+    target.onUpdated { [weak self] in
+      if let self = self {
+        callback(MessageImpl(message: $0.message, chat: self.chat))
       }
     }
   }

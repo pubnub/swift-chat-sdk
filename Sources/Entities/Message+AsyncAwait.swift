@@ -15,6 +15,12 @@ import PubNubSDK
 /// Extension providing `async-await` support for ``Message``.
 ///
 public extension Message {
+
+  /// Namespace for `AsyncStream`-based streaming methods
+  var stream: MessageStream<Self> {
+    MessageStream(message: self)
+  }
+
   /// Receive updates when specific messages and related message reactions are updated or removed.
   ///
   /// Emits the complete list of monitored messages whenever any one of them changes, excluding any that were removed.
@@ -36,7 +42,7 @@ public extension Message {
   ///
   /// - Parameter newText: New/updated text that you want to add in place of the existing message
   /// - Returns: An updated ``Message`` object
-  func editText(newText: String) async throws -> ChatType.ChatMessageType {
+  func editText(newText: String) async throws -> Self {
     try await withCheckedThrowingContinuation { continuation in
       editText(newText: newText) {
         switch $0 {
@@ -144,8 +150,7 @@ public extension Message {
   /// Create a thread (channel) for a selected message.
   ///
   /// - Returns: A ``ThreadChannel`` object which can be used for sending and reading messages from the newly created message thread
-  @available(*, deprecated, message: "Use `createThread(text:meta:shouldStore:usePost:ttl:quotedMessage:files:usersToMention:customPushData:)` instead")
-  // swiftlint:disable:previous line_length
+  @available(*, deprecated, message: "Use `createThread(text:params:)` instead")
   func createThread() async throws -> ChatType.ChatThreadChannelType {
     try await withCheckedThrowingContinuation { continuation in
       createThread {
@@ -172,6 +177,7 @@ public extension Message {
   ///   - usersToMention: A collection of user ids to automatically notify with a mention after this message is sent
   ///   - customPushData: Additional key-value pairs that will be added to the FCM and/or APNS push messages for the message itself and any user mentions
   /// - Returns: A ``ThreadChannel`` object which can be used for sending and reading messages from the newly created message thread
+  @available(*, deprecated, message: "Use `createThread(text:params:)` instead")
   func createThread(
     text: String,
     meta: [String: JSONCodable]? = nil,
@@ -205,10 +211,33 @@ public extension Message {
     }
   }
 
-  /// Removes a thread (channel) for a selected message.
+  /// Create a thread by sending the first reply and return both the thread channel and updated parent message.
   ///
-  /// - Returns: The updated ``Channel`` object after the removal of the thread
-  func removeThread() async throws -> ChatType.ChatChannelType? {
+  /// - Parameters:
+  ///   - text: Text of the first reply to send in the thread
+  ///   - params: Additional parameters for sending text, encapsulated in a ``SendTextParams`` object
+  /// - Returns: A ``CreateThreadResult`` containing the thread channel and updated parent message
+  func createThread(
+    text: String,
+    params: SendTextParams = SendTextParams()
+  ) async throws -> CreateThreadResult<ChatType.ChatThreadChannelType, ChatType.ChatMessageType> {
+    try await withCheckedThrowingContinuation { continuation in
+      createThread(
+        text: text,
+        params: params
+      ) {
+        switch $0 {
+        case let .success(result):
+          continuation.resume(returning: result)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+
+  /// Removes a thread (channel) for a selected message.
+  func removeThread() async throws {
     try await withCheckedThrowingContinuation { continuation in
       removeThread {
         switch $0 {
@@ -244,6 +273,7 @@ public extension Message {
   /// You can receive updates when this message and related message reactions are added, edited, or removed.
   ///
   /// - Returns: An asynchronous stream that produces updates when the current ``Message`` is edited.
+  @available(*, deprecated, message: "Use `stream.updates()` instead")
   func streamUpdates() -> AsyncStream<Self> {
     AsyncStream { continuation in
       let autoCloseable = streamUpdates {

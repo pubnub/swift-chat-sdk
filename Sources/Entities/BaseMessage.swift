@@ -45,7 +45,7 @@ extension BaseMessage: Message {
   public var hasThread: Bool { message.hasThread }
   public var type: String { message.type }
   public var files: [File] { message.files.transform() }
-  public var reactions: [String: [Action]] { message.reactions.transform() }
+  public var reactions: [MessageReaction] { message.reactions.transform() }
   public var textLinks: [TextLink]? { message.textLinks?.transform() }
   public var error: Error? { message.error }
 
@@ -75,14 +75,14 @@ extension BaseMessage: Message {
 
   public func editText(
     newText: String,
-    completion: ((Swift.Result<MessageImpl, Error>) -> Void)?
+    completion: ((Swift.Result<BaseMessage, Error>) -> Void)?
   ) {
     message.editText(
       newText: newText
     ).async(caller: self) { (result: FutureResult<BaseMessage, M>) in
       switch result.result {
       case let .success(message):
-        completion?(.success(MessageImpl(message: message, chat: result.caller.chat)))
+        completion?(.success(BaseMessage(message: message, chat: result.caller.chat)))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -204,13 +204,34 @@ extension BaseMessage: Message {
     }
   }
 
-  public func removeThread(completion: ((Swift.Result<ChannelImpl?, Error>) -> Void)?) {
+  func createThread(
+    text: String,
+    params: SendTextParams,
+    completion: ((Swift.Result<CreateThreadResult<ThreadChannelImpl, MessageImpl>, Error>) -> Void)?
+  ) {
+    message.createThreadWithResult(
+      text: text,
+      params: params.transform()
+    ).async(caller: self) { (result: FutureResult<BaseMessage, PubNubChat.CreateThreadResult>) in
+      switch result.result {
+      case let .success(kmpResult):
+        completion?(.success(CreateThreadResult(
+          threadChannel: ThreadChannelImpl(channel: kmpResult.threadChannel, chat: result.caller.chat),
+          parentMessage: MessageImpl(message: kmpResult.parentMessage, chat: result.caller.chat)
+        )))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
+
+  public func removeThread(completion: ((Swift.Result<Void, Error>) -> Void)?) {
     message.removeThread().async(
       caller: self
-    ) { (result: FutureResult<BaseMessage, KotlinPair<PNRemoveMessageActionResult, PubNubChat.ThreadChannel>>) in
+    ) { (result: FutureResult<BaseMessage, PubNubChat.KotlinUnit>) in
       switch result.result {
       case let .success(pair):
-        completion?(.success(ChannelImpl(channel: pair.second, chat: result.caller.chat)))
+        completion?(.success(()))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -238,6 +259,17 @@ extension BaseMessage: Message {
       message.streamUpdates { [weak self] in
         if let message = $0 as? M, let self = self {
           completion(BaseMessage(message: message, chat: self.chat))
+        }
+      },
+      owner: self
+    )
+  }
+
+  func onUpdated(callback: @escaping (BaseMessage<M>) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      message.onUpdated { [weak self] in
+        if let message = $0 as? M, let self = self {
+          callback(BaseMessage(message: message, chat: self.chat))
         }
       },
       owner: self

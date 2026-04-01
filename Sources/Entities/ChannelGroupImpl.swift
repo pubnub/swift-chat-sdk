@@ -129,6 +129,10 @@ public class ChannelGroupImpl: ChannelGroup {
   }
 
   public func streamPresence(callback: @escaping ([String: [String]]) -> Void) -> AutoCloseable {
+    onPresenceChanged(callback: callback)
+  }
+
+  public func onPresenceChanged(callback: @escaping ([String: [String]]) -> Void) -> AutoCloseable {
     AutoCloseableImpl(
       channelGroup.streamPresence { [weak self] in
         if let userIds = $0 as? [String: [String]], self != nil {
@@ -140,6 +144,10 @@ public class ChannelGroupImpl: ChannelGroup {
   }
 
   public func connect(callback: @escaping (MessageImpl) -> Void) -> AutoCloseable {
+    onMessageReceived(callback: callback)
+  }
+
+  public func onMessageReceived(callback: @escaping (MessageImpl) -> Void) -> AutoCloseable {
     AutoCloseableImpl(
       channelGroup.connect { [weak self] in
         if let self = self {

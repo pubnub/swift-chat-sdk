@@ -26,10 +26,10 @@
 - ``getChannels(filter:sort:limit:page:completion:)``
 - ``updateChannel(id:name:custom:description:status:type:)``
 - ``updateChannel(id:name:custom:description:status:type:completion:)``
-- ``deleteChannel(id:soft:)``
-- ``deleteChannel(id:soft:completion:)``
-- ``whoIsPresent(channelId:)``
-- ``whoIsPresent(channelId:completion:)``
+- ``deleteChannel(id:)``
+- ``deleteChannel(id:completion:)``
+- ``whoIsPresent(channelId:limit:offset:)``
+- ``whoIsPresent(channelId:limit:offset:completion:)``
 - ``getPushChannels()``
 - ``getPushChannels(completion:)``
 - ``registerPushChannels(channels:)``
@@ -49,8 +49,8 @@
 - ``getUsers(filter:sort:limit:page:completion:)``
 - ``updateUser(id:name:externalId:profileUrl:email:custom:status:type:)``
 - ``updateUser(id:name:externalId:profileUrl:email:custom:status:type:completion:)``
-- ``deleteUser(id:soft:)``
-- ``deleteUser(id:soft:completion:)``
+- ``deleteUser(id:)``
+- ``deleteUser(id:completion:)``
 - ``wherePresent(userId:)``
 - ``wherePresent(userId:completion:)``
 - ``isPresent(userId:channelId:)``

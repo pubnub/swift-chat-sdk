@@ -73,13 +73,19 @@ final class MembershipTests: BaseClosureIntegrationTestCase {
     let newValue = try awaitResultValue {
       membership.update(
         custom: newCustom,
+        status: "active",
+        type: "premium",
         completion: $0
       )
     }
+
     XCTAssertEqual(
       newCustom.mapValues { $0.scalarValue },
-      newValue.custom?.mapValues { $0.scalarValue }
+      newValue.custom?.filter { newCustom.keys.contains($0.key) }.mapValues { $0.scalarValue }
     )
+
+    XCTAssertEqual(newValue.status, "active")
+    XCTAssertEqual(newValue.type, "premium")
   }
 
   func testMembership_SetLastReadMessageTimetoken() throws {
@@ -119,6 +125,45 @@ final class MembershipTests: BaseClosureIntegrationTestCase {
     )
   }
 
+  func testMembership_Delete() throws {
+    let someChannel = try awaitResultValue {
+      chat.createChannel(
+        id: randomString(),
+        completion: $0
+      )
+    }
+    let someMembership = try awaitResultValue {
+      someChannel.invite(
+        user: chat.currentUser,
+        completion: $0
+      )
+    }
+
+    try awaitResult {
+      someMembership.delete(
+        completion: $0
+      )
+    }
+
+    let isMember = try awaitResultValue {
+      chat.currentUser.isMemberOf(
+        channelId: someChannel.id,
+        completion: $0
+      )
+    }
+
+    XCTAssertFalse(isMember)
+
+    addTeardownBlock { [unowned self] in
+      try awaitResult {
+        chat.deleteChannel(
+          id: someChannel.id,
+          completion: $0
+        )
+      }
+    }
+  }
+
   func testMembership_StreamUpdates() throws {
     let expectation = expectation(description: "MembershipStreamUpdates")
     expectation.assertForOverFulfill = true
@@ -132,7 +177,10 @@ final class MembershipTests: BaseClosureIntegrationTestCase {
     let closeable = membership.streamUpdates { [unowned self] membership in
       XCTAssertEqual(membership?.channel.id, self.membership.channel.id)
       XCTAssertEqual(membership?.user.id, self.membership.user.id)
-      XCTAssertEqual(membership?.custom?.mapValues { $0.scalarValue }, expectedCustom.mapValues { $0.scalarValue })
+      XCTAssertEqual(
+        membership?.custom?.filter { expectedCustom.keys.contains($0.key) }.mapValues { $0.scalarValue },
+        expectedCustom.mapValues { $0.scalarValue }
+      )
       expectation.fulfill()
     }
 
@@ -166,7 +214,10 @@ final class MembershipTests: BaseClosureIntegrationTestCase {
       let receivedMembership = $0[0]
       XCTAssertEqual(receivedMembership.channel.id, membership.channel.id)
       XCTAssertEqual(receivedMembership.user.id, membership.user.id)
-      XCTAssertEqual(receivedMembership.custom?.mapValues { $0.scalarValue }, expectedCustom.mapValues { $0.scalarValue })
+      XCTAssertEqual(
+        receivedMembership.custom?.filter { expectedCustom.keys.contains($0.key) }.mapValues { $0.scalarValue },
+        expectedCustom.mapValues { $0.scalarValue }
+      )
       expectation.fulfill()
     }
 
@@ -183,6 +234,85 @@ final class MembershipTests: BaseClosureIntegrationTestCase {
     )
     addTeardownBlock {
       closeable.close()
+    }
+  }
+
+  func testMembership_OnUpdated() throws {
+    let expectation = expectation(description: "OnUpdated")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let expectedCustom: [String: JSONCodableScalar] = [
+      "a": 1,
+      "b": "Text"
+    ]
+
+    let closeable = membership.onUpdated { [unowned self] updatedMembership in
+      XCTAssertEqual(updatedMembership.channel.id, membership.channel.id)
+      XCTAssertEqual(updatedMembership.user.id, membership.user.id)
+      XCTAssertEqual(
+        updatedMembership.custom?.filter { expectedCustom.keys.contains($0.key) }.mapValues { $0.scalarValue },
+        expectedCustom.mapValues { $0.scalarValue }
+      )
+      expectation.fulfill()
+    }
+
+    try awaitResultValue(delay: 3) {
+      membership.update(
+        custom: expectedCustom,
+        completion: $0
+      )
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 6
+    )
+    addTeardownBlock {
+      closeable.close()
+    }
+  }
+
+  func testMembership_OnDeleted() throws {
+    let expectation = expectation(description: "OnDeleted")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let anotherChannel = try awaitResultValue {
+      chat.createChannel(
+        id: randomString(),
+        completion: $0
+      )
+    }
+    let anotherMembership = try awaitResultValue {
+      anotherChannel.invite(
+        user: chat.currentUser,
+        completion: $0
+      )
+    }
+
+    let closeable = anotherMembership.onDeleted {
+      expectation.fulfill()
+    }
+
+    try awaitResultValue(delay: 3) {
+      anotherChannel.leave(
+        completion: $0
+      )
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 6
+    )
+    addTeardownBlock { [unowned self] in
+      closeable.close()
+      try awaitResult {
+        chat.deleteChannel(
+          id: anotherChannel.id,
+          completion: $0
+        )
+      }
     }
   }
 }

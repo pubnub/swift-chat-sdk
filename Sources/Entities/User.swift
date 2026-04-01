@@ -100,16 +100,14 @@ public protocol User: CustomStringConvertible {
     completion: ((Swift.Result<ChatType.ChatUserType, Error>) -> Void)?
   )
 
-  /// Deletes the user. If soft deletion is enabled, the user's data is retained but marked as inactive.
+  /// Deletes the user.
   ///
   /// - Parameters:
-  ///   - soft: If true, the user is soft deleted, retaining their data but making them inactive
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: For hard delete, the method returns `nil`. Otherwise, an updated ``User`` instance with the status field set to `"deleted"`
+  ///     - **Success**: A `Void` indicating a success
   ///     - **Failure**: An `Error` describing the failure
   func delete(
-    soft: Bool,
-    completion: ((Swift.Result<ChatType.ChatUserType?, Error>) -> Void)?
+    completion: ((Swift.Result<Void, Error>) -> Void)?
   )
 
   /// Retrieves a list of channels where the user is currently present.
@@ -152,6 +150,30 @@ public protocol User: CustomStringConvertible {
     completion: ((Swift.Result<(memberships: [ChatType.ChatMembershipType], page: PubNubHashedPage?), Error>) -> Void)?
   )
 
+  /// Checks if the user is a member of a specific channel.
+  ///
+  /// - Parameters:
+  ///   - channelId: Unique identifier of the channel to check
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: A `Bool` value indicating whether the user is a member of the specified channel
+  ///     - **Failure**: An `Error` describing the failure
+  func isMemberOf(
+    channelId: String,
+    completion: ((Swift.Result<Bool, Error>) -> Void)?
+  )
+
+  /// Retrieves the user's membership for a specific channel.
+  ///
+  /// - Parameters:
+  ///   - channelId: Unique identifier of the channel
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: The user's ``Membership`` for the specified channel, or `nil` if not a member
+  ///     - **Failure**: An `Error` describing the failure
+  func getMembership(
+    channelId: String,
+    completion: ((Swift.Result<ChatType.ChatMembershipType?, Error>) -> Void)?
+  )
+
   /// Receives updates on a single User object.
   ///
   /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
@@ -160,8 +182,49 @@ public protocol User: CustomStringConvertible {
   /// - Parameters:
   ///   - callback: A closure to be executed when detecting user changes. Takes a User object or `nil` if the user was removed
   /// - Returns: An ``AutoCloseable`` that you can use to stop receiving objects events by invoking its ``AutoCloseable/close()`` method
+  @available(*, deprecated, message: "Use `onUpdated(callback:)` and `onDeleted(callback:)` instead")
   func streamUpdates(
     callback: @escaping ((ChatType.ChatUserType?) -> Void)
+  ) -> AutoCloseable
+
+  /// Emits the updated user entity whenever this user's metadata is modified.
+  ///
+  /// - Parameter callback: A closure invoked with the updated ``User`` entity
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onUpdated(
+    callback: @escaping (ChatType.ChatUserType) -> Void
+  ) -> AutoCloseable
+
+  /// Emits an event whenever this user is permanently deleted.
+  ///
+  /// - Parameter callback: A closure invoked when the user is deleted
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onDeleted(
+    callback: @escaping () -> Void
+  ) -> AutoCloseable
+
+  /// Emits a mention whenever this user is mentioned in a message.
+  ///
+  /// - Parameter callback: A closure invoked with the ``Mention`` containing details about the mention
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onMentioned(
+    callback: @escaping (Mention) -> Void
+  ) -> AutoCloseable
+
+  /// Emits an invite whenever this user is invited to a channel.
+  ///
+  /// - Parameter callback: A closure invoked with the ``Invite`` containing details about the invitation
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onInvited(
+    callback: @escaping (Invite) -> Void
+  ) -> AutoCloseable
+
+  /// Emits a restriction whenever the moderation status changes for this user.
+  ///
+  /// - Parameter callback: A closure invoked with the ``Restriction`` containing the updated restriction details
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onRestrictionChanged(
+    callback: @escaping (Restriction) -> Void
   ) -> AutoCloseable
 
   /// Checks if the user is currently active.

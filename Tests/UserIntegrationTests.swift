@@ -147,46 +147,11 @@ final class UserIntegrationTests: BaseClosureIntegrationTestCase {
         completion: $0
       )
     }
-    let deletedUser = try awaitResultValue {
+    try awaitResult {
       createdUser.delete(
-        soft: false,
         completion: $0
       )
     }
-
-    XCTAssertNil(deletedUser)
-
-    addTeardownBlock { [unowned self] in
-      try awaitResult {
-        chat.deleteUser(
-          id: createdUser.id,
-          completion: $0
-        )
-      }
-    }
-  }
-
-  func testUser_SoftDelete() throws {
-    let createdUser = try awaitResultValue {
-      chat.createUser(
-        user: testableUser(),
-        completion: $0
-      )
-    }
-    let deletedUser = try awaitResultValue {
-      createdUser.delete(
-        soft: true,
-        completion: $0
-      )
-    }
-
-    XCTAssertFalse(
-      deletedUser?.active ?? true
-    )
-    XCTAssertEqual(
-      createdUser.id,
-      deletedUser?.id
-    )
 
     addTeardownBlock { [unowned self] in
       try awaitResult {
@@ -200,9 +165,7 @@ final class UserIntegrationTests: BaseClosureIntegrationTestCase {
 
   func testUser_DeleteNotExistingUser() throws {
     let someUser = testableUser()
-    let resultValue = try awaitResultValue { someUser.delete(soft: false, completion: $0) }
-
-    XCTAssertNil(resultValue)
+    try awaitResult { someUser.delete(completion: $0) }
   }
 
   func testUser_WherePresent() throws {
@@ -392,4 +355,82 @@ final class UserIntegrationTests: BaseClosureIntegrationTestCase {
       }
     }
   }
+
+  func testUser_OnUpdated() throws {
+    let expectation = expectation(description: "OnUpdated")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let createdUser = try awaitResultValue {
+      chat.createUser(
+        user: testableUser(),
+        completion: $0
+      )
+    }
+    let closeable = createdUser.onUpdated { user in
+      XCTAssertEqual(user.name, "NewName")
+      XCTAssertEqual(user.status, "NewStatus")
+      expectation.fulfill()
+    }
+
+    try awaitResultValue(delay: 3) {
+      createdUser.update(
+        name: "NewName",
+        status: "NewStatus",
+        completion: $0
+      )
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 6
+    )
+    addTeardownBlock { [unowned self] in
+      closeable.close()
+      try awaitResult {
+        chat.deleteUser(
+          id: createdUser.id,
+          completion: $0
+        )
+      }
+    }
+  }
+
+  func testUser_OnDeleted() throws {
+    let expectation = expectation(description: "OnDeleted")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let createdUser = try awaitResultValue {
+      chat.createUser(
+        user: testableUser(),
+        completion: $0
+      )
+    }
+    let closeable = createdUser.onDeleted {
+      expectation.fulfill()
+    }
+
+    try awaitResult(delay: 3) {
+      createdUser.delete(
+        completion: $0
+      )
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 6
+    )
+    addTeardownBlock { [unowned self] in
+      closeable.close()
+      try awaitResult {
+        chat.deleteUser(
+          id: createdUser.id,
+          completion: $0
+        )
+      }
+    }
+  }
+
+  // swiftlint:disable:next file_length
 }

@@ -158,7 +158,7 @@ func deleteUser() {
   // Assumes a "ChatImpl" reference named "chat"
   Task {
     if let user = try await chat.getUser(userId: "support_agent_15") {
-      try await user.delete(soft: false)
+      try await user.delete()
     } else {
       debugPrint("User not found")
     }
@@ -175,29 +175,6 @@ func deleteUserOnChat() {
   // snippet.end
 }
 
-func softDeleteUser() {
-  // snippet.users.delete.soft
-  // Assumes a "ChatImpl" reference named "chat"
-  Task {
-    if let user = try await chat.getUser(userId: "support_agent_15") {
-      let updatedUser = try await user.delete(soft: true)
-      debugPrint("User marked as deleted")
-      debugPrint("Updated user object: \(String(describing: updatedUser))")
-    } else {
-      debugPrint("User not found")
-    }
-  }
-  // snippet.end
-}
-
-func softDeleteUserOnChat() {
-  // snippet.users.deleteUser.soft
-  // Assumes a "ChatImpl" reference named "chat"
-  Task {
-    try await chat.deleteUser(id: "support_agent_15", soft: true)
-  }
-  // snippet.end
-}
 
 // MARK: - Stream User Updates
 
@@ -378,6 +355,44 @@ func streamPresence() {
       }
     } else {
       debugPrint("Channel not found")
+    }
+  }
+  // snippet.end
+}
+
+// MARK: - Channel Membership
+
+func isMemberOf() {
+  // snippet.users.isMemberOf
+  // Assumes a "ChatImpl" reference named "chat"
+  Task {
+    if let user = try await chat.getUser(userId: "support_agent_15") {
+      let isMember = try await user.isMemberOf(channelId: "support")
+      if isMember {
+        debugPrint("User 'support_agent_15' is a member of the 'support' channel")
+      } else {
+        debugPrint("User 'support_agent_15' is not a member of the 'support' channel")
+      }
+    } else {
+      debugPrint("User not found")
+    }
+  }
+  // snippet.end
+}
+
+func getMembership() {
+  // snippet.users.getMembership
+  // Assumes a "ChatImpl" reference named "chat"
+  Task {
+    if let user = try await chat.getUser(userId: "support_agent_15") {
+      if let membership = try await user.getMembership(channelId: "support") {
+        debugPrint("Found membership in channel: \(membership.channel.id)")
+        debugPrint("Membership custom data: \(String(describing: membership.custom))")
+      } else {
+        debugPrint("User 'support_agent_15' is not a member of the 'support' channel")
+      }
+    } else {
+      debugPrint("User not found")
     }
   }
   // snippet.end

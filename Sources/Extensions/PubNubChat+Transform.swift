@@ -63,3 +63,81 @@ extension PubNubChat.EventContent.TextMessageContent {
     )
   }
 }
+
+extension PubNubChat.MessageReaction {
+  func transform() -> MessageReaction {
+    MessageReaction(
+      value: value,
+      isMine: isMine,
+      userIds: userIds
+    )
+  }
+}
+
+extension [PubNubChat.MessageReaction] {
+  func transform() -> [MessageReaction] {
+    map { $0.transform() }
+  }
+}
+
+extension PubNubChat.ReadReceipt {
+  func transform() -> ReadReceipt {
+    ReadReceipt(
+      userId: userId,
+      lastReadTimetoken: Timetoken(lastReadTimetoken)
+    )
+  }
+}
+
+extension [PubNubChat.ReadReceipt] {
+  func transform() -> [ReadReceipt] {
+    map { $0.transform() }
+  }
+}
+
+extension PubNubChat.Mention {
+  func transform() -> Mention {
+    Mention(
+      messageTimetoken: Timetoken(messageTimetoken),
+      channelId: channelId,
+      parentChannelId: parentChannelId,
+      mentionedByUserId: mentionedByUserId
+    )
+  }
+}
+
+extension PubNubChat.Invite {
+  func transform() -> Invite {
+    Invite(
+      channelId: channelId,
+      channelType: channelType.transform(),
+      invitedByUserId: invitedByUserId,
+      invitationTimetoken: Timetoken(invitationTimetoken)
+    )
+  }
+}
+
+extension PubNubChat.Report {
+  func transform() -> Report {
+    Report(
+      reason: reason,
+      text: text,
+      messageTimetoken: messageTimetoken?.uint64Value,
+      reportedMessageChannelId: reportedMessageChannelId,
+      reportedUserId: reportedUserId,
+      autoModerationId: autoModerationId
+    )
+  }
+}
+
+extension PubNubChat.Restriction {
+  func transform() -> Restriction {
+    Restriction(
+      userId: userId,
+      channelId: channelId,
+      ban: ban,
+      mute: mute,
+      reason: reason
+    )
+  }
+}

@@ -14,11 +14,12 @@
 		3D0F90D52D48DEC700986686 /* MutedUsersManagerInterface+AsyncAwait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0F90D42D48DEC700986686 /* MutedUsersManagerInterface+AsyncAwait.swift */; };
 		3D1CE5232D79DED800617200 /* String+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1CE5222D79DED800617200 /* String+Helpers.swift */; };
 		3D1E67D72E3CBC84001454C1 /* ConnectionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1E67D62E3CBC84001454C1 /* ConnectionStatus.swift */; };
+		3D1E67D92E3CBCA0001454C1 /* MessageReaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1E67D82E3CBCA0001454C1 /* MessageReaction.swift */; };
+		3D1E67DA2E3CBCB0001454C1 /* ReadReceipt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1E67DB2E3CBCB0001454C1 /* ReadReceipt.swift */; };
 		3D27B8D02D2D9A61003AD459 /* ThreadChannelAsyncIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D27B8CF2D2D9A61003AD459 /* ThreadChannelAsyncIntegrationTests.swift */; };
 		3D27B8D22D2D9BBB003AD459 /* ThreadChannel+AsyncAwait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D27B8D12D2D9BBB003AD459 /* ThreadChannel+AsyncAwait.swift */; };
 		3D27B8D42D2EAEA6003AD459 /* MessageDraftAsyncIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D27B8D32D2EAEA5003AD459 /* MessageDraftAsyncIntegrationTests.swift */; };
 		3D27B8D62D2EAF86003AD459 /* MessageDraft+AsyncAwait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D27B8D52D2EAF86003AD459 /* MessageDraft+AsyncAwait.swift */; };
-		3D2813212D7B4EF4004623A0 /* PubNubChat in Frameworks */ = {isa = PBXBuildFile; productRef = 3D2813202D7B4EF4004623A0 /* PubNubChat */; };
 		3D2CA2362C5B9320008D2284 /* PubNubChat+Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2CA2352C5B9320008D2284 /* PubNubChat+Transform.swift */; };
 		3D2CA2382C5B9ACA008D2284 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2CA2372C5B9ACA008D2284 /* File.swift */; };
 		3D2CA23A2C5B9CF6008D2284 /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2CA2392C5B9CF6008D2284 /* Dictionary.swift */; };
@@ -47,6 +48,10 @@
 		3D46D4682D13287A007D08DB /* IntegrationTestCaseConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46D42F2D122C8F007D08DB /* IntegrationTestCaseConfiguration.swift */; };
 		3D46D46A2D142035007D08DB /* ThreadMessageAsyncIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46D4692D142035007D08DB /* ThreadMessageAsyncIntegrationTests.swift */; };
 		3D46D46C2D14BF2D007D08DB /* ChannelAsyncIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46D46B2D14BF2D007D08DB /* ChannelAsyncIntegrationTests.swift */; };
+		3D64DC732F58A58C004AC52B /* Mention.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D64DC722F58A58C004AC52B /* Mention.swift */; };
+		3D64DC742F58A58C004AC52B /* Invite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D64DC712F58A58C004AC52B /* Invite.swift */; };
+		3D64DC762F58A803004AC52B /* Report.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D64DC752F58A803004AC52B /* Report.swift */; };
+		3D64DC772F58A803004AC52B /* CustomEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D64DC782F58A803004AC52B /* CustomEvent.swift */; };
 		3D7062C62D2D4A4F000729E1 /* ChatAsyncIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7062C52D2D4A4F000729E1 /* ChatAsyncIntegrationTests.swift */; };
 		3D7062C82D2D82A5000729E1 /* User+AsyncAwait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7062C72D2D82A5000729E1 /* User+AsyncAwait.swift */; };
 		3D7062CB2D2D8C27000729E1 /* UserAsyncIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7062C92D2D8BD9000729E1 /* UserAsyncIntegrationTests.swift */; };
@@ -115,6 +120,14 @@
 		3DB73A7D2C57EA94007FE249 /* Timetoken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB73A7C2C57EA94007FE249 /* Timetoken.swift */; };
 		3DB73A7F2C58CCAE007FE249 /* GetCurrentUserMentionsResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB73A7E2C58CCAE007FE249 /* GetCurrentUserMentionsResult.swift */; };
 		3DCF7DFC2CD0FFCC00889326 /* PubNubSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 3DCF7DFB2CD0FFCC00889326 /* PubNubSDK */; };
+		3DD00C7D2F684E07002FD5F4 /* PubNubChat in Frameworks */ = {isa = PBXBuildFile; productRef = 3DD00C7C2F684E07002FD5F4 /* PubNubChat */; };
+		AA00000000000000000001B1 /* ChannelStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000001A1 /* ChannelStream.swift */; };
+		AA00000000000000000002B2 /* UserStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000002A2 /* UserStream.swift */; };
+		AA00000000000000000003B3 /* MessageStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000003A3 /* MessageStream.swift */; };
+		AA00000000000000000004B4 /* MembershipStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000004A4 /* MembershipStream.swift */; };
+		AA00000000000000000005B5 /* ChannelGroupStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000005A5 /* ChannelGroupStream.swift */; };
+		AA0001022C000001007FE249 /* SendTextParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0001012C000001007FE249 /* SendTextParams.swift */; };
+		AA0001042C000002007FE249 /* CreateThreadResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0001032C000002007FE249 /* CreateThreadResult.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -155,6 +168,8 @@
 		3D0F90D42D48DEC700986686 /* MutedUsersManagerInterface+AsyncAwait.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MutedUsersManagerInterface+AsyncAwait.swift"; sourceTree = "<group>"; };
 		3D1CE5222D79DED800617200 /* String+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Helpers.swift"; sourceTree = "<group>"; };
 		3D1E67D62E3CBC84001454C1 /* ConnectionStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionStatus.swift; sourceTree = "<group>"; };
+		3D1E67D82E3CBCA0001454C1 /* MessageReaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReaction.swift; sourceTree = "<group>"; };
+		3D1E67DB2E3CBCB0001454C1 /* ReadReceipt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadReceipt.swift; sourceTree = "<group>"; };
 		3D27B8CF2D2D9A61003AD459 /* ThreadChannelAsyncIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadChannelAsyncIntegrationTests.swift; sourceTree = "<group>"; };
 		3D27B8D12D2D9BBB003AD459 /* ThreadChannel+AsyncAwait.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ThreadChannel+AsyncAwait.swift"; sourceTree = "<group>"; };
 		3D27B8D32D2EAEA5003AD459 /* MessageDraftAsyncIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDraftAsyncIntegrationTests.swift; sourceTree = "<group>"; };
@@ -184,6 +199,10 @@
 		3D46D4662D1320F6007D08DB /* MessageAsyncIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageAsyncIntegrationTests.swift; sourceTree = "<group>"; };
 		3D46D4692D142035007D08DB /* ThreadMessageAsyncIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadMessageAsyncIntegrationTests.swift; sourceTree = "<group>"; };
 		3D46D46B2D14BF2D007D08DB /* ChannelAsyncIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelAsyncIntegrationTests.swift; sourceTree = "<group>"; };
+		3D64DC712F58A58C004AC52B /* Invite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Invite.swift; sourceTree = "<group>"; };
+		3D64DC722F58A58C004AC52B /* Mention.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mention.swift; sourceTree = "<group>"; };
+		3D64DC752F58A803004AC52B /* Report.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Report.swift; sourceTree = "<group>"; };
+		3D64DC782F58A803004AC52B /* CustomEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomEvent.swift; sourceTree = "<group>"; };
 		3D7062C52D2D4A4F000729E1 /* ChatAsyncIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAsyncIntegrationTests.swift; sourceTree = "<group>"; };
 		3D7062C72D2D82A5000729E1 /* User+AsyncAwait.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+AsyncAwait.swift"; sourceTree = "<group>"; };
 		3D7062C92D2D8BD9000729E1 /* UserAsyncIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAsyncIntegrationTests.swift; sourceTree = "<group>"; };
@@ -254,6 +273,13 @@
 		3DB73A7A2C57EA29007FE249 /* ChatImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatImpl.swift; sourceTree = "<group>"; };
 		3DB73A7C2C57EA94007FE249 /* Timetoken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timetoken.swift; sourceTree = "<group>"; };
 		3DB73A7E2C58CCAE007FE249 /* GetCurrentUserMentionsResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetCurrentUserMentionsResult.swift; sourceTree = "<group>"; };
+		AA00000000000000000001A1 /* ChannelStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelStream.swift; sourceTree = "<group>"; };
+		AA00000000000000000002A2 /* UserStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStream.swift; sourceTree = "<group>"; };
+		AA00000000000000000003A3 /* MessageStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageStream.swift; sourceTree = "<group>"; };
+		AA00000000000000000004A4 /* MembershipStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MembershipStream.swift; sourceTree = "<group>"; };
+		AA00000000000000000005A5 /* ChannelGroupStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelGroupStream.swift; sourceTree = "<group>"; };
+		AA0001012C000001007FE249 /* SendTextParams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTextParams.swift; sourceTree = "<group>"; };
+		AA0001032C000002007FE249 /* CreateThreadResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateThreadResult.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -269,7 +295,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D2813212D7B4EF4004623A0 /* PubNubChat in Frameworks */,
+				3DD00C7D2F684E07002FD5F4 /* PubNubChat in Frameworks */,
 				3DCF7DFC2CD0FFCC00889326 /* PubNubSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -318,15 +344,15 @@
 			isa = PBXGroup;
 			children = (
 				3D46D42A2D11DC8D007D08DB /* BaseAsyncIntegrationTestCase.swift */,
+				3D7062C52D2D4A4F000729E1 /* ChatAsyncIntegrationTests.swift */,
+				3D46D46B2D14BF2D007D08DB /* ChannelAsyncIntegrationTests.swift */,
+				3DB5A31D2E30D6DA001741C8 /* ChannelGroupAsyncIntegrationTests.swift */,
 				3D46D42C2D1213C0007D08DB /* MembershipAsyncIntegrationTests.swift */,
 				3D46D4662D1320F6007D08DB /* MessageAsyncIntegrationTests.swift */,
-				3D46D4692D142035007D08DB /* ThreadMessageAsyncIntegrationTests.swift */,
-				3D46D46B2D14BF2D007D08DB /* ChannelAsyncIntegrationTests.swift */,
-				3D27B8CF2D2D9A61003AD459 /* ThreadChannelAsyncIntegrationTests.swift */,
-				3D7062C52D2D4A4F000729E1 /* ChatAsyncIntegrationTests.swift */,
-				3D7062C92D2D8BD9000729E1 /* UserAsyncIntegrationTests.swift */,
 				3D27B8D32D2EAEA5003AD459 /* MessageDraftAsyncIntegrationTests.swift */,
-				3DB5A31D2E30D6DA001741C8 /* ChannelGroupAsyncIntegrationTests.swift */,
+				3D27B8CF2D2D9A61003AD459 /* ThreadChannelAsyncIntegrationTests.swift */,
+				3D46D4692D142035007D08DB /* ThreadMessageAsyncIntegrationTests.swift */,
+				3D7062C92D2D8BD9000729E1 /* UserAsyncIntegrationTests.swift */,
 			);
 			path = AsyncAwait;
 			sourceTree = "<group>";
@@ -390,15 +416,15 @@
 				3D46D4382D12310F007D08DB /* AsyncAwait */,
 				3D46D4282D11D8D2007D08DB /* BaseIntegrationTestCase.swift */,
 				3DB73A162C4FE13C007FE249 /* BaseClosureIntegrationTestCase.swift */,
-				3DA530C72C882F2500DDE763 /* ChatIntegrationTests.swift */,
 				3DB2A8AE2C7F54A400167058 /* ChannelIntegrationTests.swift */,
+				3DB5A31B2E2F9633001741C8 /* ChannelGroupIntegrationTests.swift */,
+				3DA530C72C882F2500DDE763 /* ChatIntegrationTests.swift */,
 				3DB49E272C777ECD006356ED /* MembershipIntegrationTests.swift */,
 				3DB49E292C788529006356ED /* MessageIntegrationTests.swift */,
-				3DB551DA2C7C983000634BDC /* ThreadMessageIntegrationTests.swift */,
-				3DA530C52C87455200DDE763 /* ThreadChannelIntegrationTests.swift */,
 				3D9A17992CC659E800F3F8AB /* MessageDraftIntegrationTests.swift */,
+				3DA530C52C87455200DDE763 /* ThreadChannelIntegrationTests.swift */,
+				3DB551DA2C7C983000634BDC /* ThreadMessageIntegrationTests.swift */,
 				3DB49E1C2C75F70C006356ED /* UserIntegrationTests.swift */,
-				3DB5A31B2E2F9633001741C8 /* ChannelGroupIntegrationTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -457,27 +483,32 @@
 			children = (
 				3DB73A3B2C50F42B007FE249 /* User.swift */,
 				3D7062C72D2D82A5000729E1 /* User+AsyncAwait.swift */,
+				AA00000000000000000002A2 /* UserStream.swift */,
 				3DB2A8B22C807DDC00167058 /* UserImpl.swift */,
+				3DB73A5A2C53CAB1007FE249 /* BaseChannel.swift */,
 				3DB73A3F2C51051C007FE249 /* Channel.swift */,
 				3D46D4392D1231F1007D08DB /* Channel+AsyncAwait.swift */,
+				AA00000000000000000001A1 /* ChannelStream.swift */,
+				3DB73A6E2C57BB97007FE249 /* ChannelImpl.swift */,
 				3D043A792CA6AAA000F91C05 /* ThreadChannel.swift */,
 				3D27B8D12D2D9BBB003AD459 /* ThreadChannel+AsyncAwait.swift */,
-				3DB73A5A2C53CAB1007FE249 /* BaseChannel.swift */,
-				3DB73A6E2C57BB97007FE249 /* ChannelImpl.swift */,
 				3DB73A5C2C53CC0A007FE249 /* ThreadChannelImpl.swift */,
 				3DB73A3D2C50F5F3007FE249 /* Membership.swift */,
 				3D46D4352D12302E007D08DB /* Membership+AsyncAwait.swift */,
+				AA00000000000000000004A4 /* MembershipStream.swift */,
 				3DB2A8B42C807E2A00167058 /* MembershipImpl.swift */,
+				3DB73A6C2C57BB35007FE249 /* BaseMessage.swift */,
 				3DB73A412C511900007FE249 /* Message.swift */,
 				3D46D43F2D130526007D08DB /* Message+AsyncAwait.swift */,
+				AA00000000000000000003A3 /* MessageStream.swift */,
+				3DB73A522C53A20C007FE249 /* MessageImpl.swift */,
 				3D043A7B2CAAABBD00F91C05 /* ThreadMessage.swift */,
 				3D46D4412D131BBC007D08DB /* ThreadMessage+AsyncAwait.swift */,
-				3DB73A6C2C57BB35007FE249 /* BaseMessage.swift */,
-				3DB73A522C53A20C007FE249 /* MessageImpl.swift */,
 				3DB73A542C53A22F007FE249 /* ThreadMessageImpl.swift */,
 				3DB5A3162E2F848A001741C8 /* ChannelGroup.swift */,
 				3DB5A3182E2F900B001741C8 /* ChannelGroupImpl.swift */,
 				3DB5A31F2E30D771001741C8 /* ChannelGroup+AsyncAwait.swift */,
+				AA00000000000000000005A5 /* ChannelGroupStream.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -485,6 +516,10 @@
 		3DB73A432C511D36007FE249 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				3D64DC712F58A58C004AC52B /* Invite.swift */,
+				3D64DC722F58A58C004AC52B /* Mention.swift */,
+				3D64DC752F58A803004AC52B /* Report.swift */,
+				3D64DC782F58A803004AC52B /* CustomEvent.swift */,
 				3D2CA23B2C5B9E51008D2284 /* Action.swift */,
 				3DB2A8BA2C8099F300167058 /* EventContent.swift */,
 				3DB2A8BC2C809A1400167058 /* ChatError.swift */,
@@ -497,6 +532,8 @@
 				3DB73A582C53BF18007FE249 /* GetFileItem.swift */,
 				3DB73A642C57A782007FE249 /* CreateDirectConversationResult.swift */,
 				3DB73A662C57A8C5007FE249 /* CreateGroupConversationResult.swift */,
+				AA0001012C000001007FE249 /* SendTextParams.swift */,
+				AA0001032C000002007FE249 /* CreateThreadResult.swift */,
 				3DB73A6A2C57B9D8007FE249 /* GetUnreadMessagesCount.swift */,
 				3DB73A702C57C034007FE249 /* Event.swift */,
 				3DB73A7E2C58CCAE007FE249 /* GetCurrentUserMentionsResult.swift */,
@@ -505,6 +542,8 @@
 				3DB2A8B82C80993B00167058 /* ChannelType.swift */,
 				3DB2A8BE2C809B1F00167058 /* EmitEventMethod.swift */,
 				3D1E67D62E3CBC84001454C1 /* ConnectionStatus.swift */,
+				3D1E67D82E3CBCA0001454C1 /* MessageReaction.swift */,
+				3D1E67DB2E3CBCB0001454C1 /* ReadReceipt.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -557,7 +596,7 @@
 			name = PubNubSwiftChatSDK;
 			packageProductDependencies = (
 				3DCF7DFB2CD0FFCC00889326 /* PubNubSDK */,
-				3D2813202D7B4EF4004623A0 /* PubNubChat */,
+				3DD00C7C2F684E07002FD5F4 /* PubNubChat */,
 			);
 			productName = PubNubChatSDK;
 			productReference = 3DB73A072C4FE13C007FE249 /* PubNubSwiftChatSDK.framework */;
@@ -614,7 +653,7 @@
 			mainGroup = 3DB739FD2C4FE13B007FE249;
 			packageReferences = (
 				3DCF7DFA2CD0FFCC00889326 /* XCRemoteSwiftPackageReference "swift" */,
-				3D28131F2D7B4EF4004623A0 /* XCRemoteSwiftPackageReference "kmp-chat" */,
+				3DD00C7B2F684E07002FD5F4 /* XCRemoteSwiftPackageReference "kmp-chat" */,
 			);
 			productRefGroup = 3DB73A082C4FE13C007FE249 /* Products */;
 			projectDirPath = "";
@@ -680,6 +719,8 @@
 			files = (
 				3DB73A392C5026E5007FE249 /* PubNub.MembershipSortField.swift in Sources */,
 				3DB73A0C2C4FE13C007FE249 /* PubNubSwiftChatSDK.docc in Sources */,
+				3D64DC732F58A58C004AC52B /* Mention.swift in Sources */,
+				3D64DC742F58A58C004AC52B /* Invite.swift in Sources */,
 				3D2CA2402C5BBDB6008D2284 /* PubNubChat.PNPushEnvironment.swift in Sources */,
 				3DB73A4D2C513646007FE249 /* TextLink.swift in Sources */,
 				3DB73A692C57AA1B007FE249 /* PubNubChat.KotlinArray.swift in Sources */,
@@ -699,6 +740,8 @@
 				3D2CA2382C5B9ACA008D2284 /* File.swift in Sources */,
 				3DB5A3192E2F900B001741C8 /* ChannelGroupImpl.swift in Sources */,
 				3D1E67D72E3CBC84001454C1 /* ConnectionStatus.swift in Sources */,
+				3D1E67D92E3CBCA0001454C1 /* MessageReaction.swift in Sources */,
+				3D1E67DA2E3CBCB0001454C1 /* ReadReceipt.swift in Sources */,
 				3DB73A752C57D073007FE249 /* PubNubChat.Event.swift in Sources */,
 				3D2CA2362C5B9320008D2284 /* PubNubChat+Transform.swift in Sources */,
 				3DB73A492C513578007FE249 /* MessageReferencedChannel.swift in Sources */,
@@ -725,8 +768,12 @@
 				3DB73A6B2C57B9D8007FE249 /* GetUnreadMessagesCount.swift in Sources */,
 				3DB49E212C761BD1006356ED /* AutoCloseable.swift in Sources */,
 				3DB73A532C53A20C007FE249 /* MessageImpl.swift in Sources */,
+				3D64DC762F58A803004AC52B /* Report.swift in Sources */,
+				3D64DC772F58A803004AC52B /* CustomEvent.swift in Sources */,
 				3D1CE5232D79DED800617200 /* String+Helpers.swift in Sources */,
 				3DB73A672C57A8C5007FE249 /* CreateGroupConversationResult.swift in Sources */,
+				AA0001022C000001007FE249 /* SendTextParams.swift in Sources */,
+				AA0001042C000002007FE249 /* CreateThreadResult.swift in Sources */,
 				3DB2A8B52C807E2A00167058 /* MembershipImpl.swift in Sources */,
 				3D0F90D32D48DB4700986686 /* MutedUsersManagerInterface.swift in Sources */,
 				3DB2A8B92C80993B00167058 /* ChannelType.swift in Sources */,
@@ -753,6 +800,11 @@
 				3D334BD02C8EE9E500F8793C /* PubNub.PushService.swift in Sources */,
 				3DB73A512C539421007FE249 /* InputFile.swift in Sources */,
 				3D842D242C9DC0AA005C0B55 /* ErrorConstants.swift in Sources */,
+				AA00000000000000000001B1 /* ChannelStream.swift in Sources */,
+				AA00000000000000000005B5 /* ChannelGroupStream.swift in Sources */,
+				AA00000000000000000002B2 /* UserStream.swift in Sources */,
+				AA00000000000000000003B3 /* MessageStream.swift in Sources */,
+				AA00000000000000000004B4 /* MembershipStream.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -976,7 +1028,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 0.34.0;
+				MARKETING_VERSION = 1.0.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";
@@ -1024,7 +1076,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 0.34.0;
+				MARKETING_VERSION = 1.0.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";
@@ -1132,14 +1184,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		3D28131F2D7B4EF4004623A0 /* XCRemoteSwiftPackageReference "kmp-chat" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/pubnub/kmp-chat";
-			requirement = {
-				kind = exactVersion;
-				version = "0.16.2-swift";
-			};
-		};
 		3DCF7DFA2CD0FFCC00889326 /* XCRemoteSwiftPackageReference "swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pubnub/swift";
@@ -1148,18 +1192,26 @@
 				version = 10.1.2;
 			};
 		};
+		3DD00C7B2F684E07002FD5F4 /* XCRemoteSwiftPackageReference "kmp-chat" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pubnub/kmp-chat";
+			requirement = {
+				kind = exactVersion;
+				version = "1.0.0-swift";
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		3D2813202D7B4EF4004623A0 /* PubNubChat */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 3D28131F2D7B4EF4004623A0 /* XCRemoteSwiftPackageReference "kmp-chat" */;
-			productName = PubNubChat;
-		};
 		3DCF7DFB2CD0FFCC00889326 /* PubNubSDK */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 3DCF7DFA2CD0FFCC00889326 /* XCRemoteSwiftPackageReference "swift" */;
 			productName = PubNubSDK;
+		};
+		3DD00C7C2F684E07002FD5F4 /* PubNubChat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3DD00C7B2F684E07002FD5F4 /* XCRemoteSwiftPackageReference "kmp-chat" */;
+			productName = PubNubChat;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -27,6 +27,7 @@ public protocol Message: CustomStringConvertible {
   /// Unique ID of the user who sent the message
   var userId: String { get }
   /// Any actions associated with the message, such as reactions, replies, or other interactive elements
+  @available(*, deprecated, message: "Use `Message.reactions` instead for accessing message reactions")
   var actions: [String: [String: [Action]]]? { get }
   /// Extra information added to the message giving additional context
   var meta: [String: JSONCodable]? { get }
@@ -57,7 +58,7 @@ public protocol Message: CustomStringConvertible {
   /// List of attached files to the given ``Message`` with their names, types, and sources
   var files: [File] { get }
   /// List of reactions attached to the given ``Message``
-  var reactions: [String: [Action]] { get }
+  var reactions: [MessageReaction] { get }
   /// Error associated with the message, if any
   var error: Error? { get }
 
@@ -94,7 +95,7 @@ public protocol Message: CustomStringConvertible {
   ///     - **Failure**: An `Error` describing the failure
   func editText(
     newText: String,
-    completion: ((Swift.Result<ChatType.ChatMessageType, Error>) -> Void)?
+    completion: ((Swift.Result<Self, Error>) -> Void)?
   )
 
   /// Either permanently removes a historical message from Message Persistence or marks it as deleted (if you remove the message with the soft option).
@@ -161,8 +162,7 @@ public protocol Message: CustomStringConvertible {
   ///   - completion: The async `Result` of the method call
   ///     - **Success**:  Returns a ``ThreadChannel`` object which can be used for sending and reading messages from the newly created message thread
   ///     - **Failure**: An `Error` describing the failure
-  @available(*, deprecated, message: "Use `createThread(text:meta:shouldStore:usePost:ttl:quotedMessage:files:usersToMention:customPushData:completion:)` instead")
-  // swiftlint:disable:previous line_length
+  @available(*, deprecated, message: "Use `createThread(text:params:completion:)` instead")
   func createThread(
     completion: ((Swift.Result<ChatType.ChatThreadChannelType, Error>) -> Void)?
   )
@@ -182,6 +182,7 @@ public protocol Message: CustomStringConvertible {
   ///   - completion: The async `Result` of the method call
   ///     - **Success**:  Returns a ``ThreadChannel`` object which can be used for sending and reading messages from the newly created message thread
   ///     - **Failure**: An `Error` describing the failure
+  @available(*, deprecated, message: "Use `createThread(text:params:completion:)` instead")
   func createThread(
     text: String,
     meta: [String: JSONCodable]?,
@@ -195,14 +196,28 @@ public protocol Message: CustomStringConvertible {
     completion: ((Swift.Result<ChatType.ChatThreadChannelType, Error>) -> Void)?
   )
 
+  /// Create a thread by sending the first reply and return both the thread channel and updated parent message.
+  ///
+  /// - Parameters:
+  ///   - text: Text of the first reply to send in the thread
+  ///   - params: Additional parameters for sending text, encapsulated in a ``SendTextParams`` object
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: A ``CreateThreadResult`` containing the thread channel and updated parent message
+  ///     - **Failure**: An `Error` describing the failure
+  func createThread(
+    text: String,
+    params: SendTextParams,
+    completion: ((Swift.Result<CreateThreadResult<ChatType.ChatThreadChannelType, ChatType.ChatMessageType>, Error>) -> Void)?
+  )
+
   /// Removes a thread (channel) for a selected message.
   ///
   /// - Parameters:
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**:  The updated ``Channel`` object after the removal of the thread
+  ///     - **Success**: A `Void` indicating a success
   ///     - **Failure**: An `Error` describing the failure
   func removeThread(
-    completion: ((Swift.Result<ChatType.ChatChannelType?, Error>) -> Void)?
+    completion: ((Swift.Result<Void, Error>) -> Void)?
   )
 
   /// Add or remove a reaction to a message.
@@ -227,8 +242,19 @@ public protocol Message: CustomStringConvertible {
   ///
   /// - Parameter completion: Function that takes a single Message object. It defines the custom behavior to be executed when detecting message or message reaction changes
   /// - Returns: Interface that lets you stop receiving message-related updates by invoking the ``AutoCloseable/close()`` method
+  @available(*, deprecated, message: "Use `onUpdated(callback:)` instead")
   func streamUpdates(
     completion: @escaping ((Self) -> Void)
+  ) -> AutoCloseable
+
+  /// Emits the updated message entity whenever this message's content or reactions are modified.
+  ///
+  /// For a ``ThreadMessage``, this returns the updated ``ThreadMessage`` (not the base ``Message``).
+  ///
+  /// - Parameter callback: A closure invoked with the updated message
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onUpdated(
+    callback: @escaping (Self) -> Void
   ) -> AutoCloseable
 
   /// If you delete a message, you can restore its content together with the attached files using the ``restore(completion:)`` method.

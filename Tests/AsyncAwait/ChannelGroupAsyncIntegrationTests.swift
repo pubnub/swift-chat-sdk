@@ -69,23 +69,18 @@ class ChannelGroupAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
   func testChannelGroup_WhoIsPresent() async throws {
     try await channelGroup.add(channels: [channel, secondChannel])
 
-    let connectStream = channelGroup.connect()
-    let connectTask = Task {
-      for await message in connectStream {
-        debugPrint("Did receive message: \(message)")
-      }
-    }
+    channelGroup.chat.pubNub.subscribe(
+      to: [randomString()],
+      and: [channelGroup.id]
+    )
 
-    try await Task.sleep(nanoseconds: 3_000_000_000)
+    // Allow time for the subscription to register, ensuring the user appears as present on the channel group
+    try await Task.sleep(nanoseconds: 4_000_000_000)
+
     let whoIsPresentValue = try await channelGroup.whoIsPresent()
-
     XCTAssertEqual(whoIsPresentValue.count, 2)
     XCTAssertEqual(whoIsPresentValue[channel.id], [chat.currentUser.id])
     XCTAssertEqual(whoIsPresentValue[secondChannel.id], [chat.currentUser.id])
-
-    addTeardownBlock {
-      connectTask.cancel()
-    }
   }
 
   func testChannelGroup_StreamPresence() async throws {
@@ -139,6 +134,63 @@ class ChannelGroupAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
     addTeardownBlock {
       connectTask.cancel()
+    }
+
+    try await Task.sleep(nanoseconds: 4_000_000_000)
+    try await channel.sendText(text: "This is a text")
+
+    await fulfillment(of: [expectation], timeout: 6)
+  }
+
+  func testChannelGroup_Stream_PresenceChanges() async throws {
+    let expectation = expectation(description: "Stream_PresenceChanges")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    try await channelGroup.add(channels: [channel, secondChannel])
+
+    channelGroup.chat.pubNub.subscribe(
+      to: [randomString()],
+      and: [channelGroup.id]
+    )
+
+    // Allow time for the subscription to register, ensuring the user appears as present on the channel group
+    try await Task.sleep(nanoseconds: 4_000_000_000)
+
+    let presenceTask = Task { [unowned self] in
+      for await presenceData in channelGroup.stream.presenceChanges() where presenceData.count == 2 {
+        XCTAssertEqual(presenceData[channel.id], [chat.currentUser.id])
+        XCTAssertEqual(presenceData[secondChannel.id], [chat.currentUser.id])
+        expectation.fulfill()
+        break
+      }
+    }
+
+    addTeardownBlock {
+      presenceTask.cancel()
+    }
+
+    await fulfillment(of: [expectation], timeout: 7)
+  }
+
+  func testChannelGroup_Stream_Messages() async throws {
+    let expectation = XCTestExpectation(description: "Stream_Messages")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    try await channelGroup.add(channels: [channel, secondChannel])
+
+    let task = Task { [unowned self] in
+      for await message in channelGroup.stream.messages() {
+        XCTAssertEqual(message.text, "This is a text")
+        XCTAssertEqual(message.channelId, channel.id)
+        expectation.fulfill()
+        break
+      }
+    }
+
+    addTeardownBlock {
+      task.cancel()
     }
 
     try await Task.sleep(nanoseconds: 4_000_000_000)

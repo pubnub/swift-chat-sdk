@@ -13,7 +13,7 @@ import PubNubSDK
 
 /// A protocol that defines the basic structure and behavior for a chat.
 ///
-/// For example, you can use ``deleteChannel(id:soft:completion:)``
+/// For example, you can use ``deleteChannel(id:completion:)``
 /// to remove a given channel or ``wherePresent(userId:completion:)`` to check which channels a given user is subscribed to.
 ///
 /// By calling methods on the ``Chat`` entity, you create chat objects like ``Channel``, ``User``, ``Message``, ``Membership``,  ``ThreadChannel``,
@@ -146,18 +146,16 @@ public protocol Chat: AnyObject {
     completion: ((Swift.Result<ChatUserType, Error>) -> Void)?
   )
 
-  /// Deletes a user with or without deleting its historical data from the App Context storage.
+  /// Deletes a user and its historical data from the App Context storage.
   ///
   /// - Parameters:
   ///   - id: Unique user identifier
-  ///   - soft: Decide if you want to permanently remove user metadata
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: For hard delete, the method returns `nil`. Otherwise, an updated ``User`` instance with the status field set to `"deleted"`
+  ///     - **Success**: A `Void` indicating a success
   ///     - **Failure**: An `Error` describing the failure
   func deleteUser(
     id: String,
-    soft: Bool,
-    completion: ((Swift.Result<ChatUserType?, Error>) -> Void)?
+    completion: ((Swift.Result<Void, Error>) -> Void)?
   )
 
   /// Retrieves list of channel identifiers where a given user is present.
@@ -238,18 +236,16 @@ public protocol Chat: AnyObject {
     completion: ((Swift.Result<ChatChannelType, Error>) -> Void)?
   )
 
-  /// Allows to delete ``Channel`` with or without deleting its historical data from the App Context storage.
+  /// Deletes a ``Channel`` and its historical data from the App Context storage.
   ///
   /// - Parameters:
   ///   - id: Unique channel identifier (up to 92 UTF-8 byte sequences)
-  ///   - soft: Decide if you want to permanently remove channel metadata. If you set this parameter to true, the ``Channel`` object gets the deleted status, and you can still restore/get its data
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: For hard delete, the method returns `nil`. Otherwise, an updated ``Channel`` instance with the status field set to `"deleted"`
+  ///     - **Success**: A `Void` indicating a success
   ///     - **Failure**: An `Error` describing the failure
   func deleteChannel(
     id: String,
-    soft: Bool,
-    completion: ((Swift.Result<ChatChannelType?, Error>) -> Void)?
+    completion: ((Swift.Result<Void, Error>) -> Void)?
   )
 
   /// Returns a list of ``User`` identifiers present on the given ``Channel``.
@@ -277,6 +273,7 @@ public protocol Chat: AnyObject {
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: A `Timetoken` value that holds the timestamp of the emitted event
   ///     - **Failure**: An `Error` describing the failure
+  @available(*, deprecated, message: "Use `Channel.emitCustomEvent(payload:messageType:storeInHistory:completion:)` for custom events")
   func emitEvent<T: EventContent>(
     channelId: String,
     payload: T,
@@ -323,7 +320,7 @@ public protocol Chat: AnyObject {
   ///     - **Success**: A ``CreateDirectConversationResult`` value representing the result of creating a direct conversation (private channel) between two users.
   ///     - **Failure**: An `Error` describing the failure
   func createDirectConversation(
-    invitedUser: UserImpl,
+    invitedUser: ChatUserType,
     channelId: String?,
     channelName: String?,
     channelDescription: String?,
@@ -347,7 +344,7 @@ public protocol Chat: AnyObject {
   ///     - **Success**: A  ``CreateGroupConversationResult`` value representing the result of creating a group conversation (group channel) for collaborative communication
   ///     - **Failure**: An `Error` describing the failure
   func createGroupConversation(
-    invitedUsers: [UserImpl],
+    invitedUsers: [ChatUserType],
     channelId: String?,
     channelName: String?,
     channelDescription: String?,
@@ -368,6 +365,7 @@ public protocol Chat: AnyObject {
   ///   - customMethod: An optional custom method for emitting events
   ///   - callback: A function that is called with an ``EventWrapper`` as its parameter. It defines the custom behavior to be executed whenever an event is detected on the specified channel
   /// - Returns: ``AutoCloseable`` interface you can call to stop listening for new events and clean up resources when they re no longer needed by invoking the ``AutoCloseable/close()`` method
+  @available(*, deprecated, message: "Use entity-specific methods instead")
   func listenForEvents<T: EventContent>(
     type: T.Type,
     channelId: String,
@@ -425,7 +423,7 @@ public protocol Chat: AnyObject {
     page: PubNubHashedPage?,
     filter: String?,
     sort: [PubNub.MembershipSortField],
-    completion: ((Swift.Result<[GetUnreadMessagesCount<ChannelImpl, MembershipImpl>], Error>) -> Void)?
+    completion: ((Swift.Result<[GetUnreadMessagesCount<ChatChannelType, ChatMembershipType>], Error>) -> Void)?
   )
 
   /// Returns info on all messages you didn't read on all joined channels. You can display this number on UI in the channel list of your chat app.
@@ -443,10 +441,15 @@ public protocol Chat: AnyObject {
     page: PubNubHashedPage?,
     filter: String?,
     sort: [PubNub.MembershipSortField],
-    completion: ((Swift.Result<(countsByChannel: [GetUnreadMessagesCount<ChannelImpl, MembershipImpl>], page: PubNubHashedPage?), Error>) -> Void)?
+    completion: ((Swift.Result<(
+      countsByChannel: [GetUnreadMessagesCount<ChatChannelType, ChatMembershipType>],
+      page: PubNubHashedPage?), Error>) -> Void
+    )?
   )
 
   /// Allows you to mark as read all messages you didn't read on all joined channels.
+  ///
+  /// This method emits a read receipt event on each affected channel, unless ``ChatConfiguration/emitReadReceiptEvents`` is set to `false` for the channel's type.
   ///
   /// - Parameters:
   ///   - limit: Number of objects to return in response. The maximum value is 100
@@ -514,10 +517,10 @@ public protocol Chat: AnyObject {
   /// Returns a reference to a ``ChannelGroup`` with the specified id.
   ///
   /// This does **not** create a group on the server. If the group exists, the reference points to it. If the group does not exist, it serves as a handle to create
-  /// and modify it via channel changes. For example, ``ChannelGroup/add(channels:completion:)``, ``ChannelGroup/addChannelIdentifiers(ids:completion:)``
+  /// and modify it via channel changes. For example, ``ChannelGroup/add(channels:completion:)``, ``ChannelGroup/addChannelIdentifiers(_:completion:)``
   ///
   /// - Parameter id: The ID of the ``ChannelGroup`` to get
-  /// - Returns: A ``ChatChannelGroupType`` instance
+  /// - Returns: A ``ChannelGroup`` instance
   func getChannelGroup(id: String) -> ChatChannelGroupType
 
   /// Removes a channel group with the specified id.
@@ -536,17 +539,9 @@ public protocol Chat: AnyObject {
   func addConnectionStatusListener(_ listener: @escaping (ConnectionStatus) -> Void) -> AutoCloseable
 
   /// Reconnects the client to the PubNub system.
-  ///
-  /// - Parameter completion: The async `Result` of the method call
-  ///     - **Success**: A `Void` indicating a success
-  ///     - **Failure**: An `Error` describing the failure
   func reconnectSubscriptions()
 
   /// Disconnects the client from the PubNub system.
-  ///
-  /// - Parameter completion: The async `Result` of the method call
-  ///     - **Success**: A `Void` indicating a success
-  ///     - **Failure**: An `Error` describing the failure
   func disconnectSubscriptions()
 
   // swiftlint:disable:next file_length

@@ -66,7 +66,6 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
     }
     try awaitResult {
       someChannel.delete(
-        soft: false,
         completion: $0
       )
     }
@@ -78,40 +77,6 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
         )
       }
     )
-
-    addTeardownBlock { [unowned self] in
-      try awaitResult {
-        chat.deleteChannel(
-          id: someChannel.id,
-          completion: $0
-        )
-      }
-    }
-  }
-
-  func testChannel_SoftDelete() throws {
-    let someChannel = try awaitResultValue {
-      chat.createChannel(
-        id: randomString(),
-        completion: $0
-      )
-    }
-
-    try awaitResult {
-      someChannel.delete(
-        soft: true,
-        completion: $0
-      )
-    }
-    let retrievedChannel = try awaitResultValue {
-      chat.getChannel(
-        channelId: someChannel.id,
-        completion: $0
-      )
-    }
-
-    XCTAssertFalse(retrievedChannel?.active ?? true)
-    XCTAssertEqual(retrievedChannel?.id, someChannel.id)
 
     addTeardownBlock { [unowned self] in
       try awaitResult {
@@ -202,11 +167,7 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
   }
 
   func testChannel_WhoIsPresent() throws {
-    let joinValue = try awaitResultValue {
-      channel.join(
-        completion: $0
-      )
-    }
+    channel.chat.pubNub.subscribe(to: [channel.id])
 
     let whoIsPresentValue = try awaitResultValue(delay: 4) {
       channel.whoIsPresent(
@@ -216,18 +177,10 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
 
     XCTAssertEqual(whoIsPresentValue.count, 1)
     XCTAssertEqual(whoIsPresentValue.first, chat.currentUser.id)
-
-    addTeardownBlock {
-      joinValue.disconnect?.close()
-    }
   }
 
   func testChannel_IsPresent() throws {
-    let joinValue = try awaitResultValue {
-      channel.join(
-        completion: $0
-      )
-    }
+    channel.chat.pubNub.subscribe(to: [channel.id])
 
     XCTAssertTrue(try awaitResultValue(delay: 3) {
       channel.isPresent(
@@ -235,10 +188,6 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
         completion: $0
       )
     })
-
-    addTeardownBlock {
-      joinValue.disconnect?.close()
-    }
   }
 
   func testChannel_GetHistory() throws {
@@ -560,42 +509,19 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
   }
 
   func testChannel_Join() throws {
-    let expectation = XCTestExpectation(description: "Connect")
-    expectation.assertForOverFulfill = true
-    expectation.expectedFulfillmentCount = 1
-
-    let joinValue = try awaitResultValue { [unowned self] in
+    let membership = try awaitResultValue {
       channel.join(
-        callback: {
-          XCTAssertEqual($0.text, "This is a text")
-          XCTAssertEqual($0.channelId, self.channel.id)
-          expectation.fulfill()
-        },
         completion: $0
       )
     }
 
-    XCTAssertEqual(joinValue.membership.channel.id, channel.id)
-    XCTAssertEqual(joinValue.membership.user.id, chat.currentUser.id)
-
-    try awaitResultValue(delay: 3) {
-      channel.sendText(
-        text: "This is a text",
-        completion: $0
-      )
-    }
-
-    wait(
-      for: [expectation],
-      timeout: 7
-    )
-    addTeardownBlock {
-      joinValue.disconnect?.close()
-    }
+    XCTAssertEqual(membership.channel.id, channel.id)
+    XCTAssertEqual(membership.user.id, chat.currentUser.id)
+    XCTAssertEqual(membership.status, "")
   }
 
   func testChannel_Leave() throws {
-    let joinValue = try awaitResultValue {
+    try awaitResultValue {
       channel.join(
         completion: $0
       )
@@ -612,10 +538,6 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
         )
       }.memberships.isEmpty
     )
-
-    addTeardownBlock {
-      joinValue.disconnect?.close()
-    }
   }
 
   func testChannel_PinMessageGetPinnedMessage() throws {
@@ -924,10 +846,6 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
 
-    let connectCloseable = channel.connect(callback: {
-      debugPrint("Did receive message: \($0)")
-    })
-
     let presenceCloseable = channel.streamPresence { [unowned self] in
       if !$0.isEmpty {
         XCTAssertEqual($0.count, 1)
@@ -936,13 +854,17 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
       }
     }
 
+    // Allow time for the subscription to register, ensuring the user appears as present on the channel
+    DispatchQueue.global().asyncAfter(deadline: .now() + 2) { [weak self] in
+      self?.channel.chat.pubNub.subscribe(to: [self?.channel.id ?? ""])
+    }
+
     wait(
       for: [expectation],
-      timeout: 5
+      timeout: 6
     )
     addTeardownBlock {
       presenceCloseable.close()
-      connectCloseable.close()
     }
   }
 
@@ -1033,6 +955,327 @@ class ChannelIntegrationTests: BaseClosureIntegrationTestCase {
       closeable.close()
       try awaitResult { message?.delete(completion: $0) }
     }
+  }
+
+  func testChannel_OnUpdated() throws {
+    let expectation = expectation(description: "OnUpdated")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let closeable = channel.onUpdated { updatedChannel in
+      XCTAssertEqual(updatedChannel.name, "NewName")
+      XCTAssertEqual(updatedChannel.status, "NewStatus")
+      expectation.fulfill()
+    }
+
+    try awaitResultValue(delay: 3) {
+      channel.update(
+        name: "NewName",
+        status: "NewStatus",
+        completion: $0
+      )
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 6
+    )
+    addTeardownBlock {
+      closeable.close()
+    }
+  }
+
+  func testChannel_OnDeleted() throws {
+    let expectation = expectation(description: "OnDeleted")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let channelToDelete = try awaitResultValue {
+      chat.createChannel(
+        id: randomString(),
+        completion: $0
+      )
+    }
+
+    let closeable = channelToDelete.onDeleted {
+      expectation.fulfill()
+    }
+
+    try awaitResult(delay: 3) {
+      channelToDelete.delete(
+        completion: $0
+      )
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 6
+    )
+    addTeardownBlock {
+      closeable.close()
+    }
+  }
+
+  func testChannel_OnMessageReceived() throws {
+    let expectation = XCTestExpectation(description: "OnMessageReceived")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let closeable = channel.onMessageReceived { [unowned self] in
+      XCTAssertEqual($0.text, "This is a text")
+      XCTAssertEqual($0.channelId, channel.id)
+      expectation.fulfill()
+    }
+
+    try awaitResultValue(delay: 3) {
+      channel.sendText(
+        text: "This is a text",
+        completion: $0
+      )
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 6
+    )
+    addTeardownBlock {
+      closeable.close()
+    }
+  }
+
+  func testChannel_OnTypingChanged() throws {
+    let expectation = expectation(description: "OnTypingChanged")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let closeable = channel.onTypingChanged { [unowned self] typingUsers in
+      if !typingUsers.isEmpty {
+        XCTAssertTrue(typingUsers.contains(chat.currentUser.id))
+        expectation.fulfill()
+      }
+    }
+
+    try awaitResultValue(delay: 3) {
+      channel.startTyping(
+        completion: $0
+      )
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 6
+    )
+    addTeardownBlock {
+      closeable.close()
+    }
+  }
+
+  func testChannel_OnPresenceChanged() throws {
+    let expectation = expectation(description: "OnPresenceChanged")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let presenceCloseable = channel.onPresenceChanged { [unowned self] userIds in
+      if !userIds.isEmpty {
+        XCTAssertEqual(userIds.count, 1)
+        XCTAssertEqual(userIds.first, chat.currentUser.id)
+        expectation.fulfill()
+      }
+    }
+
+    // Allow time for the subscription to register, ensuring the user appears as present on the channel
+    DispatchQueue.global().asyncAfter(deadline: .now() + 2) { [weak self] in
+      self?.channel.chat.pubNub.subscribe(to: [self?.channel.id ?? ""])
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 5
+    )
+    addTeardownBlock {
+      presenceCloseable.close()
+    }
+  }
+
+  func testChannel_OnCustomEvent() throws {
+    let expectation = expectation(description: "OnCustomEvent")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let closeable = channel.onCustomEvent { [unowned self] event in
+      XCTAssertEqual(event.userId, chat.currentUser.id)
+      XCTAssertEqual(event.payload["key"]?.stringOptional, "value")
+      expectation.fulfill()
+    }
+
+    try awaitResultValue(delay: 2) {
+      channel.emitCustomEvent(
+        payload: ["key": "value"],
+        completion: $0
+      )
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 10
+    )
+    addTeardownBlock {
+      closeable.close()
+    }
+  }
+
+  func testChannel_OnCustomEvent_WithMessageTypeFilter() throws {
+    let expectation = expectation(description: "OnCustomEvent_Filtered")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let closeable = channel.onCustomEvent(messageType: "myType") { [unowned self] event in
+      XCTAssertEqual(event.payload["key"]?.stringOptional, "value")
+      XCTAssertEqual(event.userId, chat.currentUser.id)
+      expectation.fulfill()
+    }
+
+    // Emit with a different type first - should not trigger
+    try awaitResultValue(delay: 2) {
+      channel.emitCustomEvent(
+        payload: ["key": "other"],
+        messageType: "otherType",
+        completion: $0
+      )
+    }
+
+    // Emit with the matching type - should trigger
+    try awaitResultValue(delay: 1) {
+      channel.emitCustomEvent(
+        payload: ["key": "value"],
+        messageType: "myType",
+        completion: $0
+      )
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 10
+    )
+    addTeardownBlock {
+      closeable.close()
+    }
+  }
+
+  func testChannel_OnReadReceiptReceived() throws {
+    let expectation = expectation(description: "OnReadReceiptReceived")
+    expectation.assertForOverFulfill = true
+    expectation.expectedFulfillmentCount = 1
+
+    let membership = try awaitResultValue(delay: 3) {
+      channel.invite(
+        user: chat.currentUser,
+        completion: $0
+      )
+    }
+
+    let closeable = channel.onReadReceiptReceived { receipt in
+      XCTAssertEqual(receipt.userId, membership.user.id)
+      expectation.fulfill()
+    }
+
+    let timetoken = try awaitResultValue(delay: 3) {
+      channel.sendText(
+        text: "Test message",
+        completion: $0
+      )
+    }
+
+    try awaitResultValue(delay: 1) {
+      membership.setLastReadMessageTimetoken(
+        timetoken,
+        completion: $0
+      )
+    }
+
+    wait(
+      for: [expectation],
+      timeout: 10
+    )
+    addTeardownBlock {
+      closeable.close()
+    }
+  }
+
+  func testChannel_GetInvitees() throws {
+    let someUser = UserImpl(
+      chat: chat,
+      id: randomString()
+    )
+
+    try awaitResultValue {
+      chat.createUser(
+        user: someUser,
+        completion: $0
+      )
+    }
+
+    try awaitResultValue {
+      channel.inviteMultiple(
+        users: [chat.currentUser, someUser],
+        completion: $0
+      )
+    }
+
+    let invitees = try XCTUnwrap(
+      awaitResultValue {
+        channel.getInvitees(
+          completion: $0
+        )
+      }.memberships
+    )
+
+    let firstMatch = try XCTUnwrap(
+      invitees.first {
+        $0.user.id == chat.currentUser.id && $0.channel.id == channel.id
+      }
+    )
+    let secondMatch = try XCTUnwrap(
+      invitees.first {
+        $0.user.id == someUser.id && $0.channel.id == channel.id
+      }
+    )
+
+    XCTAssertEqual(invitees.count, 2)
+    XCTAssertNotNil(firstMatch)
+    XCTAssertNotNil(secondMatch)
+
+    addTeardownBlock { [unowned self] in
+      try awaitResult {
+        chat.deleteUser(id: someUser.id, completion: $0)
+      }
+    }
+  }
+
+  func testChannel_SendTextWithParams() throws {
+    let params = SendTextParams(
+      meta: ["x": 42, "y": "hello"],
+      shouldStore: true
+    )
+
+    let tt = try awaitResultValue {
+      channel.sendText(
+        text: "Params text",
+        params: params,
+        completion: $0
+      )
+    }
+
+    let retrievedMessage = try awaitResultValue(delay: 2) {
+      channel.getMessage(
+        timetoken: tt,
+        completion: $0
+      )
+    }
+
+    XCTAssertEqual(retrievedMessage?.text, "Params text")
+    XCTAssertEqual(retrievedMessage?.meta?["x"]?.codableValue.rawValue as? Int, 42)
+    XCTAssertEqual(retrievedMessage?.meta?["y"]?.codableValue.rawValue as? String, "hello")
   }
 
   // swiftlint:disable:next file_length

@@ -67,19 +67,17 @@ public protocol Channel: CustomStringConvertible {
     description: String?,
     status: String?,
     type: ChannelType?,
-    completion: ((Swift.Result<ChatType.ChatChannelType, Error>) -> Void)?
+    completion: ((Swift.Result<Self, Error>) -> Void)?
   )
 
-  /// Allows to delete  an existing ``Channel`` with or without deleting its historical data from the App Context storage.
+  /// Deletes an existing ``Channel`` and its historical data from the App Context storage.
   ///
   /// - Parameters:
-  ///   - soft: Decide if you want to permanently remove channel metadata
   ///   - completion: The async `Result` of the method call
-  ///     - **Success**: For hard delete, the method returns `nil`. Otherwise, an updated ``Channel`` instance with the status field set to `"deleted"`
+  ///     - **Success**: A `Void` indicating a success
   ///     - **Failure**: An `Error` describing the failure
   func delete(
-    soft: Bool,
-    completion: ((Swift.Result<ChatType.ChatChannelType?, Error>) -> Void)?
+    completion: ((Swift.Result<Void, Error>) -> Void)?
   )
 
   /// Forwards a message to existing channel.
@@ -125,7 +123,16 @@ public protocol Channel: CustomStringConvertible {
   ///
   /// - Parameter callback: Callback function passed as a parameter. It defines the custom behavior to be executed whenever a user starts/stops typing
   /// - Returns: ``AutoCloseable`` you can call to disconnect (unsubscribe) from the channel and stop receiving signal events for someone typing by invoking the `close()` method
+  @available(*, deprecated, message: "Use `onTypingChanged(callback:)` instead")
   func getTyping(
+    callback: @escaping (([String]) -> Void)
+  ) -> AutoCloseable
+
+  /// Emits a list of user IDs whenever the typing status changes on this channel.
+  ///
+  /// - Parameter callback: A closure invoked with the list of user IDs currently typing
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onTypingChanged(
     callback: @escaping (([String]) -> Void)
   ) -> AutoCloseable
 
@@ -193,8 +200,7 @@ public protocol Channel: CustomStringConvertible {
   ///   - completion: The async `Result` of the method callnel
   ///     - **Success**: The timetoken of the sent message
   ///     - **Failure**: An `Error` describing the failure
-  @available(*, deprecated, message: "Use `sendText(text:meta:shouldStore:usePost:ttl:quotedMessage:files:usersToMention:customPushData:completion:)` instead")
-  // swiftlint:disable:previous line_length
+  @available(*, deprecated, message: "Use `sendText(text:params:completion:)` instead")
   func sendText(
     text: String,
     meta: [String: JSONCodable]?,
@@ -212,11 +218,6 @@ public protocol Channel: CustomStringConvertible {
 
   /// Sends text to the ``Channel``.
   ///
-  /// The following example describes how `mentionedUsers` and `referencedChannels` work.
-  /// For example, `{ 0: { id: 123, name: "Mark" }, 2: { id: 345, name: "Rob" } }` means that Mark will be shown on the first mention (@) in the message
-  /// and Rob on the third. The same rule applies for referenced channels. For example, `{ 0: { id: 123, name: "Support" }, 2: { id: 345, name: "Off-topic" } }`
-  /// means that Support will be shown on the first reference in the message and Off-topic on the third.
-  ///
   /// - Parameters:
   ///   - text: Text that you want to send to the selected channel
   ///   - meta: Publish additional details with the request
@@ -230,6 +231,7 @@ public protocol Channel: CustomStringConvertible {
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: The timetoken of the sent message
   ///     - **Failure**: An `Error` describing the failure
+  @available(*, deprecated, message: "Use `sendText(text:params:completion:)` instead")
   func sendText(
     text: String,
     meta: [String: JSONCodable]?,
@@ -240,6 +242,20 @@ public protocol Channel: CustomStringConvertible {
     files: [InputFile]?,
     usersToMention: [String]?,
     customPushData: [String: String]?,
+    completion: ((Swift.Result<Timetoken, Error>) -> Void)?
+  )
+
+  /// Sends text to the ``Channel``.
+  ///
+  /// - Parameters:
+  ///   - text: Text that you want to send to the selected channel
+  ///   - params: Additional parameters for sending text, encapsulated in a ``SendTextParams`` object
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: The timetoken of the sent message
+  ///     - **Failure**: An `Error` describing the failure
+  func sendText(
+    text: String,
+    params: SendTextParams,
     completion: ((Swift.Result<Timetoken, Error>) -> Void)?
   )
 
@@ -273,7 +289,7 @@ public protocol Channel: CustomStringConvertible {
   ///   - limit: Number of objects to return in response
   ///   - page: Object used for pagination to define which previous or next result page you want to fetch
   ///   - filter: Expression used to filter the results. Returns only these members whose properties satisfy the given expression
-  ///   - sort: A collection to specify the sort order. Available options are id, name, and updated
+  ///   - sort: A collection to specify the sort order
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: A `Tuple` containing an array of the members of the channel, and the next pagination `PubNubHashedPage` (if one exists)
   ///     - **Failure**: An `Error` describing the failure
@@ -285,6 +301,30 @@ public protocol Channel: CustomStringConvertible {
     completion: ((Swift.Result<(memberships: [ChatType.ChatMembershipType], page: PubNubHashedPage?), Error>) -> Void)?
   )
 
+  /// Checks if a specific user is a member of this channel.
+  ///
+  /// - Parameters:
+  ///   - userId: Unique identifier of the user to check
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: A `Bool` value indicating whether the user is a member of this channel
+  ///     - **Failure**: An `Error` describing the failure
+  func hasMember(
+    userId: String,
+    completion: ((Swift.Result<Bool, Error>) -> Void)?
+  )
+
+  /// Retrieves the membership of a specific user in this channel.
+  ///
+  /// - Parameters:
+  ///   - userId: Unique identifier of the user whose membership to retrieve
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: The user's ``Membership`` in this channel, or `nil` if not a member
+  ///     - **Failure**: An `Error` describing the failure
+  func getMember(
+    userId: String,
+    completion: ((Swift.Result<ChatType.ChatMembershipType?, Error>) -> Void)?
+  )
+
   /// Watch the ``Channel`` content without a need to join the ``Channel``.
   ///
   /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
@@ -292,22 +332,65 @@ public protocol Channel: CustomStringConvertible {
   ///
   /// - Parameter callback: Defines the custom behavior to be executed whenever a message is received on the ``Channel``
   /// - Returns: ``AutoCloseable`` interface you can call to stop listening for new messages and clean up resources when they are no longer needed by invoking the `close()` method
+  @available(*, deprecated, message: "Use `onMessageReceived(callback:)` instead")
   func connect(
     callback: @escaping (ChatType.ChatMessageType) -> Void
   ) -> AutoCloseable
 
-  /// Connects a user to the ``Channel`` and sets membership - this way, the chat user can both watch the channel's ontent and be its full-fledged member.
+  /// Emits the received message whenever a new message is published on this channel.
+  ///
+  /// For a ``ThreadChannel``, this returns thread messages (``ThreadMessage``).
+  ///
+  /// - Parameter callback: A closure invoked with the received message
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onMessageReceived(
+    callback: @escaping (MessageType) -> Void
+  ) -> AutoCloseable
+
+  /// Emits a custom event on this channel.
+  ///
+  /// - Parameters:
+  ///   - payload: Arbitrary key-value payload to publish
+  ///   - messageType: Optional custom message type used for filtering
+  ///   - storeInHistory: If true, event is stored in Message Persistence (if enabled)
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: The timetoken of the emitted event
+  ///     - **Failure**: An `Error` describing the failure
+  func emitCustomEvent(
+    payload: [String: JSONCodable],
+    messageType: String?,
+    storeInHistory: Bool,
+    completion: ((Swift.Result<Timetoken, Error>) -> Void)?
+  )
+
+  /// Listens for custom events on this channel.
+  ///
+  /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
+  /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
+  ///
+  /// - Parameters:
+  ///   - messageType: Optional custom message type filter. If nil, all custom message types are accepted
+  ///   - callback: A closure invoked for each matching custom event
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onCustomEvent(
+    messageType: String?,
+    callback: @escaping (CustomEvent) -> Void
+  ) -> AutoCloseable
+
+  /// Sets the caller's membership on this channel.
   ///
   /// - Parameters:
   ///   - custom: Any custom properties or metadata associated with the channel-user membership in the form of key-value pairs
-  ///   - callback: Defines the custom behavior to be executed whenever a message is received on the [Channel]
+  ///   - status: Optional membership status value
+  ///   - type: Optional membership type value
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: A `Tuple` containing the user's ``Membership`` in the channel, and ``AutoCloseable`` that  lets you stop listening to new channel messages while remaining a channel membership
   ///     - **Failure**: An `Error` describing the failure
   func join(
     custom: [String: JSONCodableScalar]?,
-    callback: ((ChatType.ChatMessageType) -> Void)?,
-    completion: ((Swift.Result<(membership: ChatType.ChatMembershipType, disconnect: AutoCloseable?), Error>) -> Void)?
+    status: String?,
+    type: String?,
+    completion: ((Swift.Result<ChatType.ChatMembershipType, Error>) -> Void)?
   )
 
   /// Remove user's channel membership.
@@ -329,7 +412,7 @@ public protocol Channel: CustomStringConvertible {
   ///     - **Success**: A pinned ``Message``
   ///     - **Failure**: An `Error` describing the failure
   func getPinnedMessage(
-    completion: ((Swift.Result<(ChatType.ChatMessageType)?, Error>) -> Void)?
+    completion: ((Swift.Result<MessageType?, Error>) -> Void)?
   )
 
   /// Fetches the message from Message Persistence based on the message `timetoken`.
@@ -341,7 +424,7 @@ public protocol Channel: CustomStringConvertible {
   ///     - **Failure**: An `Error` describing the failure
   func getMessage(
     timetoken: Timetoken,
-    completion: ((Swift.Result<(ChatType.ChatMessageType)?, Error>) -> Void)?
+    completion: ((Swift.Result<MessageType?, Error>) -> Void)?
   )
 
   /// Register a device on the ``Channel`` to receive push notifications. Push options can be configured in ``ChatConfiguration``.
@@ -395,8 +478,27 @@ public protocol Channel: CustomStringConvertible {
   ///
   /// - Parameter callback: A closure to be executed when detecting channel changes. Takes a single Channel object or `nil` if the channel was removed
   /// - Returns: ``AutoCloseable`` interface that lets you stop receiving channel-related updates (objects events) and clean up resources by invoking the `close()` method
+  @available(*, deprecated, message: "Use `onUpdated(callback:)` and `onDeleted(callback:)` instead")
   func streamUpdates(
     callback: @escaping ((ChatType.ChatChannelType)?) -> Void
+  ) -> AutoCloseable
+
+  /// Emits the updated channel entity whenever this channel's metadata is modified.
+  ///
+  /// For a ``ThreadChannel``, this returns the updated ``ThreadChannel`` (not the base ``Channel``).
+  ///
+  /// - Parameter callback: A closure invoked with the updated channel
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onUpdated(
+    callback: @escaping (Self) -> Void
+  ) -> AutoCloseable
+
+  /// Emits an event whenever this channel is permanently deleted.
+  ///
+  /// - Parameter callback: A closure invoked when the channel is deleted
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onDeleted(
+    callback: @escaping () -> Void
   ) -> AutoCloseable
 
   /// Lets you get a read confirmation status for messages you published on a channel.
@@ -404,11 +506,34 @@ public protocol Channel: CustomStringConvertible {
   /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
   /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
   ///
-  /// - Parameter callback: Defines the custom behavior to be executed when receiving a read confirmation status on the joined channel.
+  /// - Parameter callback: Defines the custom behavior to be executed when receiving read receipts on the joined channel
   /// - Returns: AutoCloseable Interface you can call to stop listening for message read receipts and clean up resources by invoking the close() method
-  func streamReadReceipts(
-    callback: @escaping (([Timetoken: [String]]) -> Void)
-  ) -> AutoCloseable
+  @available(*, deprecated, message: "Use `onReadReceiptReceived(callback:)` instead")
+  func streamReadReceipts(callback: @escaping (([Timetoken: [String]]) -> Void)) -> AutoCloseable
+
+  /// Emits a read receipt whenever a member reads a message on this channel.
+  ///
+  /// - Parameter callback: A closure invoked with the ``ReadReceipt`` containing the user ID and last read timetoken
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onReadReceiptReceived(callback: @escaping (ReadReceipt) -> Void) -> AutoCloseable
+
+  /// Fetches the read receipts for members of this channel.
+  ///
+  /// - Parameters:
+  ///   - limit: Number of objects to return in response
+  ///   - page: Object used for pagination to define which previous or next result page you want to fetch
+  ///   - filter: Expression used to filter the results. Returns only these members whose properties satisfy the given expression
+  ///   - sort: A collection to specify the sort order
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: A `Tuple` containing an array of ``ReadReceipt``, and the next pagination `PubNubHashedPage` (if one exists)
+  ///     - **Failure**: An `Error` describing the failure
+  func fetchReadReceipts(
+    limit: Int?,
+    page: PubNubHashedPage?,
+    filter: String?,
+    sort: [PubNub.MembershipSortField],
+    completion: ((Swift.Result<(receipts: [ReadReceipt], page: PubNubHashedPage?), Error>) -> Void)?
+  )
 
   /// Returns all files attached to messages on a given channel.
   ///
@@ -445,9 +570,36 @@ public protocol Channel: CustomStringConvertible {
   ///
   /// - Parameter callback: Defines the custom behavior to be executed when detecting user presence event
   /// - Returns: ``AutoCloseable`` interface that lets you stop receiving presence-related updates (presence events) by invoking the `close()` method
+  @available(*, deprecated, message: "Use `onPresenceChanged(callback:)` instead")
   func streamPresence(
     callback: @escaping (Set<String>) -> Void
   ) -> AutoCloseable
+
+  /// Emits the list of user IDs whenever the presence state changes on this channel.
+  ///
+  /// - Parameter callback: A closure invoked with the list of currently present user IDs
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onPresenceChanged(
+    callback: @escaping (Set<String>) -> Void
+  ) -> AutoCloseable
+
+  /// Returns the list of all invited members of the channel.
+  ///
+  /// - Parameters:
+  ///   - limit: Number of objects to return in response
+  ///   - page: Object used for pagination to define which previous or next result page you want to fetch
+  ///   - filter: Expression used to filter the results. Returns only these members whose properties satisfy the given expression
+  ///   - sort: A collection to specify the sort order
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: A `Tuple` containing an array of the invitees of the channel, and the next pagination `PubNubHashedPage` (if one exists)
+  ///     - **Failure**: An `Error` describing the failure
+  func getInvitees(
+    limit: Int?,
+    page: PubNubHashedPage?,
+    filter: String?,
+    sort: [PubNub.MembershipSortField],
+    completion: ((Swift.Result<(memberships: [ChatType.ChatMembershipType], page: PubNubHashedPage?), Error>) -> Void)?
+  )
 
   /// Fetches all suggested users that match the provided 3-letter string from ``Channel``.
   ///
@@ -486,8 +638,17 @@ public protocol Channel: CustomStringConvertible {
   ///
   /// - Parameter callback: Callback function passed as a parameter. It defines the custom behavior to be executed when detecting new message report events
   /// - Returns: ``AutoCloseable`` interface that lets you stop receiving report-related updates (report events) by invoking the close() method
+  @available(*, deprecated, message: "Use `onMessageReported(callback:)` instead")
   func streamMessageReports(
     callback: @escaping (any Event<EventContent.Report>) -> Void
+  ) -> AutoCloseable
+
+  /// Emits a report whenever a message in this channel is reported by a user.
+  ///
+  /// - Parameter callback: A closure invoked with the ``Report`` containing details about the reported message
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onMessageReported(
+    callback: @escaping (Report) -> Void
   ) -> AutoCloseable
 
   /// Creates a ``MessageDraft`` for composing a message that will be sent to this ``Channel``

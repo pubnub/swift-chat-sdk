@@ -15,6 +15,12 @@ import PubNubSDK
 /// Extension providing `async-await` support for ``Membership``.
 ///
 public extension Membership {
+
+  /// Namespace for `AsyncStream`-based streaming methods
+  var stream: MembershipStream<Self> {
+    MembershipStream(membership: self)
+  }
+
   /// Receive updates when specific memberships are updated or removed.
   ///
   /// Emits the complete list of monitored memberships whenever any one of them changes, excluding any that were removed.
@@ -34,6 +40,8 @@ public extension Membership {
 
   /// Setting the last read message for users lets you implement the Read Receipts feature and monitor which channel member read which message.
   ///
+  /// This method emits a read receipt event on the channel, unless ``ChatConfiguration/emitReadReceiptEvents`` is set to `false` for the channel's type.
+  ///
   /// - Parameter message: Last read message on a given channel with the timestamp that gets added to the user-channel membership as the `lastReadMessageTimetoken` property
   /// - Returns: An updated ``Membership`` object
   func setLastReadMessage(message: ChatType.ChatMessageType) async throws -> ChatType.ChatMembershipType {
@@ -51,11 +59,18 @@ public extension Membership {
 
   /// Updates the channel membership information for a given user.
   ///
-  /// - Parameter custom: Any custom properties or metadata associated with the channel-user membership in a form of key-value pairs
+  /// - Parameters:
+  ///   - custom: Any custom properties or metadata associated with the channel-user membership in a form of key-value pairs
+  ///   - status: Optional membership status value
+  ///   - type: Optional membership type value
   /// - Returns: An updated ``Membership`` object
-  func update(custom: [String: JSONCodableScalar]) async throws -> ChatType.ChatMembershipType {
+  func update(
+    custom: [String: JSONCodableScalar],
+    status: String? = nil,
+    type: String? = nil
+  ) async throws -> ChatType.ChatMembershipType {
     try await withCheckedThrowingContinuation { continuation in
-      update(custom: custom) {
+      update(custom: custom, status: status, type: type) {
         switch $0 {
         case let .success(membership):
           continuation.resume(returning: membership)
@@ -67,6 +82,8 @@ public extension Membership {
   }
 
   /// Setting the last read message timetoken for users lets you implement the Read Receipts feature and monitor which channel member read which message.
+  ///
+  /// This method emits a read receipt event on the channel, unless ``ChatConfiguration/emitReadReceiptEvents`` is set to `false` for the channel's type.
   ///
   /// - Parameter timetoken: Timetoken of the last read message on a given channel that gets added to the user-channel membership as the `lastReadMessageTimetoken` property
   /// - Returns: An updated ``Membership`` object
@@ -99,9 +116,24 @@ public extension Membership {
     }
   }
 
+  /// Deletes the membership.
+  func delete() async throws {
+    try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+      delete {
+        switch $0 {
+        case .success:
+          continuation.resume()
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+
   /// You can receive updates when this user-channel Membership object is updated or removed.
   ///
   /// - Returns: An asynchronous stream that produces updates when the current ``Membership`` is updated or `nil` if the membership was removed.
+  @available(*, deprecated, message: "Use `stream.updates()` and `stream.deletions()` instead")
   func streamUpdates() -> AsyncStream<ChatType.ChatMembershipType?> {
     AsyncStream { continuation in
       let autoCloseable = streamUpdates {

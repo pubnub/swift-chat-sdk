@@ -90,7 +90,7 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
   func testChatAsync_Delete() async throws {
     let user = try await chat.createUser(id: randomString())
-    _ = try await chat.deleteUser(id: user.id)
+    try await chat.deleteUser(id: user.id)
     let retrievedUser = try await chat.getUser(userId: user.id)
 
     XCTAssertNil(
@@ -129,12 +129,11 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     let channelId = randomString()
     let channel = try await chat.createChannel(id: channelId, name: channelId)
 
-    // Keeps a strong reference to the returned AsyncStream to prevent it from being deallocated. If this object is not retained,
-    // the AsyncStream will be deallocated, which would cause the behavior being tested to fail.
-    let connectResult = channel.connect()
-    debugPrint(connectResult)
+    channel.chat.pubNub.subscribe(to: [channelId])
 
+    // Allow time for the subscription to register, ensuring the user appears as present on the channel
     try await Task.sleep(nanoseconds: 5_000_000_000)
+
     let channelIdentifiers = try await chat.wherePresent(userId: chat.currentUser.id)
     let expectedChannelIdentifiers = [channelId]
 
@@ -149,14 +148,9 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
     let channelId = randomString()
     let channel = try await chat.createChannel(id: channelId, name: channelId)
 
-    // Keeps a strong reference to the returned AsyncStream to prevent it from being deallocated. If this object is not retained,
-    // the AsyncStream will be deallocated, which would cause the behavior being tested to fail.
-    let connectResult = channel.connect()
-    let joinResult = try await channel.join()
+    channel.chat.pubNub.subscribe(to: [channelId])
 
-    debugPrint(connectResult)
-    debugPrint(joinResult)
-
+    // Allow time for the subscription to register, ensuring the user appears as present on the channel
     try await Task.sleep(nanoseconds: 3_000_000_000)
 
     let isPresent = try await chat.isPresent(userId: chat.currentUser.id, channelId: channelId)
@@ -249,7 +243,7 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
 
   func testChatAsync_DeleteChannel() async throws {
     let channel = try await chat.createChannel(id: randomString())
-    _ = try await chat.deleteChannel(id: channel.id)
+    try await chat.deleteChannel(id: channel.id)
     let retrievedChannel = try await chat.getChannel(channelId: channel.id)
 
     XCTAssertNil(
@@ -290,11 +284,9 @@ class ChatAsyncIntegrationTests: BaseAsyncIntegrationTestCase {
       name: "ChannelName"
     )
 
-    // Keeps a strong reference to the returned AsyncStream to prevent it from being deallocated. If this object is not retained,
-    // the AsyncStream will be deallocated, which would cause the behavior being tested to fail.
-    let joinValue = try await channel.join()
-    debugPrint(joinValue)
+    channel.chat.pubNub.subscribe(to: [channel.id])
 
+    // Allow time for the subscription to register, ensuring the user appears as present on the channel
     try await Task.sleep(nanoseconds: 4_000_000_000)
 
     let whoIsPresentValue = try await chat.whoIsPresent(channelId: channel.id)

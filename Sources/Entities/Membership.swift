@@ -52,6 +52,8 @@ public protocol Membership: CustomStringConvertible {
 
   /// Setting the last read message for users lets you implement the Read Receipts feature and monitor which channel member read which message.
   ///
+  /// This method emits a read receipt event on the channel, unless ``ChatConfiguration/emitReadReceiptEvents`` is set to `false` for the channel's type.
+  ///
   /// - Parameters:
   ///   - message: Last read message on a given channel with the timestamp that gets added to the user-channel membership as the `lastReadMessageTimetoken` property
   ///   - completion: The async `Result` of the method call
@@ -66,15 +68,21 @@ public protocol Membership: CustomStringConvertible {
   ///
   /// - Parameters:
   ///   - custom: Any custom properties or metadata associated with the channel-user membership in a form of key-value pairs
+  ///   - status: Optional membership status value
+  ///   - type: Optional membership type value
   ///   - completion: The async `Result` of the method call
   ///     - **Success**: An updated ``Membership`` object
   ///     - **Failure**: An `Error` describing the failure
   func update(
     custom: [String: JSONCodableScalar],
+    status: String?,
+    type: String?,
     completion: ((Swift.Result<ChatType.ChatMembershipType, Error>) -> Void)?
   )
 
   /// Setting the last read message timetoken for users lets you implement the Read Receipts feature and monitor which channel member read which message.
+  ///
+  /// This method emits a read receipt event on the channel, unless ``ChatConfiguration/emitReadReceiptEvents`` is set to `false` for the channel's type.
   ///
   /// - Parameters:
   ///   - timetoken: Timetoken of the last read message on a given channel that gets added to the user-channel membership as the `lastReadMessageTimetoken` property
@@ -96,6 +104,16 @@ public protocol Membership: CustomStringConvertible {
     completion: ((Swift.Result<UInt64?, Error>) -> Void)?
   )
 
+  /// Deletes the membership.
+  ///
+  /// - Parameters:
+  ///   - completion: The async `Result` of the method call
+  ///     - **Success**: A `Void` indicating a success
+  ///     - **Failure**: An `Error` describing the failure
+  func delete(
+    completion: ((Swift.Result<Void, Error>) -> Void)?
+  )
+
   /// You can receive updates when this user-channel Membership object is updated or removed.
   ///
   /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
@@ -103,8 +121,25 @@ public protocol Membership: CustomStringConvertible {
   ///
   /// - Parameter callback: A closure to be executed when detecting membership changes. Takes a Membership object or `nil` if the membership was removed
   /// - Returns: An ``AutoCloseable`` that you can use to stop receiving objects events by invoking its ``AutoCloseable/close()`` method
+  @available(*, deprecated, message: "Use `onUpdated(callback:)` and `onDeleted(callback:)` instead")
   func streamUpdates(
     callback: @escaping ((ChatType.ChatMembershipType?) -> Void)
+  ) -> AutoCloseable
+
+  /// Emits the updated membership entity whenever this membership's metadata is modified.
+  ///
+  /// - Parameter callback: A closure invoked with the updated ``Membership`` entity
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onUpdated(
+    callback: @escaping (ChatType.ChatMembershipType) -> Void
+  ) -> AutoCloseable
+
+  /// Emits an event whenever this membership is removed.
+  ///
+  /// - Parameter callback: A closure invoked when the membership is deleted
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onDeleted(
+    callback: @escaping () -> Void
   ) -> AutoCloseable
 }
 

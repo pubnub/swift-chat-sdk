@@ -15,6 +15,12 @@ import PubNubSDK
 /// Extension providing `async-await` support for ``User``.
 ///
 public extension User {
+
+  /// Namespace for `AsyncStream`-based streaming methods
+  var stream: UserStream<Self> {
+    UserStream(user: self)
+  }
+
   /// Receive updates when specific users are updated or removed.
   ///
   /// Emits the complete list of monitored users whenever any one of them changes, excluding any that were removed.
@@ -98,16 +104,13 @@ public extension User {
     }
   }
 
-  /// Deletes the user. If soft deletion is enabled, the user's data is retained but marked as inactive.
-  ///
-  /// - Parameter soft: If true, the user is soft deleted, retaining their data but making them inactive
-  /// - Returns: Returns `nil` if the user was hard-deleted. Otherwise, an updated ``User`` instance with the status field set to `"deleted"`
-  func delete(soft: Bool = false) async throws -> ChatType.ChatUserType? {
-    try await withCheckedThrowingContinuation { continuation in
-      delete(soft: soft) {
+  /// Deletes the user.
+  func delete() async throws {
+    try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+      delete {
         switch $0 {
-        case let .success(user):
-          continuation.resume(returning: user)
+        case .success:
+          continuation.resume()
         case let .failure(error):
           continuation.resume(throwing: error)
         }
@@ -179,9 +182,44 @@ public extension User {
     }
   }
 
+  /// Checks if the user is a member of a specific channel.
+  ///
+  /// - Parameter channelId: Unique identifier of the channel to check
+  /// - Returns: A `Bool` value indicating whether the user is a member of the specified channel
+  func isMemberOf(channelId: String) async throws -> Bool {
+    try await withCheckedThrowingContinuation { continuation in
+      isMemberOf(channelId: channelId) {
+        switch $0 {
+        case let .success(isMember):
+          continuation.resume(returning: isMember)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+
+  /// Retrieves the user's membership for a specific channel.
+  ///
+  /// - Parameter channelId: Unique identifier of the channel
+  /// - Returns: The user's ``Membership`` for the specified channel, or `nil` if not a member
+  func getMembership(channelId: String) async throws -> ChatType.ChatMembershipType? {
+    try await withCheckedThrowingContinuation { continuation in
+      getMembership(channelId: channelId) {
+        switch $0 {
+        case let .success(membership):
+          continuation.resume(returning: membership)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+
   /// Receives updates on a single User object.
   ///
   /// - Returns: An asynchronous stream that produces updates when the current ``User`` is edited or `nil` if the user was removed.
+  @available(*, deprecated, message: "Use `stream.updates()` and `stream.deletions()` instead")
   func streamUpdates() -> AsyncStream<ChatType.ChatUserType?> {
     AsyncStream { continuation in
       let autoCloseable = streamUpdates {

@@ -15,6 +15,12 @@ import PubNubSDK
 /// Extension providing `async-await` support for ``Channel``.
 ///
 public extension Channel {
+
+  /// Namespace for `AsyncStream`-based streaming methods.
+  var stream: ChannelStream<Self> {
+    ChannelStream(channel: self)
+  }
+
   /// Receive updates when specific channels are updated or removed.
   ///
   /// Emits the complete list of monitored channels whenever any one of them changes, excluding any that were removed.
@@ -47,7 +53,7 @@ public extension Channel {
     description: String? = nil,
     status: String? = nil,
     type: ChannelType? = nil
-  ) async throws -> ChatType.ChatChannelType {
+  ) async throws -> Self {
     try await withCheckedThrowingContinuation { continuation in
       update(
         name: name,
@@ -66,16 +72,13 @@ public extension Channel {
     }
   }
 
-  /// Allows to delete  an existing ``Channel`` with or without deleting its historical data from the App Context storage.
-  ///
-  /// - Parameter soft: Decide if you want to permanently remove channel metadata
-  /// - Returns: For hard delete, the method returns `nil`. Otherwise, an updated ``Channel`` instance with the status field set to `"deleted"`
-  func delete(soft: Bool = false) async throws -> ChatType.ChatChannelType? {
-    try await withCheckedThrowingContinuation { continuation in
-      delete(soft: soft) {
+  /// Deletes an existing ``Channel`` and its historical data from the App Context storage.
+  func delete() async throws {
+    try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+      delete {
         switch $0 {
-        case let .success(message):
-          continuation.resume(returning: message)
+        case .success:
+          continuation.resume()
         case let .failure(error):
           continuation.resume(throwing: error)
         }
@@ -143,6 +146,7 @@ public extension Channel {
   /// Enables continuous tracking of typing activity within the ``Channel``.
   ///
   /// - Returns: An asynchronous stream producing typing user identifiers
+  @available(*, deprecated, message: "Use `stream.typingChanges()` instead")
   func getTyping() -> AsyncStream<[String]> {
     AsyncStream { continuation in
       let autoCloseable = getTyping {
@@ -226,6 +230,7 @@ public extension Channel {
   ///   - usersToMention: A collection of user ids to automatically notify with a mention after this message is sent
   ///   - customPushData: Additional key-value pairs that will be added to the FCM and/or APNS push messages for the message itself and any user mentions
   /// - Returns: The timetoken of the sent message
+  @available(*, deprecated, message: "Use `sendText(text:params:)` instead")
   @discardableResult
   func sendText(
     text: String,
@@ -249,6 +254,32 @@ public extension Channel {
         files: files,
         usersToMention: usersToMention,
         customPushData: customPushData
+      ) {
+        switch $0 {
+        case let .success(timetoken):
+          continuation.resume(returning: timetoken)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+
+  /// Sends text to the ``Channel``.
+  ///
+  /// - Parameters:
+  ///   - text: Text that you want to send to the selected channel
+  ///   - params: Additional parameters for sending text, encapsulated in a ``SendTextParams`` object
+  /// - Returns: The timetoken of the sent message
+  @discardableResult
+  func sendText(
+    text: String,
+    params: SendTextParams = SendTextParams()
+  ) async throws -> Timetoken {
+    try await withCheckedThrowingContinuation { continuation in
+      sendText(
+        text: text,
+        params: params
       ) {
         switch $0 {
         case let .success(timetoken):
@@ -303,7 +334,7 @@ public extension Channel {
   ///   - limit: Number of objects to return in response
   ///   - page: Object used for pagination to define which previous or next result page you want to fetch
   ///   - filter: Expression used to filter the results. Returns only these members whose properties satisfy the given expression
-  ///   - sort: A collection to specify the sort order. Available options are id, name, and updated
+  ///   - sort: A collection to specify the sort order
   /// - Returns: A `Tuple` containing an array of the members of the channel, and the next pagination `PubNubHashedPage` (if one exists)
   func getMembers(
     limit: Int? = nil,
@@ -323,9 +354,44 @@ public extension Channel {
     }
   }
 
+  /// Checks if a specific user is a member of this channel.
+  ///
+  /// - Parameter userId: Unique identifier of the user to check
+  /// - Returns: A `Bool` value indicating whether the user is a member of this channel
+  func hasMember(userId: String) async throws -> Bool {
+    try await withCheckedThrowingContinuation { continuation in
+      hasMember(userId: userId) {
+        switch $0 {
+        case let .success(hasMember):
+          continuation.resume(returning: hasMember)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+
+  /// Retrieves the membership of a specific user in this channel.
+  ///
+  /// - Parameter userId: Unique identifier of the user whose membership to retrieve
+  /// - Returns: The user's ``Membership`` in this channel, or `nil` if not a member
+  func getMember(userId: String) async throws -> ChatType.ChatMembershipType? {
+    try await withCheckedThrowingContinuation { continuation in
+      getMember(userId: userId) {
+        switch $0 {
+        case let .success(membership):
+          continuation.resume(returning: membership)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+
   /// Watch the ``Channel`` content without a need to join the ``Channel``.
   ///
   /// - Returns: An asynchronous stream that produces a new value every time a new message is published on the current channel
+  @available(*, deprecated, message: "Use `stream.messages()` instead")
   func connect() -> AsyncStream<ChatType.ChatMessageType> {
     AsyncStream { continuation in
       let autoCloseable = connect {
@@ -337,26 +403,24 @@ public extension Channel {
     }
   }
 
-  /// Connects a user to the ``Channel`` and sets membership - this way, the chat user can both watch the channel's content and be its full-fledged member.
+  /// Sets the caller's membership on this channel.
   ///
   /// - Parameters:
   ///   - custom: Any custom properties or metadata associated with the channel-user membership in the form of key-value pairs
-  /// - Returns: A `Tuple` containing the user's membership in the channel, and an asynchronous stream that produces a new value every time a new message is published on the current channel
+  ///   - status: Optional membership status value
+  ///   - type: Optional membership type value
+  /// - Returns: The caller's membership in the channel
   @discardableResult
   func join(
-    custom: [String: JSONCodableScalar]? = nil
-  ) async throws -> (
-    membership: ChatType.ChatMembershipType,
-    messagesStream: AsyncStream<ChatType.ChatMessageType>
-  ) {
-    let messagesStream = connect()
-
+    custom: [String: JSONCodableScalar]? = nil,
+    status: String? = nil,
+    type: String? = nil
+  ) async throws -> ChatType.ChatMembershipType {
     return try await withCheckedThrowingContinuation { continuation in
-      join(custom: custom, callback: nil) {
+      join(custom: custom, status: status, type: type) {
         switch $0 {
-        case let .success(joinResult):
-          joinResult.disconnect?.close()
-          continuation.resume(returning: (membership: joinResult.membership, messagesStream: messagesStream))
+        case let .success(membership):
+          continuation.resume(returning: membership)
         case let .failure(error):
           continuation.resume(throwing: error)
         }
@@ -383,7 +447,7 @@ public extension Channel {
   /// There can be only one pinned message on a channel at a time.
   ///
   /// - Returns: A pinned ``Message``
-  func getPinnedMessage() async throws -> ChatType.ChatMessageType? {
+  func getPinnedMessage() async throws -> MessageType? {
     try await withCheckedThrowingContinuation { continuation in
       getPinnedMessage {
         switch $0 {
@@ -400,7 +464,7 @@ public extension Channel {
   ///
   /// - Parameter timetoken: Timetoken of the message you want to retrieve from Message Persistence
   /// - Returns: A message object (if any)
-  func getMessage(timetoken: Timetoken) async throws -> ChatType.ChatMessageType? {
+  func getMessage(timetoken: Timetoken) async throws -> MessageType? {
     try await withCheckedThrowingContinuation { continuation in
       getMessage(timetoken: timetoken) {
         switch $0 {
@@ -479,6 +543,7 @@ public extension Channel {
   /// Receives updates on a single ``Channel`` object.
   ///
   /// - Returns: An asynchronous stream that produces updates when the current ``Channel`` is edited or `nil` if the channel was removed.
+  @available(*, deprecated, message: "Use `stream.updates()` and `stream.deletions()` instead")
   func streamUpdates() -> AsyncStream<ChatType.ChatChannelType?> {
     AsyncStream { continuation in
       let autoCloseable = streamUpdates {
@@ -491,6 +556,7 @@ public extension Channel {
   }
 
   /// Lets you get a read confirmation status for messages you published on a channel.
+  @available(*, deprecated, message: "Use `stream.readReceipts()` instead")
   func streamReadReceipts() -> AsyncStream<[Timetoken: [String]]> {
     AsyncStream { continuation in
       let autoCloseable = streamReadReceipts {
@@ -498,6 +564,32 @@ public extension Channel {
       }
       continuation.onTermination = { _ in
         autoCloseable.close()
+      }
+    }
+  }
+
+  /// Fetches the read receipts for members of this channel.
+  ///
+  /// - Parameters:
+  ///   - limit: Number of objects to return in response
+  ///   - page: Object used for pagination to define which previous or next result page you want to fetch
+  ///   - filter: Expression used to filter the results. Returns only these members whose properties satisfy the given expression
+  ///   - sort: A collection to specify the sort order
+  /// - Returns: A `Tuple` containing an array of ``ReadReceipt``, and the next pagination `PubNubHashedPage` (if one exists)
+  func fetchReadReceipts(
+    limit: Int? = nil,
+    page: PubNubHashedPage? = nil,
+    filter: String? = nil,
+    sort: [PubNub.MembershipSortField] = []
+  ) async throws -> (receipts: [ReadReceipt], page: PubNubHashedPage?) {
+    try await withCheckedThrowingContinuation { continuation in
+      fetchReadReceipts(limit: limit, page: page, filter: filter, sort: sort) {
+        switch $0 {
+        case let .success(result):
+          continuation.resume(returning: result)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
       }
     }
   }
@@ -546,6 +638,7 @@ public extension Channel {
   }
 
   /// Enables real-time tracking of users connecting to or disconnecting from a ``Channel``.
+  @available(*, deprecated, message: "Use `stream.presenceChanges()` instead")
   func streamPresence() -> AsyncStream<Set<String>> {
     AsyncStream { continuation in
       let autoCloseable = streamPresence {
@@ -553,6 +646,32 @@ public extension Channel {
       }
       continuation.onTermination = { _ in
         autoCloseable.close()
+      }
+    }
+  }
+
+  /// Returns the list of all invited members of the channel.
+  ///
+  /// - Parameters:
+  ///   - limit: Number of objects to return in response
+  ///   - page: Object used for pagination to define which previous or next result page you want to fetch
+  ///   - filter: Expression used to filter the results. Returns only these members whose properties satisfy the given expression
+  ///   - sort: A collection to specify the sort order
+  /// - Returns: A `Tuple` containing an array of the invitees of the channel, and the next pagination `PubNubHashedPage` (if one exists)
+  func getInvitees(
+    limit: Int? = nil,
+    page: PubNubHashedPage? = nil,
+    filter: String? = nil,
+    sort: [PubNub.MembershipSortField] = []
+  ) async throws -> (memberships: [ChatType.ChatMembershipType], page: PubNubHashedPage?) {
+    try await withCheckedThrowingContinuation { continuation in
+      getInvitees(limit: limit, page: page, filter: filter, sort: sort) {
+        switch $0 {
+        case let .success(getInviteesResult):
+          continuation.resume(returning: getInviteesResult)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
       }
     }
   }
@@ -606,7 +725,37 @@ public extension Channel {
     }
   }
 
+  /// Emits a custom event on this channel.
+  ///
+  /// - Parameters:
+  ///   - payload: Arbitrary key-value payload to publish
+  ///   - messageType: Optional custom message type used for filtering
+  ///   - storeInHistory: If true, event is stored in Message Persistence (if enabled)
+  /// - Returns: The timetoken of the emitted event
+  @discardableResult
+  func emitCustomEvent(
+    payload: [String: JSONCodable],
+    messageType: String? = nil,
+    storeInHistory: Bool = true
+  ) async throws -> Timetoken {
+    try await withCheckedThrowingContinuation { continuation in
+      emitCustomEvent(
+        payload: payload,
+        messageType: messageType,
+        storeInHistory: storeInHistory
+      ) {
+        switch $0 {
+        case let .success(timetoken):
+          continuation.resume(returning: timetoken)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+
   /// As an admin of your chat app, monitor all events emitted when someone reports an offensive message.
+  @available(*, deprecated, message: "Use `stream.reports()` instead")
   func streamMessageReports() -> AsyncStream<EventWrapper<EventContent.Report>> {
     AsyncStream { continuation in
       let autoCloseable = streamMessageReports {

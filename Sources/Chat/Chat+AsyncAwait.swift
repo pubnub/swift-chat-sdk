@@ -169,21 +169,17 @@ public extension Chat {
     }
   }
 
-  /// Deletes a user with or without deleting its historical data from the App Context storage.
+  /// Deletes a user and its historical data from the App Context storage.
   ///
-  /// - Parameters:
-  ///   - id: Unique user identifier
-  ///   - soft: Decide if you want to permanently remove user metadata
-  /// - Returns: For hard delete, the method returns `nil`. Otherwise, an updated ``User`` instance with the status field set to `"deleted"`
+  /// - Parameter id: Unique user identifier
   func deleteUser(
-    id: String,
-    soft: Bool = false
-  ) async throws -> ChatUserType? {
-    try await withCheckedThrowingContinuation { continuation in
-      deleteUser(id: id, soft: soft) {
+    id: String
+  ) async throws {
+    try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+      deleteUser(id: id) {
         switch $0 {
-        case let .success(user):
-          continuation.resume(returning: user)
+        case .success:
+          continuation.resume()
         case let .failure(error):
           continuation.resume(throwing: error)
         }
@@ -315,18 +311,15 @@ public extension Chat {
     }
   }
 
-  /// Allows to delete ``Channel`` with or without deleting its historical data from the App Context storage.
+  /// Deletes a ``Channel`` and its historical data from the App Context storage.
   ///
-  /// - Parameters:
-  ///   - id: Unique channel identifier (up to 92 UTF-8 byte sequences)
-  ///   - soft: Decide if you want to permanently remove channel metadata. If you set this parameter to true, the ``Channel`` object gets the deleted status, and you can still restore/get its data
-  /// - Returns: For hard delete, the method returns `nil`. Otherwise, an updated ``Channel`` instance with the status field set to `"deleted"`
-  func deleteChannel(id: String, soft: Bool = false) async throws -> ChatChannelType? {
-    try await withCheckedThrowingContinuation { continuation in
-      deleteChannel(id: id, soft: soft) {
+  /// - Parameter id: Unique channel identifier (up to 92 UTF-8 byte sequences)
+  func deleteChannel(id: String) async throws {
+    try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+      deleteChannel(id: id) {
         switch $0 {
-        case let .success(channel):
-          continuation.resume(returning: channel)
+        case .success:
+          continuation.resume()
         case let .failure(error):
           continuation.resume(throwing: error)
         }
@@ -361,6 +354,7 @@ public extension Chat {
   ///   - payload: The payload of the emitted event. Use one of ``EventContent`` subclasses. For example: `EventContent.TextMessageContent`, `EventContent.Mention`
   ///   - otherPayload: Metadata in the form of key-value pairs you want to pass as events from your chat app. Can contain anything in case of custom events, but has a predefined structure for other types of events
   /// - Returns: A `Timetoken` value that holds the timestamp of the emitted event
+  @available(*, deprecated, message: "Use `Channel.emitCustomEvent(payload:messageType:storeInHistory:)` for custom events")
   @discardableResult
   func emitEvent(
     channelId: String,
@@ -430,7 +424,7 @@ public extension Chat {
   ///   - membershipCustom: Any custom properties or metadata associated with the user-channel membership in the form of a map of key-value pairs
   /// - Returns: A ``CreateDirectConversationResult`` value representing the result of creating a direct conversation (private channel) between two users.
   func createDirectConversation(
-    invitedUser: UserImpl,
+    invitedUser: ChatUserType,
     channelId: String? = nil,
     channelName: String? = nil,
     channelDescription: String? = nil,
@@ -470,7 +464,7 @@ public extension Chat {
   ///   - membershipCustom: Any custom properties or metadata associated with the membership in the form of key-value pairs
   /// - Returns: A  ``CreateGroupConversationResult`` value representing the result of creating a group conversation (group channel) for collaborative communication
   func createGroupConversation(
-    invitedUsers: [UserImpl],
+    invitedUsers: [ChatUserType],
     channelId: String? = nil,
     channelName: String? = nil,
     channelDescription: String? = nil,
@@ -580,7 +574,7 @@ public extension Chat {
     page: PubNubHashedPage? = nil,
     filter: String? = nil,
     sort: [PubNub.MembershipSortField] = []
-  ) async throws -> [GetUnreadMessagesCount<ChannelImpl, MembershipImpl>] {
+  ) async throws -> [GetUnreadMessagesCount<ChatChannelType, ChatMembershipType>] {
     try await withCheckedThrowingContinuation { continuation in
       getUnreadMessagesCount(
         limit: limit,
@@ -612,7 +606,7 @@ public extension Chat {
     page: PubNubHashedPage? = nil,
     filter: String? = nil,
     sort: [PubNub.MembershipSortField] = []
-  ) async throws -> (countsByChannel: [GetUnreadMessagesCount<ChannelImpl, MembershipImpl>], page: PubNubHashedPage?) {
+  ) async throws -> (countsByChannel: [GetUnreadMessagesCount<ChatChannelType, ChatMembershipType>], page: PubNubHashedPage?) {
     try await withCheckedThrowingContinuation { continuation in
       fetchUnreadMessagesCounts(
         limit: limit,

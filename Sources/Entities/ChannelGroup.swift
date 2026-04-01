@@ -98,11 +98,31 @@ public protocol ChannelGroup {
   ///
   /// - Parameter callback: A closure that will be called with a dictionary of channel identifiers and their present user identifiers
   /// - Returns: ``AutoCloseable`` interface you can call to stop listening for present users by invoking the ``AutoCloseable/close()`` method.
+  @available(*, deprecated, message: "Use `onPresenceChanged(callback:)` instead")
   func streamPresence(callback: @escaping ([String: [String]]) -> Void) -> AutoCloseable
+
+  /// Emits presence data whenever the presence state changes on any channel within this channel group.
+  ///
+  /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
+  /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
+  ///
+  /// - Parameter callback: A closure invoked with a dictionary of channel identifiers and their present user identifiers
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onPresenceChanged(callback: @escaping ([String: [String]]) -> Void) -> AutoCloseable
 
   /// Watch the ``ChannelGroup`` content.
   ///
   /// - Parameter callback: Custom behavior whenever a message is received
   /// - Returns: ``AutoCloseable`` interface you can call to stop listening for new messages by invoking the ``AutoCloseable/close()`` method.
+  @available(*, deprecated, message: "Use `onMessageReceived(callback:)` instead")
   func connect(callback: @escaping (ChatType.ChatMessageType) -> Void) -> AutoCloseable
+
+  /// Emits the received message whenever a new message is published on any channel within this channel group.
+  ///
+  /// - Important: Keep a strong reference to the returned ``AutoCloseable`` object as long as you want to receive updates. If ``AutoCloseable`` is deallocated,
+  /// the stream will be canceled, and no further items will be produced. You can also stop receiving updates manually by calling ``AutoCloseable/close()``.
+  ///
+  /// - Parameter callback: A closure invoked with the received message
+  /// - Returns: An ``AutoCloseable`` that stops listening when closed
+  func onMessageReceived(callback: @escaping (ChatType.ChatMessageType) -> Void) -> AutoCloseable
 }

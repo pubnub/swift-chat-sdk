@@ -249,16 +249,12 @@ extension ChatImpl: Chat {
 
   public func deleteUser(
     id: String,
-    soft: Bool = false,
-    completion: ((Swift.Result<UserImpl?, Error>) -> Void)? = nil
+    completion: ((Swift.Result<Void, Error>) -> Void)? = nil
   ) {
-    chat.deleteUser(
-      id: id,
-      soft: soft
-    ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.User?>) in
+    chat.deleteUser(id: id).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.KotlinUnit>) in
       switch result.result {
-      case let .success(user):
-        completion?(.success(UserImpl(user: user, chat: result.caller)))
+      case .success:
+        completion?(.success(()))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -376,16 +372,12 @@ extension ChatImpl: Chat {
 
   public func deleteChannel(
     id: String,
-    soft: Bool = false,
-    completion: ((Swift.Result<ChannelImpl?, Error>) -> Void)? = nil
+    completion: ((Swift.Result<Void, Error>) -> Void)? = nil
   ) {
-    chat.deleteChannel(
-      id: id,
-      soft: soft
-    ).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.Channel_?>) in
+    chat.deleteChannel(id: id).async(caller: self) { (result: FutureResult<ChatImpl, PubNubChat.KotlinUnit>) in
       switch result.result {
-      case let .success(channel):
-        completion?(.success(ChannelImpl(channel: channel, chat: result.caller)))
+      case .success:
+        completion?(.success(()))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -532,11 +524,11 @@ extension ChatImpl: Chat {
         channelId: channelId,
         customMethod: customMethod == .publish ? .publish : .signal,
         callback: { [weak self] in
-          if let selfRef = self, let payload = $0.payload.map() as? T {
+          if let self = self, let payload = $0.payload.map() as? T {
             callback(
               EventWrapper(
                 event: EventImpl(
-                  chat: selfRef,
+                  chat: self,
                   timetoken: Timetoken($0.timetoken_),
                   payload: payload,
                   channelId: $0.channelId,

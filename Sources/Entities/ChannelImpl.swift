@@ -81,7 +81,7 @@ extension ChannelImpl: Channel {
       return AutoCloseableImpl.empty()
     }
     return AutoCloseableImpl(
-      PubNubChat.ThreadChannelCompanion.shared.streamUpdatesOn(channels: channels.map(\.target.channel)) { [chat = firstChat] in
+      PubNubChat.BaseChannelCompanion.shared.streamUpdatesOn(channels: channels.map(\.target.channel)) { [chat = firstChat] in
         callback(($0 as? [PubNubChat.Channel_] ?? []).map {
           ChannelImpl(channel: $0, chat: chat)
         })
@@ -102,17 +102,21 @@ extension ChannelImpl: Channel {
       custom: custom,
       description: description,
       status: status,
-      type: type,
-      completion: completion
-    )
+      type: type
+    ) {
+      switch $0 {
+      case let .success(channel):
+        completion?(.success(ChannelImpl(channel: channel.channel, chat: channel.chat)))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
   }
 
   public func delete(
-    soft: Bool = false,
-    completion: ((Swift.Result<ChannelImpl?, Error>) -> Void)? = nil
+    completion: ((Swift.Result<Void, Error>) -> Void)? = nil
   ) {
     target.delete(
-      soft: soft,
       completion: completion
     )
   }
@@ -235,6 +239,18 @@ extension ChannelImpl: Channel {
     )
   }
 
+  public func sendText(
+    text: String,
+    params: SendTextParams = SendTextParams(),
+    completion: ((Swift.Result<Timetoken, Error>) -> Void)? = nil
+  ) {
+    target.sendText(
+      text: text,
+      params: params,
+      completion: completion
+    )
+  }
+
   public func invite(user: UserImpl, completion: ((Swift.Result<MembershipImpl, Error>) -> Void)? = nil) {
     target.invite(
       user: user,
@@ -265,18 +281,34 @@ extension ChannelImpl: Channel {
     )
   }
 
+  public func hasMember(userId: String, completion: ((Swift.Result<Bool, Error>) -> Void)? = nil) {
+    target.hasMember(
+      userId: userId,
+      completion: completion
+    )
+  }
+
+  public func getMember(userId: String, completion: ((Swift.Result<MembershipImpl?, Error>) -> Void)? = nil) {
+    target.getMember(
+      userId: userId,
+      completion: completion
+    )
+  }
+
   public func connect(callback: @escaping (MessageImpl) -> Void) -> AutoCloseable {
     target.connect(callback: callback)
   }
 
   public func join(
     custom: [String: JSONCodableScalar]? = nil,
-    callback: ((MessageImpl) -> Void)? = nil,
-    completion: ((Swift.Result<(membership: MembershipImpl, disconnect: AutoCloseable?), Error>) -> Void)? = nil
+    status: String? = nil,
+    type: String? = nil,
+    completion: ((Swift.Result<MembershipImpl, any Error>) -> Void)? = nil
   ) {
     target.join(
       custom: custom,
-      callback: callback,
+      status: status,
+      type: type,
       completion: completion
     )
   }
@@ -288,16 +320,25 @@ extension ChannelImpl: Channel {
   }
 
   public func getPinnedMessage(completion: ((Swift.Result<MessageImpl?, Error>) -> Void)? = nil) {
-    target.getPinnedMessage(
-      completion: completion
-    )
+    target.getPinnedMessage {
+      switch $0 {
+      case let .success(message):
+        completion?(.success(MessageImpl(message: message?.message, chat: message?.chat)))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
   }
 
   public func getMessage(timetoken: Timetoken, completion: ((Swift.Result<MessageImpl?, Error>) -> Void)? = nil) {
-    target.getMessage(
-      timetoken: timetoken,
-      completion: completion
-    )
+    target.getMessage(timetoken: timetoken) {
+      switch $0 {
+      case let .success(message):
+        completion?(.success(MessageImpl(message: message?.message, chat: message?.chat)))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
   }
 
   public func registerForPush(completion: ((Swift.Result<Void, Error>) -> Void)? = nil) {
@@ -346,6 +387,22 @@ extension ChannelImpl: Channel {
     )
   }
 
+  public func fetchReadReceipts(
+    limit: Int? = nil,
+    page: PubNubHashedPage? = nil,
+    filter: String? = nil,
+    sort: [PubNub.MembershipSortField] = [],
+    completion: ((Swift.Result<(receipts: [ReadReceipt], page: PubNubHashedPage?), Error>) -> Void)? = nil
+  ) {
+    target.fetchReadReceipts(
+      limit: limit,
+      page: page,
+      filter: filter,
+      sort: sort,
+      completion: completion
+    )
+  }
+
   public func getFiles(
     limit: Int = 100,
     next: String? = nil,
@@ -369,6 +426,22 @@ extension ChannelImpl: Channel {
   public func streamPresence(callback: @escaping (Set<String>) -> Void) -> AutoCloseable {
     target.streamPresence(
       callback: callback
+    )
+  }
+
+  public func getInvitees(
+    limit: Int? = nil,
+    page: PubNubHashedPage? = nil,
+    filter: String? = nil,
+    sort: [PubNub.MembershipSortField] = [],
+    completion: ((Swift.Result<(memberships: [MembershipImpl], page: PubNubHashedPage?), Error>) -> Void)? = nil
+  ) {
+    target.getInvitees(
+      limit: limit,
+      page: page,
+      filter: filter,
+      sort: sort,
+      completion: completion
     )
   }
 
@@ -400,6 +473,66 @@ extension ChannelImpl: Channel {
 
   public func streamMessageReports(callback: @escaping (any Event<EventContent.Report>) -> Void) -> AutoCloseable {
     target.streamMessageReports(
+      callback: callback
+    )
+  }
+
+  public func onTypingChanged(callback: @escaping (([String]) -> Void)) -> AutoCloseable {
+    target.onTypingChanged(callback: callback)
+  }
+
+  public func onMessageReceived(callback: @escaping (MessageImpl) -> Void) -> AutoCloseable {
+    target.onMessageReceived { [weak self] in
+      if let self = self {
+        callback(MessageImpl(message: $0.message, chat: self.chat))
+      }
+    }
+  }
+
+  public func onUpdated(callback: @escaping (ChannelImpl) -> Void) -> AutoCloseable {
+    target.onUpdated { [weak self] in
+      if let self = self {
+        callback(ChannelImpl(channel: $0.channel, chat: self.chat))
+      }
+    }
+  }
+
+  public func onDeleted(callback: @escaping () -> Void) -> AutoCloseable {
+    target.onDeleted(callback: callback)
+  }
+
+  public func onReadReceiptReceived(callback: @escaping (ReadReceipt) -> Void) -> AutoCloseable {
+    target.onReadReceiptReceived(callback: callback)
+  }
+
+  public func onPresenceChanged(callback: @escaping (Set<String>) -> Void) -> AutoCloseable {
+    target.onPresenceChanged(callback: callback)
+  }
+
+  public func onMessageReported(callback: @escaping (Report) -> Void) -> AutoCloseable {
+    target.onMessageReported(callback: callback)
+  }
+
+  public func emitCustomEvent(
+    payload: [String: JSONCodable],
+    messageType: String? = nil,
+    storeInHistory: Bool = true,
+    completion: ((Swift.Result<Timetoken, Error>) -> Void)? = nil
+  ) {
+    target.emitCustomEvent(
+      payload: payload,
+      messageType: messageType,
+      storeInHistory: storeInHistory,
+      completion: completion
+    )
+  }
+
+  public func onCustomEvent(
+    messageType: String? = nil,
+    callback: @escaping (CustomEvent) -> Void
+  ) -> AutoCloseable {
+    target.onCustomEvent(
+      messageType: messageType,
       callback: callback
     )
   }

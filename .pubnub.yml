@@ -1,8 +1,61 @@
 name: swift-chat-sdk
 scm: github.com/pubnub/swift-chat-sdk
-version: 0.34.0
+version: 1.0.0
 schema: 1
 changelog:
+  - date: 2026-04-01
+    version: 1.0.0
+    changes:
+      - type: feature
+        text: "All entities now expose `onXxx(callback:)` closure-based methods and a `stream` property with `AsyncStream`-based equivalents, replacing the previous `connect()`/`streamUpdates()` pattern."
+      - type: feature
+        text: "Added `Channel.onMessageReceived()` and `Channel.onTypingChanged()`, replacing deprecated `connect()` and `getTyping()`."
+      - type: feature
+        text: "Added `Channel.sendText(text:params:completion:)` with new `SendTextParams` struct. Previous multi-param `sendText()` overload is deprecated."
+      - type: feature
+        text: "Added `Channel.emitCustomEvent()` and `Channel.onCustomEvent()` for publishing and listening to custom events with message type filtering."
+      - type: feature
+        text: "Added `Channel.getInvitees()` to return channel members with pending (invited) status."
+      - type: feature
+        text: "Added `Channel.hasMember()` and `Channel.getMember()` membership-oriented convenience methods."
+      - type: feature
+        text: "Added `ChannelGroup.onMessageReceived()` and `ChannelGroup.onPresenceChanged()`, replacing deprecated `connect()` and `streamPresence()`."
+      - type: feature
+        text: "Added `User.onUpdated()`, `User.onDeleted()`, `User.onMentioned()`, `User.onInvited()`, `User.onRestrictionChanged()`, replacing deprecated `streamUpdates()`."
+      - type: feature
+        text: "Added `User.isMemberOf()` and `User.getMembership()` membership-oriented convenience methods."
+      - type: feature
+        text: "Added `Membership.onUpdated()` and `Membership.onDeleted()`, replacing deprecated `streamUpdates()`."
+      - type: feature
+        text: "`Membership.update()` now accepts optional `status` and `type` parameters alongside `custom`."
+      - type: feature
+        text: "Added `Membership.delete()` for deleting a membership relationship."
+      - type: feature
+        text: "Added `Message.onUpdated()`, replacing deprecated `streamUpdates()` for listening to message edits and reaction changes."
+      - type: feature
+        text: "Added `Message.createThread(text:params:completion:)` returning `CreateThreadResult` with thread channel and updated parent message."
+      - type: feature
+        text: "`ThreadChannelImpl` returns typed `ThreadChannelImpl` and `ThreadMessageImpl` from `update()`, `getMessage()`, `getPinnedMessage()`, `getHistory()` instead of base types."
+      - type: feature
+        text: "Added `ThreadChannelImpl.onMessageReceived()` and `ThreadChannelImpl.onUpdated()`, returning typed `ThreadMessageImpl` and `ThreadChannelImpl` instead of base types."
+      - type: feature
+        text: "`ThreadMessageImpl` returns typed `ThreadMessageImpl` from `editText()`, `toggleReaction()`, `restore()` instead of base types."
+      - type: feature
+        text: "Added `ThreadMessageImpl.onUpdated()`, returning typed `ThreadMessageImpl` for thread message updates."
+      - type: feature
+        text: "Added `ChatConfiguration.emitReadReceiptEvents` as `[ChannelType: Bool]` for per-channel-type control over read receipt event emission. Defaults to `true` except for `.public` channels."
+      - type: improvement
+        text: "BREAKING CHANGES: `Channel.join()` now only creates membership without subscribing or setting `lastReadMessageTimetoken`. Previous `join()` signature removed along with `JoinResult` type."
+      - type: improvement
+        text: "BREAKING CHANGES: `Message.reactions` changed from `[String: [Action]]` to `[MessageReaction]` with `isMine`, `userIds`, `count` per reaction."
+      - type: improvement
+        text: "BREAKING CHANGES: `Message.removeThread()` completion now returns `Void` instead of a tuple of remove result and optional channel."
+      - type: improvement
+        text: "BREAKING CHANGES: `Channel.delete()` and `Chat.deleteChannel()` now permanently delete. The `soft` parameter is removed."
+      - type: improvement
+        text: "BREAKING CHANGES: `User.delete()` and `Chat.deleteUser()` now permanently delete. The `soft` parameter is removed."
+      - type: improvement
+        text: "`Chat.emitEvent()` and `Chat.listenForEvents()` deprecated. Replaced by entity-level methods like `Channel.emitCustomEvent()` and `User.onMentioned()`."
   - date: 2026-01-26
     version: 0.34.0
     changes:
@@ -207,7 +260,7 @@ sdks:
           - distribution-type: source
             distribution-repository: GitHub release
             package-name: PubNubSwiftChatSDK
-            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/0.34.0.zip
+            location: https://github.com/pubnub/swift-chat-sdk/archive/refs/tags/1.0.0.zip
             supported-platforms:
               supported-operating-systems:
                 iOS:

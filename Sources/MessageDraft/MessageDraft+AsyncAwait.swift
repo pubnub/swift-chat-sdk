@@ -29,6 +29,7 @@ public extension MessageDraft {
   ///   - usePost: Use HTTP POST
   ///   - ttl: Defines if/how long (in hours) the message should be stored in Message Persistence
   /// - Returns: The `Timetoken` of the sent message
+  @available(*, deprecated, message: "Use `send(params:)` instead")
   @discardableResult
   func send(
     meta: [String: JSONCodable]? = nil,
@@ -42,6 +43,28 @@ public extension MessageDraft {
         shouldStore: shouldStore,
         usePost: usePost,
         ttl: ttl
+      ) {
+        switch $0 {
+        case let .success(timetoken):
+          continuation.resume(returning: timetoken)
+        case let .failure(error):
+          continuation.resume(throwing: error)
+        }
+      }
+    }
+  }
+
+  /// Send the ``MessageDraft``, along with its ``files`` and ``quotedMessage`` if any, on the ``channel``.
+  ///
+  /// - Parameter params: Additional parameters for sending, encapsulated in a ``SendTextParams`` object
+  /// - Returns: The `Timetoken` of the sent message
+  @discardableResult
+  func send(
+    params: SendTextParams = SendTextParams()
+  ) async throws -> Timetoken {
+    try await withCheckedThrowingContinuation { continuation in
+      send(
+        params: params
       ) {
         switch $0 {
         case let .success(timetoken):

@@ -171,15 +171,12 @@ extension UserImpl: User {
   }
 
   public func delete(
-    soft: Bool = false,
-    completion: ((Swift.Result<UserImpl?, Error>) -> Void)? = nil
+    completion: ((Swift.Result<Void, Error>) -> Void)? = nil
   ) {
-    user.delete(
-      soft: soft
-    ).async(caller: self) { (result: FutureResult<UserImpl, PubNubChat.User?>) in
+    user.delete().async(caller: self) { (result: FutureResult<UserImpl, PubNubChat.KotlinUnit>) in
       switch result.result {
-      case let .success(user):
-        completion?(.success(UserImpl(user: user, chat: result.caller.chat)))
+      case .success:
+        completion?(.success(()))
       case let .failure(error):
         completion?(.failure(error))
       }
@@ -224,7 +221,7 @@ extension UserImpl: User {
       limit: limit?.asKotlinInt,
       page: page?.transform(),
       filter: filter,
-      sort: sort.compactMap { $0.transform }
+      sort: sort.compactMap { $0.transform() }
     ).async(caller: self) { (result: FutureResult<UserImpl, MembershipsResponse>) in
       switch result.result {
       case let .success(response):
@@ -244,6 +241,42 @@ extension UserImpl: User {
     }
   }
 
+  public func isMemberOf(
+    channelId: String,
+    completion: ((Swift.Result<Bool, Error>) -> Void)? = nil
+  ) {
+    user.isMemberOf(
+      channelId: channelId
+    ).async(caller: self) { (result: FutureResult<UserImpl, Bool>) in
+      switch result.result {
+      case let .success(isMember):
+        completion?(.success(isMember))
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
+
+  public func getMembership(
+    channelId: String,
+    completion: ((Swift.Result<MembershipImpl?, Error>) -> Void)? = nil
+  ) {
+    user.getMembership(
+      channelId: channelId
+    ).async(caller: self) { (result: FutureResult<UserImpl, PubNubChat.Membership?>) in
+      switch result.result {
+      case let .success(membership):
+        if let membership {
+          completion?(.success(MembershipImpl(membership: membership, chat: result.caller.chat)))
+        } else {
+          completion?(.success(nil))
+        }
+      case let .failure(error):
+        completion?(.failure(error))
+      }
+    }
+  }
+
   public func streamUpdates(callback: @escaping ((UserImpl?) -> Void)) -> AutoCloseable {
     AutoCloseableImpl(
       user.streamUpdates { [weak self] in
@@ -253,6 +286,61 @@ extension UserImpl: User {
           } else {
             callback(nil)
           }
+        }
+      },
+      owner: self
+    )
+  }
+
+  public func onUpdated(callback: @escaping (UserImpl) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      user.onUpdated { [weak self] in
+        if let self = self {
+          callback(UserImpl(user: $0, chat: self.chat))
+        }
+      },
+      owner: self
+    )
+  }
+
+  public func onDeleted(callback: @escaping () -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      user.onDeleted { [weak self] in
+        if self != nil {
+          callback()
+        }
+      },
+      owner: self
+    )
+  }
+
+  public func onMentioned(callback: @escaping (Mention) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      user.onMentioned { [weak self] in
+        if self != nil {
+          callback($0.transform())
+        }
+      },
+      owner: self
+    )
+  }
+
+  public func onInvited(callback: @escaping (Invite) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      user.onInvited { [weak self] in
+        if self != nil {
+          callback($0.transform())
+        }
+      },
+      owner: self
+    )
+  }
+
+  public func onRestrictionChanged(callback: @escaping (Restriction) -> Void) -> AutoCloseable {
+    AutoCloseableImpl(
+      user.onRestrictionChanged { [weak self] in
+        if self != nil {
+          callback($0.transform())
         }
       },
       owner: self

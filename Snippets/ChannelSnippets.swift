@@ -397,6 +397,26 @@ func streamMembershipsUpdatesOnClosure() {
   // snippet.end
 }
 
+// MARK: - Delete Membership
+
+func deleteMembership() {
+  // snippet.membership.delete
+  // Assumes a "ChatImpl" reference named "chat"
+  Task {
+    if let user = try await chat.getUser(userId: "support_agent_15") {
+      if let membership = try await user.getMemberships(filter: "channel.id == 'high-priority-incidents'").memberships.first {
+        try await membership.delete()
+        debugPrint("Membership deleted")
+      } else {
+        debugPrint("No memberships found")
+      }
+    } else {
+      debugPrint("User not found")
+    }
+  }
+  // snippet.end
+}
+
 // MARK: - Update Membership
 
 func updateMembership() {

@@ -52,6 +52,24 @@ func inviteMultipleUsers() {
   // snippet.end
 }
 
+// MARK: - Get Invitees
+
+func getInvitees() {
+  // snippet.invite.getInvitees
+  // Assumes a "ChatImpl" reference named "chat"
+  Task {
+    if let channel = try await chat.getChannel(channelId: "high-prio-incidents") {
+      let invitees = try await channel.getInvitees()
+      let userIds = invitees.memberships.map { $0.user.id }
+      debugPrint("Invited users: \(userIds)")
+      debugPrint("Next page (if any): \(String(describing: invitees.page))")
+    } else {
+      debugPrint("Channel not found")
+    }
+  }
+  // snippet.end
+}
+
 // MARK: - Listen to Invite Events
 
 func listenForInviteEvents() {

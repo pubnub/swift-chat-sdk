@@ -11,8 +11,8 @@
 import Foundation
 
 final class RandomStringGenerator {
-  func randomString(length: Int = 6) -> String {
-    String((0 ..< max(1, min(length, 6))).map { _ in
+  func randomString(length: Int = 6, withPrefix: Bool = true) -> String {
+    (withPrefix ? Constants.prefix : "") + String((0 ..< max(1, min(length, 6))).map { _ in
       if let character = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".randomElement() {
         return character
       } else {

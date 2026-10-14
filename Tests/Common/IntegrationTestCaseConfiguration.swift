@@ -61,7 +61,11 @@ enum IntegrationTestCaseConfiguration {
     return PubNubConfiguration(
       publishKey: dictionary["publishKey"] ?? "",
       subscribeKey: dictionary["subscribeKey"] ?? "",
-      userId: RandomStringGenerator().randomString()
+
+      // The current user's ID must not carry the shared test prefix. Otherwise, the current user would
+      // also be returned by prefix-based queries (e.g. getUsers(filter: "id LIKE '<prefix>*'")), so tests
+      // creating N users would see N + 1 results.
+      userId: RandomStringGenerator().randomString(withPrefix: false)
     )
   }
 }

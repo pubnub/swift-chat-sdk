@@ -18,8 +18,8 @@ class MessageDraftIntegrationTests: BaseAsyncIntegrationTestCase {
   private var channel: ChannelImpl!
 
   override func customSetup() async throws {
-    let channelId = "cchnl\(randomString())"
-    let userId = "uuser\(randomString())"
+    let channelId = randomString()
+    let userId = randomString()
 
     channel = try await chat.createChannel(id: channelId, name: channelId)
     user = try await chat.createUser(user: UserImpl(chat: chat, id: userId, name: userId))
@@ -57,7 +57,7 @@ class MessageDraftIntegrationTests: BaseAsyncIntegrationTestCase {
     }
 
     messageDraft.addChangeListener(listener)
-    messageDraft.update(text: "This is a @uuser")
+    messageDraft.update(text: "This is a @\(user.id)")
 
     await fulfillment(of: [expectation], timeout: 6)
 
@@ -101,7 +101,7 @@ class MessageDraftIntegrationTests: BaseAsyncIntegrationTestCase {
     }
 
     messageDraft.addChangeListener(listener)
-    messageDraft.update(text: "This is a #cchnl")
+    messageDraft.update(text: "This is a #\(channel.id)")
 
     await fulfillment(of: [expectation], timeout: 6)
 
@@ -126,11 +126,11 @@ class MessageDraftIntegrationTests: BaseAsyncIntegrationTestCase {
     expectation.expectedFulfillmentCount = 1
 
     let messageDraft = channel.createMessageDraft()
-    messageDraft.update(text: "This is a #cchnl")
+    messageDraft.update(text: "This is a #\(channel.id)")
 
     let suggestedMention = SuggestedMention(
       offset: 10,
-      replaceFrom: "#cchnl",
+      replaceFrom: "#\(channel.id)",
       replaceWith: channel.name ?? "",
       target: .channel(channelId: channel.id)
     )
@@ -159,11 +159,11 @@ class MessageDraftIntegrationTests: BaseAsyncIntegrationTestCase {
     expectation.expectedFulfillmentCount = 1
 
     let messageDraft = channel.createMessageDraft()
-    messageDraft.update(text: "This is a #cchnl")
+    messageDraft.update(text: "This is a #\(channel.id)")
 
     let suggestedMention = SuggestedMention(
       offset: 10,
-      replaceFrom: "#cchnl",
+      replaceFrom: "#\(channel.id)",
       replaceWith: channel.name ?? "",
       target: .channel(channelId: channel.id)
     )
@@ -191,11 +191,11 @@ class MessageDraftIntegrationTests: BaseAsyncIntegrationTestCase {
     expectation.expectedFulfillmentCount = 1
 
     let messageDraft = channel.createMessageDraft()
-    messageDraft.update(text: "This is a #cchnl")
+    messageDraft.update(text: "This is a #\(channel.id)")
 
     let suggestedMention = SuggestedMention(
       offset: 10,
-      replaceFrom: "#cchnl",
+      replaceFrom: "#\(channel.id)",
       replaceWith: channel.name ?? "",
       target: .channel(channelId: channel.id)
     )
@@ -221,14 +221,14 @@ class MessageDraftIntegrationTests: BaseAsyncIntegrationTestCase {
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
 
-    let originalText = "This is a #cchnl"
+    let originalText = "This is a #\(channel.id)"
     let messageDraft = channel.createMessageDraft()
 
     messageDraft.update(text: originalText)
 
     let suggestedMention = SuggestedMention(
       offset: 10,
-      replaceFrom: "#cchnl",
+      replaceFrom: "#\(channel.id)",
       replaceWith: channel.name ?? "",
       target: .channel(channelId: channel.id)
     )
@@ -255,14 +255,14 @@ class MessageDraftIntegrationTests: BaseAsyncIntegrationTestCase {
     expectation.assertForOverFulfill = true
     expectation.expectedFulfillmentCount = 1
 
-    let originalText = "This is a #cchnl"
+    let originalText = "This is a #\(channel.id)"
     let messageDraft = channel.createMessageDraft()
 
     messageDraft.update(text: originalText)
 
     let suggestedMention = SuggestedMention(
       offset: 10,
-      replaceFrom: "#cchnl",
+      replaceFrom: "#\(channel.id)",
       replaceWith: channel.name ?? "",
       target: .channel(channelId: channel.id)
     )
